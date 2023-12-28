@@ -6,4 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Organisation extends Model
 {
+    protected $fillable = [
+        'code',
+        'name',
+        'country',
+        'timezone',
+    ];
 }
