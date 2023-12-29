@@ -2,12 +2,16 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Str;
 
 class Nomination extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'name',
         'description',
@@ -40,6 +44,14 @@ class Nomination extends Model
     public function organisation(): BelongsTo
     {
         return $this->belongsTo(related: Organisation::class);
+    }
+
+    public function electors(): MorphMany
+    {
+        return $this->morphMany(
+            related: Elector::class,
+            name: 'event',
+        );
     }
 
     protected static function booted(): void

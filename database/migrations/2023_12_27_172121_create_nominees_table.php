@@ -37,8 +37,8 @@ return new class extends Migration
                     ->constrained()->cascadeOnUpdate()->cascadeOnDelete();
                 $table->foreignIdFor(model: Elector::class)->nullable()
                     ->constrained()->cascadeOnUpdate()->nullOnDelete();
-                $table->foreignIdFor(model: User::class, column: 'scrutiniser_id')->nullable()
-                    ->constrained()->cascadeOnUpdate()->nullOnDelete();
+                $table->foreignId( column: 'scrutiniser_id')->nullable()
+                    ->constrained(table: 'users')->cascadeOnUpdate()->nullOnDelete();
 
                 $table->timestamps();
             },

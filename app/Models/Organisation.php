@@ -2,17 +2,34 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
 class Organisation extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'code',
         'name',
         'country',
         'timezone',
     ];
+
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(related: User::class)
+            ->using(class: OrganisationUser::class)
+            ->withPivot(columns: ['role']);
+    }
+
+    public function nominations(): HasMany
+    {
+        return $this->hasMany(related: Nomination::class);
+    }
 
     protected static function booted(): void
     {
