@@ -14,12 +14,18 @@ class Election extends Model
         'timezone',
         'starts_at',
         'ends_at',
+        'published_at',
+        'closed_at',
+        'cancelled_at',
         'organisation_id',
     ];
 
     protected $casts = [
         'starts_at' => 'datetime',
         'ends_at' => 'datetime',
+        'published_at' => 'datetime',
+        'closed_at' => 'datetime',
+        'cancelled_at' => 'datetime',
         'organisation_id' => 'int',
     ];
 
@@ -32,8 +38,14 @@ class Election extends Model
     {
         static::creating(callback: function (Election $election) {
             if (blank($election->code)) {
-                $election->code = 'EL'.Str::upper(value: Str::random(length: 8));
+                $election->code = static::generateCode();
             }
         });
+    }
+
+    public static function generateCode(): string
+    {
+        return config(key: 'app.election.code.prefix').
+            Str::upper(value: Str::random(length: config(key: 'app.election.code.length')));
     }
 }

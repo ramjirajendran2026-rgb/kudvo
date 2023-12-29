@@ -19,6 +19,7 @@ class Nomination extends Model
         'withdrawal_starts_at',
         'withdrawal_ends_at',
         'published_at',
+        'closed_at',
         'cancelled_at',
         'organisation_id',
     ];
@@ -30,6 +31,9 @@ class Nomination extends Model
         'ends_at' => 'datetime',
         'withdrawal_starts_at' => 'datetime',
         'withdrawal_ends_at' => 'datetime',
+        'published_at' => 'datetime',
+        'closed_at' => 'datetime',
+        'cancelled_at' => 'datetime',
         'organisation_id' => 'int',
     ];
 
@@ -42,8 +46,14 @@ class Nomination extends Model
     {
         static::creating(callback: function (Nomination $nomination) {
             if (blank($nomination->code)) {
-                $nomination->code = 'NM'.Str::upper(value: Str::random(length: 8));
+                $nomination->code = static::generateCode();
             }
         });
+    }
+
+    public static function generateCode(): string
+    {
+        return config(key: 'app.nomination.code.prefix').
+            Str::upper(value: Str::random(length: config(key: 'app.nomination.code.length')));
     }
 }

@@ -22,6 +22,10 @@ return new class extends Migration
                 $table->timestamp(column: 'starts_at')->nullable();
                 $table->timestamp(column: 'ends_at')->nullable();
 
+                $table->timestamp(column: 'published_at')->nullable();
+                $table->timestamp(column: 'closed_at')->nullable();
+                $table->timestamp(column: 'cancelled_at')->nullable();
+
                 $table->foreignIdFor(model: Organisation::class)
                     ->constrained()->cascadeOnUpdate()->cascadeOnDelete();
 

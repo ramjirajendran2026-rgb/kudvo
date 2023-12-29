@@ -185,4 +185,25 @@ return [
         // 'Example' => App\Facades\Example::class,
     ])->toArray(),
 
+    'organisation' => [
+        'code' => [
+            'prefix' => 'ORG',
+            'length' => 5,
+        ],
+    ],
+
+    'nomination' => [
+        'code' => [
+            'prefix' => 'NM',
+            'length' => 8,
+        ],
+    ],
+
+    'election' => [
+        'code' => [
+            'prefix' => 'EL',
+            'length' => 8,
+        ],
+    ],
+
 ];
