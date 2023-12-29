@@ -54,6 +54,14 @@ class Nomination extends Model
         );
     }
 
+    public function positions(): MorphMany
+    {
+        return $this->morphMany(
+            related: Position::class,
+            name: 'event',
+        );
+    }
+
     protected static function booted(): void
     {
         static::creating(callback: function (Nomination $nomination) {

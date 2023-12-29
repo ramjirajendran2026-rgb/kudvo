@@ -2,6 +2,8 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\Organisation\Register as RegisterOrganisation;
+use App\Models\Organisation;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -56,6 +58,10 @@ class UserPanelProvider extends PanelProvider
             ->registration()
             ->login()
             ->passwordReset()
-            ->profile();
+            ->emailVerification()
+            ->profile()
+            ->tenant(model: Organisation::class)
+            ->tenantRegistration(page: RegisterOrganisation::class)
+            ->topNavigation();
     }
 }

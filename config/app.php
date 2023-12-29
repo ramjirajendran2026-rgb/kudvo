@@ -183,8 +183,10 @@ return [
     */
 
     'aliases' => Facade::defaultAliases()->merge([
-        // 'Example' => App\Facades\Example::class,
+        'Countries' => PeterColes\Countries\CountriesFacade::class,
     ])->toArray(),
+
+    'default_phone_country' => 'IN',
 
     'organisation' => [
         'code' => [
