@@ -40,6 +40,11 @@ class Organisation extends Model
         });
     }
 
+    public function getRouteKeyName(): string
+    {
+        return 'code';
+    }
+
     public static function generateCode(): string
     {
         return config(key: 'app.organisation.code.prefix').

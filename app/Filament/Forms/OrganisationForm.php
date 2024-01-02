@@ -2,37 +2,32 @@
 
 namespace App\Filament\Forms;
 
-use Countries;
-use Filament\Forms\Components\Select;
+use App\Forms\Components\CountryPicker;
+use App\Forms\Components\TimezonePicker;
 use Filament\Forms\Components\TextInput;
-use OmarHaris\FilamentTimezoneField\Forms\Components\Timezone;
 
 readonly class OrganisationForm
 {
-    public static function countryComponent(): Select
+    public static function countryComponent(): CountryPicker
     {
-        return Select::make(name: 'country')
-            ->label(label: __(key: 'filament/forms/organisation.country.label'))
-            ->options(options: Countries::lookup())
-            ->optionsLimit(limit: 500)
-            ->required()
-            ->searchable();
+        return CountryPicker::make()
+            ->label(label: 'Country')
+            ->required();
     }
 
     public static function nameComponent(): TextInput
     {
         return TextInput::make(name: 'name')
-            ->label(label: __(key: 'filament/forms/organisation.name.label'))
+            ->label(label: 'Organisation name')
             ->maxLength(length: 60)
             ->minLength(length: 4)
             ->required();
     }
 
-    public static function timezoneComponent(): Timezone
+    public static function timezoneComponent(): TimezonePicker
     {
-        return Timezone::make(name: 'timezone')
-            ->label(label: __(key: 'filament/forms/organisation.timezone.label'))
-            ->required()
-            ->searchable();
+        return TimezonePicker::make()
+            ->label(label: 'Timezone')
+            ->required();
     }
 }

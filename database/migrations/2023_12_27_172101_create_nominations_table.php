@@ -29,6 +29,7 @@ return new class extends Migration
 
                 $table->timestamp(column: 'published_at')->nullable();
                 $table->timestamp(column: 'closed_at')->nullable();
+                $table->timestamp(column: 'scrutinised_at')->nullable();
                 $table->timestamp(column: 'cancelled_at')->nullable();
 
                 $table->foreignIdFor(model: Organisation::class)

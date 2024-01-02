@@ -35,6 +35,18 @@ class Elector extends Model
         return $this->morphTo();
     }
 
+    protected static function booted(): void
+    {
+        static::saving(callback: function (Elector $elector) {
+            if (filled($elector->groups)) {
+                $elector->groups = collect(value: $elector->groups)
+                    ->map(callback: fn (string $item): string => trim(string: $item))
+                    ->unique()
+                    ->toArray();
+            }
+        });
+    }
+
     public function getRouteKeyName(): string
     {
         return 'uuid';

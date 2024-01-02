@@ -16,11 +16,11 @@ class Nominees extends NominationPage
 
     public static function getNavigationLabel(): string
     {
-        return __(key: 'filament/resources/nomination.nominees.navigation_label');
+        return 'Nominees';
     }
 
-    public function getTitle(): string|Htmlable
+    public static function shouldRegisterNavigation(array $parameters = []): bool
     {
-        return __(key: 'filament/resources/nomination.nominees.title');
+        return parent::shouldRegisterNavigation($parameters);
     }
 }

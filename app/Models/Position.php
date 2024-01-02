@@ -31,6 +31,15 @@ class Position extends Model
         return $this->morphTo();
     }
 
+    protected static function booted(): void
+    {
+        static::saving(callback: function (Position $position) {
+            if (blank($position->threshold) || $position->threshold > $position->quota) {
+                $position->threshold = $position->quota;
+            }
+        });
+    }
+
     public function getRouteKeyName(): string
     {
         return 'uuid';

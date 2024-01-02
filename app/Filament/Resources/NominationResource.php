@@ -5,7 +5,10 @@ namespace App\Filament\Resources;
 use App\Filament\Forms\NominationForm;
 use App\Filament\Resources\NominationResource\Pages;
 use App\Models\Nomination;
+use Carbon\Carbon;
+use Filament\Facades\Filament;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\IconPosition;
@@ -35,6 +38,20 @@ class NominationResource extends Resource
             ]);
     }
 
+    public static function timingForm(Form $form): Form
+    {
+        return $form
+            ->schema(components: [
+                NominationForm::timezoneComponent(),
+
+                NominationForm::startsAtComponent()
+                    ->timezone(fn (Get $get): ?string => $get(path: 'timezone')),
+
+                NominationForm::endsAtComponent()
+                    ->timezone(fn (Get $get): ?string => $get(path: 'timezone')),
+            ]);
+    }
+
     public static function table(Table $table): Table
     {
         return $table
@@ -45,7 +62,7 @@ class NominationResource extends Resource
                     ->copyable()
                     ->icon(icon: 'heroicon-m-clipboard-document')
                     ->iconPosition(iconPosition: IconPosition::After)
-                    ->label(label: __(key: 'filament/tables/nomination.code.label'))
+                    ->label(label: 'Code')
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make(name: 'name')

@@ -3,18 +3,21 @@
 namespace App\Filament\Resources\NominationResource\Pages;
 
 use App\Filament\Forms\ElectorForm;
+use App\Filament\Imports\ElectorImporter;
 use App\Models\Elector;
 use App\Models\Nomination;
-use Filament\Actions\CreateAction;
+use Filament\Tables\Actions\CreateAction;
+use Filament\Tables\Actions\ImportAction;
+use Filament\Forms\Components\Group;
 use Filament\Forms\Form;
 use Filament\Resources\Concerns\InteractsWithRelationshipTable;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\MaxWidth;
+use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
-use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
 class Electors extends NominationPage implements HasTable
@@ -39,12 +42,7 @@ class Electors extends NominationPage implements HasTable
 
     public static function getNavigationLabel(): string
     {
-        return __(key: 'filament/resources/nomination.electors.navigation_label');
-    }
-
-    public function getTitle(): string|Htmlable
-    {
-        return __(key: 'filament/resources/nomination.electors.title');
+        return 'Electors';
     }
 
     public function form(Form $form): Form
@@ -53,9 +51,13 @@ class Electors extends NominationPage implements HasTable
             ->schema(components: [
                 ElectorForm::membershipNumberComponent(),
 
-                ElectorForm::firstNameComponent(),
+                Group::make()
+                    ->columns()
+                    ->schema(components: [
+                        ElectorForm::firstNameComponent(),
 
-                ElectorForm::lastNameComponent(),
+                        ElectorForm::lastNameComponent(),
+                    ]),
 
                 ElectorForm::emailComponent(),
 
@@ -70,23 +72,35 @@ class Electors extends NominationPage implements HasTable
         return $table
             ->actions(actions: [
                 $this->editAction(),
+
+                $this->deleteAction(),
             ])
             ->columns(components: [
-                TextColumn::make(name: 'membership_number'),
+                TextColumn::make(name: 'membership_number')
+                    ->badge()
+                    ->label(label: 'Membership number')
+                    ->searchable(),
 
-                TextColumn::make(name: 'full_name'),
+                TextColumn::make(name: 'full_name')
+                    ->label(label: 'Full name')
+                    ->wrap(),
 
-                TextColumn::make(name: 'phone'),
+                TextColumn::make(name: 'phone')
+                    ->label(label: 'Phone number'),
 
-                TextColumn::make(name: 'email'),
+                TextColumn::make(name: 'email')
+                    ->label(label: 'Email address')
+                    ->wrap(),
+
+                TextColumn::make(name: 'groups')
+                    ->badge()
+                    ->wrap(),
+            ])
+            ->headerActions(actions: [
+                $this->importAction(),
+
+                $this->createAction(),
             ]);
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            $this->createAction(),
-        ];
     }
 
     protected function createAction(): CreateAction
@@ -98,8 +112,20 @@ class Electors extends NominationPage implements HasTable
             ->modalCancelAction(action: false)
             ->modalFooterActionsAlignment(alignment: Alignment::Center)
             ->modalWidth(width: MaxWidth::Medium)
-            ->model(model: Elector::class)
-            ->relationship(relationship: static fn (self $livewire): Relation => $livewire->nomination->electors());
+            ->model(model: Elector::class);
+    }
+
+    protected function importAction(): ImportAction
+    {
+        return ImportAction::make()
+            ->color(color: 'gray')
+            ->icon(icon: 'heroicon-s-arrow-up-tray')
+            ->importer(importer: ElectorImporter::class)
+            ->modalFooterActionsAlignment(alignment: Alignment::Center)
+            ->options(options: fn (self $livewire): array => [
+                'event_type' => Nomination::class,
+                'event_id' => $livewire->nomination->getKey(),
+            ]);
     }
 
     protected function editAction(): EditAction
@@ -110,5 +136,11 @@ class Electors extends NominationPage implements HasTable
             ->modalCancelAction(action: false)
             ->modalFooterActionsAlignment(alignment: Alignment::Center)
             ->modalWidth(width: MaxWidth::Medium);
+    }
+
+    protected function deleteAction(): DeleteAction
+    {
+        return DeleteAction::make()
+            ->iconButton();
     }
 }

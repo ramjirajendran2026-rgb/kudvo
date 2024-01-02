@@ -17,7 +17,7 @@ return new class extends Migration
 
                 $table->string(column: 'name');
                 $table->unsignedInteger(column: 'quota');
-                $table->unsignedInteger(column: 'threshold')->nullable();
+                $table->unsignedInteger(column: 'threshold');
                 $table->json(column: 'elector_groups')->nullable();
 
                 $table->integer(column: 'sort')->nullable();

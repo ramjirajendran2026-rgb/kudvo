@@ -12,34 +12,34 @@ readonly class ElectorForm
     {
         return TextInput::make(name: 'email')
             ->email()
-            ->label(label: __(key: 'filament/forms/elector.email.label'))
+            ->label(label: 'Email address')
             ->maxLength(length: 100);
     }
 
     public static function firstNameComponent(): TextInput
     {
         return TextInput::make(name: 'first_name')
-            ->label(label: __(key: 'filament/forms/elector.first_name.label'))
+            ->label(label: 'First name')
             ->maxLength(length: 100);
     }
 
-    public static function groupsComponent()
+    public static function groupsComponent(): TagsInput
     {
         return TagsInput::make(name: 'groups')
-            ->label(label: __(key: 'filament/forms/elector.groups.label'));
+            ->label(label:'Groups');
     }
 
     public static function lastNameComponent(): TextInput
     {
         return TextInput::make(name: 'last_name')
-            ->label(label: __(key: 'filament/forms/elector.last_name.label'))
+            ->label(label: 'Last name')
             ->maxLength(length: 100);
     }
 
     public static function membershipNumberComponent(): TextInput
     {
         return TextInput::make(name: 'membership_number')
-            ->label(label: __(key: 'filament/forms/elector.membership_number.label'))
+            ->label(label: 'Membership number')
             ->maxLength(length: 50)
             ->required()
             ->unique(ignoreRecord: true);
@@ -49,7 +49,7 @@ readonly class ElectorForm
     {
         return PhoneInput::make(name: 'phone')
             ->defaultCountry(value: config(key: 'app.default_phone_country'))
-            ->label(label: __(key: 'filament/forms/elector.phone.label'))
+            ->label(label: 'Phone number')
             ->useFullscreenPopup()
             ->validateFor();
     }
@@ -57,7 +57,7 @@ readonly class ElectorForm
     public static function titleComponent(): TextInput
     {
         return TextInput::make(name: 'title')
-            ->label(label: __(key: 'filament/forms/elector.title.label'))
+            ->label(label: 'Salutation')
             ->maxLength(length: 20);
     }
 }

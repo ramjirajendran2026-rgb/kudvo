@@ -4,6 +4,11 @@ namespace App\Filament\Resources\NominationResource\Pages;
 
 use App\Filament\Resources\NominationResource;
 use App\Models\Nomination;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\EditAction;
+use Filament\Forms\Form;
+use Filament\Navigation\NavigationItem;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
 use Filament\Resources\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
@@ -14,7 +19,7 @@ use Livewire\Attributes\Computed;
 /**
  * @property Nomination $nomination
  */
-class NominationPage extends Page
+abstract class NominationPage extends Page
 {
     use InteractsWithRecord;
 
@@ -37,7 +42,7 @@ class NominationPage extends Page
     #[Computed]
     public function nomination(): Nomination
     {
-        return Nomination::withCount(relations: 'positions')
+        return Nomination::withCount(relations: ['positions', 'electors'])
             ->findOrFail($this->getRecord()->getKey());
     }
 
@@ -71,6 +76,12 @@ class NominationPage extends Page
         return true;
     }
 
+    protected function canCancel(): bool
+    {
+        return ! $this->nomination->is_cancelled &&
+            ! $this->nomination->is_scrutinised;
+    }
+
     public function getBreadcrumbs(): array
     {
         return [];
@@ -79,5 +90,51 @@ class NominationPage extends Page
     public function getHeading(): string|Htmlable
     {
         return $this->getRecordTitle();
+    }
+
+    public function getTitle(): string|Htmlable
+    {
+        return static::getNavigationLabel();
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            $this->getEditAction()
+                ->iconButton(),
+
+            ActionGroup::make(actions: [
+                $this->getCancelAction(),
+
+            ])->dropdownPlacement(placement: 'bottom-end'),
+        ];
+    }
+
+    protected function getCancelAction(): Action
+    {
+        return Action::make(name: 'cancel')
+            ->requiresConfirmation()
+            ->color(color: 'warning')
+            ->icon(icon: 'heroicon-s-archive-box-x-mark')
+            ->label(label: 'Cancel')
+            ->modalCancelActionLabel(label: 'No')
+            ->modalSubmitActionLabel(label: 'Yes')
+            ->successNotificationTitle(title: 'Cancelled')
+            ->visible(condition: $this->canCancel())
+            ->action(
+                action: static function (Nomination $record, Action $action) {
+                    $record->cancel();
+
+                    $action->success();
+                }
+            );
+    }
+
+    protected function getEditAction(): EditAction
+    {
+        return EditAction::make()
+            ->form(form: fn (Form $form): Form => NominationResource::form(form: $form))
+            ->icon(icon: 'heroicon-m-pencil-square')
+            ->modalHeading(heading: fn (self $livewire) => 'Edit '.$livewire->getRecordTitle());
     }
 }
