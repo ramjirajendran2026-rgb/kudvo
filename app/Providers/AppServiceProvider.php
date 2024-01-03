@@ -2,9 +2,9 @@
 
 namespace App\Providers;
 
+use Filament\Actions\CreateAction;
 use Filament\Facades\Filament;
-use Filament\Support\Enums\ActionSize;
-use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\CreateAction as TableCreateAction;
 use Filament\Tables\Columns\Column;
 use Illuminate\Support\ServiceProvider;
 
@@ -28,8 +28,12 @@ class AppServiceProvider extends ServiceProvider
                 $component->wrapHeader();
             });
 
-            Action::configureUsing(modifyUsing: function (Action $action) {
-                $action->size(size: ActionSize::Small);
+            CreateAction::configureUsing(modifyUsing: function (CreateAction $action) {
+                $action->icon(icon: 'heroicon-m-plus');
+            });
+
+            TableCreateAction::configureUsing(modifyUsing: function (TableCreateAction $action) {
+                $action->icon(icon: 'heroicon-m-plus');
             });
         });
     }

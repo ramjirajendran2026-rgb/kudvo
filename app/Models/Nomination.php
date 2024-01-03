@@ -3,10 +3,12 @@
 namespace App\Models;
 
 use App\Enums\NominationStatusEnum;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Str;
 
@@ -44,6 +46,20 @@ class Nomination extends Model
         'cancelled_at' => 'datetime',
         'organisation_id' => 'int',
     ];
+
+    protected function startsAtLocal(): Attribute
+    {
+        return Attribute::make(
+            get: fn($value, array $attributes) => $this->starts_at?->tz(value: $this->timezone ?? 'UTC'),
+        );
+    }
+
+    protected function endsAtLocal(): Attribute
+    {
+        return Attribute::make(
+            get: fn($value, array $attributes) => $this->ends_at?->tz(value: $this->timezone ?? 'UTC'),
+        );
+    }
 
     protected function status(): Attribute
     {
@@ -98,6 +114,12 @@ class Nomination extends Model
         return $this->belongsTo(related: Organisation::class);
     }
 
+    public function preference(): HasOne
+    {
+        return $this->hasOne(related: NominationPreference::class)
+            ->latestOfMany();
+    }
+
     public function electors(): MorphMany
     {
         return $this->morphMany(
@@ -114,6 +136,37 @@ class Nomination extends Model
         );
     }
 
+    public function scopeCancelled(Builder $query): Builder
+    {
+        return $query->whereNotNull(columns: 'cancelled_at');
+    }
+
+    public function scopeClosed(Builder $query): Builder
+    {
+        return $query->whereNotNull(columns: 'closed_at')
+            ->whereNull(columns: 'scrutinised_at')
+            ->whereNull(columns: 'cancelled_at');
+    }
+
+    public function scopeDraft(Builder $query): Builder
+    {
+        return $query->whereNull(columns: 'published_at')
+            ->whereNull(columns: 'cancelled_at');
+    }
+
+    public function scopePublished(Builder $query): Builder
+    {
+        return $query->whereNotNull(columns: 'published_at')
+            ->whereNull(columns: 'closed_at')
+            ->whereNull(columns: 'cancelled_at');
+    }
+
+    public function scopeScrutinised(Builder $query): Builder
+    {
+        return $query->whereNotNull('scrutinised_at')
+            ->whereNull(columns: 'cancelled_at');
+    }
+
     protected static function booted(): void
     {
         static::creating(callback: function (Nomination $nomination) {
@@ -121,6 +174,27 @@ class Nomination extends Model
                 $nomination->code = static::generateCode();
             }
         });
+    }
+
+    public function isTimingConfigured(): bool
+    {
+        return filled(value: $this->starts_at) &&
+            filled(value: $this->ends_at) &&
+            filled(value: $this->timezone);
+    }
+
+    public function getElectorGroups(): array
+    {
+        return $this
+            ->electors()
+            ->select(columns: ['groups'])
+            ->whereNotNull(columns: 'groups')
+            ->distinct()
+            ->pluck(column: 'groups')
+            ->map(callback: fn (string $item): array => explode(separator: ',', string: $item))
+            ->flatten()
+            ->unique()
+            ->toArray();
     }
 
     public static function generateCode(): string

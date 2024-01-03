@@ -3,8 +3,10 @@
 namespace App\Filament\Resources\NominationResource\Pages;
 
 use App\Filament\Forms\PositionForm;
+use App\Filament\Resources\NominationResource;
 use App\Models\Nomination;
 use App\Models\Position;
+use Filament\Forms\Components\Select;
 use Filament\Support\Enums\ActionSize;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Forms\Form;
@@ -17,6 +19,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Arr;
 
 class Positions extends NominationPage implements HasTable
 {
@@ -38,11 +41,6 @@ class Positions extends NominationPage implements HasTable
         return $this->nomination;
     }
 
-    public static function getNavigationLabel(): string
-    {
-        return 'Positions';
-    }
-
     public function form(Form $form): Form
     {
         return $form
@@ -60,17 +58,12 @@ class Positions extends NominationPage implements HasTable
 
                 PositionForm::groupsComponent()
                     ->options(
-                        options: fn (self $livewire): array => $livewire
-                            ->nomination
-                            ->electors()
-                            ->select(columns: ['groups'])
-                            ->distinct()
-                            ->pluck(column: 'groups')
-                            ->flatten()
-                            ->unique()
-                            ->mapWithKeys(callback: fn (string $item): array => [$item => $item])
-                            ->toArray()
-                    ),
+                        options: fn (self $livewire): array => Arr::mapWithKeys(
+                            array: $livewire->nomination->getElectorGroups(),
+                            callback: fn (string $item): array => [$item => $item]
+                        )
+                    )
+                    ->visible(condition: filled(value: $this->nomination->getElectorGroups())),
             ]);
     }
 
@@ -78,9 +71,9 @@ class Positions extends NominationPage implements HasTable
     {
         return $table
             ->actions(actions: [
-                $this->editAction(),
+                $this->getEditAction(),
 
-                $this->deleteAction(),
+                $this->getDeleteAction(),
             ])
             ->columns(components: [
                 TextColumn::make(name: 'name')
@@ -102,21 +95,43 @@ class Positions extends NominationPage implements HasTable
                     ->alignCenter()
                     ->badge()
                     ->label(label: 'Eligible groups')
+                    ->visible(condition: filled(value: $this->nomination->getElectorGroups()))
                     ->wrap(),
             ])
             ->defaultSort(column: 'sort')
             ->headerActions(actions: [
-                $this->createAction(),
+                $this->getCreateAction(),
             ])
             ->reorderable(column: 'sort');
     }
 
-    public function canReorder(): true
+    public static function canAccess(Nomination $nomination): bool
     {
-        return true;
+        return parent::canAccess(nomination: $nomination) &&
+            static::can(action: 'viewAnyPosition', nomination: $nomination);
     }
 
-    protected function createAction(): CreateAction
+    protected function canCreate(): bool
+    {
+        return static::can(action: 'createPosition', nomination: $this->nomination);
+    }
+
+    protected function canReorder(): bool
+    {
+        return static::can(action: 'reorderPosition', nomination: $this->nomination);
+    }
+
+    protected function canEdit(): bool
+    {
+        return static::can(action: 'updateAnyPosition', nomination: $this->nomination);
+    }
+
+    protected function canDelete(): bool
+    {
+        return static::can(action: 'deleteAnyPosition', nomination: $this->nomination);
+    }
+
+    protected function getCreateAction(): CreateAction
     {
         return CreateAction::make()
             ->createAnother(condition: false)
@@ -125,22 +140,25 @@ class Positions extends NominationPage implements HasTable
             ->modalCancelAction(action: false)
             ->modalFooterActionsAlignment(alignment: Alignment::Center)
             ->modalWidth(width: MaxWidth::Medium)
-            ->model(model: Position::class);
+            ->model(model: Position::class)
+            ->visible(condition: $this->canCreate());
     }
 
-    protected function editAction(): EditAction
+    protected function getEditAction(): EditAction
     {
         return EditAction::make()
             ->form(static fn (self $livewire, Form $form): Form => $livewire->form($form))
             ->iconButton()
             ->modalCancelAction(action: false)
             ->modalFooterActionsAlignment(alignment: Alignment::Center)
-            ->modalWidth(width: MaxWidth::Medium);
+            ->modalWidth(width: MaxWidth::Medium)
+            ->visible(condition: $this->canEdit());
     }
 
-    protected function deleteAction(): DeleteAction
+    protected function getDeleteAction(): DeleteAction
     {
         return DeleteAction::make()
-            ->iconButton();
+            ->iconButton()
+            ->visible(condition: $this->canDelete());
     }
 }

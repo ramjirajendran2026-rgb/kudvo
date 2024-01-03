@@ -25,7 +25,7 @@ return new class extends Migration
                     );
                 $table->string(column: 'email')->nullable();
                 $table->string(column: 'phone')->nullable();
-                $table->json(column: 'groups')->nullable();
+                $table->longText(column: 'groups')->nullable();
 
                 $table->morphs(name: 'event');
 

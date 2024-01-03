@@ -14,6 +14,8 @@ use Filament\Resources\Resource;
 use Filament\Support\Enums\IconPosition;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Str;
 
 class NominationResource extends Resource
 {
@@ -55,7 +57,16 @@ class NominationResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->emptyStateActions(actions: [
+                static::getCreateAction(),
+            ])
+            ->emptyStateIcon(icon: static::getNavigationIcon())
+            ->headerActions(actions: [
+                static::getCreateAction(),
+            ])
+            ->heading(heading: Str::title(value: static::getPluralModelLabel()))
             ->recordUrl(url: fn (Nomination $record) => static::getUrl(name: 'dashboard', parameters: [$record]))
+            ->relationship(relationship: fn (): Relation => Filament::getTenant()?->nominations())
             ->columns([
                 Tables\Columns\TextColumn::make(name: 'code')
                     ->badge()
@@ -69,11 +80,9 @@ class NominationResource extends Resource
                     ->searchable()
                     ->wrap(),
 
-                Tables\Columns\IconColumn::make(name: 'self_nomination')
-                    ->boolean(),
-
-                Tables\Columns\TextColumn::make(name: 'nominator_threshold')
-                    ->numeric(),
+                Tables\Columns\TextColumn::make(name: 'status')
+                    ->alignCenter()
+                    ->badge(),
             ]);
     }
 
@@ -82,6 +91,7 @@ class NominationResource extends Resource
         return [
             'index' => Pages\ManageNominations::route(path: '/'),
             'dashboard' => Pages\Dashboard::route(path: '{record}'),
+            'preference' => Pages\Preference::route(path: '{record}/preference'),
             'electors' => Pages\Electors::route(path: '{record}/electors'),
             'positions' => Pages\Positions::route(path: '{record}/positions'),
             'nominees' => Pages\Nominees::route(path: '{record}/nominees'),
@@ -92,9 +102,17 @@ class NominationResource extends Resource
     {
         return $page->generateNavigationItems(pages: [
             Pages\Dashboard::class,
+            Pages\Preference::class,
             Pages\Electors::class,
             Pages\Positions::class,
             Pages\Nominees::class,
         ]);
+    }
+
+    public static function getCreateAction(): Tables\Actions\CreateAction
+    {
+        return Tables\Actions\CreateAction::make()
+            ->createAnother(condition: false)
+            ->successRedirectUrl(url: fn (Nomination $record) => static::getUrl(name: 'dashboard', parameters: [$record]));
     }
 }

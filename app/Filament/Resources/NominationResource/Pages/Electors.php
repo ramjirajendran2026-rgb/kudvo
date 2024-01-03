@@ -40,11 +40,6 @@ class Electors extends NominationPage implements HasTable
         return $this->nomination;
     }
 
-    public static function getNavigationLabel(): string
-    {
-        return 'Electors';
-    }
-
     public function form(Form $form): Form
     {
         return $form
@@ -71,9 +66,9 @@ class Electors extends NominationPage implements HasTable
     {
         return $table
             ->actions(actions: [
-                $this->editAction(),
+                $this->getEditAction(),
 
-                $this->deleteAction(),
+                $this->getDeleteAction(),
             ])
             ->columns(components: [
                 TextColumn::make(name: 'membership_number')
@@ -94,16 +89,47 @@ class Electors extends NominationPage implements HasTable
 
                 TextColumn::make(name: 'groups')
                     ->badge()
+                    ->separator()
                     ->wrap(),
             ])
+            ->emptyStateActions(actions: [
+                $this->getCreateAction(),
+            ])
             ->headerActions(actions: [
-                $this->importAction(),
+                $this->getImportAction(),
 
-                $this->createAction(),
-            ]);
+                $this->getCreateAction(),
+            ])
+            ->recordTitleAttribute(attribute: 'membership_number');
     }
 
-    protected function createAction(): CreateAction
+    public static function canAccess(Nomination $nomination): bool
+    {
+        return parent::canAccess($nomination) &&
+            static::can(action: 'viewAnyElector', nomination: $nomination);
+    }
+
+    protected function canCreate(): bool
+    {
+        return static::can(action: 'createElector', nomination: $this->nomination);
+    }
+
+    protected function canImport(): bool
+    {
+        return static::can(action: 'importElector', nomination: $this->nomination);
+    }
+
+    protected function canEdit(): bool
+    {
+        return static::can(action: 'updateAnyElector', nomination: $this->nomination);
+    }
+
+    protected function canDelete(): bool
+    {
+        return static::can(action: 'deleteAnyElector', nomination: $this->nomination);
+    }
+
+    protected function getCreateAction(): CreateAction
     {
         return CreateAction::make()
             ->createAnother(condition: false)
@@ -112,10 +138,11 @@ class Electors extends NominationPage implements HasTable
             ->modalCancelAction(action: false)
             ->modalFooterActionsAlignment(alignment: Alignment::Center)
             ->modalWidth(width: MaxWidth::Medium)
-            ->model(model: Elector::class);
+            ->model(model: Elector::class)
+            ->visible(condition: $this->canCreate());
     }
 
-    protected function importAction(): ImportAction
+    protected function getImportAction(): ImportAction
     {
         return ImportAction::make()
             ->color(color: 'gray')
@@ -125,22 +152,25 @@ class Electors extends NominationPage implements HasTable
             ->options(options: fn (self $livewire): array => [
                 'event_type' => Nomination::class,
                 'event_id' => $livewire->nomination->getKey(),
-            ]);
+            ])
+            ->visible(condition: $this->canImport());
     }
 
-    protected function editAction(): EditAction
+    protected function getEditAction(): EditAction
     {
         return EditAction::make()
             ->form(static fn (self $livewire, Form $form): Form => $livewire->form($form))
             ->iconButton()
             ->modalCancelAction(action: false)
             ->modalFooterActionsAlignment(alignment: Alignment::Center)
-            ->modalWidth(width: MaxWidth::Medium);
+            ->modalWidth(width: MaxWidth::Medium)
+            ->visible(condition: $this->canEdit());
     }
 
-    protected function deleteAction(): DeleteAction
+    protected function getDeleteAction(): DeleteAction
     {
         return DeleteAction::make()
-            ->iconButton();
+            ->iconButton()
+            ->visible(condition:$this->canDelete());
     }
 }

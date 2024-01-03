@@ -2,17 +2,22 @@
 
 namespace App\Filament\Resources\NominationResource\Pages;
 
+use App\Enums\NominationStatusEnum;
 use App\Filament\Resources\NominationResource;
 use App\Models\Nomination;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\EditAction;
+use Filament\Facades\Filament;
 use Filament\Forms\Form;
 use Filament\Navigation\NavigationItem;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
 use Filament\Resources\Pages\Page;
+use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\MaxWidth;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
+use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Computed;
 
@@ -65,21 +70,24 @@ abstract class NominationPage extends Page
     {
         static::authorizeResourceAccess();
 
-        abort_unless(
-            boolean: static::canAccess(nomination: $this->nomination),
-            code: 403,
-        );
+        if (! static::canAccess(nomination: $this->nomination)) {
+            $this->redirect(Dashboard::getUrl(parameters: [$this->nomination]));
+        }
     }
 
-    public function isReadOnly(): bool
+    protected function canEditTiming(): bool
     {
-        return true;
+        return static::can(action: 'updateTiming', nomination: $this->nomination);
     }
 
-    protected function canCancel(): bool
+    protected function canCancelNomination(): bool
     {
-        return ! $this->nomination->is_cancelled &&
-            ! $this->nomination->is_scrutinised;
+        return static::can(action: 'cancel', nomination: $this->nomination);
+    }
+
+    protected function canEditNomination(): bool
+    {
+        return static::can(action: 'update', nomination: $this->nomination);
     }
 
     public function getBreadcrumbs(): array
@@ -92,6 +100,20 @@ abstract class NominationPage extends Page
         return $this->getRecordTitle();
     }
 
+    public function getSubheading(): string|Htmlable|null
+    {
+        if (! $this->nomination->isTimingConfigured()) {
+            return null;
+        }
+
+        return new HtmlString(
+            html: <<<HTML
+<b>{$this->nomination->starts_at_local->format(format: 'M d, Y h:i A (T)')}</b> to
+<b>{$this->nomination->ends_at_local->format(format: 'M d, Y h:i A (T)')}</b>
+HTML
+        );
+    }
+
     public function getTitle(): string|Htmlable
     {
         return static::getNavigationLabel();
@@ -100,41 +122,66 @@ abstract class NominationPage extends Page
     protected function getHeaderActions(): array
     {
         return [
-            $this->getEditAction()
+            $this->getNominationEditAction()
                 ->iconButton(),
 
             ActionGroup::make(actions: [
-                $this->getCancelAction(),
+                $this->getTimingAction()
+                    ->visible(condition: $this->canEditTiming()),
+
+                $this->getNominationCancelAction(),
 
             ])->dropdownPlacement(placement: 'bottom-end'),
         ];
     }
 
-    protected function getCancelAction(): Action
+    protected function getNominationCancelAction(): Action
     {
         return Action::make(name: 'cancel')
-            ->requiresConfirmation()
-            ->color(color: 'warning')
-            ->icon(icon: 'heroicon-s-archive-box-x-mark')
-            ->label(label: 'Cancel')
-            ->modalCancelActionLabel(label: 'No')
-            ->modalSubmitActionLabel(label: 'Yes')
-            ->successNotificationTitle(title: 'Cancelled')
-            ->visible(condition: $this->canCancel())
             ->action(
                 action: static function (Nomination $record, Action $action) {
                     $record->cancel();
 
                     $action->success();
                 }
-            );
+            )
+            ->requiresConfirmation()
+            ->color(color: NominationStatusEnum::CANCELLED->getColor())
+            ->icon(icon: NominationStatusEnum::CANCELLED->getIcon())
+            ->label(label: 'Cancel')
+            ->modalCancelActionLabel(label: 'No')
+            ->modalIcon(icon: NominationStatusEnum::CANCELLED->getIcon())
+            ->modalSubmitActionLabel(label: 'Yes')
+            ->successNotificationTitle(title: 'Cancelled')
+            ->visible(condition: $this->canCancelNomination());
     }
 
-    protected function getEditAction(): EditAction
+    protected function getNominationEditAction(): EditAction
     {
         return EditAction::make()
             ->form(form: fn (Form $form): Form => NominationResource::form(form: $form))
             ->icon(icon: 'heroicon-m-pencil-square')
-            ->modalHeading(heading: fn (self $livewire) => 'Edit '.$livewire->getRecordTitle());
+            ->modalHeading(heading: fn (self $livewire) => 'Edit '.$livewire->getRecordTitle())
+            ->visible(condition: $this->canEditNomination());
+    }
+
+    protected function getTimingAction(): EditAction
+    {
+        return EditAction::make(name: 'edit_timing')
+            ->form(form: fn (Form $form): Form => NominationResource::timingForm(form: $form))
+            ->groupedIcon(icon: 'heroicon-m-clock')
+            ->icon(icon: 'heroicon-m-clock')
+            ->label(label: 'Update Timing')
+            ->modalCancelAction(action: false)
+            ->modalFooterActionsAlignment(alignment: Alignment::Center)
+            ->modalHeading(heading: fn (self $livewire) => $livewire->getRecordTitle())
+            ->modalWidth(width: MaxWidth::Medium)
+            ->mutateRecordDataUsing(callback: function (array $data): array {
+                $data['timezone'] ??= Filament::getTenant()?->timezone;
+                $data['starts_at'] ??= now(tz: $data['timezone'] ?? null)->addDays()->startOfDay()->addHours(value: 8);
+                $data['ends_at'] ??= now(tz: $data['timezone'] ?? null)->addDays()->startOfDay()->addHours(value: 18);
+
+                return $data;
+            });
     }
 }

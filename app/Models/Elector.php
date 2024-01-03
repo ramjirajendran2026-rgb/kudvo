@@ -26,7 +26,6 @@ class Elector extends Model
     ];
 
     protected $casts = [
-        'groups' => 'array',
         'event_id' => 'int',
     ];
 
@@ -38,11 +37,12 @@ class Elector extends Model
     protected static function booted(): void
     {
         static::saving(callback: function (Elector $elector) {
-            if (filled($elector->groups)) {
-                $elector->groups = collect(value: $elector->groups)
+            if (!is_null($elector->groups)) {
+                $elector->groups = collect(value: explode(separator: ',', string: $elector->groups))
                     ->map(callback: fn (string $item): string => trim(string: $item))
                     ->unique()
-                    ->toArray();
+                    ->sort()
+                    ->implode(value: ',') ?: null;
             }
         });
     }

@@ -26,7 +26,8 @@ readonly class ElectorForm
     public static function groupsComponent(): TagsInput
     {
         return TagsInput::make(name: 'groups')
-            ->label(label:'Groups');
+            ->label(label:'Groups')
+            ->separator();
     }
 
     public static function lastNameComponent(): TextInput

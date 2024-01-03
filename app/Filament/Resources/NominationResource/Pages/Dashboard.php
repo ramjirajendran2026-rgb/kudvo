@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\NominationResource\Pages;
 
+use App\Enums\NominationStatusEnum;
 use App\Filament\Resources\NominationResource;
 use App\Filament\Resources\NominationResource\Pages\Concerns\InteractsWithState;
 use App\Models\Nomination;
@@ -10,6 +11,8 @@ use Filament\Actions\ActionGroup;
 use Filament\Actions\EditAction;
 use Filament\Facades\Filament;
 use Filament\Forms\Form;
+use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\MaxWidth;
 
 class Dashboard extends NominationPage
 {
@@ -21,46 +24,53 @@ class Dashboard extends NominationPage
 
     protected static ?string $activeNavigationIcon = 'heroicon-s-home';
 
-    public static function getNavigationLabel(): string
+    protected function hasPendingPreferenceSetup(): bool
     {
-        return 'Dashboard';
+        return Preference::canAccess(nomination: $this->nomination) &&
+            ! Electors::canAccess(nomination: $this->nomination);
     }
 
-    protected function canSetupElectors(): bool
+    protected function hasPendingElectorSetup(): bool
     {
-        return ! $this->nomination->electors_count;
+        return Electors::canAccess(nomination: $this->nomination) &&
+            ! Positions::canAccess(nomination: $this->nomination);
     }
 
-    protected function canSetupPositions(): bool
+    protected function hasPendingPositionSetup(): bool
     {
-        return ! $this->nomination->positions_count;
+        return Positions::canAccess(nomination: $this->nomination) &&
+            ($this->nomination->positions_count ?? $this->nomination->loadCount(relations: ['positions'])->positions_count) < 1;
     }
 
     protected function canPublish(): bool
     {
-        return $this->canUpdateTiming() &&
-            $this->nomination->electors_count &&
-            $this->nomination->positions_count;
+        return static::can(action: 'publish', nomination: $this->nomination);
+    }
+
+    protected function canClose(): bool
+    {
+        return static::can(action: 'close', nomination: $this->nomination);
     }
 
     protected function canSetTiming(): bool
     {
-        return $this->nomination->is_draft &&
-            blank(value: $this->nomination->starts_at);
+        return static::can(action: 'setTiming', nomination: $this->nomination);
     }
 
     protected function canUpdateTiming(): bool
     {
-        return $this->nomination->is_draft && filled(value: $this->nomination->starts_at);
+        return static::can(action: 'updateTiming', nomination: $this->nomination);
     }
 
     public function getStateHeading(): ?string
     {
         return match (true) {
-            $this->canPublish() => 'All set',
-            $this->canSetTiming() => 'Just one step away',
-            empty($this->nomination->positions_count) => 'Setup position',
-            empty($this->nomination->electors_count) => 'Setup electors',
+            $this->hasPendingPreferenceSetup() => 'No preference',
+            $this->hasPendingElectorSetup() => 'No electors',
+            $this->hasPendingPositionSetup() => 'No positions',
+            $this->canSetTiming() => 'One step away',
+            $this->canPublish() => 'All set!',
+            $this->canClose() => 'Nomination Published',
             default => null,
         };
     }
@@ -68,59 +78,79 @@ class Dashboard extends NominationPage
     protected function getStateActions(): array
     {
         return [
+            $this->getPreferencePageAction(),
+
             $this->getElectorsPageAction(),
 
             $this->getPositionsPageAction(),
 
             $this->getTimingAction()
+                ->name(name: 'set_timing')
+                ->label(label: 'Set timing')
                 ->visible(condition: $this->canSetTiming()),
 
             $this->getPublishAction(),
+
+            $this->getCloseAction(),
         ];
+    }
+
+    protected function getPreferencePageAction(): Action
+    {
+        return Action::make(name: 'preference_page')
+            ->icon(icon: 'heroicon-m-forward')
+            ->label(label: 'Continue setup')
+            ->url(url: Preference::getUrl(parameters: [$this->nomination]))
+            ->visible(condition: $this->hasPendingPreferenceSetup());
     }
 
     protected function getElectorsPageAction(): Action
     {
         return Action::make(name: 'electors_page')
-            ->label(label: 'Manage electors')
+            ->icon(icon: 'heroicon-m-forward')
+            ->label(label: 'Continue setup')
             ->url(url: Electors::getUrl(parameters: [$this->nomination]))
-            ->visible(condition: $this->canSetupElectors());
+            ->visible(condition: $this->hasPendingElectorSetup());
     }
 
     protected function getPositionsPageAction(): Action
     {
         return Action::make(name: 'positions_page')
-            ->hidden(condition: $this->canSetupElectors())
-            ->label(label: 'Manage positions')
+            ->icon(icon: 'heroicon-m-forward')
+            ->label(label: 'Continue setup')
             ->url(url: Positions::getUrl(parameters: [$this->nomination]))
-            ->visible(condition: $this->canSetupPositions());
+            ->visible(condition: $this->hasPendingPositionSetup());
     }
 
     protected function getPublishAction(): Action
     {
         return Action::make(name: 'publish')
             ->requiresConfirmation()
-            ->color(color: 'success')
-            ->icon(icon: 'heroicon-m-rocket-launch')
-            ->modalIcon(icon: 'heroicon-o-rocket-launch')
+            ->color(color: NominationStatusEnum::PUBLISHED->getColor())
+            ->icon(icon: NominationStatusEnum::PUBLISHED->getIcon())
+            ->modalIcon(icon: NominationStatusEnum::PUBLISHED->getIcon())
             ->successNotificationTitle(title: 'Published')
-            ->visible($this->canPublish());
+            ->visible(condition: $this->canPublish())
+            ->action(action: function (Action $action): void {
+                $this->nomination->publish();
+
+                $action->success();
+            });
     }
 
-    protected function getTimingAction(): EditAction
+    protected function getCloseAction(): Action
     {
-        return EditAction::make(name: 'edit_timing')
-            ->form(form: fn (Form $form): Form => NominationResource::timingForm(form: $form))
-            ->groupedIcon(icon: 'heroicon-m-clock')
-            ->icon(icon: 'heroicon-m-clock')
-            ->label(label: fn (self $livewire) => filled(value: $livewire->nomination->starts_at) ? 'Update Timing' : 'Set timing')
-            ->modalHeading(heading: fn (self $livewire) => $livewire->getRecordTitle())
-            ->mutateRecordDataUsing(callback: function (array $data): array {
-                $data['timezone'] ??= Filament::getTenant()?->timezone;
-                $data['starts_at'] ??= now(tz: $data['timezone'] ?? null)->addDays()->startOfDay()->addHours(value: 8);
-                $data['ends_at'] ??= now(tz: $data['timezone'] ?? null)->addDays()->startOfDay()->addHours(value: 18);
+        return Action::make(name: 'close')
+            ->requiresConfirmation()
+            ->color(color: NominationStatusEnum::CLOSED->getColor())
+            ->icon(icon: NominationStatusEnum::CLOSED->getIcon())
+            ->modalIcon(icon: NominationStatusEnum::CLOSED->getIcon())
+            ->successNotificationTitle(title: 'Closed')
+            ->visible(condition: $this->canClose())
+            ->action(action: function (Action $action): void {
+                $this->nomination->close();
 
-                return $data;
+                $action->success();
             });
     }
 }
