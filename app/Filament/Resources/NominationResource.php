@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Forms\NominationForm;
 use App\Filament\Resources\NominationResource\Pages;
+use App\Filament\Resources\NominationResource\Widgets\NominationStatsOverview;
 use App\Models\Nomination;
 use Carbon\Carbon;
 use Filament\Facades\Filament;
@@ -107,6 +108,13 @@ class NominationResource extends Resource
             Pages\Positions::class,
             Pages\Nominees::class,
         ]);
+    }
+
+    public static function getWidgets(): array
+    {
+        return [
+            NominationStatsOverview::class,
+        ];
     }
 
     public static function getCreateAction(): Tables\Actions\CreateAction

@@ -119,6 +119,14 @@ HTML
         return static::getNavigationLabel();
     }
 
+    public function getWidgetData(): array
+    {
+        return [
+            'record' => $this->getRecord(),
+            'nomination' => $this->nomination,
+        ];
+    }
+
     protected function getHeaderActions(): array
     {
         return [

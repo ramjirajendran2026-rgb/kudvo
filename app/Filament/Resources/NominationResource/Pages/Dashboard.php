@@ -75,6 +75,13 @@ class Dashboard extends NominationPage
         };
     }
 
+    protected function getHeaderWidgets(): array
+    {
+        return [
+//            NominationResource\Widgets\NominationStatsOverview::class,
+        ];
+    }
+
     protected function getStateActions(): array
     {
         return [
