@@ -2,15 +2,28 @@
 
 namespace App\Models;
 
+use App\Facades\Kudvo;
+use App\Filament\NominationPanel;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Models\Contracts\HasName;
+use Filament\Panel;
+use Illuminate\Auth\Authenticatable;
+use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Foundation\Auth\Access\Authorizable;
+use Illuminate\Notifications\Notifiable;
 
-class Elector extends Model
+class Elector extends Model implements AuthenticatableContract, AuthorizableContract, FilamentUser, HasName
 {
+    use Authenticatable;
+    use Authorizable;
     use HasFactory;
     use HasUuids;
+    use Notifiable;
 
     protected $fillable = [
         'membership_number',
@@ -55,5 +68,19 @@ class Elector extends Model
     public function uniqueIds(): array
     {
         return ['uuid'];
+    }
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        if (! $panel instanceof NominationPanel) {
+            return false;
+        }
+
+        return $this->event->is(model: Kudvo::getNomination());
+    }
+
+    public function getFilamentName(): string
+    {
+        return $this->full_name ?: $this->membership_number;
     }
 }

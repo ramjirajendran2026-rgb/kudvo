@@ -2,10 +2,14 @@
 
 namespace App\Providers;
 
+use App\Facades\Kudvo;
+use App\KudvoManager;
 use Filament\Actions\CreateAction;
 use Filament\Facades\Filament;
+use Filament\Pages\Page;
 use Filament\Tables\Actions\CreateAction as TableCreateAction;
 use Filament\Tables\Columns\Column;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -15,7 +19,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(abstract: 'kudvo', concrete:  function (): KudvoManager {
+            return new KudvoManager();
+        });
     }
 
     /**

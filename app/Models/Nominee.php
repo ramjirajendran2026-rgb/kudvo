@@ -6,6 +6,8 @@ use App\Enums\NomineeStatusEnum;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Nominee extends Model
 {
@@ -46,6 +48,17 @@ class Nominee extends Model
     public function elector(): BelongsTo
     {
         return $this->belongsTo(related: Elector::class);
+    }
+
+    public function nominators(): HasMany
+    {
+        return $this->hasMany(related: Nominator::class);
+    }
+
+    public function proposer(): HasOne
+    {
+        return $this->hasOne(related: Nominator::class)
+            ->oldestOfMany();
     }
 
     public function scrutiniser(): BelongsTo

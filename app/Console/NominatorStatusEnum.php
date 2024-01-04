@@ -6,4 +6,5 @@ enum NominatorStatusEnum: string
 {
     case ACCEPTED = 'accepted';
     case DECLINED = 'declined';
+    case PENDING = 'pending';
 }
