@@ -1,24 +1,20 @@
 <?php
 
-namespace App\Filament\Resources\NominationResource\Pages;
+namespace App\Filament\User\Resources\NominationResource\Pages;
 
 use App\Filament\Forms\PositionForm;
-use App\Filament\Resources\NominationResource;
 use App\Models\Nomination;
 use App\Models\Position;
-use Filament\Forms\Components\Select;
-use Filament\Support\Enums\ActionSize;
-use Filament\Tables\Actions\CreateAction;
 use Filament\Forms\Form;
 use Filament\Resources\Concerns\InteractsWithRelationshipTable;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\MaxWidth;
+use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
 
 class Positions extends NominationPage implements HasTable

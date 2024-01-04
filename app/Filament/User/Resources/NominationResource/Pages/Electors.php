@@ -1,24 +1,23 @@
 <?php
 
-namespace App\Filament\Resources\NominationResource\Pages;
+namespace App\Filament\User\Resources\NominationResource\Pages;
 
 use App\Filament\Forms\ElectorForm;
 use App\Filament\Imports\ElectorImporter;
 use App\Models\Elector;
 use App\Models\Nomination;
-use Filament\Tables\Actions\CreateAction;
-use Filament\Tables\Actions\ImportAction;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Form;
 use Filament\Resources\Concerns\InteractsWithRelationshipTable;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\MaxWidth;
+use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\ImportAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Relations\Relation;
 
 class Electors extends NominationPage implements HasTable
 {

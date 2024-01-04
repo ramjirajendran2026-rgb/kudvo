@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Filament\Resources\NominationResource\Pages;
+namespace App\Filament\User\Resources\NominationResource\Pages;
 
-use App\Filament\Resources\NominationResource;
 use App\Models\Nomination;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Group;
@@ -10,7 +9,6 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Pages\Concerns\InteractsWithFormActions;
-use Filament\Resources\Pages\Page;
 
 /**
  * @property Form $form

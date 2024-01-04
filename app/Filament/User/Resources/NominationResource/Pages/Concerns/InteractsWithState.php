@@ -1,11 +1,9 @@
 <?php
 
-namespace App\Filament\Resources\NominationResource\Pages\Concerns;
+namespace App\Filament\User\Resources\NominationResource\Pages\Concerns;
 
-use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
-use Illuminate\Contracts\Support\Htmlable;
 use InvalidArgumentException;
 
 trait InteractsWithState

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Filament\Resources\NominationResource\Widgets;
+namespace App\Filament\User\Resources\NominationResource\Widgets;
 
-use App\Filament\Resources\NominationResource\Pages\Electors;
-use App\Filament\Resources\NominationResource\Pages\Nominees;
-use App\Filament\Resources\NominationResource\Pages\Positions;
+use App\Filament\User\Resources\NominationResource\Pages\Electors;
+use App\Filament\User\Resources\NominationResource\Pages\Nominees;
+use App\Filament\User\Resources\NominationResource\Pages\Positions;
 use App\Models\Nomination;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;

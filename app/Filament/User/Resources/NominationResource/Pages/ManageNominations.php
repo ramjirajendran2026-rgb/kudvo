@@ -1,10 +1,9 @@
 <?php
 
-namespace App\Filament\Resources\NominationResource\Pages;
+namespace App\Filament\User\Resources\NominationResource\Pages;
 
 use App\Enums\NominationStatusEnum;
-use App\Filament\Resources\NominationResource;
-use Filament\Actions;
+use App\Filament\User\Resources\NominationResource;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ManageRecords;
 

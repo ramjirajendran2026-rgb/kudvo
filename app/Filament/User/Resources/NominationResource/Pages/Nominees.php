@@ -1,10 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\NominationResource\Pages;
-
-use App\Filament\Resources\NominationResource;
-use Filament\Resources\Pages\Page;
-use Illuminate\Contracts\Support\Htmlable;
+namespace App\Filament\User\Resources\NominationResource\Pages;
 
 class Nominees extends NominationPage
 {

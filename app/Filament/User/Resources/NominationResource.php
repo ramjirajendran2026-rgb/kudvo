@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\User\Resources;
 
 use App\Filament\Forms\NominationForm;
-use App\Filament\Resources\NominationResource\Pages;
-use App\Filament\Resources\NominationResource\Widgets\NominationStatsOverview;
+use App\Filament\User\Resources\NominationResource\Pages;
+use App\Filament\User\Resources\NominationResource\Widgets\NominationStatsOverview;
 use App\Models\Nomination;
-use Carbon\Carbon;
 use Filament\Facades\Filament;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
@@ -90,23 +89,23 @@ class NominationResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageNominations::route(path: '/'),
-            'dashboard' => Pages\Dashboard::route(path: '{record}'),
-            'preference' => Pages\Preference::route(path: '{record}/preference'),
-            'electors' => Pages\Electors::route(path: '{record}/electors'),
-            'positions' => Pages\Positions::route(path: '{record}/positions'),
-            'nominees' => Pages\Nominees::route(path: '{record}/nominees'),
+            'index' => \App\Filament\User\Resources\NominationResource\Pages\ManageNominations::route(path: '/'),
+            'dashboard' => \App\Filament\User\Resources\NominationResource\Pages\Dashboard::route(path: '{record}'),
+            'preference' => \App\Filament\User\Resources\NominationResource\Pages\Preference::route(path: '{record}/preference'),
+            'electors' => \App\Filament\User\Resources\NominationResource\Pages\Electors::route(path: '{record}/electors'),
+            'positions' => \App\Filament\User\Resources\NominationResource\Pages\Positions::route(path: '{record}/positions'),
+            'nominees' => \App\Filament\User\Resources\NominationResource\Pages\Nominees::route(path: '{record}/nominees'),
         ];
     }
 
     public static function getRecordSubNavigation(Page $page): array
     {
         return $page->generateNavigationItems(pages: [
-            Pages\Dashboard::class,
-            Pages\Preference::class,
-            Pages\Electors::class,
-            Pages\Positions::class,
-            Pages\Nominees::class,
+            \App\Filament\User\Resources\NominationResource\Pages\Dashboard::class,
+            \App\Filament\User\Resources\NominationResource\Pages\Preference::class,
+            \App\Filament\User\Resources\NominationResource\Pages\Electors::class,
+            \App\Filament\User\Resources\NominationResource\Pages\Positions::class,
+            \App\Filament\User\Resources\NominationResource\Pages\Nominees::class,
         ]);
     }
 

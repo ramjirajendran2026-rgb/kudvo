@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Filament\Resources\NominationResource\Pages;
+namespace App\Filament\User\Resources\NominationResource\Pages;
 
 use App\Enums\NominationStatusEnum;
-use App\Filament\Resources\NominationResource\Pages\Concerns\InteractsWithState;
+use App\Filament\User\Resources\NominationResource\Pages\Concerns\InteractsWithState;
 use Filament\Actions\Action;
 
 class Dashboard extends NominationPage

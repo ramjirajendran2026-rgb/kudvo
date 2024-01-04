@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Pages\Organisation;
+namespace App\Filament\User\Pages\Organisation;
 
 use App\Enums\OrganisationUserRoleEnum;
 use App\Filament\Forms\OrganisationForm;
