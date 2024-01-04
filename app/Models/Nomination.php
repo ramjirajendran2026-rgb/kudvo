@@ -177,6 +177,11 @@ class Nomination extends Model
         });
     }
 
+    public function getRouteKeyName(): string
+    {
+        return 'code';
+    }
+
     public function isTimingConfigured(): bool
     {
         return filled(value: $this->starts_at) &&

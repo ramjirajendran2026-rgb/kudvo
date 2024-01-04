@@ -3,16 +3,8 @@
 namespace App\Filament\Resources\NominationResource\Pages;
 
 use App\Enums\NominationStatusEnum;
-use App\Filament\Resources\NominationResource;
 use App\Filament\Resources\NominationResource\Pages\Concerns\InteractsWithState;
-use App\Models\Nomination;
 use Filament\Actions\Action;
-use Filament\Actions\ActionGroup;
-use Filament\Actions\EditAction;
-use Filament\Facades\Filament;
-use Filament\Forms\Form;
-use Filament\Support\Enums\Alignment;
-use Filament\Support\Enums\MaxWidth;
 
 class Dashboard extends NominationPage
 {
