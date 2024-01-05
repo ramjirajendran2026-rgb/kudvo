@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\NomineeStatusEnum;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -16,7 +17,6 @@ class Nominee extends Model
         'title',
         'first_name',
         'last_name',
-        'full_name',
         'email',
         'phone',
         'self_nomination',
@@ -39,6 +39,14 @@ class Nominee extends Model
         'elector_id' => 'int',
         'scrutiniser_id' => 'int',
     ];
+
+    protected function displayName(): Attribute
+    {
+        return Attribute::make(
+            get: fn($value, array $attributes) => $this->membership_number.
+                (filled(value: $this->full_name) ? ' ('.$this->full_name.')' : ''),
+        );
+    }
 
     public function position(): BelongsTo
     {

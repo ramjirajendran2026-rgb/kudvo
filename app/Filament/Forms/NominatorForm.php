@@ -7,8 +7,10 @@ use App\Filament\Nomination\Pages\Contracts\HasNomination;
 use App\Models\Elector;
 use App\Models\Nomination;
 use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Illuminate\Support\Arr;
 use Illuminate\Validation\Rules\Exists;
@@ -17,6 +19,18 @@ use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
 readonly class NominatorForm
 {
+    public static function electorIdComponent()
+    {
+        return Hidden::make(name: 'elector_id')
+            ->exists(
+                table: 'electors',
+                column: 'id',
+                modifyRuleUsing: fn (Exists $rule, HasNomination $livewire) => $rule
+                    ->where(column: 'event_type', value: Nomination::class)
+                    ->where(column: 'event_id', value: $livewire->getNomination()->getKey())
+            );
+    }
+
     public static function emailComponent(): TextInput
     {
         return TextInput::make(name: 'email')
@@ -47,6 +61,7 @@ readonly class NominatorForm
                     null :
                     Elector::firstWhere('membership_number', $state);
 
+                $set(path: 'elector_id', state: $elector?->getKey());
                 $set(path: 'first_name', state: $elector?->first_name);
                 $set(path: 'last_name', state: $elector?->last_name);
                 $set(path: 'email', state: $elector?->email);
@@ -68,11 +83,7 @@ readonly class NominatorForm
             ->live(onBlur: true)
             ->label(label: 'Membership number')
             ->maxLength(length: 50)
-            ->notIn(
-                values: fn (HasElector $livewire): string => $livewire->getElector()->membership_number,
-                condition: fn (TextInput $component, HasNomination $livewire): bool => ! $livewire->getNomination()->self_nomination &&
-                    Arr::last(explode('.', $component->getStatePath()), fn($item) => $item != $component->getStatePath(isAbsolute: false)) != 0,
-            )
+            ->notIn(values: fn (Get $get): string => $get(path: '../../membership_number'))
             ->readOnly(
                 condition: fn (TextInput $component, HasNomination $livewire): bool => ! $livewire->getNomination()->self_nomination &&
                     Arr::last(explode('.', $component->getStatePath()), fn($item) => $item != $component->getStatePath(isAbsolute: false)) == 0

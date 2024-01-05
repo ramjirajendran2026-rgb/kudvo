@@ -10,6 +10,7 @@ use Filament\Panel;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -41,6 +42,14 @@ class Elector extends Model implements AuthenticatableContract, AuthorizableCont
     protected $casts = [
         'event_id' => 'int',
     ];
+
+    protected function displayName(): Attribute
+    {
+        return Attribute::make(
+            get: fn($value, array $attributes) => $this->membership_number.
+                (filled(value: $this->full_name) ? ' ('.$this->full_name.')' : ''),
+        );
+    }
 
     public function event(): MorphTo
     {

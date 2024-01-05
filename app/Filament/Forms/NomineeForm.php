@@ -6,17 +6,39 @@ use App\Filament\Nomination\Pages\Contracts\HasElector;
 use App\Filament\Nomination\Pages\Contracts\HasNomination;
 use App\Models\Elector;
 use App\Models\Nomination;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Validation\Rules\Exists;
 use Illuminate\Validation\Rules\Unique;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
 readonly class NomineeForm
 {
+    public static function electorIdComponent()
+    {
+        return Hidden::make(name: 'elector_id')
+            ->exists(
+                table: 'electors',
+                column: 'id',
+                modifyRuleUsing: fn (Exists $rule, HasNomination $livewire) => $rule
+                    ->where(column: 'event_type', value: Nomination::class)
+                    ->where(column: 'event_id', value: $livewire->getNomination()->getKey())
+            )
+            ->in(
+                values: fn (HasElector $livewire): string => $livewire->getElector()->getKey(),
+                condition: fn (HasNomination $livewire): bool => $livewire->getNomination()->self_nomination,
+            )
+            ->notIn(
+                values: fn (HasElector $livewire): string => $livewire->getElector()->getKey(),
+                condition: fn (HasNomination $livewire): bool => ! $livewire->getNomination()->self_nomination,
+            );
+    }
+
     public static function emailComponent(): TextInput
     {
         return TextInput::make(name: 'email')
@@ -47,6 +69,7 @@ readonly class NomineeForm
                     null :
                     Elector::firstWhere('membership_number', $state);
 
+                $set(path: 'elector_id', state: $elector?->getKey());
                 $set(path: 'first_name', state: $elector?->first_name);
                 $set(path: 'last_name', state: $elector?->last_name);
                 $set(path: 'email', state: $elector?->email);

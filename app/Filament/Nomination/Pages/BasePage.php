@@ -11,7 +11,7 @@ use Filament\Pages\Page;
 /**
  * @property Form $form
  */
-class NominationPage extends Page implements HasElector, HasNomination
+abstract class BasePage extends Page implements HasElector, HasNomination
 {
     use InteractsWithNomination;
 

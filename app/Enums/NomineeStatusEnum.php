@@ -2,7 +2,11 @@
 
 namespace App\Enums;
 
+use Filament\Support\Contracts\HasLabel;
+use Illuminate\Support\Str;
+
 enum NomineeStatusEnum: string
+    implements HasLabel
 {
     case PROPOSED = 'proposed';
     case NOMINATED = 'nominated';
@@ -11,4 +15,9 @@ enum NomineeStatusEnum: string
     case APPROVED = 'approved';
     case REJECTED = 'rejected';
     case WITHDRAWN = 'withdrawn';
+
+    public function getLabel(): ?string
+    {
+        return Str::title(value: $this->value);
+    }
 }

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Console\NominatorStatusEnum;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -13,7 +14,6 @@ class Nominator extends Model
         'title',
         'first_name',
         'last_name',
-        'full_name',
         'email',
         'phone',
         'status',
@@ -28,6 +28,14 @@ class Nominator extends Model
         'nominee_id' => 'int',
         'elector_id' => 'int',
     ];
+
+    protected function displayName(): Attribute
+    {
+        return Attribute::make(
+            get: fn($value, array $attributes) => $this->membership_number.
+                (filled(value: $this->full_name) ? ' ('.$this->full_name.')' : ''),
+        );
+    }
 
     public function nominee(): BelongsTo
     {

@@ -4,30 +4,27 @@ namespace App\Filament\Nomination\Pages;
 
 use App\Console\NominatorStatusEnum;
 use App\Enums\NomineeStatusEnum;
-use App\Filament\Forms\ElectorForm;
+use App\Events\Nomination\Nominated;
 use App\Filament\Forms\NominatorForm;
 use App\Filament\Forms\NomineeForm;
-use App\Models\Elector;
-use App\Models\Nomination;
 use App\Models\Nominee;
-use App\Models\Position;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Actions\Action as FormAction;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\ViewField;
+use Filament\Forms\Components\Wizard;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
-use Filament\Forms\Set;
+use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Illuminate\Support\Arr;
-use Illuminate\Validation\Rules\Exists;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 
-class Nominate extends NominationPage
+class Nominate extends BasePage
 {
     use InteractsWithFormActions;
 
@@ -39,26 +36,32 @@ class Nominate extends NominationPage
 
     public function mount(): void
     {
+        $electorData = [
+            'elector_id' => $this->getElector()->getKey(),
+            ...$this->getElector()->only(attributes: ['membership_number', 'first_name', 'last_name', 'email', 'phone'])
+        ];
+
         $nomineeData = [
             ...$this->getNomination()->self_nomination ?
-                $this->getElector()->only(attributes: ['membership_number', 'first_name', 'last_name', 'email', 'phone']) :
+                $electorData :
                 [],
 
-            'nominators' => [
-                ...($this->getNomination()->self_nomination && $this->getNomination()->nominator_threshold) ?
+            'nominators' => $this->getNomination()->nominator_threshold ? [
+                ...($this->getNomination()->self_nomination) ?
                     [[]] :
-                    [$this->getElector()->only(attributes: ['membership_number', 'first_name', 'last_name', 'email', 'phone'])],
+                    [$electorData],
 
                 ...$this->getNomination()->nominator_threshold > 1 ?
                     Arr::map(array: range(start: 2, end: $this->getNomination()->nominator_threshold), callback: fn () => []) :
                     []
-            ],
+            ] :
+            [],
         ];
 
         $this->form->fill(state: $nomineeData);
     }
 
-    public function submit()
+    public function submit(): void
     {
         $data = $this->form->getState();
 
@@ -71,72 +74,126 @@ class Nominate extends NominationPage
 
         $this->form->model(model: $nominee)->saveRelationships();
 
-        dd($this->form->getRecord());
+        Nominated::dispatch($nominee);
+
+        Notification::make()
+            ->success()
+            ->title(title: 'Nominated')
+            ->send();
+
+        $this->redirect(Filament::getCurrentPanel()->getUrl());
     }
 
     public function form(Form $form): Form
     {
         return $form
             ->schema(components: [
-                Section::make()
-                    ->compact()
-                    ->schema(components: [
-                        NomineeForm::positionIdComponent(),
-                    ]),
+                Wizard::make()
+                    ->submitAction(action: $this->getSubmitAction)
+                    ->steps(steps: [
+                        Wizard\Step::make(label: 'Nominee')
+                            ->columns()
+                            ->description(description: $this->getNomination()->self_nomination ? 'You' : null)
+                            ->schema(components: [
+                                NomineeForm::positionIdComponent()
+                                    ->hiddenLabel(condition: false)
+                                    ->columnSpanFull(),
 
-                Section::make(heading: 'Nominee')
-                    ->columns()
-                    ->compact()
-                    ->schema(components: [
-                        NomineeForm::membershipNumberComponent()
-                            ->columnSpanFull(),
+                                NomineeForm::electorIdComponent(),
 
-                        NomineeForm::firstNameComponent()
-                            ->readOnly(),
+                                NomineeForm::membershipNumberComponent()
+                                    ->columnSpanFull(),
 
-                        NomineeForm::lastNameComponent()
-                            ->readOnly(),
+                                NomineeForm::firstNameComponent()
+                                    ->readOnly(),
 
-                        NomineeForm::emailComponent()
-                            ->readOnly(),
+                                NomineeForm::lastNameComponent()
+                                    ->readOnly(),
 
-                        NomineeForm::phoneComponent(),
-                    ]),
+                                NomineeForm::emailComponent()
+                                    ->readOnly(),
 
-                Repeater::make(name: 'nominators')
-                    ->addable(condition: false)
-                    ->columns()
-                    ->deletable(condition: false)
-                    ->hiddenLabel()
-                    ->itemLabel(
-                        label: function (Get $get, string $uuid): ?string {
-                            $index = array_search(needle: $uuid, haystack: array_keys($get(path: 'nominators')));
+                                NomineeForm::phoneComponent(),
+                            ]),
 
-                            return $index ? 'Seconder #'.$index : 'Proposer';
-                        }
-                    )
-                    ->maxItems(count: $this->getNomination()->nominator_threshold)
-                    ->minItems(count: $this->getNomination()->nominator_threshold)
-                    ->mutateRelationshipDataBeforeCreateUsing(callback: function (array $data): array {
-                        $data['status'] = NominatorStatusEnum::PENDING;
+                        Wizard\Step::make(label: 'Nominators')
+                            ->description(
+                                description: $this->getNomination()->self_nomination ?
+                                    null :
+                                    (
+                                        'You'.
+                                        (
+                                            $this->getNomination()->nominator_threshold > 1 ?
+                                                (
+                                                    ' and '.
+                                                    ($this->getNomination()->nominator_threshold - 1).
+                                                    ' '.
+                                                    Str::plural(value: 'other', count: $this->getNomination()->nominator_threshold - 1)
+                                                ) :
+                                                ''
+                                        )
+                                    )
+                            )
+                            ->visible(condition: $this->getNomination()->nominator_threshold)
+                            ->schema(components: [
+                                Repeater::make(name: 'nominators')
+                                    ->addable(condition: false)
+                                    ->collapsible()
+                                    ->collapseAllAction(callback: fn (FormAction $action): FormAction => $action->hidden())
+                                    ->columns()
+                                    ->deletable(condition: false)
+                                    ->expandAllAction(callback: fn (FormAction $action): FormAction => $action->hidden())
+                                    ->hiddenLabel()
+                                    ->itemLabel(
+                                        label: function (Get $get, string $uuid, self $livewire): ?string {
+                                            $uuids = array_keys($get(path: 'nominators'));
+                                            $index = array_search(needle: $uuid, haystack: $uuids);
 
-                        return $data;
-                    })
-                    ->relationship()
-                    ->schema(components: [
-                        NominatorForm::membershipNumberComponent()
-                            ->columnSpanFull(),
+                                            return $index ?
+                                                'Seconder '.(count(value: $uuids) > 2 ? '#'.$index : '') :
+                                                'Proposer'.(!$livewire->getNomination()->self_nomination ? ' (You)' : '');
+                                        }
+                                    )
+                                    ->maxItems(count: $this->getNomination()->nominator_threshold)
+                                    ->minItems(count: $this->getNomination()->nominator_threshold)
+                                    ->mutateRelationshipDataBeforeCreateUsing(callback: function (array $data, self $livewire): array {
+                                        if (($data['membership_number'] ?? null) == $livewire->getElector()->membership_number) {
+                                            $data['status'] = NominatorStatusEnum::ACCEPTED;
+                                            $data['decided_at'] = Carbon::now();
+                                        } else {
+                                            $data['status'] = NominatorStatusEnum::PENDING;
+                                        }
 
-                        NominatorForm::firstNameComponent()
-                            ->readOnly(),
+                                        return $data;
+                                    })
+                                    ->relationship()
+                                    ->schema(components: [
+                                        NominatorForm::electorIdComponent(),
 
-                        NominatorForm::lastNameComponent()
-                            ->readOnly(),
+                                        NominatorForm::membershipNumberComponent()
+                                            ->columnSpanFull(),
 
-                        NominatorForm::emailComponent()
-                            ->readOnly(),
+                                        NominatorForm::firstNameComponent()
+                                            ->readOnly(),
 
-                        NominatorForm::phoneComponent(),
+                                        NominatorForm::lastNameComponent()
+                                            ->readOnly(),
+
+                                        NominatorForm::emailComponent()
+                                            ->readOnly(),
+
+                                        NominatorForm::phoneComponent(),
+                                    ]),
+                            ]),
+
+                        Wizard\Step::make(label: 'Confirmation')
+                            ->schema(components: [
+                                Checkbox::make(name: 'consent')
+                                    ->accepted()
+                                    ->dehydrated(condition: false)
+                                    ->label(label: 'I agree for the nomination')
+                                    ->validationAttribute(label: 'consent'),
+                            ]),
                     ]),
             ]);
     }
@@ -156,7 +213,6 @@ class Nominate extends NominationPage
     public function getFormActions(): array
     {
         return [
-            $this->getSubmitAction()
         ];
     }
 

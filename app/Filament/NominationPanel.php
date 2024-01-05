@@ -23,6 +23,11 @@ class NominationPanel extends Panel
         return $nomination;
     }
 
+    public function getPath(): string
+    {
+        return parent::getPath().'/{nomination}';
+    }
+
     public function route(string $name, mixed $parameters = [], bool $absolute = true): string
     {
         $parameters['nomination'] ??= Kudvo::getNomination()?->getRouteKey();
