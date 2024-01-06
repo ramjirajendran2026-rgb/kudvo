@@ -3,7 +3,7 @@
 namespace App\Filament\Nomination\Pages;
 
 use App\Console\NominatorStatusEnum;
-use App\Enums\NomineeStatusEnum;
+use App\Enums\NomineeStatus;
 use App\Events\Nomination\Nominated;
 use App\Filament\Forms\NominatorForm;
 use App\Filament\Forms\NomineeForm;
@@ -67,7 +67,6 @@ class Nominate extends BasePage
 
         $nominee = Nominee::create([
             'self_nomination' => $this->getNomination()->self_nomination,
-            'status' => $this->getNomination()->self_nomination ? NomineeStatusEnum::NOMINATED : NomineeStatusEnum::PROPOSED,
 
             ...$data
         ]);
@@ -86,6 +85,10 @@ class Nominate extends BasePage
 
     public function form(Form $form): Form
     {
+        $isSelfNomination = $this->getNomination()->self_nomination;
+        $nominatorThreshold = $this->getNomination()->nominator_threshold;
+        $seconderThreshold = $nominatorThreshold - 1;
+
         return $form
             ->schema(components: [
                 Wizard::make()
@@ -93,7 +96,7 @@ class Nominate extends BasePage
                     ->steps(steps: [
                         Wizard\Step::make(label: 'Nominee')
                             ->columns()
-                            ->description(description: $this->getNomination()->self_nomination ? 'You' : null)
+                            ->description(description: $isSelfNomination ? 'You' : null)
                             ->schema(components: [
                                 NomineeForm::positionIdComponent()
                                     ->hiddenLabel(condition: false)
@@ -116,25 +119,16 @@ class Nominate extends BasePage
                                 NomineeForm::phoneComponent(),
                             ]),
 
-                        Wizard\Step::make(label: 'Nominators')
+                        Wizard\Step::make(label: Str::plural(value: 'Nominator', count: $nominatorThreshold))
                             ->description(
-                                description: $this->getNomination()->self_nomination ?
-                                    null :
-                                    (
-                                        'You'.
-                                        (
-                                            $this->getNomination()->nominator_threshold > 1 ?
-                                                (
-                                                    ' and '.
-                                                    ($this->getNomination()->nominator_threshold - 1).
-                                                    ' '.
-                                                    Str::plural(value: 'other', count: $this->getNomination()->nominator_threshold - 1)
-                                                ) :
-                                                ''
-                                        )
-                                    )
+                                description: ($isSelfNomination ? 'Proposer' : 'You').
+                                (
+                                $seconderThreshold ?
+                                    (" and $seconderThreshold ".Str::plural(value: 'Seconder', count: $seconderThreshold)) :
+                                    ''
+                                )
                             )
-                            ->visible(condition: $this->getNomination()->nominator_threshold)
+                            ->visible(condition: $nominatorThreshold)
                             ->schema(components: [
                                 Repeater::make(name: 'nominators')
                                     ->addable(condition: false)
@@ -154,8 +148,8 @@ class Nominate extends BasePage
                                                 'Proposer'.(!$livewire->getNomination()->self_nomination ? ' (You)' : '');
                                         }
                                     )
-                                    ->maxItems(count: $this->getNomination()->nominator_threshold)
-                                    ->minItems(count: $this->getNomination()->nominator_threshold)
+                                    ->maxItems(count: $nominatorThreshold)
+                                    ->minItems(count: $nominatorThreshold)
                                     ->mutateRelationshipDataBeforeCreateUsing(callback: function (array $data, self $livewire): array {
                                         if (($data['membership_number'] ?? null) == $livewire->getElector()->membership_number) {
                                             $data['status'] = NominatorStatusEnum::ACCEPTED;

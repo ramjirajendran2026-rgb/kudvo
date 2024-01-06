@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Console\NominatorStatusEnum;
+use App\Enums\NominatorStatus;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -23,7 +23,7 @@ class Nominator extends Model
     ];
 
     protected $casts = [
-        'status' => NominatorStatusEnum::class,
+        'status' => NominatorStatus::class,
         'decided_at' => 'datetime',
         'nominee_id' => 'int',
         'elector_id' => 'int',
@@ -45,5 +45,20 @@ class Nominator extends Model
     public function elector(): BelongsTo
     {
         return $this->belongsTo(related: Elector::class);
+    }
+
+    public function isAccepted(): bool
+    {
+        return $this->status == NominatorStatusEnum::ACCEPTED;
+    }
+
+    public function isPending(): bool
+    {
+        return $this->status == NominatorStatusEnum::PENDING;
+    }
+
+    public function isDeclined(): bool
+    {
+        return $this->status == NominatorStatusEnum::DECLINED;
     }
 }

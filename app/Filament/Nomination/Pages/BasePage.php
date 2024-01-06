@@ -14,6 +14,4 @@ use Filament\Pages\Page;
 abstract class BasePage extends Page implements HasElector, HasNomination
 {
     use InteractsWithNomination;
-
-    protected ?string $maxContentWidth = '3xl';
 }

@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum CandidateSortEnum: string
+enum CandidateSort: string
 {
     case MANUAL = 'manual';
     case RANDOM = 'random';

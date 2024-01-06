@@ -2,7 +2,7 @@
 
 namespace App\Filament\User\Resources\NominationResource\Pages;
 
-use App\Enums\NominationStatusEnum;
+use App\Enums\NominationStatus;
 use App\Filament\User\Resources\NominationResource;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ManageRecords;
@@ -18,7 +18,7 @@ class ManageNominations extends ManageRecords
         return array_merge(
             ['All' => Tab::make(label: 'All')],
 
-            NominationStatusEnum::getTabs(),
+            NominationStatus::getTabs(),
         );
     }
 }

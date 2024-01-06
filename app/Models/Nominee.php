@@ -2,13 +2,15 @@
 
 namespace App\Models;
 
-use App\Enums\NomineeStatusEnum;
+use App\Enums\NomineeScrutinyStatus;
+use App\Enums\NomineeStatus;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Carbon;
 
 class Nominee extends Model
 {
@@ -21,6 +23,8 @@ class Nominee extends Model
         'phone',
         'self_nomination',
         'status',
+        'scrutiny_status',
+        'remarks',
         'decided_at',
         'scrutinised_at',
         'withdrawn_at',
@@ -31,13 +35,19 @@ class Nominee extends Model
 
     protected $casts = [
         'self_nomination' => 'bool',
-        'status' => NomineeStatusEnum::class,
+        'status' => NomineeStatus::class,
+        'scrutiny_status' => NomineeScrutinyStatus::class,
         'decided_at' => 'datetime',
         'scrutinised_at' => 'datetime',
         'withdrawn_at' => 'datetime',
         'position_id' => 'int',
         'elector_id' => 'int',
         'scrutiniser_id' => 'int',
+    ];
+
+    protected $attributes = [
+        'status' => NomineeStatus::PENDING,
+        'scrutiny_status' => NomineeScrutinyStatus::PENDING,
     ];
 
     protected function displayName(): Attribute
@@ -67,6 +77,15 @@ class Nominee extends Model
     {
         return $this->hasOne(related: Nominator::class)
             ->oldestOfMany();
+    }
+
+    public function seconders(): HasMany
+    {
+        return $this
+            ->nominators()
+            ->oldest()
+            ->take(value: 9999999999)
+            ->skip(value: 1);
     }
 
     public function scrutiniser(): BelongsTo

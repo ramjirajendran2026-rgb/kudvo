@@ -29,6 +29,9 @@ return new class extends Migration
 
                 $table->boolean(column: 'self_nomination');
                 $table->string(column: 'status');
+                $table->string(column: 'scrutiny_status');
+                $table->text(column: 'remarks')->nullable();
+
                 $table->timestamp(column: 'decided_at')->nullable();
                 $table->timestamp(column: 'scrutinised_at')->nullable();
                 $table->timestamp(column: 'withdrawn_at')->nullable();

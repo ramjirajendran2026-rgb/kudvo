@@ -2,7 +2,7 @@
 
 namespace App\Filament\User\Resources\NominationResource\Pages;
 
-use App\Enums\NominationStatusEnum;
+use App\Enums\NominationStatus;
 use App\Filament\User\Resources\NominationResource\Pages\Concerns\InteractsWithState;
 use Filament\Actions\Action;
 
@@ -125,9 +125,9 @@ class Dashboard extends NominationPage
     {
         return Action::make(name: 'publish')
             ->requiresConfirmation()
-            ->color(color: NominationStatusEnum::PUBLISHED->getColor())
-            ->icon(icon: NominationStatusEnum::PUBLISHED->getIcon())
-            ->modalIcon(icon: NominationStatusEnum::PUBLISHED->getIcon())
+            ->color(color: NominationStatus::PUBLISHED->getColor())
+            ->icon(icon: NominationStatus::PUBLISHED->getIcon())
+            ->modalIcon(icon: NominationStatus::PUBLISHED->getIcon())
             ->successNotificationTitle(title: 'Published')
             ->visible(condition: $this->canPublish())
             ->action(action: function (Action $action): void {
@@ -141,9 +141,9 @@ class Dashboard extends NominationPage
     {
         return Action::make(name: 'close')
             ->requiresConfirmation()
-            ->color(color: NominationStatusEnum::CLOSED->getColor())
-            ->icon(icon: NominationStatusEnum::CLOSED->getIcon())
-            ->modalIcon(icon: NominationStatusEnum::CLOSED->getIcon())
+            ->color(color: NominationStatus::CLOSED->getColor())
+            ->icon(icon: NominationStatus::CLOSED->getIcon())
+            ->modalIcon(icon: NominationStatus::CLOSED->getIcon())
             ->successNotificationTitle(title: 'Closed')
             ->visible(condition: $this->canClose())
             ->action(action: function (Action $action): void {

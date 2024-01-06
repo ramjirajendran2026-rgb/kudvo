@@ -3,13 +3,17 @@
 @config 'tailwind.config.js';
 
 .fi-topbar {
-    @apply mx-auto w-full md:px-6 lg:px-8 max-w-3xl relative;
+    @apply mx-auto w-full lg:px-8 max-w-5xl relative;
 
     nav {
-        @apply md:rounded-b-xl h-auto min-h-16 py-4 md:px-4 lg:px-4;
+        @apply lg:rounded-b-xl h-auto min-h-16 py-4 md:px-4;
 
         > div {
             @apply flex;
+
+            .fi-header-heading {
+                @apply max-w-full;
+            }
         }
     }
 }
@@ -21,11 +25,11 @@
 }
 
 .fi-footer {
-    @apply mx-auto w-full md:px-6 lg:px-8 max-w-3xl;
+    @apply mx-auto w-full lg:px-8 max-w-5xl;
 
     > div {
         @apply flex items-center justify-center gap-x-4 h-auto min-h-16 px-4 py-4
-        bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 md:rounded-t-xl
+        bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 lg:rounded-t-xl
         text-sm font-medium leading-6 text-gray-950 dark:text-white;
     }
 }

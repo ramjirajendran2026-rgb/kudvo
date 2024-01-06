@@ -10,6 +10,8 @@ use Filament\Pages\Page;
 use Filament\Tables\Actions\CreateAction as TableCreateAction;
 use Filament\Tables\Columns\Column;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -29,6 +31,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        if (App::isLocal()) {
+            Mail::alwaysTo(address: 'iliyas.inode@gmail.com');
+        }
+
         Filament::serving(callback: function (): void {
             Column::configureUsing(modifyUsing: function (Column $component) {
                 $component->wrapHeader();

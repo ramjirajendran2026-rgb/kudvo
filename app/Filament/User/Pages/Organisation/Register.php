@@ -2,7 +2,7 @@
 
 namespace App\Filament\User\Pages\Organisation;
 
-use App\Enums\OrganisationUserRoleEnum;
+use App\Enums\OrganisationUserRole;
 use App\Filament\Forms\OrganisationForm;
 use App\Models\User;
 use Filament\Actions\Action;
@@ -44,7 +44,7 @@ class Register extends RegisterTenant
         return $user->organisations()
             ->create(
                 attributes: $data,
-                joining: ['role' => OrganisationUserRoleEnum::ADMIN]
+                joining: ['role' => OrganisationUserRole::ADMIN]
             );
     }
 }

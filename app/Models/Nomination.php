@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\NominationStatusEnum;
+use App\Enums\NominationStatus;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -66,11 +66,11 @@ class Nomination extends Model
     {
         return Attribute::make(
             get: fn($value, array $attributes) => match (true) {
-                filled(value: $this->cancelled_at) => NominationStatusEnum::CANCELLED,
-                filled(value: $this->scrutinised_at) => NominationStatusEnum::SCRUTINISED,
-                filled(value: $this->closed_at) => NominationStatusEnum::CLOSED,
-                filled(value: $this->published_at) => NominationStatusEnum::PUBLISHED,
-                default => NominationStatusEnum::DRAFT,
+                filled(value: $this->cancelled_at) => NominationStatus::CANCELLED,
+                filled(value: $this->scrutinised_at) => NominationStatus::SCRUTINISED,
+                filled(value: $this->closed_at) => NominationStatus::CLOSED,
+                filled(value: $this->published_at) => NominationStatus::PUBLISHED,
+                default => NominationStatus::DRAFT,
             },
         );
     }
@@ -78,35 +78,35 @@ class Nomination extends Model
     protected function isDraft(): Attribute
     {
         return Attribute::make(
-            get: fn($value, array $attributes) => $this->status === NominationStatusEnum::DRAFT,
+            get: fn($value, array $attributes) => $this->status === NominationStatus::DRAFT,
         );
     }
 
     protected function isPublished(): Attribute
     {
         return Attribute::make(
-            get: fn($value, array $attributes) => $this->status === NominationStatusEnum::PUBLISHED,
+            get: fn($value, array $attributes) => $this->status === NominationStatus::PUBLISHED,
         );
     }
 
     protected function isClosed(): Attribute
     {
         return Attribute::make(
-            get: fn($value, array $attributes) => $this->status === NominationStatusEnum::CLOSED,
+            get: fn($value, array $attributes) => $this->status === NominationStatus::CLOSED,
         );
     }
 
     protected function isScrutinised(): Attribute
     {
         return Attribute::make(
-            get: fn($value, array $attributes) => $this->status === NominationStatusEnum::SCRUTINISED,
+            get: fn($value, array $attributes) => $this->status === NominationStatus::SCRUTINISED,
         );
     }
 
     protected function isCancelled(): Attribute
     {
         return Attribute::make(
-            get: fn($value, array $attributes) => $this->status === NominationStatusEnum::CANCELLED,
+            get: fn($value, array $attributes) => $this->status === NominationStatus::CANCELLED,
         );
     }
 

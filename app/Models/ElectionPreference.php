@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\CandidateSortEnum;
+use App\Enums\CandidateSort;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -39,7 +39,7 @@ class ElectionPreference extends Model
         'dnt_votes' => 'bool',
         'voted_ballot_update' => 'bool',
         'ip_restriction_threshold' => 'int',
-        'candidate_sort' => CandidateSortEnum::class,
+        'candidate_sort' => CandidateSort::class,
         'candidate_photo' => 'bool',
         'candidate_bio' => 'bool',
         'candidate_attachment' => 'bool',

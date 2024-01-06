@@ -8,8 +8,9 @@ use Filament\Support\Contracts\HasIcon;
 use Filament\Support\Contracts\HasLabel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
-enum NominationStatusEnum: string
+enum NominationStatus: string
     implements HasColor, HasIcon, HasLabel
 {
     case CANCELLED = 'cancelled';
@@ -65,13 +66,7 @@ enum NominationStatusEnum: string
 
     public function getLabel(): ?string
     {
-        return match ($this) {
-            self::CANCELLED => 'Cancelled',
-            self::CLOSED => 'Closed',
-            self::DRAFT => 'Draft',
-            self::PUBLISHED => 'Published',
-            self::SCRUTINISED => 'Scrutinised',
-        };
+        return Str::title(value: $this->value);
     }
 
     public function getIcon(): ?string

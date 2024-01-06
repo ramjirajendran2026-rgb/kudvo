@@ -58,9 +58,10 @@ class NominationPanelProvider extends PanelProvider
             ->navigation(builder: false)
             ->brandName(name: fn (): string => Kudvo::getOrganisation()?->name)
             ->colors(colors: [
-                'primary' => Color::Amber,
+                'primary' => Color::hex(color: '#00adb5'),
+                'warning' => Color::Yellow,
             ])
-            ->maxContentWidth(maxContentWidth: MaxWidth::ThreeExtraLarge)
+            ->maxContentWidth(maxContentWidth: MaxWidth::FiveExtraLarge)
             ->viteTheme(theme: 'resources/css/filament/nomination/theme.css')
             ->font(family: 'Poppins')
             ->renderHook(

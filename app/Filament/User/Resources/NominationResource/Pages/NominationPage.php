@@ -2,7 +2,7 @@
 
 namespace App\Filament\User\Resources\NominationResource\Pages;
 
-use App\Enums\NominationStatusEnum;
+use App\Enums\NominationStatus;
 use App\Filament\User\Resources\NominationResource;
 use App\Models\Nomination;
 use Filament\Actions\Action;
@@ -152,11 +152,11 @@ HTML
                 }
             )
             ->requiresConfirmation()
-            ->color(color: NominationStatusEnum::CANCELLED->getColor())
-            ->icon(icon: NominationStatusEnum::CANCELLED->getIcon())
+            ->color(color: NominationStatus::CANCELLED->getColor())
+            ->icon(icon: NominationStatus::CANCELLED->getIcon())
             ->label(label: 'Cancel')
             ->modalCancelActionLabel(label: 'No')
-            ->modalIcon(icon: NominationStatusEnum::CANCELLED->getIcon())
+            ->modalIcon(icon: NominationStatus::CANCELLED->getIcon())
             ->modalSubmitActionLabel(label: 'Yes')
             ->successNotificationTitle(title: 'Cancelled')
             ->visible(condition: $this->canCancelNomination());
