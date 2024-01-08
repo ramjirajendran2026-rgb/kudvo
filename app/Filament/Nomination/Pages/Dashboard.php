@@ -19,6 +19,8 @@ class Dashboard extends \Filament\Pages\Dashboard
 
 //    protected static string $view = 'filament.nomination.pages.dashboard';
 
+    protected static bool $isDiscovered = false;
+
     #[Computed(persist: true)]
     public function nominees(): Collection
     {

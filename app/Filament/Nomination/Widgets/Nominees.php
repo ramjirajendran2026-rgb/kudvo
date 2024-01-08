@@ -3,10 +3,12 @@
 namespace App\Filament\Nomination\Widgets;
 
 use App\Enums\NomineeScrutinyStatus;
+use App\Filament\Forms\NomineeForm;
 use App\Models\Elector;
 use App\Models\Nominator;
 use App\Models\Nominee;
 use Filament\Facades\Filament;
+use Filament\Forms\Components\Checkbox;
 use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\IconPosition;
 use Filament\Tables;
@@ -26,6 +28,11 @@ class Nominees extends BaseWidget
         $elector = Filament::auth()->user();
 
         return $table
+            ->actions(actions: [
+                $this->getAcceptNomineeAction(),
+
+                $this->getAcceptNominatorAction(),
+            ])
             ->heading(heading: null)
             ->query(
                 Nominee::query()
@@ -72,5 +79,61 @@ class Nominees extends BaseWidget
                     ->color(color: fn (NomineeScrutinyStatus $state): ?string => $state->getColor())
                     ->label(label: 'Scrutiny'),
             ]);
+    }
+
+    protected function getAcceptNomineeAction(): Tables\Actions\Action
+    {
+        return Tables\Actions\EditAction::make(name: 'accept_nominee')
+            ->requiresConfirmation()
+            ->after(callback: function (Nominee $nominee, Tables\Actions\Action $action) {
+                $nominee->accept();
+            })
+            ->color(color: 'warning')
+            ->form(form: [
+                NomineeForm::photoComponent(),
+
+                Checkbox::make(name: 'consent')
+                    ->accepted()
+                    ->dehydrated(condition: false)
+                    ->label(label: 'I agree to this proposal')
+                    ->validationAttribute(label: 'consent'),
+            ])
+            ->modalHeading(heading: 'Confirm proposal')
+            ->successNotificationTitle(title: 'Accepted');
+    }
+
+    protected function getAcceptNominatorAction(): Tables\Actions\Action
+    {
+        return Tables\Actions\Action::make(name: 'accept_nominator')
+            ->requiresConfirmation()
+            ->action(action: function (Nominee $nominee, Tables\Actions\Action $action) {
+                /** @var Elector $elector */
+                $elector = Filament::auth()->user();
+
+                $nominator = $nominee->nominators()
+                    ->whereBelongsTo(related: $elector)
+                    ->first()
+                    ?->accept();
+
+                if ($nominator && $nominator->isAccepted()) {
+                    $action->success();
+                } else {
+                    $action->failure();
+                }
+            })
+            ->color(color: 'warning')
+            ->failureNotificationTitle(title: 'Failed')
+            ->label(label: 'Accept')
+            ->modalHeading(heading: 'Confirmation')
+            ->successNotificationTitle(title: 'Accepted')
+            ->visible(condition: function (Nominee $nominee): bool {
+                /** @var Elector $elector */
+                $elector = Filament::auth()->user();
+
+                return $nominee->nominators()
+                    ->whereBelongsTo(related: $elector)
+                    ->first()
+                    ?->isPending();
+            });
     }
 }

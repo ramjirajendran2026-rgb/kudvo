@@ -34,9 +34,6 @@ class NominationPanelProvider extends PanelProvider
             ->authGuard(guard: 'elector')
             ->discoverResources(in: app_path('Filament/Nomination/Resources'), for: 'App\\Filament\\Nomination\\Resources')
             ->discoverPages(in: app_path('Filament/Nomination/Pages'), for: 'App\\Filament\\Nomination\\Pages')
-            ->pages(pages: [
-                Dashboard::class,
-            ])
             ->discoverWidgets(in: app_path('Filament/Nomination/Widgets'), for: 'App\\Filament\\Nomination\\Widgets')
             ->middleware(middleware: [IdentifyNomination::class], isPersistent: true)
             ->middleware(middleware: [
@@ -64,6 +61,7 @@ class NominationPanelProvider extends PanelProvider
             ->maxContentWidth(maxContentWidth: MaxWidth::FiveExtraLarge)
             ->viteTheme(theme: 'resources/css/filament/nomination/theme.css')
             ->font(family: 'Poppins')
+            ->breadcrumbs(condition: false)
             ->renderHook(
                 name: 'panels::footer',
                 hook: fn () => Blade::render('<x-filament.nomination.footer />')

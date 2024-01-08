@@ -2,7 +2,7 @@
 
 namespace App\Filament\Nomination\Pages;
 
-use App\Console\NominatorStatusEnum;
+use App\Enums\NominatorStatus;
 use App\Enums\NomineeStatus;
 use App\Events\Nomination\Nominated;
 use App\Filament\Forms\NominatorForm;
@@ -13,6 +13,7 @@ use Filament\Facades\Filament;
 use Filament\Forms\Components\Actions\Action as FormAction;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Wizard;
@@ -29,6 +30,8 @@ class Nominate extends BasePage
     use InteractsWithFormActions;
 
     protected static string $view = 'filament.nomination.pages.nominate';
+
+    protected static bool $isDiscovered = false;
 
     protected ?string $subheading = 'Nomination Form';
 
@@ -95,28 +98,43 @@ class Nominate extends BasePage
                     ->submitAction(action: $this->getSubmitAction)
                     ->steps(steps: [
                         Wizard\Step::make(label: 'Nominee')
-                            ->columns()
                             ->description(description: $isSelfNomination ? 'You' : null)
                             ->schema(components: [
                                 NomineeForm::positionIdComponent()
-                                    ->hiddenLabel(condition: false)
-                                    ->columnSpanFull(),
+                                    ->hiddenLabel(condition: false),
 
                                 NomineeForm::electorIdComponent(),
 
-                                NomineeForm::membershipNumberComponent()
-                                    ->columnSpanFull(),
+                                NomineeForm::membershipNumberComponent(),
 
-                                NomineeForm::firstNameComponent()
-                                    ->readOnly(),
+                                Group::make()
+                                    ->columns(columns: 5)
+                                    ->schema(components: [
+                                        Group::make()
+                                            ->columns()
+                                            ->columnSpan(span: $isSelfNomination ? 4 : 'full')
+                                            ->schema(components: [
+                                                NomineeForm::firstNameComponent()
+                                                    ->readOnly(),
 
-                                NomineeForm::lastNameComponent()
-                                    ->readOnly(),
+                                                NomineeForm::lastNameComponent()
+                                                    ->readOnly(),
 
-                                NomineeForm::emailComponent()
-                                    ->readOnly(),
+                                                NomineeForm::emailComponent()
+                                                    ->readOnly(),
 
-                                NomineeForm::phoneComponent(),
+                                                NomineeForm::phoneComponent(),
+                                            ]),
+
+                                        NomineeForm::photoComponent()
+                                            ->visible(condition: $isSelfNomination),
+                                    ]),
+
+                                NomineeForm::bioComponent()
+                                    ->visible(condition: $isSelfNomination),
+
+                                NomineeForm::attachmentComponent()
+                                    ->visible(condition: $isSelfNomination),
                             ]),
 
                         Wizard\Step::make(label: Str::plural(value: 'Nominator', count: $nominatorThreshold))
@@ -124,7 +142,7 @@ class Nominate extends BasePage
                                 description: ($isSelfNomination ? 'Proposer' : 'You').
                                 (
                                 $seconderThreshold ?
-                                    (" and $seconderThreshold ".Str::plural(value: 'Seconder', count: $seconderThreshold)) :
+                                    (" and ".Str::plural(value: 'Seconder', count: $seconderThreshold)) :
                                     ''
                                 )
                             )
@@ -152,10 +170,10 @@ class Nominate extends BasePage
                                     ->minItems(count: $nominatorThreshold)
                                     ->mutateRelationshipDataBeforeCreateUsing(callback: function (array $data, self $livewire): array {
                                         if (($data['membership_number'] ?? null) == $livewire->getElector()->membership_number) {
-                                            $data['status'] = NominatorStatusEnum::ACCEPTED;
+                                            $data['status'] = NominatorStatus::ACCEPTED;
                                             $data['decided_at'] = Carbon::now();
                                         } else {
-                                            $data['status'] = NominatorStatusEnum::PENDING;
+                                            $data['status'] = NominatorStatus::PENDING;
                                         }
 
                                         return $data;

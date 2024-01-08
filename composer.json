@@ -11,12 +11,14 @@
         "php": "^8.2",
         "aws/aws-sdk-php": "^3.295",
         "filament/filament": "^3.1",
+        "filament/spatie-laravel-media-library-plugin": "^3.1",
         "guzzlehttp/guzzle": "^7.2",
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.8",
         "omar-haris/filament-timezone-field": "^1.0",
         "petercoles/multilingual-country-list": "^1.2",
+        "spatie/laravel-medialibrary": "^11.0.0",
         "ysfkaya/filament-phone-input": "^2.2"
     },
     "require-dev": {

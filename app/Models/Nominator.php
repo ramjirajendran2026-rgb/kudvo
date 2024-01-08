@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Enums\NominatorStatus;
+use App\Events\NominatorAccepted;
+use App\Events\NominatorDeclined;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -29,6 +31,10 @@ class Nominator extends Model
         'elector_id' => 'int',
     ];
 
+    protected $appends = [
+        'display_name',
+    ];
+
     protected function displayName(): Attribute
     {
         return Attribute::make(
@@ -49,16 +55,36 @@ class Nominator extends Model
 
     public function isAccepted(): bool
     {
-        return $this->status == NominatorStatusEnum::ACCEPTED;
+        return $this->status == NominatorStatus::ACCEPTED;
     }
 
     public function isPending(): bool
     {
-        return $this->status == NominatorStatusEnum::PENDING;
+        return $this->status == NominatorStatus::PENDING;
     }
 
     public function isDeclined(): bool
     {
-        return $this->status == NominatorStatusEnum::DECLINED;
+        return $this->status == NominatorStatus::DECLINED;
+    }
+
+    public function accept(): static
+    {
+        $this->status = NominatorStatus::ACCEPTED;
+        $this->decided_at = now();
+
+        NominatorAccepted::dispatchIf($this->save(), $this);
+
+        return $this;
+    }
+
+    public function decline(): static
+    {
+        $this->status = NominatorStatus::DECLINED;
+        $this->decided_at = now();
+
+        NominatorDeclined::dispatchIf($this->save(), $this);
+
+        return $this;
     }
 }

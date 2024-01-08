@@ -4,16 +4,30 @@ namespace App\Models;
 
 use App\Enums\NomineeScrutinyStatus;
 use App\Enums\NomineeStatus;
+use App\Events\NomineeAccepted;
+use App\Events\NomineeDeclined;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Nominee extends Model
+class Nominee extends Model implements HasMedia
 {
+    use InteractsWithMedia;
+    use Notifiable;
+
+    public const ATTACHMENTS_COLLECTION_NAME = 'attachments';
+
+    public const BIO_COLLECTION_NAME = 'bio';
+
+    public const PHOTO_COLLECTION_NAME = 'photo';
+
     protected $fillable = [
         'membership_number',
         'title',
@@ -48,6 +62,10 @@ class Nominee extends Model
     protected $attributes = [
         'status' => NomineeStatus::PENDING,
         'scrutiny_status' => NomineeScrutinyStatus::PENDING,
+    ];
+
+    protected $appends = [
+        'display_name',
     ];
 
     protected function displayName(): Attribute
@@ -91,5 +109,40 @@ class Nominee extends Model
     public function scrutiniser(): BelongsTo
     {
         return $this->belongsTo(related: User::class);
+    }
+
+    public function accept(): static
+    {
+        $this->status = NomineeStatus::ACCEPTED;
+        $this->decided_at = now();
+
+        NomineeAccepted::dispatchIf($this->save(), $this);
+
+        return $this;
+    }
+
+    public function decline(): static
+    {
+        $this->status = NomineeStatus::DECLINED;
+        $this->decided_at = now();
+
+        NomineeDeclined::dispatchIf($this->save(), $this);
+
+        return $this;
+    }
+
+    public function isPending(): bool
+    {
+        return $this->status == NomineeStatus::PENDING;
+    }
+
+    public function isAccepted(): bool
+    {
+        return $this->status == NomineeStatus::ACCEPTED;
+    }
+
+    public function isDeclined(): bool
+    {
+        return $this->status == NomineeStatus::DECLINED;
     }
 }

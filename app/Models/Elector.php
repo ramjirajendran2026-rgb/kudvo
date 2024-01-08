@@ -43,6 +43,10 @@ class Elector extends Model implements AuthenticatableContract, AuthorizableCont
         'event_id' => 'int',
     ];
 
+    protected $appends = [
+        'display_name',
+    ];
+
     protected function displayName(): Attribute
     {
         return Attribute::make(

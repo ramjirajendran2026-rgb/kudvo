@@ -6,20 +6,38 @@ use App\Filament\Nomination\Pages\Contracts\HasElector;
 use App\Filament\Nomination\Pages\Contracts\HasNomination;
 use App\Models\Elector;
 use App\Models\Nomination;
+use App\Models\Nominee;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TagsInput;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Validation\Rules\Exists;
 use Illuminate\Validation\Rules\Unique;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
 readonly class NomineeForm
 {
-    public static function electorIdComponent()
+    public static function attachmentComponent(): SpatieMediaLibraryFileUpload
+    {
+        return SpatieMediaLibraryFileUpload::make(name: 'attachments')
+            ->collection(collection: Nominee::ATTACHMENTS_COLLECTION_NAME)
+            ->maxFiles(count: 5)
+            ->maxSize(size: 1024 * 2)
+            ->multiple()
+            ->reorderable();
+    }
+
+    public static function bioComponent(): SpatieMediaLibraryFileUpload
+    {
+        return SpatieMediaLibraryFileUpload::make(name: 'bio')
+            ->collection(collection: Nominee::BIO_COLLECTION_NAME)
+            ->maxSize(size: 1024 * 2);
+    }
+
+    public static function electorIdComponent(): Hidden
     {
         return Hidden::make(name: 'elector_id')
             ->exists(
@@ -112,6 +130,16 @@ readonly class NomineeForm
             ->label(label: 'Phone number')
             ->useFullscreenPopup()
             ->validateFor();
+    }
+
+    public static function photoComponent(): SpatieMediaLibraryFileUpload
+    {
+        return SpatieMediaLibraryFileUpload::make(name: 'photo')
+            ->avatar()
+            ->circleCropper()
+            ->collection(collection: Nominee::PHOTO_COLLECTION_NAME)
+            ->imageEditor()
+            ->required();
     }
 
     public static function positionIdComponent(): Select

@@ -10,18 +10,18 @@
 
         > div {
             @apply flex;
-
-            .fi-header-heading {
-                @apply max-w-full;
-            }
         }
     }
 }
 
 .fi-header {
-    > div {
-        @apply sm:flex-1 text-center;
+    > div:first-child:last-child {
+        @apply sm:flex-grow text-center;
     }
+}
+
+.fi-header-heading, .fi-header-subheading {
+    @apply max-w-full;
 }
 
 .fi-footer {
