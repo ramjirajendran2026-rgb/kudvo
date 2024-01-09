@@ -20,7 +20,6 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 class Nominee extends Model implements HasMedia
 {
     use InteractsWithMedia;
-    use Notifiable;
 
     public const ATTACHMENTS_COLLECTION_NAME = 'attachments';
 

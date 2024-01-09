@@ -2,9 +2,7 @@
 
 namespace App\Providers;
 
-use App\Events\Nomination\Nominated;
 use App\Events\NomineeNominated;
-use App\Listeners\Nomination\SendNominatedNotifications;
 use App\Listeners\SendNomineeNominatedNotifications;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -20,9 +18,6 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         Registered::class => [
             SendEmailVerificationNotification::class,
-        ],
-        Nominated::class => [
-            SendNominatedNotifications::class,
         ],
         NomineeNominated::class => [
             SendNomineeNominatedNotifications::class,

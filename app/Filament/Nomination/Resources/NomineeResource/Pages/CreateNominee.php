@@ -218,10 +218,12 @@ class CreateNominee extends CreateRecord implements HasElector, HasNomination
 
     protected function afterCreate(): void
     {
-        NomineeNominated::dispatch($this->getRecord());
+        $nominee = $this->getRecord()->fresh();
 
-        if ($this->getRecord()->self_nomination) {
-            $this->getRecord()->accept();
+        NomineeNominated::dispatch($nominee);
+
+        if ($nominee->self_nomination) {
+            $nominee->accept();
         }
     }
 
