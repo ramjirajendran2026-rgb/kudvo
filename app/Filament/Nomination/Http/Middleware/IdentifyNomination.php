@@ -17,9 +17,11 @@ class IdentifyNomination
 
         abort_unless(boolean: $panel instanceof NominationPanel, code: 404);
 
-        $nomination = $panel->getNomination($request->route()->parameter(name: 'nomination'));
-
-        Kudvo::setNomination(nomination: $nomination);
+        Kudvo::setNomination(
+            nomination: $panel->getNomination(
+                key: $request->route()->parameter(name: 'nomination')
+            )
+        );
 
         return $next($request);
     }
