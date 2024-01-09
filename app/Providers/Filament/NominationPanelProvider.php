@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Facades\Kudvo;
+use App\Filament\Nomination\Http\Middleware\EnsureMfaCompleted;
 use App\Filament\Nomination\Http\Middleware\IdentifyNomination;
 use App\Filament\Nomination\Pages\Auth\Login;
 use App\Filament\Nomination\Pages\Dashboard;
@@ -10,6 +11,7 @@ use App\Filament\NominationPanel;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\MenuItem;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
@@ -49,15 +51,16 @@ class NominationPanelProvider extends PanelProvider
             ])
             ->authMiddleware(middleware: [
                 Authenticate::class,
+                EnsureMfaCompleted::class,
             ])
             ->login(action: Login::class)
-            ->databaseNotifications()
-            ->navigation(builder: false)
             ->brandName(name: fn (): string => Kudvo::getOrganisation()?->name)
             ->colors(colors: [
                 'primary' => Color::hex(color: '#00adb5'),
                 'warning' => Color::Yellow,
             ])
+            ->navigation(builder: false)
+            ->databaseNotifications(condition: false)
             ->maxContentWidth(maxContentWidth: MaxWidth::FiveExtraLarge)
             ->viteTheme(theme: 'resources/css/filament/nomination/theme.css')
             ->font(family: 'Poppins')

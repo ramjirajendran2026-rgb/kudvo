@@ -85,6 +85,7 @@ class CreateNominee extends CreateRecord implements HasElector, HasNomination
     public function getSteps(): array
     {
         $isSelfNomination = $this->getNomination()->self_nomination;
+        $preference = $this->getNomination()->preference;
         $nominatorThreshold = $this->getNomination()->nominator_threshold;
         $seconderThreshold = $nominatorThreshold - 1;
 
@@ -104,7 +105,7 @@ class CreateNominee extends CreateRecord implements HasElector, HasNomination
                         ->schema(components: [
                             Group::make()
                                 ->columns()
-                                ->columnSpan(span: $isSelfNomination ? 4 : 'full')
+                                ->columnSpan(span: $isSelfNomination && $preference->candidate_photo ? 4 : 'full')
                                 ->schema(components: [
                                     NomineeForm::firstNameComponent()
                                         ->readOnly(),
@@ -119,14 +120,17 @@ class CreateNominee extends CreateRecord implements HasElector, HasNomination
                                 ]),
 
                             NomineeForm::photoComponent()
-                                ->visible(condition: $isSelfNomination),
+                                ->required()
+                                ->visible(condition: $isSelfNomination && $preference->candidate_photo),
                         ]),
 
                     NomineeForm::bioComponent()
-                        ->visible(condition: $isSelfNomination),
+                        ->required()
+                        ->visible(condition: $isSelfNomination && $preference->candidate_bio),
 
                     NomineeForm::attachmentComponent()
-                        ->visible(condition: $isSelfNomination),
+                        ->required()
+                        ->visible(condition: $isSelfNomination && $preference->candidate_attachment),
                 ]),
 
             Step::make(label: Str::plural(value: 'Nominator', count: $nominatorThreshold))

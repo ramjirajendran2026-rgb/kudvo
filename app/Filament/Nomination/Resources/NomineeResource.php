@@ -6,6 +6,7 @@ use App\Enums\NomineeScrutinyStatus;
 use App\Facades\Kudvo;
 use App\Filament\Forms\NomineeForm;
 use App\Filament\Nomination\Pages\Contracts\HasElector;
+use App\Filament\Nomination\Pages\Contracts\HasNomination;
 use App\Filament\Nomination\Resources\NomineeResource\Pages;
 use App\Models\Nominator;
 use App\Models\Nominee;
@@ -32,9 +33,7 @@ class NomineeResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema(components: [
-
-            ]);
+            ->schema(components: []);
     }
 
     public static function table(Table $table): Table
@@ -121,14 +120,20 @@ class NomineeResource extends Resource
             ->modalHeading(heading: 'Confirmation')
             ->successNotificationTitle(title: 'Accepted')
             ->form(
-                form: fn (Nominee $nominee, HasElector $livewire): ?array => $nominee->elector
+                form: fn (Nominee $nominee, HasElector|HasNomination $livewire): ?array => $nominee->elector
                     ?->is($livewire->getElector()) ?
                     [
-                        NomineeForm::photoComponent(),
+                        NomineeForm::photoComponent()
+                            ->required()
+                            ->visible(condition: (bool) $livewire->getNomination()->preference->candidate_photo),
 
-                        NomineeForm::bioComponent(),
+                        NomineeForm::bioComponent()
+                            ->required()
+                            ->visible(condition: (bool) $livewire->getNomination()->preference->candidate_bio),
 
-                        NomineeForm::attachmentComponent(),
+                        NomineeForm::attachmentComponent()
+                            ->required()
+                            ->visible(condition: (bool) $livewire->getNomination()->preference->candidate_attachment),
                     ] :
                     null
             )

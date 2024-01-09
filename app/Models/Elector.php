@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Notifications\Notifiable;
@@ -58,6 +59,14 @@ class Elector extends Model implements AuthenticatableContract, AuthorizableCont
     public function event(): MorphTo
     {
         return $this->morphTo();
+    }
+
+    public function oneTimePasswords(): MorphMany
+    {
+        return $this->morphMany(
+            related: OneTimePassword::class,
+            name: 'relatable',
+        );
     }
 
     protected static function booted(): void

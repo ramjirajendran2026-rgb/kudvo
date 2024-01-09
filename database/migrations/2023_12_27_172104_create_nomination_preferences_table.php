@@ -17,6 +17,10 @@ return new class extends Migration
                 $table->boolean(column: 'mfa_mail')->default(value: false);
                 $table->boolean(column: 'mfa_sms')->default(value: false);
 
+                $table->boolean(column: 'candidate_photo')->default(value: false);
+                $table->boolean(column: 'candidate_bio')->default(value: false);
+                $table->boolean(column: 'candidate_attachment')->default(value: false);
+
                 $table->foreignIdFor(model: Nomination::class)
                     ->constrained()->cascadeOnUpdate()->cascadeOnDelete();
 

@@ -40,16 +40,17 @@ class OneTimePassword extends Model
         'relatable_id' => 'int',
     ];
 
-    protected function isExpired(): Attribute
-    {
-        return Attribute::make(
-            get: fn($value, array $attributes): bool => $this->expires_at->isPast() || $this->verified_at?->isPast(),
-        );
-    }
-
     public function relatable(): MorphTo
     {
         return $this->morphTo();
+    }
+
+    protected static function booted(): void
+    {
+        static::creating(callback: function (OneTimePassword $oneTimePassword) {
+            $oneTimePassword->code ??= rand(min: 100000, max: 999999);
+            $oneTimePassword->expires_at ??= now()->addMinutes(value: 15);
+        });
     }
 
     public function uniqueIds(): array
@@ -62,8 +63,22 @@ class OneTimePassword extends Model
         return $this->phone;
     }
 
-    public function send(): void
+    public function isExpired(): bool
     {
+        return $this->expires_at->isPast() || $this->verified_at?->isPast();
+    }
+
+    public function isVerified(): bool
+    {
+        return (bool) $this->verified_at?->isPast();
+    }
+
+    public function send(?Notification $notification = null): void
+    {
+        if (filled(value: $notification)) {
+            $this->notify(instance: $notification);
+        }
+
         $this->increment(
             column: 'total_sent',
             extra: ['sent_at' => $this->freshTimestamp()]

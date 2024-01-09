@@ -12,6 +12,7 @@ use Livewire\Attributes\Locked;
 
 trait InteractsWithNomination
 {
+    #[Locked]
     protected Nomination $nomination;
 
     #[Locked]
