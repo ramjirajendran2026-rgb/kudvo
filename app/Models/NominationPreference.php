@@ -23,4 +23,9 @@ class NominationPreference extends Model
     {
         return $this->belongsTo(related: Nomination::class);
     }
+
+    public function isMfaRequired(): bool
+    {
+        return $this->mfa_mail || $this->mfa_sms;
+    }
 }
