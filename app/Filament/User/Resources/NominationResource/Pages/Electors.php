@@ -4,17 +4,21 @@ namespace App\Filament\User\Resources\NominationResource\Pages;
 
 use App\Filament\Forms\ElectorForm;
 use App\Filament\Imports\ElectorImporter;
+use App\Filament\User\Resources\ElectorResource;
 use App\Models\Elector;
 use App\Models\Nomination;
+use Filament\Actions\Action;
+use Filament\Actions\CreateAction;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Form;
 use Filament\Resources\Concerns\InteractsWithRelationshipTable;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\MaxWidth;
-use Filament\Tables\Actions\CreateAction;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ImportAction;
+use Filament\Tables\Actions\Action as TableAction;
+use Filament\Tables\Actions\CreateAction as TableCreateAction;
+use Filament\Tables\Actions\DeleteAction as TableDeleteAction;
+use Filament\Tables\Actions\EditAction as TableEditAction;
+use Filament\Tables\Actions\ImportAction as TableImportAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
@@ -41,55 +45,16 @@ class Electors extends NominationPage implements HasTable
 
     public function form(Form $form): Form
     {
-        return $form
-            ->schema(components: [
-                ElectorForm::membershipNumberComponent(),
-
-                Group::make()
-                    ->columns()
-                    ->schema(components: [
-                        ElectorForm::firstNameComponent(),
-
-                        ElectorForm::lastNameComponent(),
-                    ]),
-
-                ElectorForm::emailComponent(),
-
-                ElectorForm::phoneComponent(),
-
-                ElectorForm::groupsComponent(),
-            ]);
+        return ElectorResource::form(form: $form);
     }
 
     public function table(Table $table): Table
     {
-        return $table
+        return ElectorResource::table(table: $table)
             ->actions(actions: [
                 $this->getEditAction(),
 
                 $this->getDeleteAction(),
-            ])
-            ->columns(components: [
-                TextColumn::make(name: 'membership_number')
-                    ->badge()
-                    ->label(label: 'Membership number')
-                    ->searchable(),
-
-                TextColumn::make(name: 'full_name')
-                    ->label(label: 'Full name')
-                    ->wrap(),
-
-                TextColumn::make(name: 'phone')
-                    ->label(label: 'Phone number'),
-
-                TextColumn::make(name: 'email')
-                    ->label(label: 'Email address')
-                    ->wrap(),
-
-                TextColumn::make(name: 'groups')
-                    ->badge()
-                    ->separator()
-                    ->wrap(),
             ])
             ->emptyStateActions(actions: [
                 $this->getCreateAction(),
@@ -100,6 +65,40 @@ class Electors extends NominationPage implements HasTable
                 $this->getCreateAction(),
             ])
             ->recordTitleAttribute(attribute: 'membership_number');
+    }
+
+    protected function getImportAction(): TableImportAction
+    {
+        return ElectorResource::getTableImportAction()
+            ->options(options: fn (self $livewire): array => [
+                'event_type' => Nomination::class,
+                'event_id' => $livewire->getNomination()->getKey(),
+            ])
+            ->visible(condition: $this->canImport());
+    }
+
+    protected function getCreateAction(): TableCreateAction
+    {
+        return ElectorResource::getTableCreateAction()
+            ->model(model: ElectorResource::getModel())
+            ->modelLabel(label: ElectorResource::getModelLabel())
+            ->form(form: fn (self $livewire, Form $form): Form => $livewire->form($form))
+            ->visible(condition: $this->canCreate());
+    }
+
+    protected function getEditAction(): TableEditAction
+    {
+        return ElectorResource::getTableEditAction()
+            ->form(static fn (self $livewire, Form $form): Form => $livewire->form($form))
+            ->iconButton()
+            ->visible(condition: $this->canEdit());
+    }
+
+    protected function getDeleteAction(): TableDeleteAction
+    {
+        return TableDeleteAction::make()
+            ->iconButton()
+            ->visible(condition:$this->canDelete());
     }
 
     public static function canAccessPage(Nomination $nomination): bool
@@ -126,50 +125,5 @@ class Electors extends NominationPage implements HasTable
     protected function canDelete(): bool
     {
         return static::can(action: 'deleteAnyElector', nomination: $this->getNomination());
-    }
-
-    protected function getCreateAction(): CreateAction
-    {
-        return CreateAction::make()
-            ->createAnother(condition: false)
-            ->form(static fn (self $livewire, Form $form): Form => $livewire->form($form))
-            ->icon(icon: 'heroicon-m-plus')
-            ->modalCancelAction(action: false)
-            ->modalFooterActionsAlignment(alignment: Alignment::Center)
-            ->modalWidth(width: MaxWidth::Medium)
-            ->model(model: Elector::class)
-            ->visible(condition: $this->canCreate());
-    }
-
-    protected function getImportAction(): ImportAction
-    {
-        return ImportAction::make()
-            ->color(color: 'gray')
-            ->icon(icon: 'heroicon-s-arrow-up-tray')
-            ->importer(importer: ElectorImporter::class)
-            ->modalFooterActionsAlignment(alignment: Alignment::Center)
-            ->options(options: fn (self $livewire): array => [
-                'event_type' => Nomination::class,
-                'event_id' => $livewire->getNomination()->getKey(),
-            ])
-            ->visible(condition: $this->canImport());
-    }
-
-    protected function getEditAction(): EditAction
-    {
-        return EditAction::make()
-            ->form(static fn (self $livewire, Form $form): Form => $livewire->form($form))
-            ->iconButton()
-            ->modalCancelAction(action: false)
-            ->modalFooterActionsAlignment(alignment: Alignment::Center)
-            ->modalWidth(width: MaxWidth::Medium)
-            ->visible(condition: $this->canEdit());
-    }
-
-    protected function getDeleteAction(): DeleteAction
-    {
-        return DeleteAction::make()
-            ->iconButton()
-            ->visible(condition:$this->canDelete());
     }
 }
