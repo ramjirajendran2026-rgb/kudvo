@@ -54,17 +54,17 @@ class NominationPanelProvider extends PanelProvider
                 EnsureMfaCompleted::class,
             ])
             ->login(action: Login::class)
-            ->brandName(name: fn (): string => Kudvo::getOrganisation()?->name)
             ->colors(colors: [
                 'primary' => Color::hex(color: '#00adb5'),
-                'warning' => Color::Yellow,
             ])
+            ->font(family: 'Poppins')
+            ->viteTheme(theme: 'resources/css/filament/nomination/theme.css')
             ->navigation(builder: false)
             ->databaseNotifications(condition: false)
-            ->maxContentWidth(maxContentWidth: MaxWidth::FiveExtraLarge)
-            ->viteTheme(theme: 'resources/css/filament/nomination/theme.css')
-            ->font(family: 'Poppins')
             ->breadcrumbs(condition: false)
+            ->maxContentWidth(maxContentWidth: MaxWidth::FiveExtraLarge)
+            ->brandName(name: fn (): string => Kudvo::getOrganisation()?->name)
+            ->brandLogo(logo: fn (): string => Kudvo::getOrganisation()?->getFilamentAvatarUrl())
             ->renderHook(
                 name: 'panels::footer',
                 hook: fn () => Blade::render('<x-filament.nomination.footer />')

@@ -25,6 +25,7 @@ use Filament\Forms\Get;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
@@ -94,7 +95,16 @@ class CreateNominee extends CreateRecord implements HasElector, HasNomination
                 ->description(description: $isSelfNomination ? 'You' : null)
                 ->schema(components: [
                     NomineeForm::positionIdComponent()
-                        ->hiddenLabel(condition: false),
+                        ->hiddenLabel(condition: false)
+                        ->relationship(
+                            name: 'position',
+                            titleAttribute: 'name',
+                            modifyQueryUsing: fn (Builder $query, self $livewire): Builder => $query
+                                ->whereMorphedTo(
+                                    relation: 'event',
+                                    model: $livewire->getNomination(),
+                                )
+                        ),
 
                     NomineeForm::electorIdComponent(),
 

@@ -4,6 +4,7 @@ namespace App\Filament\User\Resources\NominationResource\Pages;
 
 use App\Enums\NominationStatus;
 use App\Filament\User\Resources\NominationResource;
+use App\Filament\User\Resources\NominationResource\Pages\Concerns\InteractsWithNomination;
 use App\Models\Nomination;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
@@ -19,34 +20,17 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\HtmlString;
 use Livewire\Attributes\Computed;
 
-/**
- * @property Nomination $nomination
- */
 abstract class NominationPage extends Page
 {
-    use InteractsWithRecord;
+    use InteractsWithNomination;
 
     protected static string $resource = NominationResource::class;
 
     public function mount(int|string $record): void
     {
-        $this->record = $this->resolveRecord(key: $record);
+        $this->nomination = $this->resolveNomination(key: $record);
 
         $this->authorizeAccess();
-    }
-
-    public function unsetProps(string|array $properties): void
-    {
-        foreach (Arr::wrap($properties) as $property) {
-            unset($this->{$property});
-        }
-    }
-
-    #[Computed]
-    public function nomination(): Nomination
-    {
-        return Nomination::withCount(relations: ['positions', 'electors'])
-            ->findOrFail($this->getRecord()->getKey());
     }
 
     public static function can(string $action, Nomination $nomination): bool
@@ -59,7 +43,7 @@ abstract class NominationPage extends Page
         return ! static::can(action: $action, nomination: $nomination);
     }
 
-    public static function canAccess(Nomination $nomination): bool
+    public static function canAccessPage(Nomination $nomination): bool
     {
         return NominationResource::canView(record: $nomination);
     }
@@ -68,7 +52,7 @@ abstract class NominationPage extends Page
     {
         static::authorizeResourceAccess();
 
-        if (! static::canAccess(nomination: $this->nomination)) {
+        if (! static::canAccessPage(nomination: $this->nomination)) {
             $this->redirect(Dashboard::getUrl(parameters: [$this->nomination]));
         }
     }
@@ -86,43 +70,6 @@ abstract class NominationPage extends Page
     protected function canEditNomination(): bool
     {
         return static::can(action: 'update', nomination: $this->nomination);
-    }
-
-    public function getBreadcrumbs(): array
-    {
-        return [];
-    }
-
-    public function getHeading(): string|Htmlable
-    {
-        return $this->getRecordTitle();
-    }
-
-    public function getSubheading(): string|Htmlable|null
-    {
-        if (! $this->nomination->isTimingConfigured()) {
-            return null;
-        }
-
-        return new HtmlString(
-            html: <<<HTML
-<b>{$this->nomination->starts_at_local->format(format: 'M d, Y h:i A (T)')}</b> to
-<b>{$this->nomination->ends_at_local->format(format: 'M d, Y h:i A (T)')}</b>
-HTML
-        );
-    }
-
-    public function getTitle(): string|Htmlable
-    {
-        return static::getNavigationLabel();
-    }
-
-    public function getWidgetData(): array
-    {
-        return [
-            'record' => $this->getRecord(),
-            'nomination' => $this->nomination,
-        ];
     }
 
     protected function getHeaderActions(): array

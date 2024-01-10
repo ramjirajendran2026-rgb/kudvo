@@ -31,10 +31,10 @@ readonly class NominationForm
     {
         return TextInput::make(name: 'nominator_threshold')
             ->default(state: 2)
-            ->helperText(text: 'First nominator is Proposer, remaining are Seconder.')
-            ->label(label: 'No. of nominators')
+            ->dehydrateStateUsing(callback: fn (int $state): int => $state + 1)
+            ->label(label: 'No. of seconders')
             ->maxValue(value: 20)
-            ->minValue(value: fn (Get $get) => $get(path: 'self_nomination') ? 0 : 1)
+            ->minValue(value: 0)
             ->numeric()
             ->required();
     }

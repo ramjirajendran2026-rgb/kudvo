@@ -34,7 +34,7 @@ class Positions extends NominationPage implements HasTable
 
     public function getOwnerRecord(): Nomination
     {
-        return $this->nomination;
+        return $this->getNomination();
     }
 
     public function form(Form $form): Form
@@ -55,11 +55,12 @@ class Positions extends NominationPage implements HasTable
                 PositionForm::groupsComponent()
                     ->options(
                         options: fn (self $livewire): array => Arr::mapWithKeys(
-                            array: $livewire->nomination->getElectorGroups(),
+                            array: $livewire->getNomination()->getElectorGroups(),
                             callback: fn (string $item): array => [$item => $item]
                         )
                     )
-                    ->visible(condition: filled(value: $this->nomination->getElectorGroups())),
+                    ->required()
+                    ->visible(condition: filled(value: $this->getNomination()->getElectorGroups())),
             ]);
     }
 
@@ -74,7 +75,6 @@ class Positions extends NominationPage implements HasTable
             ->columns(components: [
                 TextColumn::make(name: 'name')
                     ->label(label: 'Position name')
-                    ->searchable()
                     ->wrap(),
 
                 TextColumn::make(name: 'quota')
@@ -91,40 +91,43 @@ class Positions extends NominationPage implements HasTable
                     ->alignCenter()
                     ->badge()
                     ->label(label: 'Eligible groups')
-                    ->visible(condition: filled(value: $this->nomination->getElectorGroups()))
+                    ->visible(condition: filled(value: $this->getNomination()->getElectorGroups()))
                     ->wrap(),
             ])
             ->defaultSort(column: 'sort')
+            ->emptyStateActions(actions: [
+                $this->getCreateAction(),
+            ])
             ->headerActions(actions: [
                 $this->getCreateAction(),
             ])
             ->reorderable(column: 'sort');
     }
 
-    public static function canAccess(Nomination $nomination): bool
+    public static function canAccessPage(Nomination $nomination): bool
     {
-        return parent::canAccess(nomination: $nomination) &&
+        return parent::canAccessPage(nomination: $nomination) &&
             static::can(action: 'viewAnyPosition', nomination: $nomination);
     }
 
     protected function canCreate(): bool
     {
-        return static::can(action: 'createPosition', nomination: $this->nomination);
+        return static::can(action: 'createPosition', nomination: $this->getNomination());
     }
 
     protected function canReorder(): bool
     {
-        return static::can(action: 'reorderPosition', nomination: $this->nomination);
+        return static::can(action: 'reorderPosition', nomination: $this->getNomination());
     }
 
     protected function canEdit(): bool
     {
-        return static::can(action: 'updateAnyPosition', nomination: $this->nomination);
+        return static::can(action: 'updateAnyPosition', nomination: $this->getNomination());
     }
 
     protected function canDelete(): bool
     {
-        return static::can(action: 'deleteAnyPosition', nomination: $this->nomination);
+        return static::can(action: 'deleteAnyPosition', nomination: $this->getNomination());
     }
 
     protected function getCreateAction(): CreateAction
@@ -148,6 +151,11 @@ class Positions extends NominationPage implements HasTable
             ->modalCancelAction(action: false)
             ->modalFooterActionsAlignment(alignment: Alignment::Center)
             ->modalWidth(width: MaxWidth::Medium)
+            ->mutateFormDataUsing(callback: function (array $data): array {
+                $data['threshold'] = $data['abstain'] ? $data['threshold'] : $data['quota'];
+
+                return $data;
+            })
             ->visible(condition: $this->canEdit());
     }
 

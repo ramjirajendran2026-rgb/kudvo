@@ -2,15 +2,21 @@
 
 namespace App\Models;
 
+use Filament\Models\Contracts\HasAvatar;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Organisation extends Model
+class Organisation extends Model implements HasAvatar, HasMedia
 {
     use HasFactory;
+    use InteractsWithMedia;
+
+    public const MEDIA_COLLECTION_LOGO = 'logo';
 
     protected $fillable = [
         'code',
@@ -49,5 +55,10 @@ class Organisation extends Model
     {
         return config(key: 'app.organisation.code.prefix').
             Str::upper(value: Str::random(length: config(key: 'app.organisation.code.length')));
+    }
+
+    public function getFilamentAvatarUrl(): ?string
+    {
+        return $this->getFirstMediaUrl(collectionName: static::MEDIA_COLLECTION_LOGO);
     }
 }

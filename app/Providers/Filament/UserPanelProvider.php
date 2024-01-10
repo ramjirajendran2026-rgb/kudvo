@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\User\Pages\Organisation\Register as RegisterOrganisation;
 use App\Models\Organisation;
+use Exception;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -20,15 +21,15 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class UserPanelProvider extends PanelProvider
 {
+    /**
+     * @throws Exception
+     */
     public function panel(Panel $panel): Panel
     {
         return $panel
             ->default()
             ->id(id: 'user')
             ->path(path: 'app')
-            ->colors([
-                'primary' => Color::Amber,
-            ])
             ->discoverResources(in: app_path('Filament/User/Resources'), for: 'App\\Filament\\User\\Resources')
             ->discoverPages(in: app_path('Filament/User/Pages'), for: 'App\\Filament\\User\\Pages')
             ->discoverWidgets(in: app_path('Filament/User/Widgets'), for: 'App\\Filament\\User\\Widgets')
@@ -53,7 +54,13 @@ class UserPanelProvider extends PanelProvider
             ->profile()
             ->tenant(model: Organisation::class)
             ->tenantRegistration(page: RegisterOrganisation::class)
+            ->colors(colors: [
+                'primary' => Color::hex(color: '#00adb5'),
+            ])
+            ->font(family: 'Poppins')
             ->databaseNotifications()
-            ->topNavigation();
+            ->globalSearch(provider: false)
+            ->topNavigation()
+            ->spa();
     }
 }

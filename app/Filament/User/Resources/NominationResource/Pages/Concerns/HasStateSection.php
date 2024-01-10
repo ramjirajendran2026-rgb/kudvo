@@ -6,14 +6,14 @@ use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use InvalidArgumentException;
 
-trait InteractsWithState
+trait HasStateSection
 {
     /**
      * @var array<Action | ActionGroup>
      */
     protected array $cachedStateActions = [];
 
-    public function bootedInteractsWithState(): void
+    public function bootedHasStateSection(): void
     {
         $this->cacheStateActions();
     }

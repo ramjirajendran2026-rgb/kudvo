@@ -47,7 +47,7 @@ class NomineeResource extends Resource
             ])
             ->headerActions(actions: [
                 static::getCreateAction()
-                    ->visible(condition: fn (Table $table, Tables\Contracts\HasTable $livewire): bool => $livewire->getAllTableRecordsCount()),
+                    ->visible(condition: fn (Tables\Contracts\HasTable $livewire): bool => $livewire->getAllTableRecordsCount()),
             ])
             ->heading(heading: static::getPluralModelLabel())
             ->paginated(condition: false)
@@ -83,7 +83,6 @@ class NomineeResource extends Resource
                 Tables\Columns\TextColumn::make(name: 'scrutiny_status')
                     ->badge()
                     ->color(color: fn (NomineeScrutinyStatus $state): ?string => $state->getColor())
-                    ->description(description: fn (Nominee $nominee): ?string => $nominee->scrutinised_at?->diffForHumans())
                     ->icon(icon: fn (NomineeScrutinyStatus $state): ?string => $state->getIcon())
                     ->label(label: 'Scrutiny'),
             ]);

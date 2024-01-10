@@ -45,13 +45,19 @@ class NominationPolicy
     public function setTiming(User $user, Nomination $nomination): bool
     {
         return $nomination->is_draft &&
-            blank(value: $nomination->starts_at);
+            blank(value: $nomination->starts_at) &&
+            ($nomination->electors_count ?? $nomination->loadCount(relations: ['electors'])->electors_count) > 0 &&
+            ($nomination->positions_count ?? $nomination->loadCount(relations: ['positions'])->positions_count) > 0 &&
+            filled(value: $nomination->preference);
     }
 
     public function updateTiming(User $user, Nomination $nomination): bool
     {
-        return $nomination->is_draft &&
-            filled(value: $nomination->starts_at);
+        return ($nomination->is_draft || $nomination->is_published) &&
+            filled(value: $nomination->starts_at) &&
+            ($nomination->electors_count ?? $nomination->loadCount(relations: ['electors'])->electors_count) > 0 &&
+            ($nomination->positions_count ?? $nomination->loadCount(relations: ['positions'])->positions_count) > 0 &&
+            filled(value: $nomination->preference);
     }
 
     public function publish(User $user, Nomination $nomination): bool
@@ -140,5 +146,15 @@ class NominationPolicy
     public function deleteAnyPosition(User $user, Nomination $nomination): bool
     {
         return $nomination->is_draft;
+    }
+
+    public function approveAnyNominee(User $user, Nomination $nomination): bool
+    {
+        return $nomination->is_closed;
+    }
+
+    public function rejectAnyNominee(User $user, Nomination $nomination): bool
+    {
+        return $nomination->is_closed;
     }
 }

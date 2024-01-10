@@ -5,7 +5,7 @@ namespace App\Events;
 use App\Models\Nominee;
 use Illuminate\Foundation\Events\Dispatchable;
 
-class NomineeAccepted
+class NomineeApproved
 {
     use Dispatchable;
 

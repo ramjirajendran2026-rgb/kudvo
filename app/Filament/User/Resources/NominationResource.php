@@ -3,7 +3,12 @@
 namespace App\Filament\User\Resources;
 
 use App\Filament\Forms\NominationForm;
-use App\Filament\User\Resources\NominationResource\Pages;
+use App\Filament\User\Resources\NominationResource\Pages\Dashboard;
+use App\Filament\User\Resources\NominationResource\Pages\Electors;
+use App\Filament\User\Resources\NominationResource\Pages\ManageNominations;
+use App\Filament\User\Resources\NominationResource\Pages\Nominees;
+use App\Filament\User\Resources\NominationResource\Pages\Positions;
+use App\Filament\User\Resources\NominationResource\Pages\Preference;
 use App\Filament\User\Resources\NominationResource\Widgets\NominationStatsOverview;
 use App\Models\Nomination;
 use Filament\Facades\Filament;
@@ -11,6 +16,7 @@ use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
+use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\IconPosition;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -36,7 +42,8 @@ class NominationResource extends Resource
 
                 NominationForm::selfNominationComponent(),
 
-                NominationForm::nominatorThresholdComponent(),
+                NominationForm::nominatorThresholdComponent()
+                    ->inlineLabel(),
             ]);
     }
 
@@ -89,23 +96,23 @@ class NominationResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => \App\Filament\User\Resources\NominationResource\Pages\ManageNominations::route(path: '/'),
-            'dashboard' => \App\Filament\User\Resources\NominationResource\Pages\Dashboard::route(path: '{record}'),
-            'preference' => \App\Filament\User\Resources\NominationResource\Pages\Preference::route(path: '{record}/preference'),
-            'electors' => \App\Filament\User\Resources\NominationResource\Pages\Electors::route(path: '{record}/electors'),
-            'positions' => \App\Filament\User\Resources\NominationResource\Pages\Positions::route(path: '{record}/positions'),
-            'nominees' => \App\Filament\User\Resources\NominationResource\Pages\Nominees::route(path: '{record}/nominees'),
+            'index' => ManageNominations::route(path: '/'),
+            'dashboard' => Dashboard::route(path: '{record}'),
+            'preference' => Preference::route(path: '{record}/preference'),
+            'electors' => Electors::route(path: '{record}/electors'),
+            'positions' => Positions::route(path: '{record}/positions'),
+            'nominees' => Nominees::route(path: '{record}/nominees'),
         ];
     }
 
     public static function getRecordSubNavigation(Page $page): array
     {
-        return $page->generateNavigationItems(pages: [
-            \App\Filament\User\Resources\NominationResource\Pages\Dashboard::class,
-            \App\Filament\User\Resources\NominationResource\Pages\Preference::class,
-            \App\Filament\User\Resources\NominationResource\Pages\Electors::class,
-            \App\Filament\User\Resources\NominationResource\Pages\Positions::class,
-            \App\Filament\User\Resources\NominationResource\Pages\Nominees::class,
+        return $page->generateNavigationItems(components: [
+            Dashboard::class,
+            Preference::class,
+            Electors::class,
+            Positions::class,
+            Nominees::class,
         ]);
     }
 
@@ -120,6 +127,7 @@ class NominationResource extends Resource
     {
         return Tables\Actions\CreateAction::make()
             ->createAnother(condition: false)
+            ->modalFooterActionsAlignment(alignment: Alignment::End)
             ->successRedirectUrl(url: fn (Nomination $record) => static::getUrl(name: 'dashboard', parameters: [$record]));
     }
 }

@@ -51,6 +51,11 @@ class ElectorImporter extends Importer
             ImportColumn::make(name: 'groups')
                 ->array()
                 ->example(example: 'Life Member')
+                ->fillRecordUsing(
+                    callback: fn (?array $state): ?string => filled(value: $state) ?
+                        implode(separator: ',', array: $state) :
+                        null
+                )
                 ->nestedRecursiveRules(rules: ['max:50'])
                 ->rules(rules: ['array']),
         ];
@@ -61,6 +66,7 @@ class ElectorImporter extends Importer
         return [
             CountryPicker::make(name: 'phone_country')
                 ->default(state: fn () => Filament::getTenant()?->country)
+                ->inlineLabel()
                 ->label(label: 'Default phone country'),
         ];
     }

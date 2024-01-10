@@ -19,13 +19,35 @@ class NominationStatsOverview extends BaseWidget
     {
         return [
             Stat::make(label: 'Electors', value: $this->nomination->electors()->count())
+                ->icon(icon: Electors::getActiveNavigationIcon())
                 ->url(url: Electors::getUrl(parameters: [$this->nomination])),
 
             Stat::make(label: 'Positions', value: $this->nomination->positions()->count())
+                ->icon(icon: Positions::getActiveNavigationIcon())
                 ->url(url: Positions::getUrl(parameters: [$this->nomination])),
 
-            Stat::make(label: 'Nominees', value: 0)
-                ->url(url: Nominees::getUrl(parameters: [$this->nomination])),
+            ...$this->nomination->is_draft ?
+                [] :
+                [
+                    Stat::make(label: 'Nominees', value: $this->nomination->nominees()->count())
+                        ->icon(icon: Nominees::getActiveNavigationIcon())
+                        ->url(url: Nominees::getUrl(parameters: [$this->nomination])),
+                ],
         ];
+    }
+
+    protected function getColumns(): int
+    {
+        $count = count($this->getCachedStats());
+
+        if ($count < 3) {
+            return $count;
+        }
+
+        if (($count % 3) !== 1) {
+            return 3;
+        }
+
+        return 4;
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -21,10 +22,23 @@ class Position extends Model
     ];
 
     protected $casts = [
+        'quota' => 'int',
+        'threshold' => 'int',
         'elector_groups' => 'array',
         'sort' => 'int',
         'event_id' => 'int',
     ];
+
+    protected $appends = [
+        'abstain',
+    ];
+
+    protected function abstain(): Attribute
+    {
+        return Attribute::make(
+            get: fn($value, array $attributes) => filled(value: $this->threshold) && $this->threshold != $this->quota,
+        );
+    }
 
     public function event(): MorphTo
     {
@@ -34,9 +48,9 @@ class Position extends Model
     protected static function booted(): void
     {
         static::saving(callback: function (Position $position) {
-            if (blank($position->threshold) || $position->threshold > $position->quota) {
-                $position->threshold = $position->quota;
-            }
+            $position->threshold = blank($position->threshold) || $position->threshold > $position->quota ?
+                $position->quota
+                : $position->threshold;
         });
     }
 

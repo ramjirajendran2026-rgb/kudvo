@@ -5,7 +5,9 @@ namespace App\Models;
 use App\Enums\NomineeScrutinyStatus;
 use App\Enums\NomineeStatus;
 use App\Events\NomineeAccepted;
+use App\Events\NomineeApproved;
 use App\Events\NomineeDeclined;
+use App\Events\NomineeRejected;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
@@ -21,11 +23,11 @@ class Nominee extends Model implements HasMedia
 {
     use InteractsWithMedia;
 
-    public const ATTACHMENTS_COLLECTION_NAME = 'attachments';
+    public const MEDIA_COLLECTION_ATTACHMENTS = 'attachments';
 
-    public const BIO_COLLECTION_NAME = 'bio';
+    public const MEDIA_COLLECTION_BIO = 'bio';
 
-    public const PHOTO_COLLECTION_NAME = 'photo';
+    public const MEDIA_COLLECTION_PHOTO = 'photo';
 
     protected $fillable = [
         'membership_number',
@@ -130,6 +132,26 @@ class Nominee extends Model implements HasMedia
         return $this;
     }
 
+    public function approve(): static
+    {
+        $this->scrutiny_status = NomineeScrutinyStatus::APPROVED;
+        $this->scrutinised_at = now();
+
+        NomineeApproved::dispatchIf($this->save(), $this);
+
+        return $this;
+    }
+
+    public function reject(): static
+    {
+        $this->scrutiny_status = NomineeScrutinyStatus::REJECTED;
+        $this->scrutinised_at = now();
+
+        NomineeRejected::dispatchIf($this->save(), $this);
+
+        return $this;
+    }
+
     public function isPending(): bool
     {
         return $this->status == NomineeStatus::PENDING;
@@ -143,5 +165,20 @@ class Nominee extends Model implements HasMedia
     public function isDeclined(): bool
     {
         return $this->status == NomineeStatus::DECLINED;
+    }
+
+    public function isScrutinyPending(): bool
+    {
+        return $this->scrutiny_status == NomineeScrutinyStatus::PENDING;
+    }
+
+    public function isScrutinyApproved(): bool
+    {
+        return $this->scrutiny_status == NomineeScrutinyStatus::APPROVED;
+    }
+
+    public function isScrutinyRejected(): bool
+    {
+        return $this->scrutiny_status == NomineeScrutinyStatus::REJECTED;
     }
 }

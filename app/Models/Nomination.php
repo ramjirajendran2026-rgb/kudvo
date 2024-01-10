@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Str;
@@ -134,6 +135,15 @@ class Nomination extends Model
         return $this->morphMany(
             related: Position::class,
             name: 'event',
+        );
+    }
+
+    public function nominees(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            related: Nominee::class,
+            through: Position::class,
+            firstKey: 'event_id',
         );
     }
 

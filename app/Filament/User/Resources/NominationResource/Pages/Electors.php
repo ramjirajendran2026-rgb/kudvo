@@ -36,7 +36,7 @@ class Electors extends NominationPage implements HasTable
 
     public function getOwnerRecord(): Nomination
     {
-        return $this->nomination;
+        return $this->getNomination();
     }
 
     public function form(Form $form): Form
@@ -102,30 +102,30 @@ class Electors extends NominationPage implements HasTable
             ->recordTitleAttribute(attribute: 'membership_number');
     }
 
-    public static function canAccess(Nomination $nomination): bool
+    public static function canAccessPage(Nomination $nomination): bool
     {
-        return parent::canAccess($nomination) &&
+        return parent::canAccessPage($nomination) &&
             static::can(action: 'viewAnyElector', nomination: $nomination);
     }
 
     protected function canCreate(): bool
     {
-        return static::can(action: 'createElector', nomination: $this->nomination);
+        return static::can(action: 'createElector', nomination: $this->getNomination());
     }
 
     protected function canImport(): bool
     {
-        return static::can(action: 'importElector', nomination: $this->nomination);
+        return static::can(action: 'importElector', nomination: $this->getNomination());
     }
 
     protected function canEdit(): bool
     {
-        return static::can(action: 'updateAnyElector', nomination: $this->nomination);
+        return static::can(action: 'updateAnyElector', nomination: $this->getNomination());
     }
 
     protected function canDelete(): bool
     {
-        return static::can(action: 'deleteAnyElector', nomination: $this->nomination);
+        return static::can(action: 'deleteAnyElector', nomination: $this->getNomination());
     }
 
     protected function getCreateAction(): CreateAction
@@ -150,7 +150,7 @@ class Electors extends NominationPage implements HasTable
             ->modalFooterActionsAlignment(alignment: Alignment::Center)
             ->options(options: fn (self $livewire): array => [
                 'event_type' => Nomination::class,
-                'event_id' => $livewire->nomination->getKey(),
+                'event_id' => $livewire->getNomination()->getKey(),
             ])
             ->visible(condition: $this->canImport());
     }

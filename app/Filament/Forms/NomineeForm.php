@@ -14,6 +14,7 @@ use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Validation\Rules\Exists;
 use Illuminate\Validation\Rules\Unique;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
@@ -23,7 +24,7 @@ readonly class NomineeForm
     public static function attachmentComponent(): SpatieMediaLibraryFileUpload
     {
         return SpatieMediaLibraryFileUpload::make(name: 'attachments')
-            ->collection(collection: Nominee::ATTACHMENTS_COLLECTION_NAME)
+            ->collection(collection: Nominee::MEDIA_COLLECTION_ATTACHMENTS)
             ->maxFiles(count: 5)
             ->maxSize(size: 1024 * 2)
             ->multiple()
@@ -33,7 +34,7 @@ readonly class NomineeForm
     public static function bioComponent(): SpatieMediaLibraryFileUpload
     {
         return SpatieMediaLibraryFileUpload::make(name: 'bio')
-            ->collection(collection: Nominee::BIO_COLLECTION_NAME)
+            ->collection(collection: Nominee::MEDIA_COLLECTION_BIO)
             ->maxSize(size: 1024 * 2);
     }
 
@@ -137,7 +138,7 @@ readonly class NomineeForm
         return SpatieMediaLibraryFileUpload::make(name: 'photo')
             ->avatar()
             ->circleCropper()
-            ->collection(collection: Nominee::PHOTO_COLLECTION_NAME)
+            ->collection(collection: Nominee::MEDIA_COLLECTION_PHOTO)
             ->imageEditor()
             ->required();
     }
@@ -148,7 +149,6 @@ readonly class NomineeForm
             ->hiddenLabel()
             ->native(condition: false)
             ->placeholder(placeholder: 'Choose a position')
-            ->relationship(name: 'position', titleAttribute: 'name')
             ->required();
     }
 

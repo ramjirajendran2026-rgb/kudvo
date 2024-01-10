@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Facades\Kudvo;
 use App\Filament\NominationPanel;
 use Filament\Models\Contracts\FilamentUser;
+use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
 use Filament\Panel;
 use Illuminate\Auth\Authenticatable;
@@ -18,14 +19,25 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Elector extends Model implements AuthenticatableContract, AuthorizableContract, FilamentUser, HasName
+class Elector extends Model implements
+    AuthenticatableContract,
+    AuthorizableContract,
+    FilamentUser,
+    HasAvatar,
+    HasMedia,
+    HasName
 {
     use Authenticatable;
     use Authorizable;
     use HasFactory;
     use HasUuids;
+    use InteractsWithMedia;
     use Notifiable;
+
+    public const MEDIA_COLLECTION_AVATAR = 'avatar';
 
     protected $fillable = [
         'membership_number',
@@ -104,5 +116,10 @@ class Elector extends Model implements AuthenticatableContract, AuthorizableCont
     public function getFilamentName(): string
     {
         return $this->full_name ?: $this->membership_number;
+    }
+
+    public function getFilamentAvatarUrl(): ?string
+    {
+        return $this->getFirstMediaUrl(collectionName: static::MEDIA_COLLECTION_AVATAR);
     }
 }
