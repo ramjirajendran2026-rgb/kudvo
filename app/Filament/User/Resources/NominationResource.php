@@ -2,6 +2,7 @@
 
 namespace App\Filament\User\Resources;
 
+use App\Enums\NominationStatus;
 use App\Filament\User\Resources\NominationResource\Pages\Dashboard;
 use App\Filament\User\Resources\NominationResource\Pages\Electors;
 use App\Filament\User\Resources\NominationResource\Pages\ManageNominations;
@@ -11,6 +12,8 @@ use App\Filament\User\Resources\NominationResource\Pages\Preference;
 use App\Filament\User\Resources\NominationResource\Widgets\NominationStatsOverview;
 use App\Forms\NominationForm;
 use App\Models\Nomination;
+use Filament\Actions\Action;
+use Filament\Actions\EditAction;
 use Filament\Facades\Filament;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
@@ -18,7 +21,9 @@ use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\IconPosition;
+use Filament\Support\Enums\MaxWidth;
 use Filament\Tables;
+use Filament\Tables\Actions\CreateAction as TableCreateAction;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;
@@ -65,11 +70,11 @@ class NominationResource extends Resource
     {
         return $table
             ->emptyStateActions(actions: [
-                static::getCreateAction(),
+                static::getTableCreateAction(),
             ])
             ->emptyStateIcon(icon: static::getNavigationIcon())
             ->headerActions(actions: [
-                static::getCreateAction(),
+                static::getTableCreateAction(),
             ])
             ->heading(heading: Str::title(value: static::getPluralModelLabel()))
             ->recordUrl(url: fn (Nomination $record) => static::getUrl(name: 'dashboard', parameters: [$record]))
@@ -123,11 +128,57 @@ class NominationResource extends Resource
         ];
     }
 
-    public static function getCreateAction(): Tables\Actions\CreateAction
+    public static function getTableCreateAction(): TableCreateAction
     {
-        return Tables\Actions\CreateAction::make()
+        return TableCreateAction::make()
             ->createAnother(condition: false)
             ->modalFooterActionsAlignment(alignment: Alignment::End)
             ->successRedirectUrl(url: fn (Nomination $record) => static::getUrl(name: 'dashboard', parameters: [$record]));
+    }
+
+    public static function getEditAction(): EditAction
+    {
+        return EditAction::make()
+            ->form(form: fn (Form $form): Form => static::form(form: $form))
+            ->icon(icon: 'heroicon-m-pencil-square');
+    }
+
+    public static function getEditTimingAction(): EditAction
+    {
+        return EditAction::make(name: 'editTiming')
+            ->form(form: fn (Form $form): Form => static::timingForm(form: $form))
+            ->groupedIcon(icon: 'heroicon-m-clock')
+            ->icon(icon: 'heroicon-m-clock')
+            ->label(label: 'Update Timing')
+            ->modalCancelAction(action: false)
+            ->modalFooterActionsAlignment(alignment: Alignment::Center)
+            ->modalWidth(width: MaxWidth::Medium)
+            ->mutateRecordDataUsing(callback: function (array $data): array {
+                $data['timezone'] ??= Filament::getTenant()?->timezone;
+                $data['starts_at'] ??= now(tz: $data['timezone'] ?? null)->addDays()->startOfDay()->addHours(value: 8);
+                $data['ends_at'] ??= now(tz: $data['timezone'] ?? null)->addDays()->startOfDay()->addHours(value: 18);
+
+                return $data;
+            });
+    }
+
+    public static function getCancelAction(): Action
+    {
+        return Action::make(name: 'cancel')
+            ->action(
+                action: function (Nomination $nomination, Action $action) {
+                    $nomination->cancel();
+
+                    $action->success();
+                }
+            )
+            ->requiresConfirmation()
+            ->color(color: NominationStatus::CANCELLED->getColor())
+            ->icon(icon: NominationStatus::CANCELLED->getIcon())
+            ->label(label: 'Cancel')
+            ->modalCancelActionLabel(label: 'No')
+            ->modalIcon(icon: NominationStatus::CANCELLED->getIcon())
+            ->modalSubmitActionLabel(label: 'Yes')
+            ->successNotificationTitle(title: 'Cancelled');
     }
 }

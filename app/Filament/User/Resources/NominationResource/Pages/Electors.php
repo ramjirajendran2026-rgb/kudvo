@@ -17,7 +17,7 @@ class Electors extends NominationPage implements HasTable
 {
     use InteractsWithRelationshipTable;
 
-    protected static string $view = 'filament.resources.nomination-resource.pages.electors';
+    protected static string $view = 'filament.user.resources.nomination-resource.pages.electors';
 
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
 

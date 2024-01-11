@@ -2,6 +2,10 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\User\Pages\Auth\EditProfile;
+use App\Filament\User\Pages\Auth\Register;
+use App\Filament\User\Pages\Organisation\EditOrganisationProfile;
+use App\Filament\User\Pages\Organisation\EditProfile as OrganisationEditProfile;
 use App\Filament\User\Pages\Organisation\Register as RegisterOrganisation;
 use App\Models\Organisation;
 use Exception;
@@ -30,10 +34,10 @@ class UserPanelProvider extends PanelProvider
             ->default()
             ->id(id: 'user')
             ->path(path: 'app')
-            ->discoverResources(in: app_path('Filament/User/Resources'), for: 'App\\Filament\\User\\Resources')
-            ->discoverPages(in: app_path('Filament/User/Pages'), for: 'App\\Filament\\User\\Pages')
-            ->discoverWidgets(in: app_path('Filament/User/Widgets'), for: 'App\\Filament\\User\\Widgets')
-            ->middleware([
+            ->discoverResources(in: app_path(path: 'Filament/User/Resources'), for: 'App\\Filament\\User\\Resources')
+            ->discoverPages(in: app_path(path: 'Filament/User/Pages'), for: 'App\\Filament\\User\\Pages')
+            ->discoverWidgets(in: app_path(path: 'Filament/User/Widgets'), for: 'App\\Filament\\User\\Widgets')
+            ->middleware(middleware: [
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
                 StartSession::class,
@@ -44,16 +48,17 @@ class UserPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
             ])
-            ->authMiddleware([
+            ->authMiddleware(middleware: [
                 Authenticate::class,
             ])
-            ->registration()
+            ->registration(action: Register::class)
             ->login()
             ->passwordReset()
             ->emailVerification()
-            ->profile()
+            ->profile(page: EditProfile::class)
             ->tenant(model: Organisation::class)
             ->tenantRegistration(page: RegisterOrganisation::class)
+            ->tenantProfile(page: EditOrganisationProfile::class)
             ->colors(colors: [
                 'primary' => Color::hex(color: '#00adb5'),
             ])

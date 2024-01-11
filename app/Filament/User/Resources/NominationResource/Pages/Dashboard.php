@@ -3,6 +3,7 @@
 namespace App\Filament\User\Resources\NominationResource\Pages;
 
 use App\Enums\NominationStatus;
+use App\Filament\User\Resources\NominationResource;
 use App\Filament\User\Resources\NominationResource\Pages\Concerns\HasStateSection;
 use App\Filament\User\Resources\NominationResource\Widgets\NominationStatsOverview;
 use Filament\Actions\Action;
@@ -11,7 +12,7 @@ class Dashboard extends NominationPage
 {
     use HasStateSection;
 
-    protected static string $view = 'filament.resources.nomination-resource.pages.dashboard';
+    protected static string $view = 'filament.user.resources.nomination-resource.pages.dashboard';
 
     protected static ?string $navigationIcon = 'heroicon-o-home';
 
@@ -108,7 +109,7 @@ class Dashboard extends NominationPage
 
             $this->getPositionsPageAction(),
 
-            $this->getTimingAction()
+            NominationResource::getEditTimingAction()
                 ->name(name: 'set_timing')
                 ->icon(icon: '')
                 ->label(label: 'Set time')

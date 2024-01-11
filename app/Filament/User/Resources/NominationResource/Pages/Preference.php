@@ -18,7 +18,7 @@ class Preference extends NominationPage
 {
     use InteractsWithFormActions;
 
-    protected static string $view = 'filament.resources.nomination-resource.pages.preference';
+    protected static string $view = 'filament.user.resources.nomination-resource.pages.preference';
 
     protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
 

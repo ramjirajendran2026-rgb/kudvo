@@ -149,67 +149,20 @@ HTML
     protected function getHeaderActions(): array
     {
         return [
-            $this->getNominationEditAction()
-                ->iconButton(),
+            NominationResource::getEditAction()
+                ->iconButton()
+                ->visible(condition: $this->canEditNomination()),
 
             ActionGroup::make(actions: [
-                $this->getTimingAction()
+                NominationResource::getEditTimingAction()
+                    ->modalHeading(heading: fn (self $livewire) => $livewire->getRecordTitle())
                     ->visible(condition: $this->canEditTiming()),
 
-                $this->getNominationCancelAction(),
+                NominationResource::getCancelAction()
+                    ->visible(condition: $this->canCancelNomination()),
 
             ])->dropdownPlacement(placement: 'bottom-end'),
         ];
-    }
-
-    protected function getNominationCancelAction(): Action
-    {
-        return Action::make(name: 'cancel')
-            ->action(
-                action: static function (Nomination $record, Action $action) {
-                    $record->cancel();
-
-                    $action->success();
-                }
-            )
-            ->requiresConfirmation()
-            ->color(color: NominationStatus::CANCELLED->getColor())
-            ->icon(icon: NominationStatus::CANCELLED->getIcon())
-            ->label(label: 'Cancel')
-            ->modalCancelActionLabel(label: 'No')
-            ->modalIcon(icon: NominationStatus::CANCELLED->getIcon())
-            ->modalSubmitActionLabel(label: 'Yes')
-            ->successNotificationTitle(title: 'Cancelled')
-            ->visible(condition: $this->canCancelNomination());
-    }
-
-    protected function getNominationEditAction(): EditAction
-    {
-        return EditAction::make()
-            ->form(form: fn (Form $form): Form => NominationResource::form(form: $form))
-            ->icon(icon: 'heroicon-m-pencil-square')
-            ->modalHeading(heading: fn (self $livewire) => 'Edit '.$livewire->getRecordTitle())
-            ->visible(condition: $this->canEditNomination());
-    }
-
-    protected function getTimingAction(): EditAction
-    {
-        return EditAction::make(name: 'edit_timing')
-            ->form(form: fn (Form $form): Form => NominationResource::timingForm(form: $form))
-            ->groupedIcon(icon: 'heroicon-m-clock')
-            ->icon(icon: 'heroicon-m-clock')
-            ->label(label: 'Update Timing')
-            ->modalCancelAction(action: false)
-            ->modalFooterActionsAlignment(alignment: Alignment::Center)
-            ->modalHeading(heading: fn (self $livewire) => $livewire->getRecordTitle())
-            ->modalWidth(width: MaxWidth::Medium)
-            ->mutateRecordDataUsing(callback: function (array $data): array {
-                $data['timezone'] ??= Filament::getTenant()?->timezone;
-                $data['starts_at'] ??= now(tz: $data['timezone'] ?? null)->addDays()->startOfDay()->addHours(value: 8);
-                $data['ends_at'] ??= now(tz: $data['timezone'] ?? null)->addDays()->startOfDay()->addHours(value: 18);
-
-                return $data;
-            });
     }
 
     public static function can(string $action, Nomination $nomination): bool

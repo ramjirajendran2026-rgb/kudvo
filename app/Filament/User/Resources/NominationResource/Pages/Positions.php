@@ -16,7 +16,7 @@ class Positions extends NominationPage implements HasTable
 {
     use InteractsWithRelationshipTable;
 
-    protected static string $view = 'filament.resources.nomination-resource.pages.positions';
+    protected static string $view = 'filament.user.resources.nomination-resource.pages.positions';
 
     protected static ?string $navigationIcon = 'heroicon-o-briefcase';
 
