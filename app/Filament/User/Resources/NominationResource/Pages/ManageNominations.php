@@ -15,10 +15,6 @@ class ManageNominations extends ManageRecords
 
     public function getTabs(): array
     {
-        return array_merge(
-            ['All' => Tab::make(label: 'All')],
-
-            NominationStatus::getTabs(),
-        );
+        return NominationStatus::getTabs();
     }
 }

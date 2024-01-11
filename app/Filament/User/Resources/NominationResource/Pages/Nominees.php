@@ -3,6 +3,7 @@
 namespace App\Filament\User\Resources\NominationResource\Pages;
 
 use App\Enums\NomineeScrutinyStatus;
+use App\Filament\User\Resources\NomineeResource;
 use App\Models\Nomination;
 use App\Models\Nominator;
 use App\Models\Nominee;
@@ -10,7 +11,7 @@ use Exception;
 use Filament\Resources\Concerns\InteractsWithRelationshipTable;
 use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\FontWeight;
-use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\Action as TableAction;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextColumn\TextColumnSize;
@@ -22,7 +23,6 @@ use Illuminate\Database\Eloquent\Builder;
 
 class Nominees extends NominationPage implements HasTable
 {
-    use Concerns\InteractsWithNomination;
     use InteractsWithRelationshipTable;
 
     protected static string $view = 'filament.resources.nomination-resource.pages.nominees';
@@ -58,101 +58,43 @@ class Nominees extends NominationPage implements HasTable
      */
     public function table(Table $table): Table
     {
-        return $table
+        return NomineeResource::table(table: $table)
             ->actions(actions: [
                 ActionGroup::make(actions: [
                     $this->getApproveAction(),
 
                     $this->getRejectAction(),
                 ]),
-            ])
-            ->columns([
-                TextColumn::make(name: '#')
-                    ->rowIndex(),
-
-                TextColumn::make(name: 'position.name')
-                    ->color(color: 'primary')
-                    ->size(size: TextColumnSize::Large)
-                    ->weight(weight: FontWeight::Bold),
-
-                TextColumn::make(name: 'membership_number')
-                    ->description(description: fn (Nominee $nominee): ?string => $nominee->full_name)
-                    ->icon(icon: fn (Nominee $nominee): ?string => $nominee->status->getIcon())
-                    ->iconColor(color: fn (Nominee $nominee): ?string => $nominee->status->getColor())
-                    ->label(label: 'Nominee'),
-
-                TextColumn::make(name: 'proposer')
-                    ->description(description: fn (?Nominator $state): ?string => $state?->full_name)
-                    ->formatStateUsing(callback: fn (?Nominator $state): string => $state?->membership_number)
-                    ->icon(icon: fn (?Nominator $state): ?string => $state?->status->getIcon())
-                    ->iconColor(color: fn (?Nominator $state): ?string => $state?->status->getColor()),
-
-                TextColumn::make(name: 'seconders')
-                    ->formatStateUsing(callback: fn (Nominator $state): string => $state->display_name)
-                    ->icon(icon: fn (Nominator $state): ?string => $state->status->getIcon())
-                    ->iconColor(color: fn (Nominator $state): ?string => $state->status->getColor())
-                    ->listWithLineBreaks()
-                    ->size(size: TextColumnSize::Small)
-                    ->wrap(),
-
-                TextColumn::make(name: 'scrutiny_status')
-                    ->badge()
-                    ->color(color: fn (NomineeScrutinyStatus $state): ?string => $state->getColor())
-                    ->icon(icon: fn (NomineeScrutinyStatus $state): ?string => $state->getIcon())
-                    ->label(label: 'Scrutiny'),
-            ])
-            ->filters(
-                filters: [
-                    SelectFilter::make(name: 'position')
-                        ->preload()
-                        ->relationship(
-                            name: 'position',
-                            titleAttribute: 'name',
-                            modifyQueryUsing: fn (Builder $query, self $livewire): Builder => $query
-                                ->whereMorphedTo(
-                                    relation: 'event',
-                                    model: $livewire->getNomination(),
-                                )
-                        )
-                        ->searchable(),
-
-                    SelectFilter::make(name: 'scrutiny_status')
-                        ->native(condition: false)
-                        ->options(options: NomineeScrutinyStatus::options()),
-                ],
-            )
-            ->filtersFormColumns(columns: 2)
-            ->hiddenFilterIndicators();
+            ]);
     }
 
-    protected function getApproveAction()
+    protected function getApproveAction(): TableAction
     {
-        return Action::make(name: 'approve')
-            ->action(action: function (Nominee $nominee, Action $action): void {
-                $nominee->approve();
-
-                $action->success();
-            })
-            ->requiresConfirmation()
-            ->color(color: NomineeScrutinyStatus::APPROVED->getColor())
-            ->icon(icon: NomineeScrutinyStatus::APPROVED->getIcon())
-            ->successNotificationTitle(title: 'Approved')
+        return NomineeResource::getApproveAction()
             ->visible(condition: fn (self $livewire, Nominee $nominee): bool => $livewire->canApprove(nominee: $nominee));
     }
 
-    protected function getRejectAction()
+    protected function getRejectAction(): TableAction
     {
-        return Action::make(name: 'reject')
-            ->action(action: function (Nominee $nominee, Action $action): void {
-                $nominee->reject();
-
-                $action->success();
-            })
-            ->requiresConfirmation()
-            ->color(color: NomineeScrutinyStatus::REJECTED->getColor())
-            ->icon(icon: NomineeScrutinyStatus::REJECTED->getIcon())
-            ->successNotificationTitle(title: 'Rejected')
+        return NomineeResource::getRejectAction()
             ->visible(condition: fn (self $livewire, Nominee $nominee): bool => $livewire->canReject(nominee: $nominee));
+    }
+
+    public static function shouldRegisterNavigation(array $parameters = []): bool
+    {
+        return static::canAccess($parameters);
+    }
+
+    public static function canAccess(array $parameters = []): bool
+    {
+        return filled(value: $nomination = ($parameters['record'] ?? null)) &&
+            static::canAccessPage(nomination: $nomination);
+    }
+
+    public static function canAccessPage(Nomination $nomination): bool
+    {
+        return parent::canAccessPage(nomination: $nomination) &&
+            static::can(action: 'viewAnyNominee', nomination: $nomination);
     }
 
     protected function canApprove(?Nominee $nominee = null): bool

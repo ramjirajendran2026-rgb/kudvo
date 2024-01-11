@@ -35,17 +35,6 @@ class Preference extends NominationPage
         $this->form->fill($this->getNomination()->attributesToArray());
     }
 
-    public static function canAccessPage(Nomination $nomination): bool
-    {
-        return parent::canAccessPage($nomination) &&
-            static::can(action: 'viewPreference', nomination: $nomination);
-    }
-
-    protected function canSave(): bool
-    {
-        return static::can(action: 'savePreference', nomination: $this->getNomination());
-    }
-
     public function form(Form $form): Form
     {
         return $form
@@ -82,15 +71,6 @@ class Preference extends NominationPage
         ];
     }
 
-    public function save(): void
-    {
-        abort_unless(boolean: $this->canSave(), code: 403);
-
-        $this->form->getState();
-
-        $this->redirect(url: Dashboard::getUrl(parameters: [$this->getNomination()]));
-    }
-
     public function getFormActions(): array
     {
         return [
@@ -105,5 +85,25 @@ class Preference extends NominationPage
             ->label(label: 'Save Preference')
             ->submit(form: 'save')
             ->visible(condition: $this->canSave());
+    }
+
+    public static function canAccessPage(Nomination $nomination): bool
+    {
+        return parent::canAccessPage($nomination) &&
+            static::can(action: 'viewPreference', nomination: $nomination);
+    }
+
+    protected function canSave(): bool
+    {
+        return static::can(action: 'savePreference', nomination: $this->getNomination());
+    }
+
+    public function save(): void
+    {
+        abort_unless(boolean: $this->canSave(), code: 403);
+
+        $this->form->getState();
+
+        $this->redirect(url: Dashboard::getUrl(parameters: [$this->getNomination()]));
     }
 }

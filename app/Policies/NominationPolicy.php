@@ -148,6 +148,11 @@ class NominationPolicy
         return $nomination->is_draft;
     }
 
+    public function viewAnyNominee(User $user, Nomination $nomination): bool
+    {
+        return ! $nomination->is_draft;
+    }
+
     public function approveAnyNominee(User $user, Nomination $nomination): bool
     {
         return $nomination->is_closed;

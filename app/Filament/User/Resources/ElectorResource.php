@@ -11,6 +11,7 @@ use Filament\Resources\Resource;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Tables\Actions\CreateAction as TableCreateAction;
+use Filament\Tables\Actions\DeleteAction as TableDeleteAction;
 use Filament\Tables\Actions\EditAction as TableEditAction;
 use Filament\Tables\Actions\ImportAction as TableImportAction;
 use Filament\Tables\Columns\TextColumn;
@@ -71,12 +72,12 @@ class ElectorResource extends Resource
                     ->separator()
                     ->wrap(),
             ])
-            ->recordTitleAttribute(attribute: static::getRecordTitleAttribute())
             ->headerActions(actions: [
                 static::getTableImportAction(),
 
                 static::getTableCreateAction(),
-            ]);
+            ])
+            ->recordTitleAttribute(attribute: static::getRecordTitleAttribute());
     }
 
     public static function getTableImportAction(): TableImportAction
@@ -92,18 +93,28 @@ class ElectorResource extends Resource
     {
         return TableCreateAction::make()
             ->createAnother(condition: false)
+            ->form(form: fn (Form $form): Form => static::form($form))
             ->icon(icon: 'heroicon-m-plus')
+            ->model(model: static::getModel())
             ->modalCancelAction(action: false)
             ->modalFooterActionsAlignment(alignment: Alignment::Center)
-            ->modalWidth(width: MaxWidth::Medium)
-            ->model(model: static::getModel());
+            ->modelLabel(label: static::getModelLabel())
+            ->modalWidth(width: MaxWidth::Medium);
     }
 
     public static function getTableEditAction(): TableEditAction
     {
         return TableEditAction::make()
+            ->form(form: fn (Form $form): Form => static::form($form))
+            ->iconButton()
             ->modalCancelAction(action: false)
             ->modalFooterActionsAlignment(alignment: Alignment::Center)
             ->modalWidth(width: MaxWidth::Medium);
+    }
+
+    public static function getTableDeleteAction(): TableDeleteAction
+    {
+        return TableDeleteAction::make()
+            ->iconButton();
     }
 }

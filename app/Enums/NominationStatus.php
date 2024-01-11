@@ -36,10 +36,14 @@ enum NominationStatus: string
 
     public static function getTabs(): array
     {
-        return Arr::mapWithKeys(
-            array: self::cases(),
-            callback: fn(self $case) => $case->getTab()
-        );
+        return [
+            'All' => Tab::make(label: 'All'),
+
+            ...Arr::mapWithKeys(
+                array: self::cases(),
+                callback: fn(self $case) => $case->getTab()
+            )
+        ];
     }
 
     public function getTab(): array

@@ -3,6 +3,7 @@
 namespace App\Filament\User\Resources\NominationResource\Pages;
 
 use App\Filament\Forms\PositionForm;
+use App\Filament\User\Resources\PositionResource;
 use App\Models\Nomination;
 use App\Models\Position;
 use Filament\Forms\Form;
@@ -10,7 +11,7 @@ use Filament\Resources\Concerns\InteractsWithRelationshipTable;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Tables\Actions\CreateAction;
-use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\DeleteAction as TableDeleteAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
@@ -39,69 +40,41 @@ class Positions extends NominationPage implements HasTable
 
     public function form(Form $form): Form
     {
-        return $form
-            ->schema(components: [
-                PositionForm::nameComponent(),
-
-                PositionForm::quotaComponent()
-                    ->inlineLabel(),
-
-                PositionForm::abstainComponent()
-                    ->live(),
-
-                PositionForm::thresholdComponent()
-                    ->inlineLabel(),
-
-                PositionForm::groupsComponent()
-                    ->options(
-                        options: fn (self $livewire): array => Arr::mapWithKeys(
-                            array: $livewire->getNomination()->getElectorGroups(),
-                            callback: fn (string $item): array => [$item => $item]
-                        )
-                    )
-                    ->required()
-                    ->visible(condition: filled(value: $this->getNomination()->getElectorGroups())),
-            ]);
+        return PositionResource::form(form: $form);
     }
 
     public function table(Table $table): Table
     {
-        return $table
+        return PositionResource::table(table: $table)
             ->actions(actions: [
                 $this->getEditAction(),
 
                 $this->getDeleteAction(),
             ])
-            ->columns(components: [
-                TextColumn::make(name: 'name')
-                    ->label(label: 'Position name')
-                    ->wrap(),
-
-                TextColumn::make(name: 'quota')
-                    ->alignCenter()
-                    ->label(label: 'Available posts')
-                    ->numeric(),
-
-                TextColumn::make(name: 'threshold')
-                    ->alignCenter()
-                    ->label(label: 'Min selection')
-                    ->numeric(),
-
-                TextColumn::make(name: 'elector_groups')
-                    ->alignCenter()
-                    ->badge()
-                    ->label(label: 'Eligible groups')
-                    ->visible(condition: filled(value: $this->getNomination()->getElectorGroups()))
-                    ->wrap(),
-            ])
-            ->defaultSort(column: 'sort')
             ->emptyStateActions(actions: [
                 $this->getCreateAction(),
             ])
             ->headerActions(actions: [
                 $this->getCreateAction(),
-            ])
-            ->reorderable(column: 'sort');
+            ]);
+    }
+
+    protected function getCreateAction(): CreateAction
+    {
+        return PositionResource::getTableCreateAction()
+            ->visible(condition: $this->canCreate());
+    }
+
+    protected function getEditAction(): EditAction
+    {
+        return PositionResource::getTableEditAction()
+            ->visible(condition: $this->canEdit());
+    }
+
+    protected function getDeleteAction(): TableDeleteAction
+    {
+        return PositionResource::getTableDeleteAction()
+            ->visible(condition: $this->canDelete());
     }
 
     public static function canAccessPage(Nomination $nomination): bool
@@ -128,41 +101,5 @@ class Positions extends NominationPage implements HasTable
     protected function canDelete(): bool
     {
         return static::can(action: 'deleteAnyPosition', nomination: $this->getNomination());
-    }
-
-    protected function getCreateAction(): CreateAction
-    {
-        return CreateAction::make()
-            ->createAnother(condition: false)
-            ->form(static fn (self $livewire, Form $form): Form => $livewire->form($form))
-            ->icon(icon: 'heroicon-m-plus')
-            ->modalCancelAction(action: false)
-            ->modalFooterActionsAlignment(alignment: Alignment::Center)
-            ->modalWidth(width: MaxWidth::Medium)
-            ->model(model: Position::class)
-            ->visible(condition: $this->canCreate());
-    }
-
-    protected function getEditAction(): EditAction
-    {
-        return EditAction::make()
-            ->form(static fn (self $livewire, Form $form): Form => $livewire->form($form))
-            ->iconButton()
-            ->modalCancelAction(action: false)
-            ->modalFooterActionsAlignment(alignment: Alignment::Center)
-            ->modalWidth(width: MaxWidth::Medium)
-            ->mutateFormDataUsing(callback: function (array $data): array {
-                $data['threshold'] = $data['abstain'] ? $data['threshold'] : $data['quota'];
-
-                return $data;
-            })
-            ->visible(condition: $this->canEdit());
-    }
-
-    protected function getDeleteAction(): DeleteAction
-    {
-        return DeleteAction::make()
-            ->iconButton()
-            ->visible(condition: $this->canDelete());
     }
 }

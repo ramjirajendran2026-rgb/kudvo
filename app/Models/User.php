@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
+use Filament\Models\Contracts\HasName;
 use Filament\Models\Contracts\HasTenants;
 use Filament\Panel;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -17,7 +18,7 @@ use Laravel\Sanctum\HasApiTokens;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
-class User extends Authenticatable implements FilamentUser, HasAvatar, HasMedia, HasTenants, MustVerifyEmail
+class User extends Authenticatable implements FilamentUser, HasAvatar, HasMedia, HasName, HasTenants, MustVerifyEmail
 {
     use HasApiTokens;
     use HasFactory;
@@ -81,5 +82,10 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasMedia,
     public function getFilamentAvatarUrl(): ?string
     {
         return $this->getFirstMediaUrl(collectionName: static::MEDIA_COLLECTION_AVATAR);
+    }
+
+    public function getFilamentName(): string
+    {
+        return $this->name;
     }
 }
