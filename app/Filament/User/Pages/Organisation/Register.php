@@ -3,7 +3,7 @@
 namespace App\Filament\User\Pages\Organisation;
 
 use App\Enums\OrganisationUserRole;
-use App\Filament\Forms\OrganisationForm;
+use App\Forms\OrganisationForm;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;

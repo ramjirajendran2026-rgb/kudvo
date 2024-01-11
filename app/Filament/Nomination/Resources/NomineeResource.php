@@ -4,22 +4,19 @@ namespace App\Filament\Nomination\Resources;
 
 use App\Enums\NomineeScrutinyStatus;
 use App\Facades\Kudvo;
-use App\Filament\Forms\NomineeForm;
 use App\Filament\Nomination\Pages\Contracts\HasElector;
 use App\Filament\Nomination\Pages\Contracts\HasNomination;
 use App\Filament\Nomination\Resources\NomineeResource\Pages;
+use App\Forms\NomineeForm;
 use App\Models\Nominator;
 use App\Models\Nominee;
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\FontWeight;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn\TextColumnSize;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\HtmlString;
 
 class NomineeResource extends Resource

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Forms;
+namespace App\Forms;
 
 use App\Forms\Components\CountryPicker;
 use App\Forms\Components\TimezonePicker;

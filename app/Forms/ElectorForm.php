@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Forms;
+namespace App\Forms;
 
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;

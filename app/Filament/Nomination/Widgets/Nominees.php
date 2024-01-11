@@ -3,20 +3,18 @@
 namespace App\Filament\Nomination\Widgets;
 
 use App\Enums\NomineeScrutinyStatus;
-use App\Filament\Forms\NomineeForm;
+use App\Forms\NomineeForm;
 use App\Models\Elector;
 use App\Models\Nominator;
 use App\Models\Nominee;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Checkbox;
 use Filament\Support\Enums\FontWeight;
-use Filament\Support\Enums\IconPosition;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn\TextColumnSize;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Database\Eloquent\Builder;
-use stdClass;
 
 class Nominees extends BaseWidget
 {

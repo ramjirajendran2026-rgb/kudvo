@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Filament\Forms;
+namespace App\Forms;
 
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Get;

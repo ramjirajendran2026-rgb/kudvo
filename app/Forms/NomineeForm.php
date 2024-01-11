@@ -1,25 +1,42 @@
 <?php
 
-namespace App\Filament\Forms;
+namespace App\Forms;
 
 use App\Filament\Nomination\Pages\Contracts\HasElector;
 use App\Filament\Nomination\Pages\Contracts\HasNomination;
 use App\Models\Elector;
 use App\Models\Nomination;
-use Filament\Forms\Components\Component;
+use App\Models\Nominee;
 use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\TagsInput;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
-use Illuminate\Support\Arr;
 use Illuminate\Validation\Rules\Exists;
 use Illuminate\Validation\Rules\Unique;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
-readonly class NominatorForm
+readonly class NomineeForm
 {
-    public static function electorIdComponent()
+    public static function attachmentComponent(): SpatieMediaLibraryFileUpload
+    {
+        return SpatieMediaLibraryFileUpload::make(name: 'attachments')
+            ->collection(collection: Nominee::MEDIA_COLLECTION_ATTACHMENTS)
+            ->maxFiles(count: 5)
+            ->maxSize(size: 1024 * 2)
+            ->multiple()
+            ->reorderable();
+    }
+
+    public static function bioComponent(): SpatieMediaLibraryFileUpload
+    {
+        return SpatieMediaLibraryFileUpload::make(name: 'bio')
+            ->collection(collection: Nominee::MEDIA_COLLECTION_BIO)
+            ->maxSize(size: 1024 * 2);
+    }
+
+    public static function electorIdComponent(): Hidden
     {
         return Hidden::make(name: 'elector_id')
             ->exists(
@@ -28,6 +45,14 @@ readonly class NominatorForm
                 modifyRuleUsing: fn (Exists $rule, HasNomination $livewire) => $rule
                     ->where(column: 'event_type', value: Nomination::class)
                     ->where(column: 'event_id', value: $livewire->getNomination()->getKey())
+            )
+            ->in(
+                values: fn (HasElector $livewire): string => $livewire->getElector()->getKey(),
+                condition: fn (HasNomination $livewire): bool => $livewire->getNomination()->self_nomination,
+            )
+            ->notIn(
+                values: fn (HasElector $livewire): string => $livewire->getElector()->getKey(),
+                condition: fn (HasNomination $livewire): bool => ! $livewire->getNomination()->self_nomination,
             );
     }
 
@@ -67,7 +92,6 @@ readonly class NominatorForm
                 $set(path: 'email', state: $elector?->email);
                 $set(path: 'phone', state: $elector?->phone);
             })
-            ->distinct()
             ->exists(
                 table: 'electors',
                 column: 'membership_number',
@@ -77,20 +101,24 @@ readonly class NominatorForm
             )
             ->in(
                 values: fn (HasElector $livewire): string => $livewire->getElector()->membership_number,
-                condition: fn (TextInput $component, HasNomination $livewire): bool => ! $livewire->getNomination()->self_nomination &&
-                    Arr::last(explode('.', $component->getStatePath()), fn($item) => $item != $component->getStatePath(isAbsolute: false)) == 0,
+                condition: fn (HasNomination $livewire): bool => $livewire->getNomination()->self_nomination,
             )
             ->live(onBlur: true)
             ->label(label: 'Membership number')
             ->maxLength(length: 50)
-            ->notIn(values: fn (Get $get): string => $get(path: '../../membership_number'))
-            ->readOnly(
-                condition: fn (TextInput $component, HasNomination $livewire): bool => ! $livewire->getNomination()->self_nomination &&
-                    Arr::last(explode('.', $component->getStatePath()), fn($item) => $item != $component->getStatePath(isAbsolute: false)) == 0
+            ->notIn(
+                values: fn (HasElector $livewire): string => $livewire->getElector()->membership_number,
+                condition: fn (HasNomination $livewire): bool => ! $livewire->getNomination()->self_nomination,
             )
+            ->readOnly(condition: fn (HasNomination $livewire): bool => $livewire->getNomination()->self_nomination)
             ->required()
+            ->unique(
+                modifyRuleUsing: fn (Unique $rule, Get $get) => $rule
+                    ->where(column: 'position_id', value: $get(path: 'position_id'))
+            )
             ->validationMessages(messages: [
-                'not_in' => 'Nominee cannot be a nominator'
+                'not_in' => 'Self nomination is not allowed',
+                'unique' => 'Already applied for the same position',
             ]);
     }
 
@@ -101,6 +129,25 @@ readonly class NominatorForm
             ->label(label: 'Phone number')
             ->useFullscreenPopup()
             ->validateFor();
+    }
+
+    public static function photoComponent(): SpatieMediaLibraryFileUpload
+    {
+        return SpatieMediaLibraryFileUpload::make(name: 'photo')
+            ->avatar()
+            ->circleCropper()
+            ->collection(collection: Nominee::MEDIA_COLLECTION_PHOTO)
+            ->imageEditor()
+            ->required();
+    }
+
+    public static function positionIdComponent(): Select
+    {
+        return Select::make(name: 'position_id')
+            ->hiddenLabel()
+            ->native(condition: false)
+            ->placeholder(placeholder: 'Choose a position')
+            ->required();
     }
 
     public static function titleComponent(): TextInput

@@ -2,7 +2,6 @@
 
 namespace App\Filament\User\Resources;
 
-use App\Filament\Forms\NominationForm;
 use App\Filament\User\Resources\NominationResource\Pages\Dashboard;
 use App\Filament\User\Resources\NominationResource\Pages\Electors;
 use App\Filament\User\Resources\NominationResource\Pages\ManageNominations;
@@ -10,6 +9,7 @@ use App\Filament\User\Resources\NominationResource\Pages\Nominees;
 use App\Filament\User\Resources\NominationResource\Pages\Positions;
 use App\Filament\User\Resources\NominationResource\Pages\Preference;
 use App\Filament\User\Resources\NominationResource\Widgets\NominationStatsOverview;
+use App\Forms\NominationForm;
 use App\Models\Nomination;
 use Filament\Facades\Filament;
 use Filament\Forms\Form;

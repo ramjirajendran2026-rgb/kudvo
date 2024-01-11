@@ -2,8 +2,8 @@
 
 namespace App\Filament\User\Resources;
 
-use App\Filament\Forms\ElectorForm;
 use App\Filament\Imports\ElectorImporter;
+use App\Forms\ElectorForm;
 use App\Models\Elector;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Form;
