@@ -37,6 +37,11 @@ class Organisation extends Model implements HasAvatar, HasMedia
         return $this->hasMany(related: Nomination::class);
     }
 
+    public function elections(): HasMany
+    {
+        return $this->hasMany(related: Election::class);
+    }
+
     protected static function booted(): void
     {
         static::creating(callback: function (Organisation $organisation) {

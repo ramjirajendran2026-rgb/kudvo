@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\User\Resources\NominationResource\Pages\Concerns;
+namespace App\Filament\User\Pages\Concerns;
 
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;

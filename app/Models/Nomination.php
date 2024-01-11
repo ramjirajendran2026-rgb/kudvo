@@ -192,6 +192,12 @@ class Nomination extends Model
         return 'code';
     }
 
+    public static function generateCode(): string
+    {
+        return config(key: 'app.nomination.code.prefix').
+            Str::upper(value: Str::random(length: config(key: 'app.nomination.code.length')));
+    }
+
     public function isTimingConfigured(): bool
     {
         return filled(value: $this->starts_at) &&
@@ -211,12 +217,6 @@ class Nomination extends Model
             ->flatten()
             ->unique()
             ->toArray();
-    }
-
-    public static function generateCode(): string
-    {
-        return config(key: 'app.nomination.code.prefix').
-            Str::upper(value: Str::random(length: config(key: 'app.nomination.code.length')));
     }
 
     public function cancel(): bool

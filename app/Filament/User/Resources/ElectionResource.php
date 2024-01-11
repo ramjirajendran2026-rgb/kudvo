@@ -2,16 +2,11 @@
 
 namespace App\Filament\User\Resources;
 
-use App\Enums\NominationStatus;
-use App\Filament\User\Resources\NominationResource\Pages\Dashboard;
-use App\Filament\User\Resources\NominationResource\Pages\Electors;
-use App\Filament\User\Resources\NominationResource\Pages\ManageNominations;
-use App\Filament\User\Resources\NominationResource\Pages\Nominees;
-use App\Filament\User\Resources\NominationResource\Pages\Positions;
-use App\Filament\User\Resources\NominationResource\Pages\Preference;
-use App\Filament\User\Resources\NominationResource\Widgets\NominationStatsOverview;
-use App\Forms\NominationForm;
-use App\Models\Nomination;
+use App\Enums\ElectionStatus;
+use App\Filament\User\Resources\ElectionResource\Pages;
+use App\Filament\User\Resources\ElectionResource\RelationManagers;
+use App\Forms\ElectionForm;
+use App\Models\Election;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Facades\Filament;
@@ -28,27 +23,22 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;
 
-class NominationResource extends Resource
+class ElectionResource extends Resource
 {
-    protected static ?string $model = Nomination::class;
-
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $model = Election::class;
 
     protected static ?string $recordTitleAttribute = 'name';
+
+    protected static ?string $navigationIcon = 'heroicon-o-archive-box';
+
+    protected static ?string $activeNavigationIcon = 'heroicon-s-archive-box';
 
     public static function form(Form $form): Form
     {
         return $form
             ->columns(columns: null)
-            ->schema(components: [
-                NominationForm::nameComponent(),
-
-                NominationForm::descriptionComponent(),
-
-                NominationForm::selfNominationComponent(),
-
-                NominationForm::nominatorThresholdComponent()
-                    ->inlineLabel(),
+            ->schema([
+                ElectionForm::nameComponent(),
             ]);
     }
 
@@ -56,12 +46,12 @@ class NominationResource extends Resource
     {
         return $form
             ->schema(components: [
-                NominationForm::timezoneComponent(),
+                ElectionForm::timezoneComponent(),
 
-                NominationForm::startsAtComponent()
+                ElectionForm::startsAtComponent()
                     ->timezone(fn (Get $get): ?string => $get(path: 'timezone')),
 
-                NominationForm::endsAtComponent()
+                ElectionForm::endsAtComponent()
                     ->timezone(fn (Get $get): ?string => $get(path: 'timezone')),
             ]);
     }
@@ -94,38 +84,29 @@ class NominationResource extends Resource
                 static::getTableCreateAction(),
             ])
             ->heading(heading: Str::title(value: static::getPluralModelLabel()))
-            ->recordUrl(url: fn (Nomination $record) => static::getUrl(name: 'dashboard', parameters: [$record]))
-            ->relationship(relationship: fn (): Relation => Filament::getTenant()?->nominations());
+            ->recordUrl(url: fn (Election $election) => static::getUrl(name: 'dashboard', parameters: [$election]))
+            ->relationship(relationship: fn (): Relation => Filament::getTenant()?->elections());
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => ManageNominations::route(path: '/'),
-            'dashboard' => Dashboard::route(path: '{record}'),
-            'preference' => Preference::route(path: '{record}/preference'),
-            'electors' => Electors::route(path: '{record}/electors'),
-            'positions' => Positions::route(path: '{record}/positions'),
-            'nominees' => Nominees::route(path: '{record}/nominees'),
+            'index' => Pages\ManageElections::route(path: '/'),
+            'dashboard' => Pages\Dashboard::route(path: '/{record}'),
+            'preference' => Pages\Preference::route(path: '/{record}/preference'),
+            'electors' => Pages\Electors::route(path: '/{record}/electors'),
+            'ballot' => Pages\Ballot::route(path: '/{record}/ballot'),
         ];
     }
 
     public static function getRecordSubNavigation(Page $page): array
     {
         return $page->generateNavigationItems(components: [
-            Dashboard::class,
-            Preference::class,
-            Electors::class,
-            Positions::class,
-            Nominees::class,
+            Pages\Dashboard::class,
+            Pages\Preference::class,
+            Pages\Electors::class,
+            Pages\Ballot::class,
         ]);
-    }
-
-    public static function getWidgets(): array
-    {
-        return [
-            NominationStatsOverview::class,
-        ];
     }
 
     public static function getTableCreateAction(): TableCreateAction
@@ -133,14 +114,18 @@ class NominationResource extends Resource
         return TableCreateAction::make()
             ->createAnother(condition: false)
             ->modalFooterActionsAlignment(alignment: Alignment::End)
-            ->successRedirectUrl(url: fn (Nomination $record) => static::getUrl(name: 'dashboard', parameters: [$record]));
+            ->modalWidth(width: MaxWidth::ExtraLarge)
+            ->successRedirectUrl(url: fn (Election $election) => static::getUrl(name: 'dashboard', parameters: [$election]));
     }
 
     public static function getEditAction(): EditAction
     {
         return EditAction::make()
             ->form(form: fn (Form $form): Form => static::form(form: $form))
-            ->icon(icon: 'heroicon-m-pencil-square');
+            ->icon(icon: 'heroicon-m-pencil-square')
+            ->modalCancelAction(action: false)
+            ->modalFooterActionsAlignment(alignment: Alignment::Center)
+            ->modalWidth(width: MaxWidth::ExtraLarge);
     }
 
     public static function getEditTimingAction(): EditAction
@@ -166,18 +151,18 @@ class NominationResource extends Resource
     {
         return Action::make(name: 'cancel')
             ->action(
-                action: function (Nomination $nomination, Action $action) {
-                    $nomination->cancel();
+                action: function (Election $nomination, Action $action) {
+//                    $nomination->cancel();
 
                     $action->success();
                 }
             )
             ->requiresConfirmation()
-            ->color(color: NominationStatus::CANCELLED->getColor())
-            ->icon(icon: NominationStatus::CANCELLED->getIcon())
+            ->color(color: ElectionStatus::CANCELLED->getColor())
+            ->icon(icon: ElectionStatus::CANCELLED->getIcon())
             ->label(label: 'Cancel')
             ->modalCancelActionLabel(label: 'No')
-            ->modalIcon(icon: NominationStatus::CANCELLED->getIcon())
+            ->modalIcon(icon: ElectionStatus::CANCELLED->getIcon())
             ->modalSubmitActionLabel(label: 'Yes')
             ->successNotificationTitle(title: 'Cancelled');
     }

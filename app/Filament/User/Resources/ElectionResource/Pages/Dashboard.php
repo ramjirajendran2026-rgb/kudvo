@@ -1,18 +1,20 @@
 <?php
 
-namespace App\Filament\User\Resources\NominationResource\Pages;
+namespace App\Filament\User\Resources\ElectionResource\Pages;
 
-use App\Enums\NominationStatus;
+use App\Enums\ElectionStatus;
+use App\Filament\User\Contracts\HasElection;
 use App\Filament\User\Pages\Concerns\HasStateSection;
-use App\Filament\User\Resources\NominationResource;
-use App\Filament\User\Resources\NominationResource\Widgets\NominationStatsOverview;
+use App\Filament\User\Resources\ElectionResource;
+use App\Filament\User\Resources\NominationResource\Pages\Positions;
+use App\Models\Election;
 use Filament\Actions\Action;
 
-class Dashboard extends NominationPage
+class Dashboard extends ElectionPage
 {
     use HasStateSection;
 
-    protected static string $view = 'filament.user.resources.nomination-resource.pages.dashboard';
+    protected static string $view = 'filament.user.resources.election-resource.pages.dashboard';
 
     protected static ?string $navigationIcon = 'heroicon-o-home';
 
@@ -26,7 +28,7 @@ class Dashboard extends NominationPage
             $this->hasPendingPositionSetup() => 'Configure positions',
             $this->canSetTiming() => 'Configure timing',
             $this->canPublish() => 'All set!',
-            $this->canClose() => 'Nomination Published',
+            $this->canClose() => 'Election Published',
             default => null,
         };
     }
@@ -34,10 +36,10 @@ class Dashboard extends NominationPage
     public function getStateDescription(): ?string
     {
         return match (true) {
-            $this->hasPendingPreferenceSetup() => 'Continue to configure nomination preferences',
+            $this->hasPendingPreferenceSetup() => 'Continue to configure election preferences',
             $this->hasPendingElectorSetup() => 'Bulk import or add manually',
             $this->hasPendingPositionSetup() => 'Add positions and available posts',
-            $this->canSetTiming() => 'Set start time and end time for the nominations',
+            $this->canSetTiming() => 'Set start time and end time for the elections',
             $this->canPublish() => 'Once published, you are not allowed to modify any of elector and position information.',
             default => null,
         };
@@ -50,16 +52,9 @@ class Dashboard extends NominationPage
             $this->hasPendingElectorSetup() => 'heroicon-o-user-group',
             $this->hasPendingPositionSetup() => 'heroicon-o-briefcase',
             $this->canSetTiming() => 'heroicon-o-clock',
-            $this->canPublish() => NominationStatus::PUBLISHED->getIcon(),
+            $this->canPublish() => ElectionStatus::PUBLISHED->getIcon(),
             default => null,
         };
-    }
-
-    protected function getFooterWidgets(): array
-    {
-        return [
-            NominationStatsOverview::class,
-        ];
     }
 
     protected function getStateActions(): array
@@ -71,10 +66,12 @@ class Dashboard extends NominationPage
 
             $this->getPositionsPageAction(),
 
-            NominationResource::getEditTimingAction()
+            ElectionResource::getEditTimingAction()
                 ->name(name: 'set_timing')
                 ->icon(icon: '')
                 ->label(label: 'Set time')
+                ->record(record: fn (HasElection $livewire): Election => $livewire->getElection())
+                ->recordTitle('name')
                 ->visible(condition: $this->canSetTiming()),
 
             $this->getPublishAction(),
@@ -87,7 +84,7 @@ class Dashboard extends NominationPage
     {
         return Action::make(name: 'preference_page')
             ->label(label: 'Configure Preference')
-            ->url(url: Preference::getUrl(parameters: [$this->getNomination()]))
+            ->url(url: Preference::getUrl(parameters: [$this->getElection()]))
             ->visible(condition: $this->hasPendingPreferenceSetup());
     }
 
@@ -95,7 +92,7 @@ class Dashboard extends NominationPage
     {
         return Action::make(name: 'electors_page')
             ->label(label: 'Continue setup')
-            ->url(url: Electors::getUrl(parameters: [$this->getNomination()]))
+            ->url(url: Electors::getUrl(parameters: [$this->getElection()]))
             ->visible(condition: $this->hasPendingElectorSetup());
     }
 
@@ -103,7 +100,7 @@ class Dashboard extends NominationPage
     {
         return Action::make(name: 'positions_page')
             ->label(label: 'Continue setup')
-            ->url(url: Positions::getUrl(parameters: [$this->getNomination()]))
+            ->url(url: Positions::getUrl(parameters: [$this->getElection()]))
             ->visible(condition: $this->hasPendingPositionSetup());
     }
 
@@ -111,12 +108,12 @@ class Dashboard extends NominationPage
     {
         return Action::make(name: 'publish')
             ->requiresConfirmation()
-            ->color(color: NominationStatus::PUBLISHED->getColor())
-            ->modalIcon(icon: NominationStatus::PUBLISHED->getIcon())
+            ->color(color: ElectionStatus::PUBLISHED->getColor())
+            ->modalIcon(icon: ElectionStatus::PUBLISHED->getIcon())
             ->successNotificationTitle(title: 'Published')
             ->visible(condition: $this->canPublish())
             ->action(action: function (Action $action): void {
-                $this->getNomination()->publish();
+                $this->getElection()->publish();
 
                 $action->success();
             });
@@ -126,13 +123,13 @@ class Dashboard extends NominationPage
     {
         return Action::make(name: 'close')
             ->requiresConfirmation()
-            ->color(color: NominationStatus::CLOSED->getColor())
-            ->icon(icon: NominationStatus::CLOSED->getIcon())
-            ->modalIcon(icon: NominationStatus::CLOSED->getIcon())
+            ->color(color: ElectionStatus::CLOSED->getColor())
+            ->icon(icon: ElectionStatus::CLOSED->getIcon())
+            ->modalIcon(icon: ElectionStatus::CLOSED->getIcon())
             ->successNotificationTitle(title: 'Closed')
             ->visible(condition: $this->canClose())
             ->action(action: function (Action $action): void {
-                $this->getNomination()->close();
+                $this->getElection()->close();
 
                 $action->success();
             });
@@ -140,39 +137,39 @@ class Dashboard extends NominationPage
 
     protected function hasPendingPreferenceSetup(): bool
     {
-        return Preference::canAccessPage(nomination: $this->getNomination()) &&
-            ! Electors::canAccessPage(nomination: $this->getNomination());
+        return Preference::canAccessPage(election: $this->getElection()) &&
+            ! Electors::canAccessPage(election: $this->getElection());
     }
 
     protected function hasPendingElectorSetup(): bool
     {
-        return Electors::canAccessPage(nomination: $this->getNomination()) &&
-            ! Positions::canAccessPage(nomination: $this->getNomination());
+        return Electors::canAccessPage(election: $this->getElection()) &&
+            ! Ballot::canAccessPage(election: $this->getElection());
     }
 
     protected function hasPendingPositionSetup(): bool
     {
-        return Positions::canAccessPage(nomination: $this->getNomination()) &&
-            ($this->getNomination()->positions_count ?? $this->getNomination()->loadCount(relations: ['positions'])->positions_count) < 1;
+        return Ballot::canAccessPage(election: $this->getElection()) &&
+            ($this->getElection()->positions_count ?? $this->getElection()->loadCount(relations: ['positions'])->positions_count) < 1;
     }
 
     protected function canPublish(): bool
     {
-        return static::can(action: 'publish', nomination: $this->getNomination());
+        return static::can(action: 'publish', election: $this->getElection());
     }
 
     protected function canClose(): bool
     {
-        return static::can(action: 'close', nomination: $this->getNomination());
+        return static::can(action: 'close', election: $this->getElection());
     }
 
     protected function canSetTiming(): bool
     {
-        return static::can(action: 'setTiming', nomination: $this->getNomination());
+        return static::can(action: 'setTiming', election: $this->getElection());
     }
 
     protected function canUpdateTiming(): bool
     {
-        return static::can(action: 'updateTiming', nomination: $this->getNomination());
+        return static::can(action: 'updateTiming', election: $this->getElection());
     }
 }

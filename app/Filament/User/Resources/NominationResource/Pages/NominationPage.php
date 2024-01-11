@@ -21,6 +21,9 @@ use Illuminate\Support\HtmlString;
 use Livewire\Attributes\Locked;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * @property Form $form
+ */
 abstract class NominationPage extends Page implements HasElectorGroups, HasNomination
 {
     protected static string $resource = NominationResource::class;
@@ -79,11 +82,6 @@ abstract class NominationPage extends Page implements HasElectorGroups, HasNomin
         }
 
         return NominationResource::getRecordTitle($this->getNomination());
-    }
-
-    public function getBreadcrumbs(): array
-    {
-        return [];
     }
 
     public function getHeading(): string|Htmlable

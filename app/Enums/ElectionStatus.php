@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
-enum NominationStatus: string
+enum ElectionStatus: string
     implements HasColor, HasIcon, HasLabel
 {
     case CANCELLED = 'cancelled';
@@ -21,7 +21,7 @@ enum NominationStatus: string
 
     case PUBLISHED = 'published';
 
-    case SCRUTINISED = 'scrutinised';
+    case COMPLETED = 'completed';
 
     public function getScopes(): string|array|null
     {
@@ -30,7 +30,7 @@ enum NominationStatus: string
             self::CLOSED => 'closed',
             self::DRAFT => 'draft',
             self::PUBLISHED => 'published',
-            self::SCRUTINISED => 'scrutinised',
+            self::COMPLETED => 'completed',
         };
     }
 
@@ -64,7 +64,7 @@ enum NominationStatus: string
             self::CLOSED => 'warning',
             self::DRAFT => 'info',
             self::PUBLISHED => 'primary',
-            self::SCRUTINISED => 'success',
+            self::COMPLETED => 'success',
         };
     }
 
@@ -80,7 +80,7 @@ enum NominationStatus: string
             self::CLOSED => 'heroicon-m-lock-closed',
             self::DRAFT => 'heroicon-m-pencil',
             self::PUBLISHED => 'heroicon-m-megaphone',
-            self::SCRUTINISED => 'heroicon-m-document-check',
+            self::COMPLETED => 'heroicon-m-document-check',
         };
     }
 }

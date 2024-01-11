@@ -1,11 +1,13 @@
 <?php
 
-namespace App\Filament\User\Resources\NominationResource\Pages;
+namespace App\Filament\User\Resources\ElectionResource\Pages;
 
+use App\Filament\User\Resources\ElectionResource;
 use App\Filament\User\Resources\ElectorResource;
-use App\Models\Nomination;
+use App\Models\Election;
 use Filament\Forms\Form;
 use Filament\Resources\Concerns\InteractsWithRelationshipTable;
+use Filament\Resources\Pages\Page;
 use Filament\Tables\Actions\CreateAction as TableCreateAction;
 use Filament\Tables\Actions\DeleteAction as TableDeleteAction;
 use Filament\Tables\Actions\EditAction as TableEditAction;
@@ -13,11 +15,11 @@ use Filament\Tables\Actions\ImportAction as TableImportAction;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 
-class Electors extends NominationPage implements HasTable
+class Electors extends ElectionPage implements HasTable
 {
     use InteractsWithRelationshipTable;
 
-    protected static string $view = 'filament.user.resources.nomination-resource.pages.electors';
+    protected static string $view = 'filament.user.resources.election-resource.pages.electors';
 
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
 
@@ -28,9 +30,9 @@ class Electors extends NominationPage implements HasTable
         return 'electors';
     }
 
-    public function getOwnerRecord(): Nomination
+    public function getOwnerRecord(): Election
     {
-        return $this->getNomination();
+        return $this->getElection();
     }
 
     public function form(Form $form): Form
@@ -60,7 +62,7 @@ class Electors extends NominationPage implements HasTable
     {
         return ElectorResource::getTableImportAction()
             ->options(options: fn (self $livewire): array => [
-                'event_type' => Nomination::class,
+                'event_type' => Election::class,
                 'event_id' => $livewire->getElection()->getKey(),
             ])
             ->visible(condition: $this->canImport());
@@ -84,29 +86,29 @@ class Electors extends NominationPage implements HasTable
             ->visible(condition:$this->canDelete());
     }
 
-    public static function canAccessPage(Nomination $nomination): bool
+    public static function canAccessPage(Election $election): bool
     {
-        return parent::canAccessPage(nomination: $nomination) &&
-            static::can(action: 'viewAnyElector', nomination: $nomination);
+        return parent::canAccessPage(election: $election) &&
+            static::can(action: 'viewAnyElector', election: $election);
     }
 
     protected function canCreate(): bool
     {
-        return static::can(action: 'createElector', nomination: $this->getNomination());
+        return static::can(action: 'createElector', election: $this->getElection());
     }
 
     protected function canImport(): bool
     {
-        return static::can(action: 'importElector', nomination: $this->getNomination());
+        return static::can(action: 'importElector', election: $this->getElection());
     }
 
     protected function canEdit(): bool
     {
-        return static::can(action: 'updateAnyElector', nomination: $this->getNomination());
+        return static::can(action: 'updateAnyElector', election: $this->getElection());
     }
 
     protected function canDelete(): bool
     {
-        return static::can(action: 'deleteAnyElector', nomination: $this->getNomination());
+        return static::can(action: 'deleteAnyElector', election: $this->getElection());
     }
 }

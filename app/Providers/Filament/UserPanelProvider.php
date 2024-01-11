@@ -66,6 +66,7 @@ class UserPanelProvider extends PanelProvider
             ->databaseNotifications()
             ->globalSearch(provider: false)
             ->topNavigation()
+            ->breadcrumbs(condition: false)
             ->spa();
     }
 }

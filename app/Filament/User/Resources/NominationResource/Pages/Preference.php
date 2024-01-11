@@ -11,9 +11,6 @@ use Filament\Forms\Form;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Support\Enums\Alignment;
 
-/**
- * @property Form $form
- */
 class Preference extends NominationPage
 {
     use InteractsWithFormActions;
