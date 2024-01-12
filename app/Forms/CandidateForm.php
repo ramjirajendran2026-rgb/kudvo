@@ -2,27 +2,25 @@
 
 namespace App\Forms;
 
-use App\Filament\Contracts\HasElector;
-use App\Filament\Contracts\HasNomination;
+use App\Filament\Contracts\HasElection;
+use App\Models\Candidate;
+use App\Models\Election;
 use App\Models\Elector;
-use App\Models\Nomination;
 use App\Models\Nominee;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Illuminate\Validation\Rules\Exists;
-use Illuminate\Validation\Rules\Unique;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
-readonly class NomineeForm
+readonly class CandidateForm
 {
     public static function attachmentComponent(): SpatieMediaLibraryFileUpload
     {
         return SpatieMediaLibraryFileUpload::make(name: 'attachments')
-            ->collection(collection: Nominee::MEDIA_COLLECTION_ATTACHMENTS)
+            ->collection(collection: Candidate::MEDIA_COLLECTION_ATTACHMENTS)
             ->maxFiles(count: 5)
             ->maxSize(size: 1024 * 2)
             ->multiple()
@@ -32,7 +30,7 @@ readonly class NomineeForm
     public static function bioComponent(): SpatieMediaLibraryFileUpload
     {
         return SpatieMediaLibraryFileUpload::make(name: 'bio')
-            ->collection(collection: Nominee::MEDIA_COLLECTION_BIO)
+            ->collection(collection: Candidate::MEDIA_COLLECTION_BIO)
             ->maxSize(size: 1024 * 2);
     }
 
@@ -42,17 +40,9 @@ readonly class NomineeForm
             ->exists(
                 table: 'electors',
                 column: 'id',
-                modifyRuleUsing: fn (Exists $rule, HasNomination $livewire) => $rule
-                    ->where(column: 'event_type', value: Nomination::class)
-                    ->where(column: 'event_id', value: $livewire->getNomination()->getKey())
-            )
-            ->in(
-                values: fn (HasElector $livewire): string => $livewire->getElector()->getKey(),
-                condition: fn (HasNomination $livewire): bool => $livewire->getNomination()->self_nomination,
-            )
-            ->notIn(
-                values: fn (HasElector $livewire): string => $livewire->getElector()->getKey(),
-                condition: fn (HasNomination $livewire): bool => ! $livewire->getNomination()->self_nomination,
+                modifyRuleUsing: fn (Exists $rule, HasElection $livewire) => $rule
+                    ->where(column: 'event_type', value: Election::class)
+                    ->where(column: 'event_id', value: $livewire->getElection()->getKey())
             );
     }
 
@@ -95,31 +85,13 @@ readonly class NomineeForm
             ->exists(
                 table: 'electors',
                 column: 'membership_number',
-                modifyRuleUsing: fn (Exists $rule, HasNomination $livewire) => $rule
-                    ->where(column: 'event_type', value: Nomination::class)
-                    ->where(column: 'event_id', value: $livewire->getNomination()->getKey())
+                modifyRuleUsing: fn (Exists $rule, HasElection $livewire) => $rule
+                    ->where(column: 'event_type', value: Election::class)
+                    ->where(column: 'event_id', value: $livewire->getElection()->getKey())
             )
-            ->in(
-                values: fn (HasElector $livewire): string => $livewire->getElector()->membership_number,
-                condition: fn (HasNomination $livewire): bool => $livewire->getNomination()->self_nomination,
-            )
-            ->live(onBlur: true)
             ->label(label: 'Membership number')
             ->maxLength(length: 50)
-            ->notIn(
-                values: fn (HasElector $livewire): string => $livewire->getElector()->membership_number,
-                condition: fn (HasNomination $livewire): bool => ! $livewire->getNomination()->self_nomination,
-            )
-            ->readOnly(condition: fn (HasNomination $livewire): bool => $livewire->getNomination()->self_nomination)
-            ->required()
-            ->unique(
-                modifyRuleUsing: fn (Unique $rule, Get $get) => $rule
-                    ->where(column: 'position_id', value: $get(path: 'position_id'))
-            )
-            ->validationMessages(messages: [
-                'not_in' => 'Self nomination is not allowed',
-                'unique' => 'Already applied for the same position',
-            ]);
+            ->required();
     }
 
     public static function phoneComponent(): PhoneInput

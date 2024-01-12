@@ -3,6 +3,7 @@
 namespace App\Filament\User\Resources;
 
 use App\Enums\ElectionStatus;
+use App\Filament\Contracts\HasElection;
 use App\Filament\User\Resources\ElectionResource\Pages;
 use App\Filament\User\Resources\ElectionResource\RelationManagers;
 use App\Forms\ElectionForm;
@@ -95,7 +96,7 @@ class ElectionResource extends Resource
             'dashboard' => Pages\Dashboard::route(path: '/{record}'),
             'preference' => Pages\Preference::route(path: '/{record}/preference'),
             'electors' => Pages\Electors::route(path: '/{record}/electors'),
-            'ballot' => Pages\Ballot::route(path: '/{record}/ballot'),
+            'ballot.setup' => Pages\BallotSetup::route(path: '/{record}/ballot/setup'),
         ];
     }
 
@@ -105,7 +106,7 @@ class ElectionResource extends Resource
             Pages\Dashboard::class,
             Pages\Preference::class,
             Pages\Electors::class,
-            Pages\Ballot::class,
+            Pages\BallotSetup::class,
         ]);
     }
 
@@ -121,6 +122,12 @@ class ElectionResource extends Resource
     public static function getEditAction(): EditAction
     {
         return EditAction::make()
+            ->authorize(
+                abilities: fn (HasElection $livewire): bool => static::can(
+                    action: 'update',
+                    record: $livewire->getElection()
+                )
+            )
             ->form(form: fn (Form $form): Form => static::form(form: $form))
             ->icon(icon: 'heroicon-m-pencil-square')
             ->modalCancelAction(action: false)
@@ -128,15 +135,22 @@ class ElectionResource extends Resource
             ->modalWidth(width: MaxWidth::ExtraLarge);
     }
 
-    public static function getEditTimingAction(): EditAction
+    public static function getSetTimingAction(): EditAction
     {
-        return EditAction::make(name: 'editTiming')
+        return EditAction::make(name: 'setTiming')
+            ->authorize(
+                abilities: fn (HasElection $livewire): bool => static::can(
+                    action: 'setTiming',
+                    record: $livewire->getElection()
+                )
+            )
             ->form(form: fn (Form $form): Form => static::timingForm(form: $form))
             ->groupedIcon(icon: 'heroicon-m-clock')
             ->icon(icon: 'heroicon-m-clock')
-            ->label(label: 'Update Timing')
+            ->label(label: 'Set Timing')
             ->modalCancelAction(action: false)
             ->modalFooterActionsAlignment(alignment: Alignment::Center)
+            ->modalHeading(heading: fn (HasElection $livewire): ?string => $livewire->getElection()->name)
             ->modalWidth(width: MaxWidth::Medium)
             ->mutateRecordDataUsing(callback: function (array $data): array {
                 $data['timezone'] ??= Filament::getTenant()?->timezone;
@@ -144,18 +158,38 @@ class ElectionResource extends Resource
                 $data['ends_at'] ??= now(tz: $data['timezone'] ?? null)->addDays()->startOfDay()->addHours(value: 18);
 
                 return $data;
-            });
+            })
+            ->record(record: fn (HasElection $livewire): Election => $livewire->getElection());
+    }
+
+    public static function getEditTimingAction(): EditAction
+    {
+        return static::getSetTimingAction()
+            ->authorize(
+                abilities: fn (HasElection $livewire): bool => static::can(
+                    action: 'updateTiming',
+                    record: $livewire->getElection()
+                )
+            )
+            ->label(label: 'Update Timing')
+            ->name(name: 'editTiming');
     }
 
     public static function getCancelAction(): Action
     {
         return Action::make(name: 'cancel')
             ->action(
-                action: function (Election $nomination, Action $action) {
-//                    $nomination->cancel();
+                action: function (Election $election, Action $action) {
+                    $election->cancel();
 
                     $action->success();
                 }
+            )
+            ->authorize(
+                abilities: fn (HasElection $livewire): bool => static::can(
+                    action: 'cancel',
+                    record: $livewire->getElection()
+                )
             )
             ->requiresConfirmation()
             ->color(color: ElectionStatus::CANCELLED->getColor())
@@ -165,5 +199,46 @@ class ElectionResource extends Resource
             ->modalIcon(icon: ElectionStatus::CANCELLED->getIcon())
             ->modalSubmitActionLabel(label: 'Yes')
             ->successNotificationTitle(title: 'Cancelled');
+    }
+
+    public static function getPublishAction(): Action
+    {
+        return Action::make(name: 'publish')
+            ->action(action: function (HasElection $livewire, Action $action): void {
+                $livewire->getElection()->publish();
+
+                $action->success();
+            })
+            ->authorize(
+                abilities: fn (HasElection $livewire): bool => static::can(
+                    action: 'publish',
+                    record: $livewire->getElection()
+                )
+            )
+            ->requiresConfirmation()
+            ->color(color: ElectionStatus::PUBLISHED->getColor())
+            ->modalIcon(icon: ElectionStatus::PUBLISHED->getIcon())
+            ->successNotificationTitle(title: 'Published');
+    }
+
+    public static function getCloseAction(): Action
+    {
+        return Action::make(name: 'close')
+            ->action(action: function (HasElection $livewire, Action $action): void {
+                $livewire->getElection()->close();
+
+                $action->success();
+            })
+            ->authorize(
+                abilities: fn (HasElection $livewire): bool => static::can(
+                    action: 'close',
+                    record: $livewire->getElection()
+                )
+            )
+            ->requiresConfirmation()
+            ->color(color: ElectionStatus::CLOSED->getColor())
+            ->icon(icon: ElectionStatus::CLOSED->getIcon())
+            ->modalIcon(icon: ElectionStatus::CLOSED->getIcon())
+            ->successNotificationTitle(title: 'Closed');
     }
 }

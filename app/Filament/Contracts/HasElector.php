@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Nomination\Pages\Contracts;
+namespace App\Filament\Contracts;
 
 use App\Models\Elector;
 use Illuminate\Contracts\Auth\Authenticatable;

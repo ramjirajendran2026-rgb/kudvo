@@ -2,8 +2,8 @@
 
 namespace App\Forms;
 
-use App\Filament\Nomination\Pages\Contracts\HasElector;
-use App\Filament\Nomination\Pages\Contracts\HasNomination;
+use App\Filament\Contracts\HasElector;
+use App\Filament\Contracts\HasNomination;
 use App\Models\Elector;
 use App\Models\Nomination;
 use Filament\Forms\Components\Hidden;

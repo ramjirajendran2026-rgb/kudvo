@@ -2,7 +2,7 @@
 
 namespace App\Filament\User\Resources;
 
-use App\Filament\User\Contracts\HasElectorGroups;
+use App\Filament\Contracts\HasElectorGroups;
 use App\Forms\PositionForm;
 use App\Models\Position;
 use Filament\Forms\Form;

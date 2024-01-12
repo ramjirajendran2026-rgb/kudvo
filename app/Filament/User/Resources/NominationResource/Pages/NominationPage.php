@@ -2,19 +2,14 @@
 
 namespace App\Filament\User\Resources\NominationResource\Pages;
 
-use App\Enums\NominationStatus;
-use App\Filament\User\Contracts\HasElectorGroups;
-use App\Filament\User\Contracts\HasNomination;
+use App\Filament\Contracts\HasElectorGroups;
+use App\Filament\Contracts\HasNomination;
 use App\Filament\User\Resources\NominationResource;
 use App\Models\Nomination;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
-use Filament\Actions\EditAction;
-use Filament\Facades\Filament;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\Page;
-use Filament\Support\Enums\Alignment;
-use Filament\Support\Enums\MaxWidth;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\HtmlString;

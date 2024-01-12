@@ -4,8 +4,8 @@ namespace App\Filament\Nomination\Resources;
 
 use App\Enums\NomineeScrutinyStatus;
 use App\Facades\Kudvo;
-use App\Filament\Nomination\Pages\Contracts\HasElector;
-use App\Filament\Nomination\Pages\Contracts\HasNomination;
+use App\Filament\Contracts\HasElector;
+use App\Filament\Contracts\HasNomination;
 use App\Filament\Nomination\Resources\NomineeResource\Pages;
 use App\Forms\NomineeForm;
 use App\Models\Nominator;

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Position extends Model
@@ -43,6 +44,16 @@ class Position extends Model
     public function event(): MorphTo
     {
         return $this->morphTo();
+    }
+
+    public function nominees(): HasMany
+    {
+        return $this->hasMany(related: Nominee::class);
+    }
+
+    public function candidates(): HasMany
+    {
+        return $this->hasMany(related: Candidate::class);
     }
 
     protected static function booted(): void

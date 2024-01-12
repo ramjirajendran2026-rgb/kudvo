@@ -2,14 +2,11 @@
 
 namespace App\Filament\User\Resources\ElectionResource\Pages;
 
-use App\Filament\User\Contracts\HasElection;
-use App\Filament\User\Contracts\HasElectorGroups;
-use App\Filament\User\Contracts\HasNomination;
+use App\Filament\Contracts\HasElection;
+use App\Filament\Contracts\HasElectorGroups;
 use App\Filament\User\Resources\ElectionResource;
-use App\Filament\User\Resources\NominationResource;
 use App\Filament\User\Resources\NominationResource\Pages\Dashboard;
 use App\Models\Election;
-use App\Models\Nomination;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Forms\Form;

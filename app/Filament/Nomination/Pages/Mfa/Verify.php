@@ -2,9 +2,9 @@
 
 namespace App\Filament\Nomination\Pages\Mfa;
 
+use App\Filament\Contracts\HasNomination;
 use App\Filament\Nomination\Http\Middleware\EnsureMfaCompleted;
 use App\Filament\Nomination\Pages\Concerns\InteractsWithNomination;
-use App\Filament\Nomination\Pages\Contracts\HasNomination;
 use App\Models\OneTimePassword;
 use App\Notifications\NominationMfaNotification;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;

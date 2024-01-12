@@ -3,11 +3,8 @@
 namespace App\Filament\User\Resources\ElectionResource\Pages;
 
 use App\Enums\ElectionStatus;
-use App\Filament\User\Contracts\HasElection;
 use App\Filament\User\Pages\Concerns\HasStateSection;
 use App\Filament\User\Resources\ElectionResource;
-use App\Filament\User\Resources\NominationResource\Pages\Positions;
-use App\Models\Election;
 use Filament\Actions\Action;
 
 class Dashboard extends ElectionPage
@@ -25,7 +22,7 @@ class Dashboard extends ElectionPage
         return match (true) {
             $this->hasPendingPreferenceSetup() => 'Get started',
             $this->hasPendingElectorSetup() => 'Voters information',
-            $this->hasPendingPositionSetup() => 'Configure positions',
+            $this->hasPendingBallotSetup() => 'Configure ballot',
             $this->canSetTiming() => 'Configure timing',
             $this->canPublish() => 'All set!',
             $this->canClose() => 'Election Published',
@@ -38,7 +35,7 @@ class Dashboard extends ElectionPage
         return match (true) {
             $this->hasPendingPreferenceSetup() => 'Continue to configure election preferences',
             $this->hasPendingElectorSetup() => 'Bulk import or add manually',
-            $this->hasPendingPositionSetup() => 'Add positions and available posts',
+            $this->hasPendingBallotSetup() => 'Add positions and candidates',
             $this->canSetTiming() => 'Set start time and end time for the elections',
             $this->canPublish() => 'Once published, you are not allowed to modify any of elector and position information.',
             default => null,
@@ -48,9 +45,9 @@ class Dashboard extends ElectionPage
     public function getStateIcon(): ?string
     {
         return match (true) {
-            $this->hasPendingPreferenceSetup() => 'heroicon-o-cog-6-tooth',
-            $this->hasPendingElectorSetup() => 'heroicon-o-user-group',
-            $this->hasPendingPositionSetup() => 'heroicon-o-briefcase',
+            $this->hasPendingPreferenceSetup() => Preference::getNavigationIcon(),
+            $this->hasPendingElectorSetup() => Electors::getNavigationIcon(),
+            $this->hasPendingBallotSetup() => BallotSetup::getNavigationIcon(),
             $this->canSetTiming() => 'heroicon-o-clock',
             $this->canPublish() => ElectionStatus::PUBLISHED->getIcon(),
             default => null,
@@ -64,75 +61,38 @@ class Dashboard extends ElectionPage
 
             $this->getElectorsPageAction(),
 
-            $this->getPositionsPageAction(),
+            $this->getBallotPageAction(),
 
-            ElectionResource::getEditTimingAction()
-                ->name(name: 'set_timing')
-                ->icon(icon: '')
-                ->label(label: 'Set time')
-                ->record(record: fn (HasElection $livewire): Election => $livewire->getElection())
-                ->recordTitle('name')
-                ->visible(condition: $this->canSetTiming()),
+            ElectionResource::getSetTimingAction(),
 
-            $this->getPublishAction(),
+            ElectionResource::getPublishAction(),
 
-            $this->getCloseAction(),
+            ElectionResource::getCloseAction(),
         ];
     }
 
     protected function getPreferencePageAction(): Action
     {
         return Action::make(name: 'preference_page')
+            ->authorize(abilities: $this->hasPendingPreferenceSetup())
             ->label(label: 'Configure Preference')
-            ->url(url: Preference::getUrl(parameters: [$this->getElection()]))
-            ->visible(condition: $this->hasPendingPreferenceSetup());
+            ->url(url: Preference::getUrl(parameters: [$this->getElection()]));
     }
 
     protected function getElectorsPageAction(): Action
     {
         return Action::make(name: 'electors_page')
+            ->authorize(abilities: $this->hasPendingElectorSetup())
             ->label(label: 'Continue setup')
-            ->url(url: Electors::getUrl(parameters: [$this->getElection()]))
-            ->visible(condition: $this->hasPendingElectorSetup());
+            ->url(url: Electors::getUrl(parameters: [$this->getElection()]));
     }
 
-    protected function getPositionsPageAction(): Action
+    protected function getBallotPageAction(): Action
     {
-        return Action::make(name: 'positions_page')
+        return Action::make(name: 'ballot_page')
+            ->authorize(abilities: $this->hasPendingBallotSetup())
             ->label(label: 'Continue setup')
-            ->url(url: Positions::getUrl(parameters: [$this->getElection()]))
-            ->visible(condition: $this->hasPendingPositionSetup());
-    }
-
-    protected function getPublishAction(): Action
-    {
-        return Action::make(name: 'publish')
-            ->requiresConfirmation()
-            ->color(color: ElectionStatus::PUBLISHED->getColor())
-            ->modalIcon(icon: ElectionStatus::PUBLISHED->getIcon())
-            ->successNotificationTitle(title: 'Published')
-            ->visible(condition: $this->canPublish())
-            ->action(action: function (Action $action): void {
-                $this->getElection()->publish();
-
-                $action->success();
-            });
-    }
-
-    protected function getCloseAction(): Action
-    {
-        return Action::make(name: 'close')
-            ->requiresConfirmation()
-            ->color(color: ElectionStatus::CLOSED->getColor())
-            ->icon(icon: ElectionStatus::CLOSED->getIcon())
-            ->modalIcon(icon: ElectionStatus::CLOSED->getIcon())
-            ->successNotificationTitle(title: 'Closed')
-            ->visible(condition: $this->canClose())
-            ->action(action: function (Action $action): void {
-                $this->getElection()->close();
-
-                $action->success();
-            });
+            ->url(url: BallotSetup::getUrl(parameters: [$this->getElection()]));
     }
 
     protected function hasPendingPreferenceSetup(): bool
@@ -144,12 +104,12 @@ class Dashboard extends ElectionPage
     protected function hasPendingElectorSetup(): bool
     {
         return Electors::canAccessPage(election: $this->getElection()) &&
-            ! Ballot::canAccessPage(election: $this->getElection());
+            ! BallotSetup::canAccessPage(election: $this->getElection());
     }
 
-    protected function hasPendingPositionSetup(): bool
+    protected function hasPendingBallotSetup(): bool
     {
-        return Ballot::canAccessPage(election: $this->getElection()) &&
+        return BallotSetup::canAccessPage(election: $this->getElection()) &&
             ($this->getElection()->positions_count ?? $this->getElection()->loadCount(relations: ['positions'])->positions_count) < 1;
     }
 

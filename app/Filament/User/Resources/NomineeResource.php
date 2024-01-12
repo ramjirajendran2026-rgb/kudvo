@@ -3,8 +3,8 @@
 namespace App\Filament\User\Resources;
 
 use App\Enums\NomineeScrutinyStatus;
-use App\Filament\User\Contracts\HasElection;
-use App\Filament\User\Contracts\HasNomination;
+use App\Filament\Contracts\HasElection;
+use App\Filament\Contracts\HasNomination;
 use App\Models\Nominator;
 use App\Models\Nominee;
 use Exception;
