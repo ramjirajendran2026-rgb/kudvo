@@ -3,6 +3,7 @@
 namespace App\Filament\User\Resources\ElectionResource\Pages;
 
 use App\Filament\Contracts\HasElection;
+use App\Filament\User\Resources\PositionResource;
 use App\Forms\CandidateForm;
 use App\Forms\PositionForm;
 use App\Models\Candidate;
@@ -42,13 +43,11 @@ class BallotSetup extends ElectionPage
                             ->compact()
                             ->description(description: fn (Position $state): ?string => $state->quota.Str::plural(value: ' Post', count: $state->quota))
                             ->headerActions(actions: [
-                                $this->getCreateCandidateAction(),
-
-//                                $this->getCreateCandidatesAction(),
+                                $this->getDeletePositionAction(),
 
                                 $this->getEditPositionAction(),
 
-                                $this->getDeletePositionAction(),
+                                $this->getCreateCandidateAction(),
                             ])
                             ->schema(components: [
                                 RepeatableEntry::make(name: 'candidates')
@@ -68,9 +67,9 @@ class BallotSetup extends ElectionPage
                                                 ->schema(components: [
                                                     TextEntry::make(name: 'full_name')
                                                         ->suffixActions(actions: [
-                                                            $this->getEditCandidateAction(),
-
                                                             $this->getDeleteCandidateAction(),
+
+                                                            $this->getEditCandidateAction(),
                                                         ])
                                                         ->hiddenLabel()
                                                         ->size(size: TextEntry\TextEntrySize::Large),
@@ -120,18 +119,7 @@ class BallotSetup extends ElectionPage
                     election: $livewire->getElection()
                 )
             )
-            ->form(form: [
-                PositionForm::nameComponent(),
-
-                PositionForm::quotaComponent(),
-
-                PositionForm::abstainComponent()
-                    ->live(),
-
-                PositionForm::thresholdComponent(),
-
-                PositionForm::groupsComponent(),
-            ])
+            ->form(form: fn (Form $form): Form => PositionResource::form(form: $form))
             ->model(model: Position::class)
             ->record(record: null)
             ->relationship(relationship: fn(HasElection $livewire) => $livewire->getElection()->positions());
@@ -152,18 +140,7 @@ class BallotSetup extends ElectionPage
                 $record->save();
             })
             ->fillForm(data: fn (Position $record): array => $record->attributesToArray())
-            ->form(form: [
-                PositionForm::nameComponent(),
-
-                PositionForm::quotaComponent(),
-
-                PositionForm::abstainComponent()
-                    ->live(),
-
-                PositionForm::thresholdComponent(),
-
-                PositionForm::groupsComponent(),
-            ])
+            ->form(form: fn (Form $form): Form => PositionResource::form(form: $form))
             ->icon(icon: 'heroicon-m-pencil-square')
             ->iconButton()
             ->modalHeading(heading: fn (Position $record): string => "Edit $record->name");
@@ -220,7 +197,8 @@ class BallotSetup extends ElectionPage
                     ])
             )
             ->icon(icon: 'heroicon-m-plus')
-            ->iconButton();
+            ->label(label: 'New candidate')
+            ->outlined();
     }
 
     protected function getCreateCandidatesAction(): Action
