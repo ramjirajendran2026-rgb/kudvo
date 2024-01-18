@@ -91,7 +91,10 @@ readonly class CandidateForm
             )
             ->label(label: 'Membership number')
             ->maxLength(length: 50)
-            ->required();
+            ->required()
+            ->validationMessages(messages: [
+                'exists' => 'This :attribute is not found in electors data',
+            ]);
     }
 
     public static function phoneComponent(): PhoneInput
