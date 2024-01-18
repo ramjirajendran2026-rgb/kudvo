@@ -8,6 +8,8 @@ export default defineConfig({
                 'resources/css/app.css',
                 'resources/js/app.js',
 
+                'resources/css/filament/election/theme.css',
+
                 'resources/css/filament/nomination/theme.css',
             ],
             refresh: true,

@@ -50,4 +50,9 @@ class ElectionPreference extends Model
     {
         return $this->belongsTo(related: Election::class);
     }
+
+    public function isMfaRequired(): bool
+    {
+        return $this->mfa_mail || $this->mfa_sms;
+    }
 }

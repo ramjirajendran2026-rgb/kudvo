@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Facades\Kudvo;
+use App\Filament\ElectionPanel;
 use App\Filament\NominationPanel;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
@@ -106,11 +107,11 @@ class Elector extends Model implements
 
     public function canAccessPanel(Panel $panel): bool
     {
-        if (! $panel instanceof NominationPanel) {
-            return false;
-        }
-
-        return $this->event->is(model: Kudvo::getNomination());
+        return match (true) {
+            $panel instanceof NominationPanel => $this->event->is(model: Kudvo::getNomination()),
+            $panel instanceof ElectionPanel => $this->event->is(model: Kudvo::getElection()),
+            default => false,
+        };
     }
 
     public function getFilamentName(): string
