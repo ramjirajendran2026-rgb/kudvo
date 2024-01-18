@@ -123,6 +123,7 @@ class BallotSetup extends ElectionPage
                 )
             )
             ->form(form: fn (Form $form): Form => PositionResource::form(form: $form))
+            ->modalWidth(width: MaxWidth::ExtraLarge)
             ->model(model: Position::class)
             ->record(record: null)
             ->relationship(relationship: fn(HasElection $livewire) => $livewire->getElection()->positions());
@@ -146,7 +147,9 @@ class BallotSetup extends ElectionPage
             ->form(form: fn (Form $form): Form => PositionResource::form(form: $form))
             ->icon(icon: 'heroicon-m-pencil-square')
             ->iconButton()
-            ->modalHeading(heading: fn (Position $record): string => "Edit $record->name");
+            ->modalHeading(heading: fn (Position $record): string => "Edit $record->name")
+            ->modalSubmitActionLabel(label: 'Save changes')
+            ->modalWidth(width: MaxWidth::ExtraLarge);
     }
 
     protected function getDeletePositionAction(): Action
@@ -237,8 +240,7 @@ class BallotSetup extends ElectionPage
             ->iconButton()
             ->modalFooterActionsAlignment(alignment: Alignment::End)
             ->modalHeading(heading: fn (Candidate $record): string => "Edit $record->membership_number")
-            ->modalSubmitActionLabel(label: 'Save changes')
-            ->modalWidth(width: MaxWidth::ExtraLarge);
+            ->modalSubmitActionLabel(label: 'Save changes');
     }
 
     protected function getDeleteCandidateAction(): Action

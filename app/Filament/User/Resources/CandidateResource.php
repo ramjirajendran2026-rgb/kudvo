@@ -4,6 +4,7 @@ namespace App\Filament\User\Resources;
 
 use App\Forms\CandidateForm;
 use App\Models\Candidate;
+use Filament\Forms\Components\Group;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 
@@ -18,7 +19,7 @@ class CandidateResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->columns()
+            ->columns(null)
             ->model(model: static::getModel())
             ->schema(components: static::getFormComponents());
     }
@@ -26,16 +27,28 @@ class CandidateResource extends Resource
     public static function getFormComponents(): array
     {
         return [
-            CandidateForm::membershipNumberComponent()
-                ->columnSpanFull(),
+            Group::make()
+                ->columns(columns: 5)
+                ->schema(components: [
+                    Group::make()
+                        ->columns()
+                        ->columnSpan(span: 4)
+                        ->schema(components: [
+                            CandidateForm::membershipNumberComponent()
+                                ->live()
+                                ->columnSpanFull(),
 
-            CandidateForm::firstNameComponent(),
+                            CandidateForm::firstNameComponent(),
 
-            CandidateForm::lastNameComponent(),
+                            CandidateForm::lastNameComponent(),
 
-            CandidateForm::emailComponent(),
+                            CandidateForm::emailComponent(),
 
-            CandidateForm::phoneComponent(),
+                            CandidateForm::phoneComponent(),
+                        ]),
+
+                    CandidateForm::photoComponent(),
+                ]),
         ];
     }
 }
