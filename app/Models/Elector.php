@@ -17,9 +17,12 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Foundation\Auth\Access\Authorizable;
+use Illuminate\Http\Request;
 use Illuminate\Notifications\Notifiable;
+use Jenssegers\Agent\Agent;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
@@ -49,6 +52,7 @@ class Elector extends Model implements
         'email',
         'phone',
         'groups',
+        'current_session_id',
         'event_id',
         'event_type',
     ];
@@ -80,6 +84,24 @@ class Elector extends Model implements
             related: OneTimePassword::class,
             name: 'relatable',
         );
+    }
+
+    public function authSessions(): MorphMany
+    {
+        return $this->morphMany(
+            related: AuthSession::class,
+            name: 'authenticatable',
+        );
+    }
+
+    public function authSession(): MorphOne
+    {
+        return $this
+            ->morphOne(
+                related: AuthSession::class,
+                name: 'authenticatable',
+            )
+            ->latestOfMany();
     }
 
     protected static function booted(): void
@@ -122,5 +144,20 @@ class Elector extends Model implements
     public function getFilamentAvatarUrl(): ?string
     {
         return $this->getFirstMediaUrl(collectionName: static::MEDIA_COLLECTION_AVATAR);
+    }
+
+    public function createAuthSession(string $sessionId, string $guardName, Request $request): AuthSession
+    {
+        $this->authSessions()
+            ->where('guard_name', $guardName)
+            ->delete();
+
+        return $this->authSessions()
+            ->create(attributes: [
+                'session_id' => $sessionId,
+                'guard_name' => $guardName,
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+            ]);
     }
 }

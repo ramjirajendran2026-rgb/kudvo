@@ -3,7 +3,10 @@
 namespace App\Providers;
 
 use App\Events\NomineeNominated;
+use App\Listeners\DestroyBrowserSession;
 use App\Listeners\SendNomineeNominatedNotifications;
+use Illuminate\Auth\Events\CurrentDeviceLogout;
+use Illuminate\Auth\Events\Logout;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -16,11 +19,17 @@ class EventServiceProvider extends ServiceProvider
      * @var array<class-string, array<int, class-string>>
      */
     protected $listen = [
-        Registered::class => [
-            SendEmailVerificationNotification::class,
+        CurrentDeviceLogout::class => [
+            DestroyBrowserSession::class,
+        ],
+        Logout::class => [
+            DestroyBrowserSession::class,
         ],
         NomineeNominated::class => [
             SendNomineeNominatedNotifications::class,
+        ],
+        Registered::class => [
+            SendEmailVerificationNotification::class,
         ],
     ];
 

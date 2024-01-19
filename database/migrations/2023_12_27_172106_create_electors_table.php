@@ -27,6 +27,8 @@ return new class extends Migration
                 $table->string(column: 'phone')->nullable();
                 $table->longText(column: 'groups')->nullable();
 
+                $table->string(column: 'current_session_id')->nullable();
+
                 $table->morphs(name: 'event');
 
                 $table->timestamps();

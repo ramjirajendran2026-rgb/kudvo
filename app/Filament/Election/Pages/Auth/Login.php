@@ -4,13 +4,12 @@ namespace App\Filament\Election\Pages\Auth;
 
 use App\Facades\Kudvo;
 use App\Models\Election;
-use App\Models\Nomination;
+use App\Models\Elector;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Http\Responses\Auth\Contracts\LoginResponse;
-use Filament\Models\Contracts\FilamentUser;
 use Filament\Notifications\Notification;
 use Filament\Pages\Auth\Login as BasePage;
 use Illuminate\Contracts\Support\Htmlable;
@@ -45,26 +44,30 @@ class Login extends BasePage
 
         $data = $this->form->getState();
 
-        $user = Kudvo::getElection()->electors()
+        $elector = Kudvo::getElection()->electors()
             ->firstWhere('membership_number', $data['membership_number']);
 
-        if (blank(value: $user)) {
+        if (blank(value: $elector)) {
             $this->throwFailureValidationException();
         }
-        Filament::auth()->login(user: $user);
+        Filament::auth()->login(user: $elector);
 
-        $user = Filament::auth()->user();
+        /** @var Elector $elector */
+        $elector = Filament::auth()->user();
 
-        if (
-            ($user instanceof FilamentUser) &&
-            (! $user->canAccessPanel(Filament::getCurrentPanel()))
-        ) {
+        if (! $elector->canAccessPanel(Filament::getCurrentPanel())) {
             Filament::auth()->logout();
 
             $this->throwFailureValidationException();
         }
 
         session()->regenerate();
+
+        $elector->createAuthSession(
+            sessionId: session()->getId(),
+            guardName: Filament::getAuthGuard(),
+            request: request(),
+        );
 
         return app(LoginResponse::class);
     }
