@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use App\Models\Election;
+use App\Models\Elector;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
@@ -149,5 +150,10 @@ class ElectionPolicy
     public function deleteAnyPosition(User $user, Election $election): bool
     {
         return $election->is_draft;
+    }
+
+    public function vote(Elector $elector, Election $election): bool
+    {
+        return true;
     }
 }
