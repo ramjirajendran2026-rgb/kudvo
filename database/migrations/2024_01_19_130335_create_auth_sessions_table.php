@@ -28,6 +28,6 @@ return new class extends Migration {
 
     public function down(): void
     {
-        Schema::dropIfExists('browser_sessions');
+        Schema::dropIfExists(table: 'browser_sessions');
     }
 };
