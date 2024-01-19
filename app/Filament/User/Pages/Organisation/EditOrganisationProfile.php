@@ -20,15 +20,22 @@ class EditOrganisationProfile extends EditTenantProfile
     public function form(Form $form): Form
     {
         return $form
+            ->columns(columns: 5)
             ->schema(components: [
                 Section::make()
-                    ->maxWidth(width: MaxWidth::TwoExtraLarge)
+                    ->columnSpan(span: 4)
                     ->schema(components: [
                         OrganisationForm::nameComponent(),
 
                         OrganisationForm::countryComponent(),
 
                         OrganisationForm::timezoneComponent(),
+                    ]),
+
+                Section::make()
+                    ->columnSpan(span: 1)
+                    ->schema(components: [
+                        OrganisationForm::logoComponent(),
                     ]),
             ]);
     }

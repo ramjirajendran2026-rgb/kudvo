@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Filament\Models\Contracts\HasAvatar;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -24,6 +25,13 @@ class Organisation extends Model implements HasAvatar, HasMedia
         'country',
         'timezone',
     ];
+
+    protected function logoUrl(): Attribute
+    {
+        return Attribute::make(
+            get: fn($value, array $attributes) => $this->getFirstMediaUrl(collectionName: static::MEDIA_COLLECTION_LOGO),
+        );
+    }
 
     public function users(): BelongsToMany
     {

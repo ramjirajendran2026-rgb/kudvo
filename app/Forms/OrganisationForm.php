@@ -4,6 +4,8 @@ namespace App\Forms;
 
 use App\Forms\Components\CountryPicker;
 use App\Forms\Components\TimezonePicker;
+use App\Models\Organisation;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 
 readonly class OrganisationForm
@@ -13,6 +15,17 @@ readonly class OrganisationForm
         return CountryPicker::make()
             ->label(label: 'Country')
             ->required();
+    }
+
+    public static function logoComponent(): SpatieMediaLibraryFileUpload
+    {
+        return SpatieMediaLibraryFileUpload::make(name: 'logo')
+            ->collection(collection: Organisation::MEDIA_COLLECTION_LOGO)
+            ->image()
+            ->imageResizeMode(mode: 'cover')
+            ->imageCropAspectRatio(ratio: '1:1')
+            ->imageResizeTargetWidth(width: '512')
+            ->imageResizeTargetHeight(height: '512');
     }
 
     public static function nameComponent(): TextInput
