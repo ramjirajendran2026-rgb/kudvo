@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Http\Request;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Notifications\Notification;
 use Jenssegers\Agent\Agent;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -144,6 +145,11 @@ class Elector extends Model implements
     public function getFilamentAvatarUrl(): ?string
     {
         return $this->getFirstMediaUrl(collectionName: static::MEDIA_COLLECTION_AVATAR);
+    }
+
+    public function routeNotificationForSms(?Notification $notification = null)
+    {
+        return $this->phone;
     }
 
     public function createAuthSession(string $sessionId, string $guardName, Request $request): AuthSession

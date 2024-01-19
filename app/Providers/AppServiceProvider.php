@@ -14,6 +14,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -35,6 +36,8 @@ class AppServiceProvider extends ServiceProvider
         if (App::isLocal()) {
             Mail::alwaysTo(address: 'iliyas.inode@gmail.com');
         }
+
+        Str::macro('isUnicode', fn ($string): bool => strlen($string) != strlen(utf8_decode($string)));
 
         Arr::macro(name: 'implodeWithAnd', macro: static function (array $array, string $separator = ', '): string {
             if (empty($array)) {

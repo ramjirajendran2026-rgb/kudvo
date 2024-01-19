@@ -1,0 +1,75 @@
+<?php
+
+namespace App\Services\TwentyFourSevenSms;
+
+use App\Notifications\Channels\Concerns\Smsable;
+use App\Settings\SmsSettings;
+use Exception;
+use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
+use Throwable;
+
+class TwentyFourSevenSmsChannel
+{
+    use Smsable;
+
+    public const NAME = 'twenty_four_seven_sms';
+
+    public function send(object $notifiable, Notification $notification)
+    {
+        $route = $this->getSmsRoute(
+            notifiable: $notifiable,
+            notification: $notification,
+            channel: static::NAME,
+        );
+
+        if (blank($route)) {
+            return null;
+        }
+
+        $sms = $this->getSmsMessage(
+            notifiable: $notifiable,
+            notification: $notification,
+            channel: static::NAME,
+        );
+
+        if (is_string($sms)) {
+            $sms = new SmsMessage(message: $sms);
+        }
+
+        if (! $sms instanceof SmsMessage) {
+            return null;
+        }
+
+        try {
+            $smsSettings = app(SmsSettings::class);
+
+            $response = Http::get(
+                url: 'https://smsapi.24x7sms.com/api_2.0/Send'.($sms->isUnicode() ? 'Unicode' : '').'SMS.aspx',
+                query: [
+                    'APIKEY' => $smsSettings->twenty_four_seven_sms['key'] ?? null,
+                    'MobileNo' => str($route)->replace(search: '+', replace: '')->toString(),
+
+                    'SenderID' => $smsSettings->twenty_four_seven_sms['sender_id'] ?? null,
+                    'Message' => $sms->getMessage(),
+                    'ServiceName' => $sms->getServiceName()->name,
+                ],
+            )->body();
+
+            if (! Str::startsWith(haystack: $response, needles: 'MsgID')) {
+                throw new Exception('Invalid response received. '.$response);
+            }
+
+            Log::info('[24x7SMS] SendSMS Response: '.$response);
+
+            SmsMessageSent::dispatch($response);
+
+        } catch (Throwable $e) {
+            Log::error(message: "[24x7SMS] SendSMS Error: {$e->getMessage()}");
+
+            return null;
+        }
+    }
+}

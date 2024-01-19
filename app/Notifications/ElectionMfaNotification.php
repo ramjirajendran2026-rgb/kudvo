@@ -5,6 +5,7 @@ namespace App\Notifications;
 use App\Models\Election;
 use App\Models\Nomination;
 use App\Models\OneTimePassword;
+use App\Services\TwentyFourSevenSms\TwentyFourSevenSmsChannel;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -17,12 +18,15 @@ class ElectionMfaNotification extends Notification
     {
     }
 
-    public function via($notifiable): array
+    public function via(object $notifiable): array
     {
-        return ['mail'];
+        return [
+            TwentyFourSevenSmsChannel::class,
+            'mail',
+        ];
     }
 
-    public function toMail($notifiable): MailMessage
+    public function toMail(object $notifiable): MailMessage
     {
         $nomination = $this->election;
         $oneTimePassword = $this->oneTimePassword;
@@ -32,7 +36,17 @@ class ElectionMfaNotification extends Notification
             ->line(line: "**$oneTimePassword->code** is your MFA code for $nomination->name");
     }
 
-    public function toArray($notifiable): array
+    public function toSms(object $notifiable): string
+    {
+        return <<<EOD
+Your OTP verification code is {$this->oneTimePassword->code}
+
+@kudvo.com #{$this->oneTimePassword->code}
+EOD;
+
+    }
+
+    public function toArray(object $notifiable): array
     {
         return [];
     }

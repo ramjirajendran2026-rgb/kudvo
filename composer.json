@@ -20,6 +20,7 @@
         "omar-haris/filament-timezone-field": "^1.0",
         "petercoles/multilingual-country-list": "^1.2",
         "spatie/laravel-medialibrary": "^11.0.0",
+        "spatie/laravel-settings": "^3.2",
         "ysfkaya/filament-phone-input": "^2.2"
     },
     "require-dev": {
