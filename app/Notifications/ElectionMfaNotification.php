@@ -42,9 +42,10 @@ class ElectionMfaNotification extends Notification
         $appName = Str::maxLimit(value: config(key: 'app.name'), limit: 30);
 
         return <<<EOD
-{$this->oneTimePassword->code} is your OTP for the $appName.
+Your OTP verification code is {$this->oneTimePassword->code}
 
 -iNodesys
+@muc.evoteonline.com #{$this->oneTimePassword->code}
 EOD;
 
     }
