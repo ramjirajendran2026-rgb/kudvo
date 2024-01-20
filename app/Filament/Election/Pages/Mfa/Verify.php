@@ -50,7 +50,7 @@ class Verify extends Page implements HasElection
     public ?array $data = [];
 
     #[Locked]
-    public OneTimePassword $oneTimePassword;
+    public ?OneTimePassword $oneTimePassword;
 
     public function mount(): void
     {

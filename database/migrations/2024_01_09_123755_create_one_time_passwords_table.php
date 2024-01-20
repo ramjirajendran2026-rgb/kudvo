@@ -22,7 +22,7 @@ return new class extends Migration
                 $table->unsignedInteger(column: 'total_sent')->default(value: 0);
                 $table->unsignedInteger(column: 'total_attempt')->default(value: 0);
 
-                $table->timestamp(column: 'expires_at');
+                $table->timestamp(column: 'expires_at')->nullable();
                 $table->timestamp(column: 'sent_at')->nullable();
                 $table->timestamp(column: 'verified_at')->nullable();
 
