@@ -54,24 +54,6 @@
         :suffix-icon="$suffixIcon"
         :suffix-icon-color="$getSuffixIconColor()"
         :valid="! $errors->has($statePath)"
-        x-data="{
-            init: function () {
-                if('OTPCredential' in window) {
-                    const ac = new AbortController();
-                    const form = $el.closest('form');
-
-                    navigator.credentials.get({
-                        otp: { transport:['sms'] },
-                        signal: ac.signal
-                    }).then(otp => {
-                        this.state = otp.code;
-                    }).catch(err => {
-                        console.log(err);
-                    });
-                }
-            },
-            'state': $wire.$entangle('{{ $getStatePath() }}'),
-        }"
         :attributes="
             \Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())
                 ->class(['fi-fo-text-input overflow-hidden'])
@@ -100,7 +82,7 @@
                         'required' => $isRequired() && (! $isConcealed),
                         'step' => $getStep(),
                         'type' => $type,
-                        'x-model' => 'state',
+                        $applyStateBindingModifiers('wire:model') => $statePath,
                         'x-bind:type' => $isPasswordRevealable ? 'isPasswordRevealed ? \'text\' : \'password\'' : null,
                         'x-mask' . ($mask instanceof \Filament\Support\RawJs ? ':dynamic' : '') => filled($mask) ? $mask : null,
                     ], escape: false)

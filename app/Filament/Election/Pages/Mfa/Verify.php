@@ -25,6 +25,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Locked;
+use Livewire\Attributes\On;
 use Livewire\Features\SupportRedirects\Redirector;
 use Throwable;
 
@@ -200,5 +201,14 @@ class Verify extends Page implements HasElection
         ];
 
         return '6 digit OTP code has been sent to your registered '.Arr::implodeWithAnd($via).'.';
+    }
+
+    #[On(event: 'otp-received')]
+    public function verifyOTP(string $code)
+    {
+        Notification::make()
+            ->title(title: 'Verifying otp is '.$code)
+            ->success()
+            ->send();
     }
 }
