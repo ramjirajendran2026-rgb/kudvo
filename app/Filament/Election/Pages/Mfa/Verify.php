@@ -5,6 +5,7 @@ namespace App\Filament\Election\Pages\Mfa;
 use App\Filament\Contracts\HasElection;
 use App\Filament\Election\Http\Middleware\EnsureMfaCompleted;
 use App\Filament\Election\Pages\Concerns\InteractsWithElection;
+use App\Forms\Components\OtpInput;
 use App\Models\OneTimePassword;
 use App\Notifications\ElectionMfaNotification;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
@@ -100,13 +101,12 @@ class Verify extends Page implements HasElection
                             ])
                             ->hiddenLabel(),
 
-                        TextInput::make(name: 'code')
+                        OtpInput::make(name: 'code')
                             ->length(length: strlen(string: $this->oneTimePassword->code))
                             ->hintAction(
                                 action: \Filament\Forms\Components\Actions\Action::make(name: 'resend')
                                     ->action(action: 'resend'),
                             )
-                            ->numeric()
                             ->required(),
                     ]),
             ]);

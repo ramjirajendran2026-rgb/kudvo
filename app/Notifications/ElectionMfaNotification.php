@@ -8,6 +8,7 @@ use App\Models\OneTimePassword;
 use App\Services\TwentyFourSevenSms\TwentyFourSevenSmsChannel;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Str;
 
 class ElectionMfaNotification extends Notification
 {
@@ -38,10 +39,12 @@ class ElectionMfaNotification extends Notification
 
     public function toSms(object $notifiable): string
     {
-        return <<<EOD
-Your OTP verification code is {$this->oneTimePassword->code}
+        $appName = Str::maxLimit(value: config(key: 'app.name'), limit: 30);
 
-@kudvo.com #{$this->oneTimePassword->code}
+        return <<<EOD
+{$this->oneTimePassword->code} is your OTP for the $appName.
+
+-iNodesys
 EOD;
 
     }

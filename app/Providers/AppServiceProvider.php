@@ -38,6 +38,13 @@ class AppServiceProvider extends ServiceProvider
         }
 
         Str::macro('isUnicode', fn ($string): bool => strlen($string) != strlen(utf8_decode($string)));
+        Str::macro('maxLimit', function ($value, $limit = 100, $end = '...'): string {
+            if (mb_strwidth($value, 'UTF-8') <= $limit) {
+                return $value;
+            }
+
+            return rtrim(mb_strimwidth(string: $value, start: 0, width: $limit, trim_marker: $end, encoding: 'UTF-8'));
+        });
 
         Arr::macro(name: 'implodeWithAnd', macro: static function (array $array, string $separator = ', '): string {
             if (empty($array)) {
