@@ -65,8 +65,6 @@
                         signal: ac.signal
                     }).then(otp => {
                         this.state = otp.code;
-
-                        if(form) form.submit()
                     }).catch(err => {
                         console.log(err);
                     });
