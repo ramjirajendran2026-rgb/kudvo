@@ -57,8 +57,6 @@
         x-data="{
             init: function () {
                 if('OTPCredential' in window) {
-                    console.log('listening for WebOTP')
-
                     const ac = new AbortController();
                     const form = $el.closest('form');
 
@@ -67,7 +65,8 @@
                         signal: ac.signal
                     }).then(otp => {
                         this.state = otp.code;
-                        console.log('received code:'+otp.code)
+
+                        if(form) form.submit()
                     }).catch(err => {
                         console.log(err);
                     });
