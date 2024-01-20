@@ -1,0 +1,22 @@
+{
+  "resources/css/app.css": {
+    "file": "assets/app-w40geAFS.js",
+    "isEntry": true,
+    "src": "resources/css/app.css"
+  },
+  "resources/css/filament/election/theme.css": {
+    "file": "assets/theme-1lmVrKT8.css",
+    "isEntry": true,
+    "src": "resources/css/filament/election/theme.css"
+  },
+  "resources/css/filament/nomination/theme.css": {
+    "file": "assets/theme-b47hAH9D.css",
+    "isEntry": true,
+    "src": "resources/css/filament/nomination/theme.css"
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-p4n4M-rx.js",
+    "isEntry": true,
+    "src": "resources/js/app.js"
+  }
+}
