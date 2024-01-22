@@ -12,13 +12,17 @@ use Illuminate\Support\Str;
 
 class ElectionEulNotification extends Notification
 {
-    public const BALLOT_LINK = '{#BALLOT_LINK#}';
+    public const VAR_BALLOT_LINK = '{#BALLOT_LINK#}';
 
-    public const BALLOT_SHORT_LINK = '{#BALLOT_SHORT_LINK#}';
+    public const VAR_BALLOT_LINK_SHORT = '{#BALLOT_LINK_SHORT#}';
 
-    public const ELECTION_NAME = '{#ELECTION_NAME#}';
+    public const VAR_ELECTION_NAME = '{#ELECTION_NAME#}';
 
-    public const ELECTION_SHORT_NAME = '{#ELECTION_SHORT_NAME#}';
+    public const VAR_ELECTION_NAME_SHORT = '{#ELECTION_NAME_SHORT#}';
+
+    public const VAR_ELECTOR_NAME = '{#ELECTOR_NAME#}';
+
+    public const VAR_ELECTOR_NAME_SHORT = '{#ELECTOR_NAME_SHORT#}';
 
     public function __construct(
         protected Elector $elector,
@@ -55,10 +59,12 @@ class ElectionEulNotification extends Notification
     protected function formatTemplate(string $template): string
     {
         $variables = [
-            static::BALLOT_LINK => url('/'),
-            static::BALLOT_SHORT_LINK => url('/'),
-            static::ELECTION_NAME => $this->getElection()->name,
-            static::ELECTION_SHORT_NAME => Str::maxLimit(value: $this->getElection()->name, limit: 30),
+            static::VAR_BALLOT_LINK => url('/'),
+            static::VAR_BALLOT_LINK_SHORT => url('/'),
+            static::VAR_ELECTION_NAME => $this->getElection()->name,
+            static::VAR_ELECTION_NAME_SHORT => Str::maxLimit(value: $this->getElector()->display_name, limit: 30),
+            static::VAR_ELECTOR_NAME => $this->getElection()->name,
+            static::VAR_ELECTOR_NAME_SHORT => Str::maxLimit(value: $this->getElector()->display_name, limit: 30),
         ];
 
         return Str::replace(
