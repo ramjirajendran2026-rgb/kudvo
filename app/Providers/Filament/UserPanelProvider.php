@@ -63,6 +63,7 @@ class UserPanelProvider extends PanelProvider
                 'primary' => Color::hex(color: '#00adb5'),
             ])
             ->font(family: 'Poppins')
+            ->viteTheme(theme: 'resources/css/filament/user/theme.css')
             ->databaseNotifications()
             ->globalSearch(provider: false)
             ->topNavigation()

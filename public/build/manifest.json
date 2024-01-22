@@ -14,6 +14,11 @@
     "isEntry": true,
     "src": "resources/css/filament/nomination/theme.css"
   },
+  "resources/css/filament/user/theme.css": {
+    "file": "assets/theme-bXXtHGnc.css",
+    "isEntry": true,
+    "src": "resources/css/filament/user/theme.css"
+  },
   "resources/js/app.js": {
     "file": "assets/app-p4n4M-rx.js",
     "isEntry": true,

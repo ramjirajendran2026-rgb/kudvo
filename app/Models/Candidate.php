@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -38,6 +39,18 @@ class Candidate extends Model implements HasMedia, HasName, HasAvatar
         'position_id' => 'int',
         'elector_id' => 'int',
     ];
+
+    protected $appends = [
+        'display_name',
+    ];
+
+    protected function displayName(): Attribute
+    {
+        return Attribute::make(
+            get: fn($value, array $attributes) => $this->full_name.
+                (filled(value: $this->membership_number) ? ' ('.$this->membership_number.')' : ''),
+        );
+    }
 
     public function position(): BelongsTo
     {

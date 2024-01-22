@@ -91,7 +91,6 @@ readonly class CandidateForm
             )
             ->label(label: 'Membership number')
             ->maxLength(length: 50)
-            ->required()
             ->validationMessages(messages: [
                 'exists' => 'This :attribute is not found in electors data',
             ]);
@@ -112,8 +111,7 @@ readonly class CandidateForm
             ->avatar()
             ->circleCropper()
             ->collection(collection: Nominee::MEDIA_COLLECTION_PHOTO)
-            ->imageEditor()
-            ->required();
+            ->imageEditor();
     }
 
     public static function positionIdComponent(): Select

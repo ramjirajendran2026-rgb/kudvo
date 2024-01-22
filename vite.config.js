@@ -11,6 +11,8 @@ export default defineConfig({
                 'resources/css/filament/election/theme.css',
 
                 'resources/css/filament/nomination/theme.css',
+
+                'resources/css/filament/user/theme.css',
             ],
             refresh: true,
         }),

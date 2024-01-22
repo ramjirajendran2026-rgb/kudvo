@@ -53,7 +53,8 @@ class Position extends Model
 
     public function candidates(): HasMany
     {
-        return $this->hasMany(related: Candidate::class);
+        return $this->hasMany(related: Candidate::class)
+            ->oldest(column: 'sort');
     }
 
     protected static function booted(): void

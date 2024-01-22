@@ -122,7 +122,8 @@ class Election extends Model
         return $this->morphMany(
             related: Position::class,
             name: 'event',
-        );
+        )
+            ->oldest(column: 'sort');
     }
 
     public function scopeCancelled(Builder $query): Builder

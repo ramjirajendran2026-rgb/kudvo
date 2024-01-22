@@ -16,7 +16,7 @@ return new class extends Migration
                 $table->id();
                 $table->uuid()->unique();
 
-                $table->string(column: 'membership_number');
+                $table->string(column: 'membership_number')->nullable();
                 $table->string(column: 'title')->nullable();
                 $table->string(column: 'first_name')->nullable();
                 $table->string(column: 'last_name')->nullable();

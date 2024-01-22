@@ -35,10 +35,11 @@ class CandidateResource extends Resource
                         ->columnSpan(span: 4)
                         ->schema(components: [
                             CandidateForm::membershipNumberComponent()
-                                ->live()
+                                ->live(onBlur: true)
                                 ->columnSpanFull(),
 
-                            CandidateForm::firstNameComponent(),
+                            CandidateForm::firstNameComponent()
+                                ->required(),
 
                             CandidateForm::lastNameComponent(),
 

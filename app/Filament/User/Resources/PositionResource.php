@@ -5,6 +5,7 @@ namespace App\Filament\User\Resources;
 use App\Filament\Contracts\HasElectorGroups;
 use App\Forms\PositionForm;
 use App\Models\Position;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\Alignment;
@@ -27,30 +28,35 @@ class PositionResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema(components: [
-                PositionForm::nameComponent(),
+            ->schema(components: static::getFormComponents());
+    }
 
-                PositionForm::quotaComponent()
-                    ->inlineLabel(),
+    public static function getFormComponents(): array
+    {
+        return [
+            PositionForm::nameComponent(),
 
-                PositionForm::abstainComponent()
-                    ->live(),
+            PositionForm::quotaComponent()
+                ->inlineLabel(),
 
-                PositionForm::thresholdComponent()
-                    ->inlineLabel(),
+            PositionForm::abstainComponent()
+                ->live(),
 
-                PositionForm::groupsComponent()
-                    ->options(
-                        options: fn (HasElectorGroups $livewire): array => Arr::mapWithKeys(
-                            array: $livewire->getElectorGroups(),
-                            callback: fn (string $item): array => [$item => $item]
-                        )
+            PositionForm::thresholdComponent()
+                ->inlineLabel(),
+
+            PositionForm::groupsComponent()
+                ->options(
+                    options: fn (HasElectorGroups $livewire): array => Arr::mapWithKeys(
+                        array: $livewire->getElectorGroups(),
+                        callback: fn (string $item): array => [$item => $item]
                     )
-                    ->required()
-                    ->visible(
-                        condition: fn (HasElectorGroups $livewire): bool => filled(value: $livewire->getElectorGroups())
-                    ),
-            ]);
+                )
+                ->required()
+                ->visible(
+                    condition: fn (HasElectorGroups $livewire): bool => filled(value: $livewire->getElectorGroups())
+                ),
+        ];
     }
 
     public static function table(Table $table): Table
