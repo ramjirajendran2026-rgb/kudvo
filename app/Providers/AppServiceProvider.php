@@ -37,8 +37,8 @@ class AppServiceProvider extends ServiceProvider
             Mail::alwaysTo(address: 'iliyas.inode@gmail.com');
         }
 
-        Str::macro('isUnicode', fn ($string): bool => strlen($string) != strlen(utf8_decode($string)));
-        Str::macro('maxLimit', function ($value, $limit = 100, $end = '...'): string {
+        Str::macro(name: 'isUnicode', macro: fn ($string): bool => strlen($string) != strlen(utf8_decode($string)));
+        Str::macro(name: 'maxLimit', macro: function ($value, $limit = 100, $end = '...'): string {
             if (mb_strwidth($value, 'UTF-8') <= $limit) {
                 return $value;
             }

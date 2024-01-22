@@ -8,6 +8,7 @@ return [
      */
     'settings' => [
         \App\Settings\SmsSettings::class,
+        \App\Settings\SmsTemplates::class,
     ],
 
     /*
