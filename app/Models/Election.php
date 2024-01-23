@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Data\ElectionPreferenceData;
 use App\Enums\ElectionStatus;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -16,6 +17,7 @@ class Election extends Model
     protected $fillable = [
         'name',
         'description',
+        'preference',
         'timezone',
         'starts_at',
         'ends_at',
@@ -27,6 +29,7 @@ class Election extends Model
     ];
 
     protected $casts = [
+        'preference' => ElectionPreferenceData::class,
         'starts_at' => 'datetime',
         'ends_at' => 'datetime',
         'published_at' => 'datetime',
@@ -103,12 +106,6 @@ class Election extends Model
         return $this->belongsTo(related: Organisation::class);
     }
 
-    public function preference(): HasOne
-    {
-        return $this->hasOne(related: ElectionPreference::class)
-            ->latestOfMany();
-    }
-
     public function electors(): MorphMany
     {
         return $this->morphMany(
@@ -183,6 +180,11 @@ class Election extends Model
         return filled(value: $this->starts_at) &&
             filled(value: $this->ends_at) &&
             filled(value: $this->timezone);
+    }
+
+    public function isMfaRequired(): bool
+    {
+        return false;
     }
 
     public function getElectorGroups(): array

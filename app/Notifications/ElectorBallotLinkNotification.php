@@ -2,15 +2,15 @@
 
 namespace App\Notifications;
 
+use App\Data\ElectionPreferenceData;
 use App\Models\Election;
-use App\Models\ElectionPreference;
 use App\Models\Elector;
 use App\Settings\SmsTemplates;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Str;
 
-class ElectionEulNotification extends Notification
+class ElectorBallotLinkNotification extends Notification
 {
     public const VAR_BALLOT_LINK = '{#BALLOT_LINK#}';
 
@@ -48,7 +48,7 @@ class ElectionEulNotification extends Notification
 
     public function toSms(object $notifiable): string
     {
-        return $this->formatTemplate(template: app(abstract: SmsTemplates::class)->eul);
+        return $this->formatTemplate(template: app(abstract: SmsTemplates::class)->elector_ballot_link);
     }
 
     public function toArray(object $notifiable): array
@@ -84,7 +84,7 @@ class ElectionEulNotification extends Notification
         return $this->getElector()->event;
     }
 
-    protected function getPreference(): ElectionPreference
+    protected function getPreference(): ElectionPreferenceData
     {
         return $this->getElection()->preference;
     }

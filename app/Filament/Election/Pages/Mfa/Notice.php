@@ -48,7 +48,7 @@ class Notice extends Page implements HasElection
     {
         if (
             Session::has(key: Notice::getMfaCompletedSessionKey(elector: $this->getElector())) ||
-            ! $this->getElection()->preference->isMfaRequired()
+            ! $this->getElection()->isMfaRequired()
         ) {
             $this->redirect(url: Filament::getUrl());
 

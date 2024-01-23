@@ -6,7 +6,9 @@ use Spatie\LaravelSettings\Settings;
 
 class SmsSettings extends Settings
 {
-    public array $twenty_four_seven_sms;
+    public ?string $default_channel;
+
+    public array $country_channel;
 
     public static function group(): string
     {

@@ -13,6 +13,7 @@
         "aws/aws-sdk-php": "^3.295",
         "filament/filament": "^3.2",
         "filament/spatie-laravel-media-library-plugin": "^3.2",
+        "filament/spatie-laravel-settings-plugin": "^3.2",
         "guzzlehttp/guzzle": "^7.2",
         "jenssegers/agent": "^2.6",
         "laravel/framework": "^10.10",
@@ -20,6 +21,7 @@
         "laravel/tinker": "^2.8",
         "omar-haris/filament-timezone-field": "^1.0",
         "petercoles/multilingual-country-list": "^1.2",
+        "spatie/laravel-data": "^3.11",
         "spatie/laravel-medialibrary": "^11.0.0",
         "spatie/laravel-settings": "^3.2",
         "ysfkaya/filament-phone-input": "^2.2"

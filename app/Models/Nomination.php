@@ -2,15 +2,14 @@
 
 namespace App\Models;
 
+use App\Data\NominationPreferenceData;
 use App\Enums\NominationStatus;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Str;
 
@@ -21,6 +20,7 @@ class Nomination extends Model
     protected $fillable = [
         'name',
         'description',
+        'preference',
         'self_nomination',
         'nominator_threshold',
         'timezone',
@@ -36,6 +36,7 @@ class Nomination extends Model
     ];
 
     protected $casts = [
+        'preference' => NominationPreferenceData::class,
         'self_nomination' => 'bool',
         'nominator_threshold' => 'int',
         'starts_at' => 'datetime',
@@ -114,12 +115,6 @@ class Nomination extends Model
     public function organisation(): BelongsTo
     {
         return $this->belongsTo(related: Organisation::class);
-    }
-
-    public function preference(): HasOne
-    {
-        return $this->hasOne(related: NominationPreference::class)
-            ->latestOfMany();
     }
 
     public function electors(): MorphMany
@@ -203,6 +198,11 @@ class Nomination extends Model
         return filled(value: $this->starts_at) &&
             filled(value: $this->ends_at) &&
             filled(value: $this->timezone);
+    }
+
+    public function isMfaRequired(): bool
+    {
+        return false;
     }
 
     public function getElectorGroups(): array

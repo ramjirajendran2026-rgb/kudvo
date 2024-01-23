@@ -18,6 +18,8 @@ return new class extends Migration
                 $table->string(column: 'name')->index();
                 $table->longText(column: 'description')->nullable();
 
+                $table->json(column: 'preference')->nullable();
+
                 $table->boolean(column: 'self_nomination')->default(value: false);
                 $table->unsignedInteger(column: 'nominator_threshold')->default(value: 2);
 

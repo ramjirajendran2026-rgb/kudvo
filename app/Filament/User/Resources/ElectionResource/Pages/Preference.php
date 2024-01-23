@@ -50,7 +50,7 @@ class Preference extends ElectionPage
                 Group::make()
                     ->columns()
                     ->columnSpanFull()
-                    ->relationship(name: 'preference')
+                    ->statePath(path: 'preference')
                     ->schema(
                         components: [
                             Section::make('EUL Delivery')
@@ -166,6 +166,7 @@ class Preference extends ElectionPage
                                         ->label('Display order')
                                         ->columnSpanFull()
                                         ->default(CandidateSort::MANUAL->value)
+                                        ->dehydrated(condition: fn (?string $state): bool => filled($state))
                                         ->enum(CandidateSort::class)
                                         ->columns(6)
                                         ->native(false)
@@ -231,7 +232,9 @@ class Preference extends ElectionPage
     {
         abort_unless(boolean: $this->canSave(), code: 403);
 
-        $this->form->getState();
+        $data = $this->form->getState();
+
+        $this->getElection()->update(attributes: $data);
 
         Notification::make()
             ->success()

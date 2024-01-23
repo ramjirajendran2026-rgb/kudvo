@@ -56,7 +56,7 @@ class Verify extends Page implements HasNomination
     {
         if (
             Session::has(key: Notice::getMfaCompletedSessionKey(elector: $this->getElector())) ||
-            ! $this->getNomination()->preference->isMfaRequired()
+            ! $this->getNomination()->isMfaRequired()
         ) {
             $this->redirect(url: Filament::getUrl());
 

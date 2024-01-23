@@ -27,14 +27,8 @@ class AdminPanelProvider extends PanelProvider
             ->path(path: 'admin')
             ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\\Filament\\Admin\\Resources')
             ->discoverPages(in: app_path('Filament/Admin/Pages'), for: 'App\\Filament\\Admin\\Pages')
-            ->pages(pages: [
-                Pages\Dashboard::class,
-            ])
+            ->discoverClusters(in: app_path('Filament/Admin/Clusters'), for: 'App\\Filament\\Admin\\Clusters')
             ->discoverWidgets(in: app_path('Filament/Admin/Widgets'), for: 'App\\Filament\\Admin\\Widgets')
-            ->widgets(widgets: [
-                Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
-            ])
             ->middleware(middleware: [
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
@@ -50,6 +44,7 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
             ])
             ->login()
+            ->unsavedChangesAlerts()
             ->colors(colors: [
                 'primary' => Color::Amber,
             ]);

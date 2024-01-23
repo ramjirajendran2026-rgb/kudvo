@@ -6,9 +6,11 @@ use Spatie\LaravelSettings\Settings;
 
 class SmsTemplates extends Settings
 {
-    public string $eul;
+    public string $elector_ballot_link;
 
-    public string $otp;
+    public string $elector_ballot_mfa;
+
+    public string $elector_nomination_mfa;
 
     public static function group(): string
     {

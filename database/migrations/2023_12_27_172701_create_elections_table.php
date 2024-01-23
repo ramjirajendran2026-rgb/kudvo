@@ -18,6 +18,8 @@ return new class extends Migration
                 $table->string(column: 'name')->index();
                 $table->longText(column: 'description')->nullable();
 
+                $table->json(column: 'preference')->nullable();
+
                 $table->string(column: 'timezone')->nullable();
                 $table->timestamp(column: 'starts_at')->nullable();
                 $table->timestamp(column: 'ends_at')->nullable();
