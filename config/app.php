@@ -171,6 +171,7 @@ return [
         App\Providers\Filament\NominationPanelProvider::class,
         App\Providers\Filament\ElectionPanelProvider::class,
         App\Providers\Filament\AdminPanelProvider::class,
+        App\Providers\Filament\BallotPanelProvider::class,
         App\Providers\RouteServiceProvider::class,
     ])->toArray(),
 

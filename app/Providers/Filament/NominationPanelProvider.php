@@ -3,8 +3,8 @@
 namespace App\Providers\Filament;
 
 use App\Facades\Kudvo;
+use App\Filament\Http\Middleware\IdentifyNomination;
 use App\Filament\Nomination\Http\Middleware\EnsureMfaCompleted;
-use App\Filament\Nomination\Http\Middleware\IdentifyNomination;
 use App\Filament\Nomination\Pages\Auth\Login;
 use App\Filament\Nomination\Pages\Dashboard;
 use App\Filament\NominationPanel;
@@ -32,7 +32,7 @@ class NominationPanelProvider extends PanelProvider
     {
         return NominationPanel::make()
             ->id(id: 'nomination')
-            ->path(path: 'nomination')
+            ->path(path: 'nomination/{nomination}')
             ->authGuard(guard: 'elector')
             ->discoverResources(in: app_path('Filament/Nomination/Resources'), for: 'App\\Filament\\Nomination\\Resources')
             ->discoverPages(in: app_path('Filament/Nomination/Pages'), for: 'App\\Filament\\Nomination\\Pages')

@@ -11,6 +11,7 @@ use App\Models\Election;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Facades\Filament;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Resources\Pages\Page;
@@ -204,7 +205,7 @@ class ElectionResource extends Resource
     public static function getPublishAction(): Action
     {
         return Action::make(name: 'publish')
-            ->action(action: function (HasElection $livewire, Action $action): void {
+            ->action(action: function (HasElection $livewire, Action $action, array $data): void {
                 $livewire->getElection()->publish();
 
                 $action->success();

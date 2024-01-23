@@ -3,16 +3,20 @@
 namespace App\Providers;
 
 use App\Facades\Kudvo;
+use App\Filament\Contracts\ResolvesElection;
 use App\KudvoManager;
+use App\Services\TwentyFourSevenSms\TwentyFourSevenSmsChannel;
 use Filament\Actions\CreateAction;
 use Filament\Facades\Filament;
 use Filament\Pages\Page;
 use Filament\Tables\Actions\CreateAction as TableCreateAction;
 use Filament\Tables\Columns\Column;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\ChannelManager;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 
@@ -59,6 +63,14 @@ class AppServiceProvider extends ServiceProvider
 
             return implode(separator: $separator, array: $array).' and '.$lastItem;
         });
+
+        Notification::resolved(
+            fn (ChannelManager $service) => $service
+                ->extend(
+                    driver: TwentyFourSevenSmsChannel::NAME,
+                    callback: fn () => app(abstract: TwentyFourSevenSmsChannel::class)
+                )
+        );
 
         Filament::serving(callback: function (): void {
             Column::configureUsing(modifyUsing: function (Column $component) {

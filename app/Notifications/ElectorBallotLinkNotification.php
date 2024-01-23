@@ -5,13 +5,17 @@ namespace App\Notifications;
 use App\Data\ElectionPreferenceData;
 use App\Models\Election;
 use App\Models\Elector;
+use App\Notifications\Concerns\HasSmsChannel;
 use App\Settings\SmsTemplates;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
 class ElectorBallotLinkNotification extends Notification
 {
+    use HasSmsChannel;
+
     public const VAR_BALLOT_LINK = '{#BALLOT_LINK#}';
 
     public const VAR_BALLOT_LINK_SHORT = '{#BALLOT_LINK_SHORT#}';
@@ -30,11 +34,11 @@ class ElectorBallotLinkNotification extends Notification
 
     public function via(object $notifiable): array
     {
-        $preference = $this->getPreference();
+        $preference = $this->getElection()->preference;
 
         return [
-            ...$preference->eul_mail ? ['mail'] : [],
-            ...$preference->eul_sms ? ['sms'] : [],
+            ...Arr::wrap(value: $preference->eul_mail ? 'mail' : null),
+            ...Arr::wrap(value: $preference->eul_sms ? $this->getSmsChannel(notifiable: $notifiable) : null),
         ];
     }
 
@@ -60,10 +64,10 @@ class ElectorBallotLinkNotification extends Notification
     {
         $variables = [
             static::VAR_BALLOT_LINK => url('/'),
-            static::VAR_BALLOT_LINK_SHORT => url('/'),
+            static::VAR_BALLOT_LINK_SHORT => url('/b/'.$this->getElector()->short_code),
             static::VAR_ELECTION_NAME => $this->getElection()->name,
-            static::VAR_ELECTION_NAME_SHORT => Str::maxLimit(value: $this->getElector()->display_name, limit: 30),
-            static::VAR_ELECTOR_NAME => $this->getElection()->name,
+            static::VAR_ELECTION_NAME_SHORT => Str::maxLimit(value: $this->getElection()->name, limit: 30),
+            static::VAR_ELECTOR_NAME => $this->getElector()->display_name,
             static::VAR_ELECTOR_NAME_SHORT => Str::maxLimit(value: $this->getElector()->display_name, limit: 30),
         ];
 

@@ -18,7 +18,7 @@ trait HasSmsChannel
 
         $smsSettings = app(abstract: SmsSettings::class);
 
-        return $smsSettings->country_channel[str(phone($route)->getCountry())->upper()->toString()]
-            ?? $smsSettings->default_channel;
+        return collect($smsSettings->country_channel)->firstWhere(key: 'country', value: str(phone($route)->getCountry())->upper()->toString())['channel'] ??
+            $smsSettings->default_channel;
     }
 }

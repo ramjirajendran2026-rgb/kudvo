@@ -2,6 +2,8 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\BallotPanel;
+use App\Filament\Http\Middleware\IdentifyElection;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -18,17 +20,21 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
-class AdminPanelProvider extends PanelProvider
+class BallotPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
-        return $panel
-            ->id(id: 'admin')
-            ->path(path: 'admin')
-            ->discoverClusters(in: app_path('Filament/Admin/Clusters'), for: 'App\\Filament\\Admin\\Clusters')
-            ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\\Filament\\Admin\\Resources')
-            ->discoverPages(in: app_path('Filament/Admin/Pages'), for: 'App\\Filament\\Admin\\Pages')
-            ->discoverWidgets(in: app_path('Filament/Admin/Widgets'), for: 'App\\Filament\\Admin\\Widgets')
+        return BallotPanel::make()
+            ->id(id: 'ballot')
+            ->path(path: 'ballot/{election}')
+            ->discoverClusters(in: app_path('Filament/Ballot/Clusters'), for: 'App\\Filament\\Ballot\\Clusters')
+            ->discoverResources(in: app_path('Filament/Ballot/Resources'), for: 'App\\Filament\\Ballot\\Resources')
+            ->discoverPages(in: app_path('Filament/Ballot/Pages'), for: 'App\\Filament\\Ballot\\Pages')
+            ->pages(pages: [
+                Pages\Dashboard::class,
+            ])
+            ->discoverWidgets(in: app_path('Filament/Ballot/Widgets'), for: 'App\\Filament\\Ballot\\Widgets')
+            ->middleware(middleware: [IdentifyElection::class], isPersistent: true)
             ->middleware(middleware: [
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
@@ -41,10 +47,9 @@ class AdminPanelProvider extends PanelProvider
                 DispatchServingFilamentEvent::class,
             ])
             ->authMiddleware(middleware: [
-                Authenticate::class,
+//                Authenticate::class,
             ])
             ->login()
-            ->unsavedChangesAlerts()
             ->colors(colors: [
                 'primary' => Color::Amber,
             ]);

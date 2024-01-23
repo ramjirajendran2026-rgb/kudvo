@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Facades\Kudvo;
 use App\Filament\ElectionPanel;
 use App\Filament\NominationPanel;
+use App\Notifications\ElectorBallotLinkNotification;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
@@ -23,6 +24,7 @@ use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Http\Request;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Str;
 use Jenssegers\Agent\Agent;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -69,8 +71,7 @@ class Elector extends Model implements
     protected function displayName(): Attribute
     {
         return Attribute::make(
-            get: fn($value, array $attributes) => $this->membership_number.
-                (filled(value: $this->full_name) ? ' ('.$this->full_name.')' : ''),
+            get: fn($value, array $attributes) => ($this->full_name ?: 'Member').' ('.$this->membership_number.')',
         );
     }
 
@@ -108,6 +109,10 @@ class Elector extends Model implements
     protected static function booted(): void
     {
         static::saving(callback: function (Elector $elector) {
+            if (blank($elector->short_code)) {
+                $elector->short_code = Str::random(length: 6);
+            }
+
             if (!is_null($elector->groups)) {
                 $elector->groups = collect(value: explode(separator: ',', string: $elector->groups))
                     ->map(callback: fn (string $item): string => trim(string: $item))
@@ -165,5 +170,10 @@ class Elector extends Model implements
                 'ip_address' => $request->ip(),
                 'user_agent' => $request->userAgent(),
             ]);
+    }
+
+    public function sendBallotLink(): void
+    {
+        $this->notify(instance: new ElectorBallotLinkNotification(elector: $this));
     }
 }

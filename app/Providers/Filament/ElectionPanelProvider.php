@@ -5,10 +5,10 @@ namespace App\Providers\Filament;
 use App\Facades\Kudvo;
 use App\Filament\Election\Http\Middleware\AuthenticateSession;
 use App\Filament\Election\Http\Middleware\EnsureMfaCompleted;
-use App\Filament\Election\Http\Middleware\IdentifyElection;
 use App\Filament\Election\Pages\Auth\Login;
 use App\Filament\Election\Pages\Dashboard;
 use App\Filament\ElectionPanel;
+use App\Filament\Http\Middleware\IdentifyElection;
 use App\Models\Organisation;
 use Filament\Facades\Filament;
 use Filament\Http\Middleware\Authenticate;
@@ -35,7 +35,7 @@ class ElectionPanelProvider extends PanelProvider
     {
         return ElectionPanel::make()
             ->id(id: 'election')
-            ->path(path: 'election')
+            ->path(path: 'election/{election}')
             ->authGuard(guard: 'elector')
             ->discoverResources(in: app_path('Filament/Election/Resources'), for: 'App\\Filament\\Election\\Resources')
             ->discoverPages(in: app_path('Filament/Election/Pages'), for: 'App\\Filament\\Election\\Pages')

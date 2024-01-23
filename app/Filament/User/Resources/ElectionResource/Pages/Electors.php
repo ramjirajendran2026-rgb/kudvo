@@ -2,12 +2,15 @@
 
 namespace App\Filament\User\Resources\ElectionResource\Pages;
 
+use App\Filament\Contracts\HasElection;
 use App\Filament\User\Resources\ElectionResource;
 use App\Filament\User\Resources\ElectorResource;
 use App\Models\Election;
+use App\Models\Elector;
 use Filament\Forms\Form;
 use Filament\Resources\Concerns\InteractsWithRelationshipTable;
 use Filament\Resources\Pages\Page;
+use Filament\Tables\Actions\Action as TableAction;
 use Filament\Tables\Actions\CreateAction as TableCreateAction;
 use Filament\Tables\Actions\DeleteAction as TableDeleteAction;
 use Filament\Tables\Actions\EditAction as TableEditAction;
@@ -47,6 +50,8 @@ class Electors extends ElectionPage implements HasTable
                 $this->getEditAction(),
 
                 $this->getDeleteAction(),
+
+                $this->getSendBallotLinkAction(),
             ])
             ->emptyStateActions(actions: [
                 $this->getCreateAction(),
@@ -84,6 +89,17 @@ class Electors extends ElectionPage implements HasTable
     {
         return ElectorResource::getTableDeleteAction()
             ->visible(condition:$this->canDelete());
+    }
+
+    protected function getSendBallotLinkAction(): TableAction
+    {
+        return TableAction::make(name: 'sendBallotLink')
+            ->requiresConfirmation()
+            ->action(action: function (HasElection $livewire, Elector $elector) {
+                $elector->sendBallotLink();
+            })
+            ->icon(icon: 'heroicon-m-bell-alert')
+            ->iconButton();
     }
 
     public static function canAccessPage(Election $election): bool
