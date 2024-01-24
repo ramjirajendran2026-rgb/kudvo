@@ -3,7 +3,7 @@
 namespace App\Filament\User\Resources\NominationResource\Pages;
 
 use App\Enums\NominationStatus;
-use App\Filament\User\Pages\Concerns\HasStateSection;
+use App\Filament\Pages\Concerns\HasStateSection;
 use App\Filament\User\Resources\NominationResource;
 use App\Filament\User\Resources\NominationResource\Widgets\NominationStatsOverview;
 use Filament\Actions\Action;

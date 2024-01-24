@@ -2,22 +2,27 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Str;
 
 class Vote extends Model
 {
+    use HasUuids;
+
     protected $fillable = [
-        'content',
+        'key',
+        'secret',
         'ballot_id',
-        'position_id',
     ];
 
     protected $casts = [
-        'content' => 'encrypted:array',
+        'secret' => 'encrypted:array',
         'ballot_id' => 'int',
-        'position_id' => 'int',
     ];
+
+    public $timestamps = false;
 
     public function ballot(): BelongsTo
     {
@@ -26,6 +31,11 @@ class Vote extends Model
 
     public function position(): BelongsTo
     {
-        return $this->belongsTo(related: Position::class);
+        return $this->belongsTo(related: Position::class, foreignKey: 'key', ownerKey: 'uuid');
+    }
+
+    public function newUniqueId(): string
+    {
+        return (string) Str::uuid();
     }
 }

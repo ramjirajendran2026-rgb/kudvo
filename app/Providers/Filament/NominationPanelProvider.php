@@ -32,7 +32,7 @@ class NominationPanelProvider extends PanelProvider
     {
         return NominationPanel::make()
             ->id(id: 'nomination')
-            ->path(path: 'nomination/{nomination}')
+            ->path(path: 'nomination')
             ->authGuard(guard: 'elector')
             ->discoverResources(in: app_path('Filament/Nomination/Resources'), for: 'App\\Filament\\Nomination\\Resources')
             ->discoverPages(in: app_path('Filament/Nomination/Pages'), for: 'App\\Filament\\Nomination\\Pages')

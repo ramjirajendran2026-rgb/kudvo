@@ -26,4 +26,9 @@ trait CanResolveNomination
 
         return parent::route($name, $parameters, $absolute);
     }
+
+    public function getPath(): string
+    {
+        return parent::getPath().'/{nomination}';
+    }
 }

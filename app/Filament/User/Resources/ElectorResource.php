@@ -30,7 +30,8 @@ class ElectorResource extends Resource
     {
         return $form
             ->schema(components: [
-                ElectorForm::membershipNumberComponent(),
+                ElectorForm::membershipNumberComponent()
+                    ->unique(),
 
                 Group::make()
                     ->columns()

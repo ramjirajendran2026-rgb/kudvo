@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Election\Pages\Auth;
+namespace App\Filament\Ballot\Pages\Auth;
 
 use App\Facades\Kudvo;
 use App\Models\Election;
@@ -53,9 +53,6 @@ class Login extends BasePage
         }
         Filament::auth()->login(user: $elector);
 
-        /** @var Elector $elector */
-        $elector = Filament::auth()->user();
-
         if (! $elector->canAccessPanel(Filament::getCurrentPanel())) {
             Filament::auth()->logout();
 
@@ -70,7 +67,7 @@ class Login extends BasePage
             request: request(),
         );
 
-        return app(LoginResponse::class);
+        return app(abstract: LoginResponse::class);
     }
 
     protected function getCredentialsFromFormData(array $data): array
@@ -100,6 +97,7 @@ class Login extends BasePage
     protected function getPhoneComponent()
     {
         return PhoneInput::make(name: 'phone')
+            ->defaultCountry(value: 'IN')
             ->label(label: 'Your phone number')
             ->required()
             ->validateFor();

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\User\Pages\Concerns;
+namespace App\Filament\Pages\Concerns;
 
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;

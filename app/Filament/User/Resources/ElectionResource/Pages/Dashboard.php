@@ -3,7 +3,7 @@
 namespace App\Filament\User\Resources\ElectionResource\Pages;
 
 use App\Enums\ElectionStatus;
-use App\Filament\User\Pages\Concerns\HasStateSection;
+use App\Filament\Pages\Concerns\HasStateSection;
 use App\Filament\User\Resources\ElectionResource;
 use Filament\Actions\Action;
 

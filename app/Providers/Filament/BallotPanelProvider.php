@@ -2,6 +2,9 @@
 
 namespace App\Providers\Filament;
 
+use App\Facades\Kudvo;
+use App\Filament\Ballot\Pages\Auth\Login;
+use App\Filament\Ballot\Pages\Index;
 use App\Filament\BallotPanel;
 use App\Filament\Http\Middleware\IdentifyElection;
 use Filament\Http\Middleware\Authenticate;
@@ -26,14 +29,12 @@ class BallotPanelProvider extends PanelProvider
     {
         return BallotPanel::make()
             ->id(id: 'ballot')
-            ->path(path: 'ballot/{election}')
-            ->discoverClusters(in: app_path('Filament/Ballot/Clusters'), for: 'App\\Filament\\Ballot\\Clusters')
-            ->discoverResources(in: app_path('Filament/Ballot/Resources'), for: 'App\\Filament\\Ballot\\Resources')
-            ->discoverPages(in: app_path('Filament/Ballot/Pages'), for: 'App\\Filament\\Ballot\\Pages')
-            ->pages(pages: [
-                Pages\Dashboard::class,
-            ])
-            ->discoverWidgets(in: app_path('Filament/Ballot/Widgets'), for: 'App\\Filament\\Ballot\\Widgets')
+            ->path(path: 'ballot')
+            ->authGuard(guard: 'elector')
+            ->discoverClusters(in: app_path(path: 'Filament/Ballot/Clusters'), for: 'App\\Filament\\Ballot\\Clusters')
+            ->discoverResources(in: app_path(path: 'Filament/Ballot/Resources'), for: 'App\\Filament\\Ballot\\Resources')
+            ->discoverPages(in: app_path(path: 'Filament/Ballot/Pages'), for: 'App\\Filament\\Ballot\\Pages')
+            ->discoverWidgets(in: app_path(path: 'Filament/Ballot/Widgets'), for: 'App\\Filament\\Ballot\\Widgets')
             ->middleware(middleware: [IdentifyElection::class], isPersistent: true)
             ->middleware(middleware: [
                 EncryptCookies::class,
@@ -47,9 +48,12 @@ class BallotPanelProvider extends PanelProvider
                 DispatchServingFilamentEvent::class,
             ])
             ->authMiddleware(middleware: [
-//                Authenticate::class,
+                Authenticate::class,
             ])
-            ->login()
+            ->login(action: Login::class)
+            ->brandName(name: fn (): string => Kudvo::getOrganisation()?->name)
+            ->brandLogo(logo: fn (): string => Kudvo::getOrganisation()?->getFilamentAvatarUrl())
+            ->navigation(builder: false)
             ->colors(colors: [
                 'primary' => Color::Amber,
             ]);

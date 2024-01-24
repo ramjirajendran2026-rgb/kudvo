@@ -184,7 +184,7 @@ class Election extends Model
 
     public function isMfaRequired(): bool
     {
-        return false;
+        return $this->preference->mfa_sms || $this->preference->mfa_mail;
     }
 
     public function getElectorGroups(): array

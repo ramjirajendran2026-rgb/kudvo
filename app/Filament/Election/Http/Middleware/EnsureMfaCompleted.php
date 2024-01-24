@@ -21,7 +21,7 @@ class EnsureMfaCompleted
 
         if (
             ! Str::startsWith(haystack: $request->url(), needles: Filament::getLogoutUrl()) &&
-            ! Session::has(key: Notice::getMfaCompletedSessionKey(elector: $elector)) &&
+            ! $elector->authSession?->isMfaCompleted() &&
             Kudvo::getElection()->isMfaRequired()
         ) {
             return Redirect::guest(path: Notice::getUrl());

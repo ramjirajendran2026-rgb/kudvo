@@ -35,15 +35,11 @@ class ElectionPanelProvider extends PanelProvider
     {
         return ElectionPanel::make()
             ->id(id: 'election')
-            ->path(path: 'election/{election}')
+            ->path(path: 'election')
             ->authGuard(guard: 'elector')
             ->discoverResources(in: app_path('Filament/Election/Resources'), for: 'App\\Filament\\Election\\Resources')
             ->discoverPages(in: app_path('Filament/Election/Pages'), for: 'App\\Filament\\Election\\Pages')
             ->discoverWidgets(in: app_path('Filament/Election/Widgets'), for: 'App\\Filament\\Election\\Widgets')
-            ->widgets(widgets: [
-                Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
-            ])
             ->middleware(middleware: [IdentifyElection::class], isPersistent: true)
             ->middleware(middleware: [
                 EncryptCookies::class,
@@ -100,7 +96,7 @@ class ElectionPanelProvider extends PanelProvider
                 ->name(name: 'webmanifest');
             })
             ->colors(colors: [
-                'primary' => Color::Amber,
+                'primary' => Color::Green,
             ])
             ->font(family: 'Poppins')
             ->viteTheme('resources/css/filament/election/theme.css')

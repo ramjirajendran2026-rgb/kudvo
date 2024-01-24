@@ -10,6 +10,7 @@ use Filament\Facades\Filament;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\HtmlString;
 use Jenssegers\Agent\Agent;
 use Livewire\Attributes\Locked;
 use function Filament\authorize;
@@ -61,5 +62,19 @@ trait InteractsWithElection
     public function getHeading(): string|Htmlable
     {
         return $this->getElection()->name;
+    }
+
+    public function getSubheading(): string|Htmlable|null
+    {
+        if (! $this->getElection()->isTimingConfigured()) {
+            return null;
+        }
+
+        return new HtmlString(
+            html: <<<HTML
+<b>{$this->getElection()->starts_at_local->format(format: 'M d, Y h:i A (T)')}</b> to
+<b>{$this->getElection()->ends_at_local->format(format: 'M d, Y h:i A (T)')}</b>
+HTML
+        );
     }
 }

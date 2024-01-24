@@ -40,4 +40,9 @@ class AuthSession extends Model
     {
         return $this->session_id == $sessionId && $this->guard_name = $guardName;
     }
+
+    public function isMfaCompleted(): bool
+    {
+        return filled(value: $this->mfa_completed_at);
+    }
 }

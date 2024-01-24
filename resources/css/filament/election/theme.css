@@ -2,6 +2,10 @@
 
 @config 'tailwind.config.js';
 
+.fi-btn {
+    @apply rounded-full px-12;
+}
+
 .fi-topbar {
     @apply mx-auto w-full lg:px-8 max-w-5xl relative;
 

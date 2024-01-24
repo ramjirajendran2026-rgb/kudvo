@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Facades\Kudvo;
+use App\Filament\BallotPanel;
 use App\Filament\ElectionPanel;
 use App\Filament\NominationPanel;
 use App\Notifications\ElectorBallotLinkNotification;
@@ -17,6 +18,8 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -25,7 +28,6 @@ use Illuminate\Http\Request;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Str;
-use Jenssegers\Agent\Agent;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
@@ -88,6 +90,18 @@ class Elector extends Model implements
         );
     }
 
+    public function ballots(): HasMany
+    {
+        return $this->hasMany(related: Ballot::class)
+            ->latest();
+    }
+
+    public function ballot(): HasOne
+    {
+        return $this->hasOne(related: Ballot::class)
+            ->latestOfMany();
+    }
+
     public function authSessions(): MorphMany
     {
         return $this->morphMany(
@@ -137,7 +151,8 @@ class Elector extends Model implements
     {
         return match (true) {
             $panel instanceof NominationPanel => $this->event->is(model: Kudvo::getNomination()),
-            $panel instanceof ElectionPanel => $this->event->is(model: Kudvo::getElection()),
+            $panel instanceof ElectionPanel,
+                $panel instanceof BallotPanel => $this->event->is(model: Kudvo::getElection()),
             default => false,
         };
     }

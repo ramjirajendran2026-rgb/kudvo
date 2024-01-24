@@ -15,11 +15,11 @@ return new class extends Migration
             callback: function (Blueprint $table): void {
                 $table->uuid(column: 'id')->primary();
 
-                $table->longText(column: 'content');
+                $table->foreignUuid(column: 'key')
+                    ->constrained(table: 'positions', column: 'uuid')->cascadeOnUpdate()->cascadeOnDelete();
+                $table->longText(column: 'secret')->nullable();
 
                 $table->foreignIdFor(model: Ballot::class)->nullable()
-                    ->constrained()->cascadeOnUpdate()->cascadeOnDelete();
-                $table->foreignIdFor(model: Position::class)
                     ->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             },
         );

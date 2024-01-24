@@ -49,7 +49,7 @@ class ElectionMfaNotification extends Notification
 
     public function toSms(object $notifiable): string
     {
-        return $this->formatTemplate(template: app(abstract: SmsTemplates::class)->election_mfa);
+        return $this->formatTemplate(template: app(abstract: SmsTemplates::class)->elector_ballot_mfa);
     }
 
     public function toArray(object $notifiable): array

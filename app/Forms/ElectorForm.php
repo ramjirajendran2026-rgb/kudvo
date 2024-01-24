@@ -2,8 +2,13 @@
 
 namespace App\Forms;
 
+use App\Filament\Contracts\HasElection;
+use App\Filament\Contracts\HasNomination;
+use App\Models\Election;
+use App\Models\Nomination;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
+use Illuminate\Validation\Rules\Unique;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
 readonly class ElectorForm
@@ -43,7 +48,22 @@ readonly class ElectorForm
             ->label(label: 'Membership number')
             ->maxLength(length: 50)
             ->required()
-            ->unique(ignoreRecord: true);
+            ->unique(
+                ignoreRecord: true,
+                modifyRuleUsing: fn (HasElection|HasNomination $livewire, Unique $rule): Unique => $rule
+                    ->when(
+                        value: $livewire instanceof HasElection,
+                        callback: fn (Unique $rule): Unique => $rule
+                            ->where(column: 'event_type', value: Election::class)
+                            ->where(column: 'event_id', value: $livewire->getElection()->getKey())
+                    )
+                    ->when(
+                        value: $livewire instanceof HasNomination,
+                        callback: fn (Unique $rule): Unique => $rule
+                            ->where(column: 'event_type', value: Nomination::class)
+                            ->where(column: 'event_id', value: $livewire->getNomination()->getKey())
+                    )
+            );
     }
 
     public static function phoneComponent(): PhoneInput

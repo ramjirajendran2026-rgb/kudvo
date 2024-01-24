@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Ballot extends Model
 {
@@ -21,5 +22,10 @@ class Ballot extends Model
     public function elector(): BelongsTo
     {
         return $this->belongsTo(related: Elector::class);
+    }
+
+    public function votes(): HasMany
+    {
+        return $this->hasMany(related: Vote::class);
     }
 }

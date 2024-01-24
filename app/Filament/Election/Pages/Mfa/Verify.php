@@ -14,15 +14,14 @@ use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Section;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\Page;
+use Filament\Support\Enums\Alignment;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
@@ -48,6 +47,8 @@ class Verify extends Page implements HasElection
 
     protected ?string $subheading = 'Multi-Factor Authentication';
 
+    public static string | Alignment $formActionsAlignment = Alignment::Center;
+
     public ?array $data = [];
 
     #[Locked]
@@ -56,7 +57,7 @@ class Verify extends Page implements HasElection
     public function mount(): void
     {
         if (
-            Session::has(key: Notice::getMfaCompletedSessionKey(elector: $this->getElector())) ||
+            $this->getElector()->authSession?->isMfaCompleted() ||
             ! $this->getElection()->isMfaRequired()
         ) {
             $this->redirect(url: Filament::getUrl());
@@ -123,11 +124,6 @@ class Verify extends Page implements HasElection
         ];
     }
 
-    protected function hasFullWidthFormActions(): bool
-    {
-        return true;
-    }
-
     public function getFormActions(): array
     {
         return [
@@ -161,7 +157,7 @@ class Verify extends Page implements HasElection
             exception: ValidationException::withMessages(messages: ['data.code' => 'Invalid code'])
         );
 
-        Session::put(key: Notice::getMfaCompletedSessionKey(elector: $this->getElector()), value: Str::uuid());
+        $this->getElector()->authSession?->touch(attribute: 'mfa_completed_at');
 
         return redirect()->intended(default: Filament::getUrl());
     }

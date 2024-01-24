@@ -20,6 +20,7 @@ use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\Page;
+use Filament\Support\Enums\Alignment;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Session;
 
@@ -42,14 +43,13 @@ class Notice extends Page implements HasElection
 
     protected ?string $subheading = 'Multi-Factor Authentication';
 
+    public static string | Alignment $formActionsAlignment = Alignment::Center;
+
     public ?array $data = [];
 
     public function mount(): void
     {
-        if (
-            Session::has(key: Notice::getMfaCompletedSessionKey(elector: $this->getElector())) ||
-            ! $this->getElection()->isMfaRequired()
-        ) {
+        if (! $this->getElection()->isMfaRequired() || $this->getElector()->authSession?->isMfaCompleted()) {
             $this->redirect(url: Filament::getUrl());
 
             return;
@@ -96,11 +96,6 @@ class Notice extends Page implements HasElection
                     ->statePath(path: 'data'),
             ),
         ];
-    }
-
-    protected function hasFullWidthFormActions(): bool
-    {
-        return true;
     }
 
     public function getFormActions(): array
@@ -166,19 +161,6 @@ class Notice extends Page implements HasElection
             array: [
                 Filament::getAuthGuard(),
                 'mfa',
-                $elector->getKey()
-            ]
-        );
-    }
-
-    public static function getMfaCompletedSessionKey(Elector $elector): string
-    {
-        return implode(
-            separator: '_',
-            array: [
-                Filament::getAuthGuard(),
-                'mfa',
-                'completed',
                 $elector->getKey()
             ]
         );
