@@ -7,6 +7,7 @@ use App\Models\Candidate;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Guava\FilamentClusters\Forms\Cluster;
 
 class CandidateResource extends Resource
 {
@@ -38,10 +39,21 @@ class CandidateResource extends Resource
                                 ->live(onBlur: true)
                                 ->columnSpanFull(),
 
-                            CandidateForm::firstNameComponent()
-                                ->required(),
+                            Cluster::make(schema: [
+                                CandidateForm::titleComponent()
+                                    ->placeholder(placeholder: 'Title'),
 
-                            CandidateForm::lastNameComponent(),
+                                CandidateForm::firstNameComponent()
+                                    ->columnSpan(2)
+                                    ->placeholder(placeholder: 'First name'),
+
+                                CandidateForm::lastNameComponent()
+                                    ->columnSpan(2)
+                                    ->placeholder(placeholder: 'Last name'),
+                            ])
+                                ->columns(columns: 5)
+                                ->columnSpanFull()
+                                ->label(label: 'Full name'),
 
                             CandidateForm::emailComponent(),
 

@@ -10,6 +10,7 @@
     :compact="false"
     :heading="$getHeading()"
     :description="$getSectionDescription()"
+    class="fi-vote-picker"
 >
     <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
         <div
@@ -184,14 +185,28 @@
                         <label
                             @class([
                                 'fi-fo-checkbox-list-option-label flex items-center gap-x-3 py-2 rounded-xl',
-                                'cursor-pointer hover:bg-gray-100 hover:px-4 dark:hover:bg-white/5' => ! $isDisabled,
+                                'cursor-pointer md:hover:bg-gray-100 md:hover:px-4 dark:md:hover:bg-white/5' => ! $isDisabled,
                             ])
                         >
+                            <x-filament::input.checkbox
+                                :valid="! $errors->has($statePath)"
+                                :attributes="
+                                \Filament\Support\prepare_inherited_attributes($getExtraInputAttributeBag())
+                                    ->merge([
+                                        'disabled' => $isDisabled || $isOptionDisabled($value, $label),
+                                        'value' => $value,
+                                        'wire:loading.attr' => 'disabled',
+                                        $applyStateBindingModifiers('wire:model') => $statePath,
+                                        'x-on:change' => $isBulkToggleable ? 'checkIfAllCheckboxesAreChecked()' : null,
+                                    ], escape: false)
+                                    ->class(['mt-1 w-8 h-8'])
+                            "
+                            />
+
                             <img
                                 src="{{ $getPhotoUrl($value) }}"
                                 alt="{{ $label }}'s photo"
-                                class="max-w-none object-cover object-center rounded-full"
-                                style="height: 80px; width: 80px"
+                                class="max-w-none object-cover object-center rounded-full w-10 h-10 md:w-20 md:h-20"
                             />
 
                             <div class="grid flex-1 text-sm leading-6">
@@ -210,26 +225,20 @@
                                 @endif
                             </div>
 
-                            <x-filament::input.checkbox
-                                :valid="! $errors->has($statePath)"
-                                :attributes="
-                                \Filament\Support\prepare_inherited_attributes($getExtraInputAttributeBag())
-                                    ->merge([
-                                        'disabled' => $isDisabled || $isOptionDisabled($value, $label),
-                                        'value' => $value,
-                                        'wire:loading.attr' => 'disabled',
-                                        $applyStateBindingModifiers('wire:model') => $statePath,
-                                        'x-on:change' => $isBulkToggleable ? 'checkIfAllCheckboxesAreChecked()' : null,
-                                    ], escape: false)
-                                    ->class(['mt-1 w-8 h-8'])
-                            "
+                            <img
+                                src="{{ $getSymbolUrl($value) }}"
+                                alt="{{ $label }}'s symbol"
+                                class="max-w-none object-cover object-center rounded-full w-10 h-10 md:w-20 md:h-20"
                             />
                         </label>
                     </div>
                 @empty
                     <div
                         wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.empty"
-                    ></div>
+                        class="text-center text-base font-semibold leading-6 text-gray-950 dark:text-white px-6 py-12"
+                    >
+                        {{ $getPlaceholder() }}
+                    </div>
                 @endforelse
             </x-filament::grid>
 

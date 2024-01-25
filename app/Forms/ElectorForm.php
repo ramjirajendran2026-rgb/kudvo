@@ -6,6 +6,7 @@ use App\Filament\Contracts\HasElection;
 use App\Filament\Contracts\HasNomination;
 use App\Models\Election;
 use App\Models\Nomination;
+use Filament\Forms\Components\Split;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Validation\Rules\Unique;
@@ -78,6 +79,7 @@ readonly class ElectorForm
     public static function titleComponent(): TextInput
     {
         return TextInput::make(name: 'title')
+            ->datalist(options: ['Mr.', 'Ms.', 'Mrs.', 'Dr.', 'Prof.'])
             ->label(label: 'Salutation')
             ->maxLength(length: 20);
     }

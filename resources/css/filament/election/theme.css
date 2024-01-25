@@ -36,3 +36,17 @@
         text-sm font-medium leading-6 text-gray-950 dark:text-white;
     }
 }
+
+.fi-vote-picker {
+    & .fi-section-header {
+        & .fi-section-header-heading {
+            @apply text-xl
+        }
+
+        @apply text-center
+    }
+
+    & .fi-checkbox-input {
+        @apply w-4 h-4 md:w-8 md:h-8 rounded-full hover:ring-primary-600 dark:hover:ring-primary-500
+    }
+}

@@ -6,6 +6,7 @@ use App\Filament\Imports\ElectorImporter;
 use App\Forms\ElectorForm;
 use App\Models\Elector;
 use Filament\Forms\Components\Group;
+use Filament\Forms\Components\Split;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\Alignment;
@@ -17,6 +18,7 @@ use Filament\Tables\Actions\EditAction as TableEditAction;
 use Filament\Tables\Actions\ImportAction as TableImportAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Guava\FilamentClusters\Forms\Cluster;
 
 class ElectorResource extends Resource
 {
@@ -30,16 +32,22 @@ class ElectorResource extends Resource
     {
         return $form
             ->schema(components: [
-                ElectorForm::membershipNumberComponent()
-                    ->unique(),
+                ElectorForm::membershipNumberComponent(),
 
-                Group::make()
-                    ->columns()
-                    ->schema(components: [
-                        ElectorForm::firstNameComponent(),
+                Cluster::make(schema: [
+                    ElectorForm::titleComponent()
+                        ->placeholder(placeholder: 'Title'),
 
-                        ElectorForm::lastNameComponent(),
-                    ]),
+                    ElectorForm::firstNameComponent()
+                        ->columnSpan(2)
+                        ->placeholder(placeholder: 'First name'),
+
+                    ElectorForm::lastNameComponent()
+                        ->columnSpan(2)
+                        ->placeholder(placeholder: 'Last name'),
+                ])
+                    ->columns(columns: 5)
+                    ->label(label: 'Full name'),
 
                 ElectorForm::emailComponent(),
 

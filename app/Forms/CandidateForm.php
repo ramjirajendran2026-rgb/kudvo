@@ -126,6 +126,7 @@ readonly class CandidateForm
     public static function titleComponent(): TextInput
     {
         return TextInput::make(name: 'title')
+            ->datalist(options: ['Mr.', 'Ms.', 'Mrs.', 'Dr.', 'Prof.'])
             ->label(label: 'Salutation')
             ->maxLength(length: 20);
     }

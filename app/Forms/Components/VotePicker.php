@@ -8,16 +8,21 @@ use Closure;
 use Filament\AvatarProviders\UiAvatarsProvider;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Concerns\CanLimitItemsLength;
+use Filament\Forms\Components\Concerns\HasPlaceholder;
 use Filament\Support\Concerns\HasHeading;
+use Filament\Support\Facades\FilamentColor;
+use Filament\Tables\Table\Concerns\HasEmptyState;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Spatie\Color\Rgb;
 
 class VotePicker extends CheckboxList
 {
     use CanLimitItemsLength;
     use HasHeading;
+    use HasPlaceholder;
 
     protected Position $position;
 
@@ -45,7 +50,7 @@ class VotePicker extends CheckboxList
         return $this;
     }
 
-    public function preview(bool|Closure $condition): static
+    public function preview(bool|Closure $condition = true): static
     {
         $this->preview = $condition;
 
@@ -75,6 +80,7 @@ class VotePicker extends CheckboxList
         $this->validationAttribute(label: $position->name);
 
         $this->heading(heading: $position->name);
+        $this->placeholder(placeholder: fn (self $component): string => $component->isPreview() ? 'None selected' : 'No candidates');
 
         $this->options(
             options: fn (string $operation, array $state, self $component) => $position
@@ -88,7 +94,7 @@ class VotePicker extends CheckboxList
                 )
                 ->mapWithKeys(callback: fn(Candidate $candidate) => [$candidate->uuid => $candidate->display_name])
         );
-        $this->searchable(condition: $position->candidates->count() > 5);
+        $this->searchable(condition: $position->candidates->count() > 2);
         $this->maxItems(count: $position->quota);
         $this->minItems(count: $position->threshold);
 
@@ -123,5 +129,14 @@ class VotePicker extends CheckboxList
 
         return $candidate->getFilamentAvatarUrl() ?:
             app(abstract: UiAvatarsProvider::class)->get(record: $candidate);
+    }
+
+    public function getSymbolUrl(string $uuid): ?string
+    {
+        $candidate = $this->getCandidate(uuid: $uuid);
+
+        $backgroundColor = Rgb::fromString('rgb(' . FilamentColor::getColors()['info'][800] . ')')->toHex();
+
+        return 'https://ui-avatars.com/api/?name=' . $candidate->sort . '&color=FFFFFF&background=' . str($backgroundColor)->after('#');
     }
 }

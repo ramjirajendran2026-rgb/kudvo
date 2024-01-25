@@ -6,17 +6,23 @@ use App\Filament\Contracts\HasElection;
 use App\Filament\User\Resources\CandidateResource;
 use App\Filament\User\Resources\PositionResource;
 use App\Forms\CandidateForm;
+use App\Forms\Components\VotePicker;
 use App\Forms\PositionForm;
 use App\Models\Candidate;
 use App\Models\Election;
 use App\Models\Position;
+use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\StaticAction;
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
-use Filament\Infolists\Components\Actions\Action;
+use Filament\Forms\Set;
+use Filament\Infolists\Components\Actions\Action as InfolistAction;
 use Filament\Infolists\Components\Group;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\Section;
@@ -24,9 +30,11 @@ use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
 use Filament\Infolists\Components\Split;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
+use Filament\Notifications\Notification;
 use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\MaxWidth;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
@@ -45,6 +53,7 @@ class BallotSetup extends ElectionPage
             ->schema(components: [
                 RepeatableEntry::make(name: 'positions')
                     ->contained(condition: false)
+                    ->extraAttributes(attributes: ['class' => 'position-repeatable-entry'])
                     ->hiddenLabel()
                     ->placeholder(placeholder: 'No positions')
                     ->schema(components: [
@@ -62,7 +71,7 @@ class BallotSetup extends ElectionPage
                             ])
                             ->schema(components: [
                                 RepeatableEntry::make(name: 'candidates')
-                                    ->extraAttributes(['class' => 'divide-y'])
+                                    ->extraAttributes(attributes: ['class' => 'candidate-repeatable-entry'])
                                     ->hiddenLabel()
                                     ->placeholder(placeholder: 'No candidates')
                                     ->schema(components: [
@@ -86,18 +95,17 @@ class BallotSetup extends ElectionPage
                                                             $this->getDeleteCandidateAction(),
                                                         ]),
 
-                                                    Split::make(schema: [
-                                                        TextEntry::make(name: 'membership_number')
-                                                            ->color(color: 'gray')
-                                                            ->getStateUsing(
-                                                                callback: fn (Candidate $record): ?string => collect(value: [
-                                                                    $record->membership_number,
-                                                                    $record->email,
-                                                                    $record->phone
-                                                                ])->filter(callback: fn (?string $item): bool => filled(value: $item))->implode(value: ' • ')
-                                                            )
-                                                            ->hiddenLabel(),
-                                                    ])
+                                                    TextEntry::make(name: 'membership_number')
+                                                        ->color(color: 'gray')
+                                                        ->getStateUsing(
+                                                            callback: fn (Candidate $record): ?string => collect(value: [
+                                                                $record->membership_number,
+                                                                $record->email,
+                                                                $record->phone
+                                                            ])->filter(callback: fn (?string $item): bool => filled(value: $item))->implode(value: ' • ')
+                                                        )
+                                                        ->hiddenLabel()
+                                                        ->visible(condition: fn (?string $state): bool => filled($state)),
                                                 ]),
                                         ]),
                                     ]),
@@ -115,12 +123,66 @@ class BallotSetup extends ElectionPage
     protected function getHeaderActions(): array
     {
         return [
+            $this->getPreviewBallotAction(),
+
             $this->getCreatePositionAction(),
 
             $this->getReorderPositionAction(),
 
             ...parent::getHeaderActions(),
         ];
+    }
+
+    protected function getPreviewBallotAction()
+    {
+        return Action::make(name: 'previewBallot')
+            ->action(action: function (Action $action, array $data, Form $form): void {
+                $preview = $data['preview'];
+
+                if ($preview) {
+                    Notification::make()
+                        ->title(title: 'Preview completed')
+                        ->success()
+                        ->send();
+
+                    return;
+                }
+
+                $data['preview'] = true;
+                $data['votes'] = Arr::mapWithKeys($data['votes'], fn ($item, $key) => [$key => Arr::map($item, fn ($subItem) => $subItem['key'])]);
+
+                $form->fill(state: $data);
+
+                $action->formData(data: $data);
+                $action->halt();
+            })
+            ->color(color: 'success')
+            ->form(
+                form: fn (self $livewire): array => [
+                    Hidden::make(name: 'preview')
+                        ->default(state: false),
+
+                    \Filament\Forms\Components\Group::make(
+                        schema: $livewire->getElection()->positions
+                            ->map(
+                                callback: fn (Position $position) => VotePicker::makeFor(position: $position)
+                                    ->disabled(condition: fn (Get $get): bool => $get(path: '../preview'))
+                                    ->preview(condition: fn (Get $get): bool => $get(path: '../preview')),
+                            )
+                            ->toArray()
+                    )
+                    ->statePath(path: 'votes')
+                ]
+            )
+            ->icon(icon: 'heroicon-m-eye')
+//            ->iconButton()
+            ->label(label: 'Preview')
+            ->modalFooterActionsAlignment(alignment: Alignment::Center)
+            ->modalDescription(description: $this->getSubheading())
+            ->modalHeading(heading: $this->getHeading())
+            ->modalCancelAction(action: false)
+            ->modalSubmitActionLabel(label: fn (array $data): string => ($data['preview'] ?? false) ? 'Confirm' : 'Continue')
+            ->slideOver();
     }
 
     protected function getCreatePositionAction(): CreateAction
@@ -175,9 +237,9 @@ class BallotSetup extends ElectionPage
             ->modalWidth(width: MaxWidth::ExtraLarge);
     }
 
-    protected function getEditPositionAction(): Action
+    protected function getEditPositionAction(): InfolistAction
     {
-        return Action::make(name: 'editPosition')
+        return InfolistAction::make(name: 'editPosition')
             ->authorize(
                 abilities: fn (HasElection $livewire): bool => static::can(
                     action: 'updateAnyPosition',
@@ -198,9 +260,9 @@ class BallotSetup extends ElectionPage
             ->modalWidth(width: MaxWidth::ExtraLarge);
     }
 
-    protected function getDeletePositionAction(): Action
+    protected function getDeletePositionAction(): InfolistAction
     {
-        return Action::make(name: 'deletePosition')
+        return InfolistAction::make(name: 'deletePosition')
             ->authorize(
                 abilities: fn (HasElection $livewire): bool => static::can(
                     action: 'deleteAnyPosition',
@@ -217,9 +279,9 @@ class BallotSetup extends ElectionPage
             ->modalHeading(heading: fn (Position $record): string => "Delete $record->name");
     }
 
-    protected function getReorderCandidateAction(): Action
+    protected function getReorderCandidateAction(): InfolistAction
     {
-        return Action::make(name: 'reorderCandidate')
+        return InfolistAction::make(name: 'reorderCandidate')
             ->authorize(
                 abilities: fn (HasElection $livewire): bool => static::can(
                     action: 'reorderCandidate',
@@ -254,9 +316,9 @@ class BallotSetup extends ElectionPage
             ->modalWidth(width: MaxWidth::ExtraLarge);
     }
 
-    protected function getCreateCandidateAction(): Action
+    protected function getCreateCandidateAction(): InfolistAction
     {
-        return Action::make(name: 'createCandidate')
+        return InfolistAction::make(name: 'createCandidate')
             ->authorize(
                 abilities: fn (HasElection $livewire): bool => static::can(
                     action: 'createCandidate',
@@ -277,9 +339,9 @@ class BallotSetup extends ElectionPage
             ->size(size: ActionSize::Small);
     }
 
-    protected function getCreateCandidatesAction(): Action
+    protected function getCreateCandidatesAction(): InfolistAction
     {
-        return Action::make(name: 'createCandidates')
+        return InfolistAction::make(name: 'createCandidates')
             ->authorize(
                 abilities: fn (HasElection $livewire): bool => static::can(
                     action: 'createCandidates',
@@ -300,9 +362,9 @@ class BallotSetup extends ElectionPage
             ->iconButton();
     }
 
-    protected function getEditCandidateAction(): Action
+    protected function getEditCandidateAction(): InfolistAction
     {
-        return Action::make(name: 'editCandidate')
+        return InfolistAction::make(name: 'editCandidate')
             ->authorize(
                 abilities: fn (HasElection $livewire): bool => static::can(
                     action: 'updateAnyCandidate',
@@ -326,9 +388,9 @@ class BallotSetup extends ElectionPage
             ->modalSubmitActionLabel(label: 'Save changes');
     }
 
-    protected function getDeleteCandidateAction(): Action
+    protected function getDeleteCandidateAction(): InfolistAction
     {
-        return Action::make(name: 'deleteCandidate')
+        return InfolistAction::make(name: 'deleteCandidate')
             ->authorize(
                 abilities: fn (HasElection $livewire): bool => static::can(
                     action: 'deleteAnyCandidate',

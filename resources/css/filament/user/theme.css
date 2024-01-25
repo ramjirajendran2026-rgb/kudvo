@@ -5,3 +5,29 @@
 .fi-in-placeholder {
     @apply text-center;
 }
+
+.guava-fi-cl-cluster {
+    .fi-input-wrp {
+        @apply rounded-none;
+    }
+}
+
+.position-repeatable-entry {
+    & .fi-section-content {
+        @apply p-0;
+
+        & .flex.items-start {
+            @apply items-center;
+        }
+    }
+}
+
+.candidate-repeatable-entry {
+    &>ul>.grid {
+        @apply divide-y gap-0;
+    }
+
+    & .fi-in-repeatable-item {
+        @apply rounded-none shadow-none ring-0 border-gray-200 dark:border-white/10 bg-inherit dark:bg-inherit;
+    }
+}
