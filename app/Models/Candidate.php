@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use Filament\AvatarProviders\UiAvatarsProvider;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
+use Filament\Support\Facades\FilamentColor;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\Color\Rgb;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
@@ -49,6 +52,25 @@ class Candidate extends Model implements HasMedia, HasName, HasAvatar
         return Attribute::make(
             get: fn($value, array $attributes) => $this->full_name.
                 (filled(value: $this->membership_number) ? ' ('.$this->membership_number.')' : ''),
+        );
+    }
+
+    protected function photoUrl(): Attribute
+    {
+        return Attribute::make(
+            get: fn($value, array $attributes) => $this->getFilamentAvatarUrl() ?:
+                app(abstract: UiAvatarsProvider::class)->get(record: $this),
+        );
+    }
+
+    protected function symbolUrl(): Attribute
+    {
+        return Attribute::make(
+            get: fn($value, array $attributes) => 'https://ui-avatars.com/api/?name=' .
+                $this->sort .
+                '&color=FFFFFF&background=' .
+                str(Rgb::fromString('rgb(' . FilamentColor::getColors()['info'][800] . ')')->toHex())
+                    ->after('#'),
         );
     }
 

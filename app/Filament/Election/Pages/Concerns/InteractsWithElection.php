@@ -72,8 +72,11 @@ trait InteractsWithElection
 
         return new HtmlString(
             html: <<<HTML
-<b>{$this->getElection()->starts_at_local->format(format: 'M d, Y h:i A (T)')}</b> to
+<div class="flex flex-col md:flex-row justify-center items-center gap-2">
+<b>{$this->getElection()->starts_at_local->format(format: 'M d, Y h:i A (T)')}</b>
+<span>to</span>
 <b>{$this->getElection()->ends_at_local->format(format: 'M d, Y h:i A (T)')}</b>
+</div>
 HTML
         );
     }

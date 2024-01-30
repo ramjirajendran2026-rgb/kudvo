@@ -80,6 +80,27 @@ class Election extends Model
         );
     }
 
+    protected function isUpcoming(): Attribute
+    {
+        return Attribute::make(
+            get: fn($value, array $attributes) => $this->is_published && $this->starts_at->isFuture(),
+        );
+    }
+
+    protected function isOpen(): Attribute
+    {
+        return Attribute::make(
+            get: fn($value, array $attributes) => $this->is_published && $this->starts_at->isPast() && $this->ends_at->isFuture(),
+        );
+    }
+
+    protected function isExpired(): Attribute
+    {
+        return Attribute::make(
+            get: fn($value, array $attributes) => $this->is_published && $this->ends_at->isPast(),
+        );
+    }
+
     protected function isClosed(): Attribute
     {
         return Attribute::make(

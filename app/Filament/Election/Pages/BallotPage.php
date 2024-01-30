@@ -13,6 +13,7 @@ use Filament\Notifications\Notification;
 use Filament\Support\Enums\ActionSize;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 use Symfony\Component\HttpFoundation\Response;
 
 class BallotPage extends BasePage
@@ -27,9 +28,26 @@ class BallotPage extends BasePage
 
     public bool $preview = false;
 
-    public function mount(): void
+    public function mountCanAuthorizeAccess(): void
     {
-        $this->form->fill(state: $this->getElector()->ballot?->votes->mapWithKeys(fn(Vote $vote) => [$vote->key => Arr::map($vote->secret, fn ($item) => $item['key'])])->toArray() ?? []);
+        if (! static::canAccess()) {
+            $this->redirect(url: Dashboard::getUrl());
+
+            return;
+        }
+
+        $this->form->fill(
+            state: $this->getElector()
+                ->ballot
+                ?->votes
+                ->mapWithKeys(
+                    callback: fn(Vote $vote): array => [
+                        $vote->key => Arr::map($vote->secret, fn ($item) => $item['key'])
+                    ]
+                )
+                ->toArray() ??
+                []
+        );
     }
 
     public static function canAccess(): bool
@@ -94,7 +112,7 @@ class BallotPage extends BasePage
             $vote = Vote::create(attributes: [
                 'key' => $key,
                 'secret' => $secret,
-                'ballot_id' => $ballot->getKey(),
+                'ballot_id' => $this->getElection()->preference->dnt_votes ? null : $ballot->getKey(),
             ]);
         }
 
@@ -102,6 +120,8 @@ class BallotPage extends BasePage
             ->title(title: 'Your votes confirmed successfully')
             ->success()
             ->send();
+
+        Session::put(key: 'elector_'.$this->getElector()->getKey().'_votes', value: encrypt(value: $data));
 
         $this->redirect(url: Filament::getUrl());
     }

@@ -28,4 +28,9 @@ class Ballot extends Model
     {
         return $this->hasMany(related: Vote::class);
     }
+
+    public function isVoted(): bool
+    {
+        return filled($this->voted_at);
+    }
 }

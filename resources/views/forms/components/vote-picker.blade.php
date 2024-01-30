@@ -228,7 +228,7 @@
                             <img
                                 src="{{ $getSymbolUrl($value) }}"
                                 alt="{{ $label }}'s symbol"
-                                class="max-w-none object-cover object-center rounded-full w-10 h-10 md:w-20 md:h-20"
+                                class="max-w-none object-cover object-center rounded-xl w-10 h-10 md:w-20 md:h-20"
                             />
                         </label>
                     </div>

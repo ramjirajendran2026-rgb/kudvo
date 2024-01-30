@@ -125,18 +125,11 @@ class VotePicker extends CheckboxList
 
     public function getPhotoUrl(string $uuid): ?string
     {
-        $candidate = $this->getCandidate(uuid: $uuid);
-
-        return $candidate->getFilamentAvatarUrl() ?:
-            app(abstract: UiAvatarsProvider::class)->get(record: $candidate);
+        return $this->getCandidate(uuid: $uuid)->photo_url;
     }
 
     public function getSymbolUrl(string $uuid): ?string
     {
-        $candidate = $this->getCandidate(uuid: $uuid);
-
-        $backgroundColor = Rgb::fromString('rgb(' . FilamentColor::getColors()['info'][800] . ')')->toHex();
-
-        return 'https://ui-avatars.com/api/?name=' . $candidate->sort . '&color=FFFFFF&background=' . str($backgroundColor)->after('#');
+        return $this->getCandidate(uuid: $uuid)->symbol_url;
     }
 }

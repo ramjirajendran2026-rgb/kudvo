@@ -123,66 +123,12 @@ class BallotSetup extends ElectionPage
     protected function getHeaderActions(): array
     {
         return [
-            $this->getPreviewBallotAction(),
-
             $this->getCreatePositionAction(),
 
             $this->getReorderPositionAction(),
 
             ...parent::getHeaderActions(),
         ];
-    }
-
-    protected function getPreviewBallotAction()
-    {
-        return Action::make(name: 'previewBallot')
-            ->action(action: function (Action $action, array $data, Form $form): void {
-                $preview = $data['preview'];
-
-                if ($preview) {
-                    Notification::make()
-                        ->title(title: 'Preview completed')
-                        ->success()
-                        ->send();
-
-                    return;
-                }
-
-                $data['preview'] = true;
-                $data['votes'] = Arr::mapWithKeys($data['votes'], fn ($item, $key) => [$key => Arr::map($item, fn ($subItem) => $subItem['key'])]);
-
-                $form->fill(state: $data);
-
-                $action->formData(data: $data);
-                $action->halt();
-            })
-            ->color(color: 'success')
-            ->form(
-                form: fn (self $livewire): array => [
-                    Hidden::make(name: 'preview')
-                        ->default(state: false),
-
-                    \Filament\Forms\Components\Group::make(
-                        schema: $livewire->getElection()->positions
-                            ->map(
-                                callback: fn (Position $position) => VotePicker::makeFor(position: $position)
-                                    ->disabled(condition: fn (Get $get): bool => $get(path: '../preview'))
-                                    ->preview(condition: fn (Get $get): bool => $get(path: '../preview')),
-                            )
-                            ->toArray()
-                    )
-                    ->statePath(path: 'votes')
-                ]
-            )
-            ->icon(icon: 'heroicon-m-eye')
-//            ->iconButton()
-            ->label(label: 'Preview')
-            ->modalFooterActionsAlignment(alignment: Alignment::Center)
-            ->modalDescription(description: $this->getSubheading())
-            ->modalHeading(heading: $this->getHeading())
-            ->modalCancelAction(action: false)
-            ->modalSubmitActionLabel(label: fn (array $data): string => ($data['preview'] ?? false) ? 'Confirm' : 'Continue')
-            ->slideOver();
     }
 
     protected function getCreatePositionAction(): CreateAction

@@ -6,13 +6,21 @@ use App\Filament\Contracts\HasElection;
 use App\Filament\Contracts\HasElectorGroups;
 use App\Filament\User\Resources\ElectionResource;
 use App\Filament\User\Resources\NominationResource\Pages\Dashboard;
+use App\Forms\Components\VotePicker;
 use App\Models\Election;
+use App\Models\Position;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Forms\Components\Group;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\Page;
+use Filament\Support\Enums\Alignment;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Illuminate\Support\HtmlString;
 use Livewire\Attributes\Locked;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,7 +28,7 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * @property Form $form
  */
-class ElectionPage extends Page implements HasElectorGroups, HasElection
+abstract class ElectionPage extends Page implements HasElectorGroups, HasElection
 {
     protected static string $resource = ElectionResource::class;
 
@@ -143,6 +151,8 @@ HTML
     protected function getHeaderActions(): array
     {
         return [
+            $this->getPreviewBallotAction(),
+
             ElectionResource::getEditAction()
                 ->iconButton(),
 
@@ -154,6 +164,58 @@ HTML
 
             ])->dropdownPlacement(placement: 'bottom-end'),
         ];
+    }
+
+    protected function getPreviewBallotAction()
+    {
+        return Action::make(name: 'previewBallot')
+            ->action(action: function (Action $action, array $data, Form $form): void {
+                $preview = $data['preview'];
+
+                if ($preview) {
+                    Notification::make()
+                        ->title(title: 'Preview completed')
+                        ->success()
+                        ->send();
+
+                    return;
+                }
+
+                $data['preview'] = true;
+                $data['votes'] = Arr::mapWithKeys($data['votes'], fn ($item, $key) => [$key => Arr::map($item, fn ($subItem) => $subItem['key'])]);
+
+                $form->fill(state: $data);
+
+                $action->formData(data: $data);
+                $action->halt();
+            })
+            ->color(color: 'success')
+            ->form(
+                form: fn (HasElection $livewire): array => [
+                    Hidden::make(name: 'preview')
+                        ->default(state: false),
+
+                    Group::make()
+                        ->statePath(path: 'votes')
+                        ->schema(components: $livewire->getElection()->positions
+                            ->map(
+                                callback: fn (Position $position) => VotePicker::makeFor(position: $position)
+                                    ->disabled(condition: fn (Get $get): bool => $get(path: '../preview'))
+                                    ->preview(condition: fn (Get $get): bool => $get(path: '../preview')),
+                            )
+                            ->toArray()
+                        )
+                ]
+            )
+            ->icon(icon: 'heroicon-m-eye')
+            ->iconButton()
+            ->label(label: 'Preview')
+            ->modalFooterActionsAlignment(alignment: Alignment::Center)
+            ->modalDescription(description: $this->getSubheading())
+            ->modalHeading(heading: $this->getHeading())
+            ->modalCancelAction(action: false)
+            ->modalSubmitActionLabel(label: fn (array $data): string => ($data['preview'] ?? false) ? 'Confirm' : 'Continue')
+            ->slideOver();
     }
 
     public static function can(string $action, Election $election): bool

@@ -154,6 +154,10 @@ class ElectionPolicy
 
     public function vote(Elector $elector, Election $election): bool
     {
+        if (! $election->is_open || $elector->ballot?->isVoted()) {
+            return false;
+        }
+
         return true;
     }
 }
