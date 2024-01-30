@@ -97,4 +97,30 @@
             @endforeach
         </datalist>
     @endif
+
+    <div wire:loading wire:target="verifyOTP">Verifying...</div>
 </x-dynamic-component>
+
+@script
+<script>
+    if ('OTPCredential' in window) {
+        window.addEventListener('livewire:navigated', () => {
+            const ac = new AbortController();
+
+            console.log('listening');
+            window.navigator.credentials.get({
+                otp: { transport:['sms'] },
+                signal: ac.signal
+            }).then(otp => {
+                console.log('otp received.'+otp.code);
+
+                $wire.{{ $statePath }} = otp.code;
+                $wire.verifyOTP(otp.code);
+            }).catch(err => {
+                alert('otp error.'+err)
+                console.log(err);
+            });
+        })
+    }
+</script>
+@endscript

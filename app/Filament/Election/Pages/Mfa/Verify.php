@@ -93,6 +93,7 @@ class Verify extends Page implements HasElection
     public function form(Form $form): Form
     {
         return $form
+            ->disabled()
             ->schema(components: [
                 Section::make()
                     ->schema(components: [
@@ -104,6 +105,7 @@ class Verify extends Page implements HasElection
                             ->hiddenLabel(),
 
                         OtpInput::make(name: 'code')
+                            ->autofocus()
                             ->length(length: strlen(string: $this->oneTimePassword->code))
                             ->hintAction(
                                 action: \Filament\Forms\Components\Actions\Action::make(name: 'resend')
@@ -127,9 +129,9 @@ class Verify extends Page implements HasElection
     public function getFormActions(): array
     {
         return [
-            Action::make(name: 'submit')
-                ->label(label: 'Verify')
-                ->submit(form: 'submit'),
+//            Action::make(name: 'submit')
+//                ->label(label: 'Verify')
+//                ->submit(form: 'submit'),
         ];
     }
 
@@ -154,7 +156,7 @@ class Verify extends Page implements HasElection
 
         throw_unless(
             condition: $this->oneTimePassword->verify(code: $data['code']),
-            exception: ValidationException::withMessages(messages: ['data.code' => 'Invalid code'])
+            exception: ValidationException::withMessages(messages: ['data.code' => 'Invalid code. '.$data['code']])
         );
 
         $this->getElector()->authSession?->touch(attribute: 'mfa_completed_at');
@@ -199,12 +201,14 @@ class Verify extends Page implements HasElection
         return '6 digit OTP code has been sent to your registered '.Arr::implodeWithAnd($via).'.';
     }
 
+    /**
+     * @throws Throwable
+     */
     #[On(event: 'otp-received')]
-    public function verifyOTP(string $code)
+    public function verifyOTP(string $code): Redirector|RedirectResponse|null
     {
-        Notification::make()
-            ->title(title: 'Verifying otp is '.$code)
-            ->success()
-            ->send();
+        $this->data['code'] = $code;
+
+        return $this->submit();
     }
 }
