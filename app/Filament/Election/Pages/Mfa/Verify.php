@@ -23,6 +23,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\ValidationException;
+use Jenssegers\Agent\Agent;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 use Livewire\Features\SupportRedirects\Redirector;
@@ -93,7 +94,7 @@ class Verify extends Page implements HasElection
     public function form(Form $form): Form
     {
         return $form
-            ->disabled()
+            ->disabled(condition: fn (Agent $agent): bool => !$agent->isiPhone())
             ->schema(components: [
                 Section::make()
                     ->schema(components: [
@@ -105,13 +106,15 @@ class Verify extends Page implements HasElection
                             ->hiddenLabel(),
 
                         OtpInput::make(name: 'code')
+                            ->autoFill()
                             ->autofocus()
                             ->length(length: strlen(string: $this->oneTimePassword->code))
                             ->hintAction(
                                 action: \Filament\Forms\Components\Actions\Action::make(name: 'resend')
                                     ->action(action: 'resend'),
                             )
-                            ->required(),
+                            ->required()
+                            ->verifyActionName(value: 'verifyOTP'),
                     ]),
             ]);
     }
@@ -184,6 +187,7 @@ class Verify extends Page implements HasElection
                 oneTimePassword: $this->oneTimePassword,
             )
         );
+        $this->data['code'] = '';
 
         Notification::make()
             ->title(title: 'OTP resent')

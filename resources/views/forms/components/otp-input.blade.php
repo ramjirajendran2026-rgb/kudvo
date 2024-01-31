@@ -18,6 +18,8 @@
     $suffixIcon = $getSuffixIcon();
     $suffixLabel = $getSuffixLabel();
     $statePath = $getStatePath();
+    $autoFill = $shouldAutoFill();
+    $verifyActionName = $getVerifyActionName();
 
     if ($isPasswordRevealable) {
         $xData = '{ isPasswordRevealed: false }';
@@ -58,8 +60,50 @@
             \Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())
                 ->class(['fi-fo-text-input overflow-hidden'])
         "
+        x-data="{
+            autoFill: {{ $shouldAutoFill ? 'true' : 'false' }},
+            fill(code) {
+                $wire.{{ $statePath }} = code;
+                if(code) {
+                    {{ filled($verifyActionName) ? ('$wire.'.$verifyActionName.'(code)') : '' }}
+                }
+            }
+        }"
+        x-init="
+            if ('OTPCredential' in window && autoFill) {
+                $nextTick(() => {
+                    const ac = new AbortController();
+
+                    console.log('listening');
+                    window.navigator.credentials.get({
+                        otp: { transport:['sms'] },
+                        signal: ac.signal
+                    }).then(otp => {
+                        console.log('otp received.'+otp.code);
+
+                        fill(otp.code);
+                    }).catch(err => {
+                        alert('otp error.'+err)
+                        console.log(err);
+                    });
+                });
+            }
+        "
     >
         <x-filament::input
+            @change="console.log($event);"
+            @keydown.prevent="console.log($event);alert('Not allowed')"
+            @input.prevent="
+                console.log($event);
+                if($event.inputType == 'insertText' && $event.data && $event.data.length == {{ $getMaxLength() ?: 6 }}) {
+                    fill($event.data);
+                } else {
+                    alert('Not allowed.');
+                    fill('');
+                }
+            "
+            pattern="[0-9]*"
+
             :attributes="
                 \Filament\Support\prepare_inherited_attributes($getExtraInputAttributeBag())
                     ->merge($extraAlpineAttributes, escape: false)
@@ -98,29 +142,5 @@
         </datalist>
     @endif
 
-    <div wire:loading wire:target="verifyOTP">Verifying...</div>
+    <div wire:loading wire:target="{{ $verifyActionName }}">Verifying...</div>
 </x-dynamic-component>
-
-@script
-<script>
-    if ('OTPCredential' in window) {
-        window.addEventListener('livewire:navigated', () => {
-            const ac = new AbortController();
-
-            console.log('listening');
-            window.navigator.credentials.get({
-                otp: { transport:['sms'] },
-                signal: ac.signal
-            }).then(otp => {
-                console.log('otp received.'+otp.code);
-
-                $wire.{{ $statePath }} = otp.code;
-                $wire.verifyOTP(otp.code);
-            }).catch(err => {
-                alert('otp error.'+err)
-                console.log(err);
-            });
-        })
-    }
-</script>
-@endscript

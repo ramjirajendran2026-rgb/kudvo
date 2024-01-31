@@ -2,6 +2,7 @@
     <x-filament-panels::form
         :wire:key="$this->getId() . '.form'"
         class="w-full items-center max-w-lg mx-auto"
+        onsubmit="return false"
     >
         {{ $this->form }}
 
