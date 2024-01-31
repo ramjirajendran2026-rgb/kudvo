@@ -5,7 +5,6 @@ namespace App\Providers\Filament;
 use App\Filament\User\Pages\Auth\EditProfile;
 use App\Filament\User\Pages\Auth\Register;
 use App\Filament\User\Pages\Organisation\EditOrganisationProfile;
-use App\Filament\User\Pages\Organisation\EditProfile as OrganisationEditProfile;
 use App\Filament\User\Pages\Organisation\Register as RegisterOrganisation;
 use App\Models\Organisation;
 use Exception;
