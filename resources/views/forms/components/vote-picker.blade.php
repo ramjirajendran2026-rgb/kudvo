@@ -4,6 +4,8 @@
     $isDisabled = $isDisabled();
     $isSearchable = $isSearchable();
     $statePath = $getStatePath();
+
+    $options = $getOptions();
 @endphp
 
 <x-filament::section
@@ -163,7 +165,7 @@
                     ])
             "
             >
-                @forelse ($getOptions() as $value => $label)
+                @foreach ($options as $value => $label)
                     <div
                         wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.options.{{ $value }}"
                         @if ($isSearchable)
@@ -232,15 +234,17 @@
                             />
                         </label>
                     </div>
-                @empty
-                    <div
-                        wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.empty"
-                        class="text-center text-base font-semibold leading-6 text-gray-950 dark:text-white px-6 py-12"
-                    >
-                        {{ $getPlaceholder() }}
-                    </div>
-                @endforelse
+                @endforeach
             </x-filament::grid>
+
+            @if(blank($options))
+                <div
+                    wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.empty"
+                    class="text-center text-base font-semibold leading-6 text-gray-950 dark:text-white px-6 py-12"
+                >
+                    {{ $getPlaceholder() }}
+                </div>
+            @endif
 
             @if ($isSearchable)
                 <div

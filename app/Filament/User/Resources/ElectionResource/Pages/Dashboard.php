@@ -26,6 +26,7 @@ class Dashboard extends ElectionPage
             $this->canSetTiming() => 'Configure timing',
             $this->canPublish() => 'All set!',
             $this->canClose() => 'Election Published',
+            $this->canGenerateResult() => 'Election Closed',
             default => null,
         };
     }
@@ -113,6 +114,16 @@ class Dashboard extends ElectionPage
             ($this->getElection()->positions_count ?? $this->getElection()->loadCount(relations: ['positions'])->positions_count) < 1;
     }
 
+    protected function canSetTiming(): bool
+    {
+        return static::can(action: 'setTiming', election: $this->getElection());
+    }
+
+    protected function canUpdateTiming(): bool
+    {
+        return static::can(action: 'updateTiming', election: $this->getElection());
+    }
+
     protected function canPublish(): bool
     {
         return static::can(action: 'publish', election: $this->getElection());
@@ -123,13 +134,8 @@ class Dashboard extends ElectionPage
         return static::can(action: 'close', election: $this->getElection());
     }
 
-    protected function canSetTiming(): bool
+    protected function canGenerateResult(): bool
     {
-        return static::can(action: 'setTiming', election: $this->getElection());
-    }
-
-    protected function canUpdateTiming(): bool
-    {
-        return static::can(action: 'updateTiming', election: $this->getElection());
+        return static::can(action: 'generateResult', election: $this->getElection());
     }
 }

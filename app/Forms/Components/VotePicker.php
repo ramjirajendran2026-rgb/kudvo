@@ -94,7 +94,7 @@ class VotePicker extends CheckboxList
                 )
                 ->mapWithKeys(callback: fn(Candidate $candidate) => [$candidate->uuid => $candidate->display_name])
         );
-        $this->searchable(condition: $position->candidates->count() > 2);
+        $this->searchable(condition: $position->candidates->count() > 10);
         $this->maxItems(count: $position->quota);
         $this->minItems(count: $position->threshold);
 
