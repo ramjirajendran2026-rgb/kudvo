@@ -2,6 +2,7 @@
 
 namespace App\Filament\Election\Pages;
 
+use App\Facades\Kudvo;
 use App\Forms\Components\VotePicker;
 use App\Models\Ballot;
 use App\Models\Position;
@@ -11,7 +12,10 @@ use Filament\Forms\Components\Actions;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Support\Enums\ActionSize;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Symfony\Component\HttpFoundation\Response;
@@ -31,15 +35,20 @@ class BallotPage extends BasePage
     public function mountCanAuthorizeAccess(): void
     {
         if (! static::canAccess()) {
-            $this->redirect(url: Dashboard::getUrl());
+            $this->redirect(url: Filament::getUrl());
+
+            return;
+        }
+
+        $ballot = $this->getElector()->ballot;
+        if (filled($ballot) && ! $this->getElection()->preference->voted_ballot_update) {
+            $this->redirect(url: Filament::getUrl());
 
             return;
         }
 
         $this->form->fill(
-            state: $this->getElector()
-                ->ballot
-                ?->votes
+            state: $ballot?->votes
                 ->mapWithKeys(
                     callback: fn(Vote $vote): array => [
                         $vote->key => Arr::map($vote->secret, fn ($item) => $item['key'])
@@ -102,10 +111,41 @@ class BallotPage extends BasePage
             return;
         }
 
+        if (
+            $this->getElection()->preference->ip_restriction_threshold &&
+            Ballot::query()
+                ->whereIpAddress(value: request()->ip())
+                ->whereHas(
+                    relation: 'elector',
+                    callback: fn (Builder $query): Builder => $query
+                        ->whereMorphedTo(relation: 'event', model: $this->getElection())
+                )
+                ->count() >= $this->getElection()->preference->ip_restriction_threshold
+        ) {
+            Notification::make()
+                ->title(title: 'Device not allowed')
+                ->body(body: 'This device is already used by another member. Please use another device to cast your vote. It is advised to don\'t use shared Wi-Fi network for voting.')
+                ->warning()
+                ->send();
+
+            return;
+        }
+
+        if (Cookie::has(key: 'election_'.Kudvo::getElection()->getKey().'_ballot')) {
+            Notification::make()
+                ->title(title: 'Device not allowed')
+                ->body(body: 'This device is already used by another member. Please use another device to cast your vote.')
+                ->warning()
+                ->send();
+
+            return;
+        }
+
         $ballot = $this->getElector()->ballots()
             ->create(attributes: [
                 'ip_address' => request()->ip(),
                 'voted_at' => now(),
+                'auth_session_id' => $this->getElector()->authSession->getKey(),
             ]);
 
         foreach ($data as $key => $secret) {
@@ -122,6 +162,7 @@ class BallotPage extends BasePage
             ->send();
 
         Session::put(key: 'elector_'.$this->getElector()->getKey().'_votes', value: encrypt(value: $data));
+        Cookie::queue(Cookie::forever(name: 'election_'.Kudvo::getElection()->getKey().'_ballot', value: $ballot->getKey()));
 
         $this->redirect(url: Filament::getUrl());
     }

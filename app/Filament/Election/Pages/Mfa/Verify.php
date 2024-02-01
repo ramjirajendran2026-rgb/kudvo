@@ -12,6 +12,7 @@ use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use DanHarrin\LivewireRateLimiting\WithRateLimiting;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
+use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
@@ -34,7 +35,6 @@ use Throwable;
  */
 class Verify extends Page implements HasElection
 {
-    use InteractsWithFormActions;
     use InteractsWithElection;
     use WithRateLimiting;
 
@@ -55,19 +55,23 @@ class Verify extends Page implements HasElection
     #[Locked]
     public ?OneTimePassword $oneTimePassword;
 
+    public bool $spaMode;
+
     public function mount(): void
     {
+        $this->spaMode = Filament::getCurrentPanel()->hasSpaMode();
+
         if (
             $this->getElector()->authSession?->isMfaCompleted() ||
             ! $this->getElection()->isMfaRequired()
         ) {
-            $this->redirect(url: Filament::getUrl());
+            $this->redirect(url: Filament::getUrl(), navigate: $this->spaMode);
 
             return;
         }
 
         if (! Session::has(key: Notice::getMfaSessionKey($this->getElector()))) {
-            $this->redirect(url: Notice::getUrl());
+            $this->redirect(url: Notice::getUrl(), navigate: $this->spaMode);
 
             return;
         }
@@ -75,7 +79,7 @@ class Verify extends Page implements HasElection
         $this->oneTimePassword = OneTimePassword::find(id: Session::get(key: Notice::getMfaSessionKey($this->getElector())));
 
         if ($this->oneTimePassword?->isVerified()) {
-            $this->redirect(url: Filament::getUrl());
+            $this->redirect(url: Filament::getUrl(), navigate: $this->spaMode);
 
             return;
         }
@@ -83,7 +87,7 @@ class Verify extends Page implements HasElection
         if (blank(value: $this->oneTimePassword) || $this->oneTimePassword->isExpired()) {
             Session::remove(key: Notice::getMfaSessionKey(elector: $this->getElector()));
 
-            $this->redirect(url: Notice::getUrl());
+            $this->redirect(url: Notice::getUrl(), navigate: $this->spaMode);
 
             return;
         }
@@ -94,9 +98,16 @@ class Verify extends Page implements HasElection
     public function form(Form $form): Form
     {
         return $form
-            ->disabled(condition: fn (Agent $agent): bool => !$agent->isiPhone())
+            ->extraAttributes(attributes: [
+                'class' => 'max-w-lg mx-auto',
+            ])
             ->schema(components: [
-                Section::make()
+                Section::make(heading: 'MFA Verification')
+                    ->headerActions(actions: [
+                        Actions\Action::make(name: 'resend')
+                            ->action(action: 'resend')
+                            ->link(),
+                    ])
                     ->schema(components: [
                         Placeholder::make(name: 'description')
                             ->content(content: $this->getNoticeText())
@@ -106,15 +117,11 @@ class Verify extends Page implements HasElection
                             ->hiddenLabel(),
 
                         OtpInput::make(name: 'code')
-                            ->autoFill()
-                            ->autofocus()
+                            ->afterStateUpdated(callback: fn (?string $state, self $livewire) => $livewire->submit())
+                            ->autoFillOnly(condition: $this->getElection()->isMfaSmsAutoFillOnly())
+                            ->autoFillOnly()
                             ->length(length: strlen(string: $this->oneTimePassword->code))
-                            ->hintAction(
-                                action: \Filament\Forms\Components\Actions\Action::make(name: 'resend')
-                                    ->action(action: 'resend'),
-                            )
-                            ->required()
-                            ->verifyActionName(value: 'verifyOTP'),
+                            ->required(),
                     ]),
             ]);
     }
@@ -129,19 +136,10 @@ class Verify extends Page implements HasElection
         ];
     }
 
-    public function getFormActions(): array
-    {
-        return [
-//            Action::make(name: 'submit')
-//                ->label(label: 'Verify')
-//                ->submit(form: 'submit'),
-        ];
-    }
-
     /**
      * @throws Throwable
      */
-    public function submit(): RedirectResponse|Redirector|null
+    public function submit(): void
     {
         try {
             $this->rateLimit(maxAttempts: 3);
@@ -152,19 +150,19 @@ class Verify extends Page implements HasElection
                 ->danger()
                 ->send();
 
-            return null;
+            return;
         }
 
         $data = $this->form->getState();
 
         throw_unless(
             condition: $this->oneTimePassword->verify(code: $data['code']),
-            exception: ValidationException::withMessages(messages: ['data.code' => 'Invalid code. '.$data['code']])
+            exception: ValidationException::withMessages(messages: ['data.code' => 'Invalid code'])
         );
 
         $this->getElector()->authSession?->touch(attribute: 'mfa_completed_at');
 
-        return redirect()->intended(default: Filament::getUrl());
+        $this->redirectIntended(default: Filament::getUrl(), navigate: Filament::getCurrentPanel()->hasSpaMode());
     }
 
     public function resend(): void
@@ -209,10 +207,10 @@ class Verify extends Page implements HasElection
      * @throws Throwable
      */
     #[On(event: 'otp-received')]
-    public function verifyOTP(string $code): Redirector|RedirectResponse|null
+    public function verifyOTP(string $code): void
     {
         $this->data['code'] = $code;
 
-        return $this->submit();
+        $this->submit();
     }
 }

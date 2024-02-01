@@ -91,10 +91,10 @@
             </tr>
             </thead>
             <tbody>
-            @forelse($position->candidates as $candidate)
-                @if(blank(collect($votes[$position->uuid])->firstWhere('key', $candidate->uuid)))
-                    @continue
-                @endif
+            @forelse($votes[$position->uuid] as $vote)
+                @php
+                    $candidate = $position->candidates->firstWhere('uuid', $vote['key']);
+                @endphp
                 <tr>
                     <td style="height: 16mm; width: 16mm;">
                         <img

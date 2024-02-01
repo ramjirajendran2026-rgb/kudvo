@@ -7,13 +7,11 @@ use App\Models\Election;
 use App\Models\Elector;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Http\Responses\Auth\Contracts\LoginResponse;
 use Filament\Notifications\Notification;
 use Filament\Pages\Auth\Login as BasePage;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Support\Facades\Cookie;
 use Illuminate\Validation\ValidationException;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
@@ -51,12 +49,6 @@ class Login extends BasePage
 
         if (blank(value: $elector)) {
             $this->throwFailureValidationException();
-        }
-
-        if (Cookie::has(key: 'election_'.Kudvo::getElection()->getKey().'_ballot')) {
-            throw ValidationException::withMessages([
-                'data.phone' => 'This device is already used by another voter',
-            ]);
         }
 
         Filament::auth()->login(user: $elector);

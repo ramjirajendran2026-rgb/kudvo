@@ -12,16 +12,23 @@ class Ballot extends Model
         'ip_address',
         'voted_at',
         'elector_id',
+        'auth_session_id',
     ];
 
     protected $casts = [
         'voted_at' => 'datetime',
         'elector_id' => 'int',
+        'auth_session_id' => 'int',
     ];
 
     public function elector(): BelongsTo
     {
         return $this->belongsTo(related: Elector::class);
+    }
+
+    public function authSession(): BelongsTo
+    {
+        return $this->belongsTo(related: AuthSession::class);
     }
 
     public function votes(): HasMany

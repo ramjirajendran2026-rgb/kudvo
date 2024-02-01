@@ -1,16 +1,10 @@
 @php
-    use Filament\Forms\Components\TextInput\Actions\HidePasswordAction;
-    use Filament\Forms\Components\TextInput\Actions\ShowPasswordAction;
-
-    $datalistOptions = $getDatalistOptions();
-    $extraAlpineAttributes = $getExtraAlpineAttributes();
-    $id = $getId();
+    use function Filament\Support\prepare_inherited_attributes;$id = $getId();
     $isConcealed = $isConcealed();
     $isDisabled = $isDisabled();
-    $isPasswordRevealable = $isPasswordRevealable();
+    $isNumeric = $isNumeric();
     $isPrefixInline = $isPrefixInline();
     $isSuffixInline = $isSuffixInline();
-    $mask = $getMask();
     $prefixActions = $getPrefixActions();
     $prefixIcon = $getPrefixIcon();
     $prefixLabel = $getPrefixLabel();
@@ -18,129 +12,165 @@
     $suffixIcon = $getSuffixIcon();
     $suffixLabel = $getSuffixLabel();
     $statePath = $getStatePath();
-    $autoFill = $shouldAutoFill();
-    $verifyActionName = $getVerifyActionName();
-
-    if ($isPasswordRevealable) {
-        $xData = '{ isPasswordRevealed: false }';
-    } elseif (count($extraAlpineAttributes) || filled($mask)) {
-        $xData = '{}';
-    } else {
-        $xData = null;
-    }
-
-    if ($isPasswordRevealable) {
-        $type = null;
-    } elseif (filled($mask)) {
-        $type = 'text';
-    } else {
-        $type = $getType();
-    }
+    $length = $getLength();
+    $isAutofocused = $isAutofocused();
 @endphp
 
 <x-dynamic-component
     :component="$getFieldWrapperView()"
     :field="$field"
-    :inline-label-vertical-alignment="\Filament\Support\Enums\VerticalAlignment::Center"
 >
-    <x-filament::input.wrapper
-        :disabled="$isDisabled"
-        :inline-prefix="$isPrefixInline"
-        :inline-suffix="$isSuffixInline"
-        :prefix="$prefixLabel"
-        :prefix-actions="$prefixActions"
-        :prefix-icon="$prefixIcon"
-        :prefix-icon-color="$getPrefixIconColor()"
-        :suffix="$suffixLabel"
-        :suffix-actions="$suffixActions"
-        :suffix-icon="$suffixIcon"
-        :suffix-icon-color="$getSuffixIconColor()"
-        :valid="! $errors->has($statePath)"
-        :attributes="
-            \Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())
-                ->class(['fi-fo-text-input overflow-hidden'])
-        "
-        x-data="{
-            autoFill: {{ $shouldAutoFill ? 'true' : 'false' }},
-            fill(code) {
-                $wire.{{ $statePath }} = code;
-                if(code) {
-                    {{ filled($verifyActionName) ? ('$wire.'.$verifyActionName.'(code)') : '' }}
+    <div x-data="{
+    	    state: $wire.$entangle('{{ $getStatePath() }}'),
+    	    length: @js($length),
+    	    autoFocus: @js($isAutofocused),
+    	    readOnly: @js($isReadOnly()),
+    	    autoFillOnly: @js($isAutoFillOnly()),
+    	    safari: @js($isSafari()),
+            init: function(){
+                if (this.autoFocus){
+                    this.$refs[1].focus();
                 }
-            }
-        }"
-        x-init="
-            if ('OTPCredential' in window && autoFill) {
-                $nextTick(() => {
-                    const ac = new AbortController();
 
-                    console.log('listening');
-                    window.navigator.credentials.get({
-                        otp: { transport:['sms'] },
-                        signal: ac.signal
-                    }).then(otp => {
-                        console.log('otp received.'+otp.code);
+                if ('OTPCredential' in window) {
+                    $nextTick(() => {
+                        const ac = new AbortController();
 
-                        fill(otp.code);
-                    }).catch(err => {
-                        alert('otp error.'+err)
-                        console.log(err);
+                        window.addEventListener('livewire:navigating', e => {
+                            console.log('aborting...');
+
+                            ac.abort();
+                        });
+
+                        window.navigator.credentials.get({
+                            otp: { transport:['sms'] },
+                            signal: ac.signal
+                        }).then(otp => {
+                            const code = otp.code;
+                            const inputs = Array.from(Array(this.length));
+
+                            inputs.forEach((element, i) => {
+                                this.$refs[(i+1)].focus();
+                                this.$refs[(i+1)].value = code[i] || '';
+                            });
+
+                            $dispatch('otp-received', {code: code});
+                        }).catch(err => {
+                            console.log(err);
+                        });
                     });
-                });
-            }
-        "
-    >
-        <x-filament::input
-            @change="console.log($event);"
-            @keydown.prevent="console.log($event);alert('Not allowed')"
-            @input.prevent="
-                console.log($event);
-                if($event.inputType == 'insertText' && $event.data && $event.data.length == {{ $getMaxLength() ?: 6 }}) {
-                    fill($event.data);
-                } else {
-                    alert('Not allowed.');
-                    fill('');
                 }
-            "
-            pattern="[0-9]*"
+            },
 
-            :attributes="
-                \Filament\Support\prepare_inherited_attributes($getExtraInputAttributeBag())
-                    ->merge($extraAlpineAttributes, escape: false)
-                    ->merge([
-                        'autocapitalize' => $getAutocapitalize(),
-                        'autocomplete' => $getAutocomplete(),
-                        'autofocus' => $isAutofocused(),
-                        'disabled' => $isDisabled,
-                        'id' => $id,
-                        'inlinePrefix' => $isPrefixInline && (count($prefixActions) || $prefixIcon || filled($prefixLabel)),
-                        'inlineSuffix' => $isSuffixInline && (count($suffixActions) || $suffixIcon || filled($suffixLabel)),
-                        'inputmode' => $getInputMode(),
-                        'list' => $datalistOptions ? $id . '-list' : null,
-                        'max' => (! $isConcealed) ? $getMaxValue() : null,
-                        'maxlength' => (! $isConcealed) ? $getMaxLength() : null,
-                        'min' => (! $isConcealed) ? $getMinValue() : null,
-                        'minlength' => (! $isConcealed) ? $getMinLength() : null,
-                        'placeholder' => $getPlaceholder(),
-                        'readonly' => $isReadOnly(),
-                        'required' => $isRequired() && (! $isConcealed),
-                        'step' => $getStep(),
-                        'type' => $type,
-                        $applyStateBindingModifiers('wire:model') => $statePath,
-                        'x-bind:type' => $isPasswordRevealable ? 'isPasswordRevealed ? \'text\' : \'password\'' : null,
-                        'x-mask' . ($mask instanceof \Filament\Support\RawJs ? ':dynamic' : '') => filled($mask) ? $mask : null,
-                    ], escape: false)
-            "
-        />
-    </x-filament::input.wrapper>
+            handleKeydown(e, i) {
+                if(autoFillOnly && safari && e.isTrusted) {
+                    e.preventDefault();
+                    return false;
+                }
+            },
 
-    @if ($datalistOptions)
-        <datalist id="{{ $id }}-list">
-            @foreach ($datalistOptions as $option)
-                <option value="{{ $option }}" />
+            handleInput(e, i) {
+                const input = e.target;
+                if(input.value.length > 1){
+                    input.value = input.value.substring(0, 1);
+                }
+
+                this.state = Array.from(Array(this.length), (element, i) => {
+                    const el = this.$refs[(i + 1)];
+                    return el.value ? el.value : '';
+                }).join('');
+
+
+                if (i < this.length) {
+                    this.$refs[i+1].focus();
+                    this.$refs[i+1].select();
+                }
+                if(i == this.length){
+                    @this.set('{{ $getStatePath() }}', this.state)
+                }
+            },
+
+            handlePaste(e) {
+                if(autoFillOnly) {
+                    e.preventDefault();
+
+                    return false;
+                }
+
+                const paste = e.clipboardData.getData('text');
+                const inputs = Array.from(Array(this.length));
+
+                inputs.forEach((element, i) => {
+                    this.$refs[(i+1)].focus();
+                    this.$refs[(i+1)].value = paste[i] || '';
+                });
+            },
+
+            handleBackspace(e) {
+                const ref = e.target.getAttribute('x-ref');
+                e.target.value = '';
+                const previous = ref - 1;
+                this.$refs[previous] && this.$refs[previous].focus();
+                this.$refs[previous] && this.$refs[previous].select();
+                e.preventDefault();
+            },
+        }">
+        <div class="flex justify-between gap-4 md:gap-6">
+
+            @foreach(range(1, $length) as $column)
+
+                <x-filament::input.wrapper
+                    :disabled="$isDisabled"
+                    :inline-prefix="$isPrefixInline"
+                    :inline-suffix="$isSuffixInline"
+                    :prefix="$prefixLabel"
+                    :prefix-actions="$prefixActions"
+                    :prefix-icon="$prefixIcon"
+                    :prefix-icon-color="$getPrefixIconColor()"
+                    :suffix="$suffixLabel"
+                    :suffix-actions="$suffixActions"
+                    :suffix-icon="$suffixIcon"
+                    :suffix-icon-color="$getSuffixIconColor()"
+                    :valid="! $errors->has($statePath)"
+                    :attributes="
+                        \Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())
+                        ->class(['overflow-hidden'])
+                    "
+                >
+                    <input
+                        maxlength="1"
+                        type="{{ $isNumeric ? 'number' : 'text' }}"
+                        required
+                        {!! $isDisabled ? 'disabled' : 'wire:loading.attr="disabled"' !!}
+                        class="fi-input fi-otp-input block w-full border-none py-1.5 text-base text-gray-950 transition duration-75 placeholder:text-gray-400 focus:ring-0 disabled:text-gray-500 disabled:[-webkit-text-fill-color:theme(colors.gray.500)] disabled:placeholder:[-webkit-text-fill-color:theme(colors.gray.400)] dark:text-white dark:placeholder:text-gray-500 dark:disabled:text-gray-400 dark:disabled:[-webkit-text-fill-color:theme(colors.gray.400)] dark:disabled:placeholder:[-webkit-text-fill-color:theme(colors.gray.500)] sm:text-sm sm:leading-6 bg-white/0 ps-3 pe-3 text-center"
+                        x-ref="{{ $column }}"
+                        x-bind:readonly="readOnly || (autoFillOnly && ! safari)"
+                        x-on:keydown="handleKeydown($event, {{ $column }})"
+                        x-on:input="handleInput($event, {{ $column }})"
+                        x-on:paste="handlePaste($event)"
+                        x-on:keydown.backspace="handleBackspace($event)"
+                    />
+
+                </x-filament::input.wrapper>
             @endforeach
-        </datalist>
-    @endif
 
-    <div wire:loading wire:target="{{ $verifyActionName }}">Verifying...</div>
+        </div>
+    </div>
 </x-dynamic-component>
+
+<style>
+    input.fi-otp-input[type=number] {
+        -webkit-appearance: textfield;
+        -moz-appearance: textfield;
+        appearance: textfield;
+        overflow: visible;
+    }
+
+    input.fi-otp-input[type=number]::-webkit-inner-spin-button,
+    input.fi-otp-input[type=number]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        margin: 0
+    }
+</style>

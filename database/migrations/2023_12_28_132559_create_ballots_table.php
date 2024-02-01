@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\AuthSession;
 use App\Models\Elector;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -19,7 +20,9 @@ return new class extends Migration
                 $table->timestamp(column: 'voted_at')->nullable();
 
                 $table->foreignIdFor(model: Elector::class)
-                    ->constrained()->cascadeOnUpdate()->restrictOnDelete();
+                    ->constrained()->cascadeOnUpdate()->cascadeOnDelete();
+                $table->foreignIdFor(model: AuthSession::class)->nullable()
+                    ->constrained()->cascadeOnUpdate()->nullOnDelete();
 
                 $table->timestamps();
             },

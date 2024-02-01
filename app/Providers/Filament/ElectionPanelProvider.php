@@ -114,36 +114,6 @@ class ElectionPanelProvider extends PanelProvider
             ->renderHook(
                 name: 'panels::footer',
                 hook: fn () => Blade::render('<x-filament.nomination.footer />')
-            )
-            ->renderHook(
-                name: 'panels::footerr',
-                hook: fn () => new HtmlString(
-                    html: <<<'HTML'
-<script>
-document.addEventListener('livewire:navigated', () => {
-    if ('OTPCredential' in window) {
-        alert('listening to OTP');
-
-        const ac = new AbortController();
-
-        navigator.credentials.get({
-            otp: { transport:['sms'] },
-            signal: ac.signal
-        }).then(otp => {
-            alert('otp received.'+otp.code);
-            // $wire.dispatch('otp-received', { code: otp.code });
-
-            document.dispatchEvent(new CustomEvent('otp-received', { code: otp.code }));
-        }).catch(err => {
-            alert('otp error.'+err)
-            console.log(err);
-        });
-    }
-})
-</script>
-HTML
-
-                )
             );
     }
 }
