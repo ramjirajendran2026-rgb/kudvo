@@ -36,7 +36,7 @@ class ElectionPanelProvider extends PanelProvider
     {
         return ElectionPanel::make()
             ->id(id: 'election')
-            ->path(path: 'election')
+            ->path(path: 'el')
             ->authGuard(guard: 'elector')
             ->discoverResources(in: app_path('Filament/Election/Resources'), for: 'App\\Filament\\Election\\Resources')
             ->discoverPages(in: app_path('Filament/Election/Pages'), for: 'App\\Filament\\Election\\Pages')
