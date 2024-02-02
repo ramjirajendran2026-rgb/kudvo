@@ -58,7 +58,7 @@
             >
                 <img
                     alt="Ballot QR code"
-                    src="data:image/svg+xml;base64,{!! base64_encode(\SimpleSoftwareIO\QrCode\Facades\QrCode::size(100)->generate($election->code.$elector->uuid)) !!}"
+                    src="data:image/svg+xml;base64,{!! base64_encode(\SimpleSoftwareIO\QrCode\Facades\QrCode::size(100)->generate($election->code.'|'.$elector->uuid)) !!}"
                 >
             </th>
         </tr>
@@ -100,7 +100,7 @@
                         <img
                             src="{{ $candidate->photo_url }}"
                             alt="{{ 'Candidate photo' }}"
-                            style="border-radius: 100%;"
+                            style="border-radius: 100%; height: 10mm; width: 10mm;"
                         />
                     </td>
                     <td>
@@ -120,7 +120,7 @@
                         <img
                             src="{{ $candidate->symbol_url }}"
                             alt="{{ 'Candidate symbol' }}"
-                            style="border-radius: 1mm;"
+                            style="border-radius: 1mm; height: 10mm; width: 10mm;"
                         />
                     </td>
                 </tr>
