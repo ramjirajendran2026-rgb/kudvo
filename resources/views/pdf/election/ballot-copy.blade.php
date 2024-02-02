@@ -44,7 +44,7 @@
                 <img
                     src="{{ $election->organisation->logo_url }}"
                     alt="{{ 'Logo' }}"
-                    style="height: 10mm;"
+                    style="height: 20mm;"
                 />
                 <div
                     style="vertical-align: middle; text-align: center; margin-top: 2mm;"
@@ -100,7 +100,7 @@
                         <img
                             src="{{ $candidate->photo_url }}"
                             alt="{{ 'Candidate photo' }}"
-                            style="border-radius: 100%; height: 10mm; width: 10mm;"
+                            style="border-radius: 100%; height: 15mm; width: 15mm;"
                         />
                     </td>
                     <td>
@@ -120,7 +120,7 @@
                         <img
                             src="{{ $candidate->symbol_url }}"
                             alt="{{ 'Candidate symbol' }}"
-                            style="border-radius: 1mm; height: 10mm; width: 10mm;"
+                            style="border-radius: 1mm; height: 15mm; width: 15mm;"
                         />
                     </td>
                 </tr>
