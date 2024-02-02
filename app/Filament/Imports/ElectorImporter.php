@@ -55,7 +55,7 @@ class ElectorImporter extends Importer
                 ->array()
                 ->example(example: 'Life Member')
                 ->fillRecordUsing(
-                    callback: fn (?array $state): ?string => filled(value: $state) ?
+                    callback: fn (?array $state, Elector $record) => $record->groups = filled(value: $state) ?
                         implode(separator: ',', array: $state) :
                         null
                 )
