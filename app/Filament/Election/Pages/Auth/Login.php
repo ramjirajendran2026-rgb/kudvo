@@ -94,7 +94,8 @@ class Login extends BasePage
     {
         return $form
             ->schema(components: [
-                $this->getPhoneComponent(),
+                $this->getPhoneComponent()
+                    ->initialCountry(value: Kudvo::getOrganisation()?->country),
             ]);
     }
 
