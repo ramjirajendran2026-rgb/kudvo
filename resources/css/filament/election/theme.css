@@ -7,7 +7,7 @@
 }
 
 .fi-topbar {
-    @apply mx-auto w-full lg:px-8 max-w-5xl relative;
+    @apply mx-auto w-full lg:px-8 max-w-5xl;
 
     nav {
         @apply lg:rounded-b-xl h-auto min-h-16 py-4 md:px-4;
