@@ -4,7 +4,9 @@ namespace App\Filament\Election\Pages;
 
 use App\Filament\Contracts\HasElection;
 use App\Filament\Contracts\HasElector;
+use App\Filament\Election\Http\Middleware\EnsureDeviceIsAllowed;
 use App\Filament\Election\Pages\Concerns\InteractsWithElection;
+use App\Filament\Election\Pages\Concerns\InteractsWithElector;
 use App\Filament\Pages\Concerns\HasStateSection;
 use App\Models\Ballot;
 use App\Models\Nominee;
@@ -25,9 +27,12 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 class Dashboard extends \Filament\Pages\Dashboard
 {
     use HasStateSection;
+    use InteractsWithElector;
     use InteractsWithElection;
 
     protected static string $view = 'filament.election.pages.dashboard';
+
+    protected static string | array $withoutRouteMiddleware = EnsureDeviceIsAllowed::class;
 
     #[Locked]
     public ?array $sessionVotes = null;

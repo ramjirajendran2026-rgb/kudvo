@@ -111,36 +111,6 @@ class BallotPage extends BasePage
             return;
         }
 
-        if (
-            $this->getElection()->preference->ip_restriction_threshold &&
-            Ballot::query()
-                ->whereIpAddress(value: request()->ip())
-                ->whereHas(
-                    relation: 'elector',
-                    callback: fn (Builder $query): Builder => $query
-                        ->whereMorphedTo(relation: 'event', model: $this->getElection())
-                )
-                ->count() >= $this->getElection()->preference->ip_restriction_threshold
-        ) {
-            Notification::make()
-                ->title(title: 'Device not allowed')
-                ->body(body: 'This device is already used by another member. Please use another device to cast your vote. It is advised to don\'t use shared Wi-Fi network for voting.')
-                ->warning()
-                ->send();
-
-            return;
-        }
-
-        if (Cookie::has(key: 'election_'.Kudvo::getElection()->getKey().'_ballot')) {
-            Notification::make()
-                ->title(title: 'Device not allowed')
-                ->body(body: 'This device is already used by another member. Please use another device to cast your vote.')
-                ->warning()
-                ->send();
-
-            return;
-        }
-
         $ballot = $this->getElector()->ballots()
             ->create(attributes: [
                 'ip_address' => request()->ip(),
@@ -155,11 +125,6 @@ class BallotPage extends BasePage
                 'ballot_id' => $this->getElection()->preference->dnt_votes ? null : $ballot->getKey(),
             ]);
         }
-
-        Notification::make()
-            ->title(title: 'Your votes confirmed successfully')
-            ->success()
-            ->send();
 
         Session::put(key: 'elector_'.$this->getElector()->getKey().'_votes', value: encrypt(value: $data));
         Cookie::queue(Cookie::forever(name: 'election_'.Kudvo::getElection()->getKey().'_ballot', value: $ballot->getKey()));

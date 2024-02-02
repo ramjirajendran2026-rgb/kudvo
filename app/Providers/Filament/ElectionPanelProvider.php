@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Facades\Kudvo;
 use App\Filament\Election\Http\Middleware\AuthenticateSession;
+use App\Filament\Election\Http\Middleware\EnsureDeviceIsAllowed;
 use App\Filament\Election\Http\Middleware\EnsureMfaCompleted;
 use App\Filament\Election\Pages\Auth\Login;
 use App\Filament\Election\Pages\Dashboard;
@@ -52,6 +53,7 @@ class ElectionPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
             ])
+            ->middleware(middleware: [EnsureDeviceIsAllowed::class], isPersistent: true)
             ->authMiddleware(middleware: [
                 Authenticate::class,
                 EnsureMfaCompleted::class,
@@ -115,5 +117,30 @@ class ElectionPanelProvider extends PanelProvider
                 name: 'panels::footer',
                 hook: fn () => Blade::render('<x-filament.nomination.footer />')
             );
+    }
+
+    protected function getBrandLogo(): HtmlString
+    {
+        $organisation = Kudvo::getOrganisation();
+        $logoUrl = $organisation->getFilamentAvatarUrl();
+
+        return new HtmlString(
+            html: <<<HTML
+<div
+    class="flex items-center gap-4"
+>
+    <img
+        alt="$organisation->name\'s logo"
+        src="$logoUrl"
+        style="height: 2.5rem;"
+    />
+    <div
+        class="text-xl font-bold leading-5 tracking-tight text-gray-950 dark:text-white"
+    >
+        $organisation->name
+    </div>
+</div>
+HTML
+        );
     }
 }

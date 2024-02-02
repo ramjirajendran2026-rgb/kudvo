@@ -6,6 +6,7 @@ use App\Facades\Kudvo;
 use App\Filament\Contracts\HasElection;
 use App\Filament\Contracts\HasElector;
 use App\Filament\Election\Pages\Concerns\InteractsWithElection;
+use App\Filament\Election\Pages\Concerns\InteractsWithElector;
 use App\Models\Election;
 use Filament\Forms\Form;
 use Filament\Pages\Page;
@@ -18,6 +19,7 @@ use function Filament\authorize;
  */
 abstract class BasePage extends Page implements HasElector, HasElection
 {
+    use InteractsWithElector;
     use InteractsWithElection;
 
     public static function can(string $action)

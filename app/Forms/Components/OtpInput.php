@@ -25,7 +25,7 @@ class OtpInput extends Field implements Contracts\CanHaveNumericState
 
     protected bool | Closure $isNumeric = true;
 
-    protected bool | Closure | null $safari = null;
+    protected bool | Closure | null $ios = null;
 
     protected bool | Closure $autoFillOnly = false;
 
@@ -76,20 +76,20 @@ class OtpInput extends Field implements Contracts\CanHaveNumericState
         return (bool) $this->evaluate($this->isNumeric);
     }
 
-    public function safari(bool|Closure $condition = true): static
+    public function ios(bool|Closure $condition = true): static
     {
-        $this->safari = $condition;
+        $this->ios = $condition;
 
         return $this;
     }
 
-    public function isSafari(): bool
+    public function isIos(): bool
     {
-        if (! is_null($this->safari)) {
-            return (bool) $this->evaluate($this->safari);
+        if (! is_null($this->ios)) {
+            return (bool) $this->evaluate($this->ios);
         }
 
-        return $this->evaluate(fn (Agent $agent): bool => $agent->isSafari());
+        return $this->evaluate(fn (Agent $agent): bool => $agent->isiOS());
     }
 
     public function autoFillOnly(bool|Closure $condition = true): static

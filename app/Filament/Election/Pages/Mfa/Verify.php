@@ -5,6 +5,7 @@ namespace App\Filament\Election\Pages\Mfa;
 use App\Filament\Contracts\HasElection;
 use App\Filament\Election\Http\Middleware\EnsureMfaCompleted;
 use App\Filament\Election\Pages\Concerns\InteractsWithElection;
+use App\Filament\Election\Pages\Concerns\InteractsWithElector;
 use App\Forms\Components\OtpInput;
 use App\Models\OneTimePassword;
 use App\Notifications\ElectionMfaNotification;
@@ -28,6 +29,7 @@ use Jenssegers\Agent\Agent;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 use Livewire\Features\SupportRedirects\Redirector;
+use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
 /**
@@ -35,6 +37,7 @@ use Throwable;
  */
 class Verify extends Page implements HasElection
 {
+    use InteractsWithElector;
     use InteractsWithElection;
     use WithRateLimiting;
 
@@ -57,7 +60,7 @@ class Verify extends Page implements HasElection
 
     public bool $spaMode;
 
-    public function mount(): void
+    public function mount(Agent $agent): void
     {
         $this->spaMode = Filament::getCurrentPanel()->hasSpaMode();
 
@@ -119,7 +122,6 @@ class Verify extends Page implements HasElection
                         OtpInput::make(name: 'code')
                             ->afterStateUpdated(callback: fn (?string $state, self $livewire) => $livewire->submit())
                             ->autoFillOnly(condition: $this->getElection()->isMfaSmsAutoFillOnly())
-                            ->autoFillOnly()
                             ->length(length: strlen(string: $this->oneTimePassword->code))
                             ->required(),
                     ]),
@@ -200,7 +202,7 @@ class Verify extends Page implements HasElection
             ...$this->getElection()->preference->mfa_mail ? ['email address'] : [],
         ];
 
-        return '6 digit OTP code has been sent to your registered '.Arr::implodeWithAnd($via).'.';
+        return '6 digit OTP code has been sent to your '.Arr::implodeWithAnd($via).'.';
     }
 
     /**

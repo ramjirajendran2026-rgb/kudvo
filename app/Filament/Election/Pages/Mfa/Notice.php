@@ -6,6 +6,7 @@ use App\Enums\OneTimePasswordPurpose;
 use App\Filament\Contracts\HasElection;
 use App\Filament\Election\Http\Middleware\EnsureMfaCompleted;
 use App\Filament\Election\Pages\Concerns\InteractsWithElection;
+use App\Filament\Election\Pages\Concerns\InteractsWithElector;
 use App\Models\Elector;
 use App\Models\OneTimePassword;
 use App\Notifications\ElectionMfaNotification;
@@ -30,6 +31,7 @@ use Illuminate\Support\Facades\Session;
 class Notice extends Page implements HasElection
 {
     use InteractsWithFormActions;
+    use InteractsWithElector;
     use InteractsWithElection;
     use WithRateLimiting;
 
@@ -75,7 +77,7 @@ class Notice extends Page implements HasElection
     {
         return $form
             ->schema(components: [
-                Section::make()
+                Section::make(heading: 'MFA Verification')
                     ->schema(components: [
                         Placeholder::make(name: 'description')
                             ->content(content: $this->getNoticeText())
@@ -86,7 +88,7 @@ class Notice extends Page implements HasElection
 
                         Checkbox::make(name: 'consent')
                             ->accepted()
-                            ->label(label: 'I agree to receive OTP code through sms / email.')
+                            ->label(label: 'I agree to receive OTP')
                             ->validationAttribute(label: 'consent'),
                     ]),
             ]);
@@ -155,7 +157,7 @@ class Notice extends Page implements HasElection
             ...$this->getElection()->preference->mfa_mail ? ['email address'] : [],
         ];
 
-        return '6 digit OTP code will be sent to your registered '.Arr::implodeWithAnd($via).'.';
+        return '6 digit OTP code will be sent to your '.Arr::implodeWithAnd($via).'.';
     }
 
     public static function getMfaSessionKey(Elector $elector): string
