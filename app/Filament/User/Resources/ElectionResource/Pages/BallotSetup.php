@@ -271,16 +271,35 @@ class BallotSetup extends ElectionPage
                     election: $livewire->getElection()
                 )
             )
-            ->action(action: function (Position $record, array $data, Form $form): void {
+            ->action(action: function (Position $record, array $data, Form $form, array $arguments, InfolistAction $action): void {
                 $candidate = new Candidate();
                 $candidate->fill(attributes: $data);
                 $record->candidates()->save(model: $candidate);
 
                 $form->model($candidate)->saveRelationships();
+
+                if ($arguments['another'] ?? false) {
+                    $action->callAfter();
+                    $action->sendSuccessNotification();
+
+                    // Ensure that the form record is anonymized so that relationships aren't loaded.
+                    $form->model(model: Candidate::class);
+
+                    $form->fill();
+
+                    $action->halt();
+                }
+
+                $action->success();
             })
+            ->extraModalFooterActions(actions: fn (InfolistAction $action): array => [
+                $action->makeModalSubmitAction(name: 'createAnother', arguments: ['another' => true])
+                    ->label(__('filament-actions::create.single.modal.actions.create_another.label'))
+            ])
             ->form(form: fn (Form $form) => CandidateResource::form(form: $form))
             ->icon(icon: 'heroicon-m-plus')
             ->label(label: 'New candidate')
+            ->modalSubmitActionLabel(label: __('filament-actions::create.single.modal.actions.create.label'))
             ->outlined()
             ->size(size: ActionSize::Small);
     }
