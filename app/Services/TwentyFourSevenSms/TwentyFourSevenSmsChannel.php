@@ -69,7 +69,7 @@ class TwentyFourSevenSmsChannel
 
             return $response;
         } catch (Throwable $e) {
-            Log::error(message: "[24x7SMS] SendSMS Error: {$e->getMessage()}");
+            Log::error(message: "[24x7SMS] SendSMS Error: {$e->getMessage()} | {$sms->getMessage()}");
 
             return null;
         }
