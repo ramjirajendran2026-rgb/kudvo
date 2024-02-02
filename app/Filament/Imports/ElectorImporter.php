@@ -41,7 +41,7 @@ class ElectorImporter extends Importer
             ImportColumn::make(name: 'phone')
                 ->example(example: '9876543210')
                 ->fillRecordUsing(
-                    callback: fn (?string $state, array $options): ?string => ($phone = phone(number: $state, country: $options['phone_country']))->isValid() ? $phone->formatE164() : null
+                    callback: fn (?string $state, array $options, Elector $record) => $record->phone = ($phone = phone(number: $state, country: $options['phone_country']))->isValid() ? $phone->formatE164() : null
                 )
                 ->rules(rules: fn (array $options): array => [
                     'phone:INTERNATIONAL,'.$options['phone_country'] ?? ''
