@@ -59,44 +59,6 @@ class ElectionPanelProvider extends PanelProvider
                 EnsureMfaCompleted::class,
             ])
             ->login(action: Login::class)
-            ->routes(routes: function () {
-                Route::get(
-                    uri: 'election.webmanifest',
-                    action: function () {
-                        $election = Kudvo::getElection();
-                        $organisation = Kudvo::getOrganisation();
-
-                        /** @var ElectionPanel $panel */
-                        $panel = Filament::getCurrentPanel();
-
-                        $data = [
-                            'name' => $election->name,
-                            'display' => 'standalone',
-                            'start_url' => Dashboard::getUrl(),
-                            'id' => $panel->getId().'/'.$election->getRouteKey(),
-                            'theme_color' => '#0000ff',
-                            'icons' => [],
-                        ];
-
-                        if ($organisation->logo_url) {
-                            $data['icons'][] = [
-                                'src' => $organisation->logo_url,
-                                'type' => 'image/png',
-                                'sizes' => '512x512',
-                            ];
-                        } else {
-                            $data['icons'][] = [
-                                'src' => Filament::getTenantAvatarUrl(tenant: $organisation).'&size=512',
-                                'type' => 'image/png',
-                                'sizes' => '512x512',
-                            ];
-                        }
-
-                        return response()->json($data);
-                    }
-                )
-                ->name(name: 'webmanifest');
-            })
             ->colors(colors: [
                 'primary' => Color::Green,
             ])
@@ -106,13 +68,9 @@ class ElectionPanelProvider extends PanelProvider
             ->databaseNotifications(condition: false)
             ->breadcrumbs(condition: false)
             ->maxContentWidth(maxContentWidth: MaxWidth::FiveExtraLarge)
-            ->spa()
             ->brandName(name: fn (): string => Kudvo::getOrganisation()?->name)
             ->brandLogo(logo: fn (): string => Kudvo::getOrganisation()?->getFilamentAvatarUrl())
-            ->renderHook(
-                name: 'panels::head.start',
-                hook: fn () => new HtmlString('<link rel="manifest" href="'.Filament::getCurrentPanel()->route(name: 'webmanifest').'">')
-            )
+            ->spa()
             ->renderHook(
                 name: 'panels::footer',
                 hook: fn () => Blade::render('<x-filament.nomination.footer />')
