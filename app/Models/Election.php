@@ -206,14 +206,12 @@ class Election extends Model
 
     public function isMfaRequired(): bool
     {
-        return $this->preference->mfa_sms || $this->preference->mfa_mail || $this->preference->mfa_sms_auto_fill;
+        return $this->preference->mfa_sms || $this->preference->mfa_mail;
     }
 
     public function isMfaSmsAutoFillOnly(): bool
     {
-        return $this->preference->mfa_sms_auto_fill &&
-            !$this->preference->mfa_sms &&
-            !$this->preference->mfa_mail;
+        return $this->preference->mfa_sms_auto_fill_only;
     }
 
     public function getElectorGroups(): array

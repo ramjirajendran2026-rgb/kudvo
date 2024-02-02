@@ -16,7 +16,7 @@ class ElectionPreferenceData extends Data
 
         public bool $mfa_sms = false,
 
-        public bool $mfa_sms_auto_fill = false,
+        public bool $mfa_sms_auto_fill_only = false,
 
         public bool $voted_confirmation_mail = false,
 
