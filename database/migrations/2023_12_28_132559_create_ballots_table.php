@@ -15,6 +15,7 @@ return new class extends Migration
             callback: function (Blueprint $table): void {
                 $table->id();
 
+                $table->string(column: 'type');
                 $table->ipAddress()->nullable();
 
                 $table->timestamp(column: 'voted_at')->nullable();

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Election\Pages\Mfa;
 
+use App\Facades\Kudvo;
 use App\Filament\Contracts\HasElection;
 use App\Filament\Election\Http\Middleware\EnsureMfaCompleted;
 use App\Filament\Election\Pages\Concerns\InteractsWithElection;
@@ -121,7 +122,7 @@ class Verify extends Page implements HasElection
 
                         OtpInput::make(name: 'code')
                             ->afterStateUpdated(callback: fn (?string $state, self $livewire) => $livewire->submit())
-                            ->autoFillOnly(condition: $this->getElection()->isMfaSmsAutoFillOnly())
+                            ->autoFillOnly(condition: ! Kudvo::isBoothDevice() && $this->getElection()->isMfaSmsAutoFillOnly())
                             ->length(length: strlen(string: $this->oneTimePassword->code))
                             ->required(),
                     ]),

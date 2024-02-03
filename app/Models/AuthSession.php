@@ -16,6 +16,7 @@ class AuthSession extends Model
         'ip_address',
         'user_agent',
         'last_activity_at',
+        'expires_at',
         'authenticatable_id',
         'authenticatable_type',
         'deleted_at',
@@ -23,6 +24,7 @@ class AuthSession extends Model
 
     protected $casts = [
         'last_activity_at' => 'timestamp',
+        'expires_at' => 'timestamp',
         'authenticatable_id' => 'int',
     ];
 

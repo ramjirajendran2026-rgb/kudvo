@@ -2,6 +2,7 @@
 
 namespace App\Filament\User\Resources\ElectionResource\Pages;
 
+use App\Facades\Kudvo;
 use App\Filament\Contracts\HasElection;
 use App\Filament\Contracts\HasElectorGroups;
 use App\Filament\User\Resources\ElectionResource;
@@ -9,6 +10,7 @@ use App\Filament\User\Resources\NominationResource\Pages\Dashboard;
 use App\Forms\Components\VotePicker;
 use App\Models\Election;
 use App\Models\Position;
+use Cookie;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\Group;
@@ -160,7 +162,11 @@ HTML
                 ElectionResource::getEditTimingAction()
                     ->modalHeading(heading: fn (self $livewire) => $livewire->getRecordTitle()),
 
-                ElectionResource::getCancelAction()
+                ElectionResource::getCancelAction(),
+
+                $this->getUseAsBoothDeviceAction(),
+
+                $this->getRemoveFromBoothDeviceAction(),
 
             ])->dropdownPlacement(placement: 'bottom-end'),
         ];
@@ -216,6 +222,36 @@ HTML
             ->modalCancelAction(action: false)
             ->modalSubmitActionLabel(label: fn (array $data): string => ($data['preview'] ?? false) ? 'Confirm' : 'Continue')
             ->slideOver();
+    }
+
+    public function getUseAsBoothDeviceAction(): Action
+    {
+        return Action::make(name: 'useAsBoothDevice')
+            ->requiresConfirmation()
+            ->authorize(abilities: fn (self $livewire): bool => static::can(action: 'enableBoothDevice', election: $livewire->getElection()))
+            ->color(color: 'success')
+            ->action(action: function (self $livewire, Action $action): void {
+                Cookie::queue(Cookie::forever(name: 'election_booth_device', value: $livewire->getElection()->getKey()));
+
+                $action->success();
+            })
+            ->successNotificationTitle(title: 'Enabled for booth voting.')
+            ->visible(condition: fn (self $livewire): bool => Cookie::get(key: 'election_booth_device') != $livewire->getElection()->getKey());
+    }
+
+    public function getRemoveFromBoothDeviceAction(): Action
+    {
+        return Action::make(name: 'removeFromBoothDevice')
+            ->requiresConfirmation()
+            ->authorize(abilities: fn (self $livewire): bool => static::can(action: 'disableBoothDevice', election: $livewire->getElection()))
+            ->color(color: 'danger')
+            ->action(action: function (self $livewire, Action $action): void {
+                Cookie::queue(Cookie::forget(name: 'election_booth_device'));
+
+                $action->success();
+            })
+            ->successNotificationTitle(title: 'Disabled for booth voting.')
+            ->visible(condition: fn (self $livewire): bool => Kudvo::isBoothDevice(election: $livewire->getElection()));
     }
 
     public static function can(string $action, Election $election): bool

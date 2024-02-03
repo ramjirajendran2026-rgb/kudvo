@@ -2,6 +2,7 @@
 
 namespace App\Filament\Election\Http\Middleware;
 
+use App\Enums\BallotType;
 use App\Facades\Kudvo;
 use App\Filament\Election\Pages\DeviceAlreadyUsed;
 use App\Filament\Election\Pages\DeviceNotSupported;
@@ -29,20 +30,22 @@ class EnsureDeviceIsAllowed
             return $next($request);
         }
 
-        if (! $this->agent->isiOS() && ! $this->agent->isAndroidOS()) {
+        if (! Kudvo::isBoothDevice() && ! $this->agent->isiOS() && ! $this->agent->isAndroidOS()) {
             return redirect(to: DeviceNotSupported::getUrl());
         }
 
         $election = Kudvo::getElection();
         $preference = $election->preference;
 
-        if (Cookie::has(key: 'election_'.Kudvo::getElection()->getKey().'_ballot')) {
+        if (! Kudvo::isBoothDevice() && Cookie::has(key: 'election_'.Kudvo::getElection()->getKey().'_ballot')) {
             return redirect(to: DeviceAlreadyUsed::getUrl());
         }
 
         if (
+            ! Kudvo::isBoothDevice() &&
             $preference->ip_restriction_threshold &&
             Ballot::query()
+                ->where('type', BallotType::Direct->value)
                 ->where('ip_address', $request->ip())
                 ->whereHas(
                     relation: 'elector',

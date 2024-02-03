@@ -2,6 +2,7 @@
 
 namespace App\Filament\Election\Pages;
 
+use App\Enums\BallotType;
 use App\Facades\Kudvo;
 use App\Forms\Components\VotePicker;
 use App\Models\Ballot;
@@ -113,6 +114,7 @@ class BallotPage extends BasePage
 
         $ballot = $this->getElector()->ballots()
             ->create(attributes: [
+                'type' => Kudvo::isBoothDevice() ? BallotType::Booth : BallotType::Direct,
                 'ip_address' => request()->ip(),
                 'voted_at' => now(),
                 'auth_session_id' => $this->getElector()->authSession->getKey(),
@@ -126,8 +128,10 @@ class BallotPage extends BasePage
             ]);
         }
 
-        Session::put(key: 'elector_'.$this->getElector()->getKey().'_votes', value: encrypt(value: $data));
-        Cookie::queue(Cookie::forever(name: 'election_'.Kudvo::getElection()->getKey().'_ballot', value: $ballot->getKey()));
+        if (! Kudvo::isBoothDevice()) {
+            Session::put(key: 'elector_'.$this->getElector()->getKey().'_votes', value: encrypt(value: $data));
+            Cookie::queue(Cookie::forever(name: 'election_'.Kudvo::getElection()->getKey().'_ballot', value: $ballot->getKey()));
+        }
 
         $this->redirect(url: Filament::getUrl());
     }

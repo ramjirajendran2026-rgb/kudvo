@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\BallotType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -9,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Ballot extends Model
 {
     protected $fillable = [
+        'type',
         'ip_address',
         'voted_at',
         'elector_id',
@@ -16,6 +18,7 @@ class Ballot extends Model
     ];
 
     protected $casts = [
+        'type' => BallotType::class,
         'voted_at' => 'datetime',
         'elector_id' => 'int',
         'auth_session_id' => 'int',

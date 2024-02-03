@@ -5,6 +5,7 @@ namespace App;
 use App\Models\Election;
 use App\Models\Nomination;
 use App\Models\Organisation;
+use Cookie;
 
 class KudvoManager
 {
@@ -46,5 +47,12 @@ class KudvoManager
     public function setOrganisation(?Organisation $organisation): void
     {
         $this->organisation = $organisation;
+    }
+
+    public function isBoothDevice(?Election $election = null): bool
+    {
+        $election ??= $this->getElection();
+
+        return filled($election) && Cookie::get(key: 'election_booth_device') == $election->getKey();
     }
 }

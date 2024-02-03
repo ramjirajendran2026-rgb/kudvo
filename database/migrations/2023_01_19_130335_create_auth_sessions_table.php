@@ -18,6 +18,7 @@ return new class extends Migration {
                 $table->text(column: 'user_agent')->nullable();
                 $table->timestamp(column: 'mfa_completed_at')->nullable();
                 $table->timestamp(column: 'last_activity_at')->useCurrent();
+                $table->timestamp(column: 'expires_at')->nullable();
 
                 $table->morphs(name: 'authenticatable');
 
