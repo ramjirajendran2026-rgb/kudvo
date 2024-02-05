@@ -93,12 +93,28 @@ class Elector extends Model implements
     public function ballots(): HasMany
     {
         return $this->hasMany(related: Ballot::class)
+            ->where('mock', false)
             ->latest();
     }
 
     public function ballot(): HasOne
     {
         return $this->hasOne(related: Ballot::class)
+            ->where('mock', false)
+            ->latestOfMany();
+    }
+
+    public function mockBallots(): HasMany
+    {
+        return $this->hasMany(related: Ballot::class)
+            ->where('mock', true)
+            ->latest();
+    }
+
+    public function mockBallot(): HasOne
+    {
+        return $this->hasOne(related: Ballot::class)
+            ->where('mock', true)
             ->latestOfMany();
     }
 

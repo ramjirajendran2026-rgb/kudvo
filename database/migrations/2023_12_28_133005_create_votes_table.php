@@ -19,6 +19,8 @@ return new class extends Migration
                     ->constrained(table: 'positions', column: 'uuid')->cascadeOnUpdate()->cascadeOnDelete();
                 $table->longText(column: 'secret')->nullable();
 
+                $table->boolean(column: 'mock')->default(value: false);
+
                 $table->foreignIdFor(model: Ballot::class)->nullable()
                     ->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             },

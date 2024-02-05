@@ -13,6 +13,7 @@ class Ballot extends Model
         'type',
         'ip_address',
         'voted_at',
+        'mock',
         'elector_id',
         'auth_session_id',
     ];
@@ -20,6 +21,7 @@ class Ballot extends Model
     protected $casts = [
         'type' => BallotType::class,
         'voted_at' => 'datetime',
+        'mock' => 'bool',
         'elector_id' => 'int',
         'auth_session_id' => 'int',
     ];

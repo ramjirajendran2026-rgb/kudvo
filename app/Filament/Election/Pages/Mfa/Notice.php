@@ -49,14 +49,10 @@ class Notice extends Page implements HasElection
 
     public ?array $data = [];
 
-    public bool $spaMode;
-
     public function mount(): void
     {
-        $this->spaMode = Filament::getCurrentPanel()->hasSpaMode();
-
         if (! $this->getElection()->isMfaRequired() || $this->getElector()->authSession?->isMfaCompleted()) {
-            $this->redirect(url: Filament::getUrl(), navigate: $this->spaMode);
+            $this->redirect(url: Filament::getUrl(), navigate: $this->isSpa());
 
             return;
         }
@@ -65,7 +61,7 @@ class Notice extends Page implements HasElection
             Session::has(key: static::getMfaSessionKey($this->getElector())) &&
             OneTimePassword::find(id: Session::get(key: static::getMfaSessionKey($this->getElector())))
         ) {
-            $this->redirect(Verify::getUrl(), navigate: $this->spaMode);
+            $this->redirect(Verify::getUrl(), navigate: $this->isSpa());
 
             return;
         }
@@ -147,7 +143,12 @@ class Notice extends Page implements HasElection
 
         Session::put(key: static::getMfaSessionKey($this->getElector()), value: $oneTimePassword->getKey());
 
-        $this->redirect(Verify::getUrl(), navigate: $this->spaMode);
+        $this->redirect(Verify::getUrl(), navigate: $this->isSpa());
+    }
+
+    public function isSpa(): bool
+    {
+        return Filament::getCurrentPanel()->hasSpaMode();
     }
 
     protected function getNoticeText(): string

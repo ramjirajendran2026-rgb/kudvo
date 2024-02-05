@@ -14,11 +14,13 @@ class Vote extends Model
     protected $fillable = [
         'key',
         'secret',
+        'mock',
         'ballot_id',
     ];
 
     protected $casts = [
         'secret' => 'encrypted:array',
+        'mock' => 'bool',
         'ballot_id' => 'int',
     ];
 

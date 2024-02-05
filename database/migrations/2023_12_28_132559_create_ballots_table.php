@@ -20,6 +20,8 @@ return new class extends Migration
 
                 $table->timestamp(column: 'voted_at')->nullable();
 
+                $table->boolean(column: 'mock')->default(value: false);
+
                 $table->foreignIdFor(model: Elector::class)
                     ->constrained()->cascadeOnUpdate()->cascadeOnDelete();
                 $table->foreignIdFor(model: AuthSession::class)->nullable()

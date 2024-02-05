@@ -38,9 +38,9 @@ class ElectionPanelProvider extends PanelProvider
             ->id(id: 'election')
             ->path(path: 'el')
             ->authGuard(guard: 'elector')
-            ->discoverResources(in: app_path('Filament/Election/Resources'), for: 'App\\Filament\\Election\\Resources')
-            ->discoverPages(in: app_path('Filament/Election/Pages'), for: 'App\\Filament\\Election\\Pages')
-            ->discoverWidgets(in: app_path('Filament/Election/Widgets'), for: 'App\\Filament\\Election\\Widgets')
+            ->discoverResources(in: app_path(path: 'Filament/Election/Resources'), for: 'App\\Filament\\Election\\Resources')
+            ->discoverPages(in: app_path(path: 'Filament/Election/Pages'), for: 'App\\Filament\\Election\\Pages')
+            ->discoverWidgets(in: app_path(path: 'Filament/Election/Widgets'), for: 'App\\Filament\\Election\\Widgets')
             ->middleware(middleware: [IdentifyElection::class], isPersistent: true)
             ->middleware(middleware: [
                 EncryptCookies::class,
@@ -63,7 +63,7 @@ class ElectionPanelProvider extends PanelProvider
                 'primary' => Color::Green,
             ])
             ->font(family: 'Poppins')
-            ->viteTheme('resources/css/filament/election/theme.css')
+            ->viteTheme(theme: 'resources/css/filament/election/theme.css')
             ->navigation(builder: false)
             ->databaseNotifications(condition: false)
             ->breadcrumbs(condition: false)

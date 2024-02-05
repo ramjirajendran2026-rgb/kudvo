@@ -15,6 +15,7 @@ use Filament\Tables\Table\Concerns\HasEmptyState;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Arr;
+use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 use Spatie\Color\Rgb;
 
@@ -69,12 +70,11 @@ class VotePicker extends CheckboxList
         $position = $this->position;
 
         $this->description(
-            description: $position->abstain ?
-                "Choose".
-                ($position->threshold ? " at least $position->threshold and" : "").
-                    " upto $position->quota ".
-                    Str::plural('candidate', $position->quota) :
-                "Choose exactly $position->quota ".Str::plural("candidate", $position->quota)
+            description: new HtmlString(
+                html: $this->getDescriptionHint().
+                " • ".
+                '<span class="text-info-500" x-text="checkedOptionsCount+\' selected\'"></span>'
+            )
         );
         $this->hiddenLabel();
         $this->validationAttribute(label: $position->name);
@@ -99,8 +99,8 @@ class VotePicker extends CheckboxList
         $this->minItems(count: $position->threshold);
 
         $this->validationMessages(messages: [
-            'max' => fn (self $component): ?string => $component->getSectionDescription(),
-            'min' => fn (self $component): ?string => $component->getSectionDescription(),
+            'max' => fn (self $component): ?string => $component->getDescriptionHint(),
+            'min' => fn (self $component): ?string => $component->getDescriptionHint(),
         ]);
 
         $this->mutateDehydratedStateUsing(callback: fn ($state) => Arr::map($state, fn ($item) => ['key' => $item, 'value' => 1]));
@@ -131,5 +131,17 @@ class VotePicker extends CheckboxList
     public function getSymbolUrl(string $uuid): ?string
     {
         return $this->getCandidate(uuid: $uuid)->symbol_url;
+    }
+
+    public function getDescriptionHint(): string
+    {
+        $position = $this->position;
+
+        return $position->abstain ?
+            "Choose".
+            ($position->threshold ? " at least $position->threshold and" : "").
+            " upto $position->quota ".
+            Str::plural('candidate', $position->quota) :
+            "Choose exactly $position->quota ".Str::plural("candidate", $position->quota);
     }
 }

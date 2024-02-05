@@ -59,10 +59,18 @@ trait InteractsWithElection
 
         return new HtmlString(
             html: <<<HTML
-<div class="flex flex-col md:flex-row justify-center items-center gap-2">
-<b>{$this->getElection()->starts_at_local->format(format: 'M d, Y h:i A (T)')}</b>
+<div class="flex justify-center items-center gap-4">
+<div class="flex flex-col md:flex-row flex-grow justify-center items-end md:gap-2 font-bold">
+<span>{$this->getElection()->starts_at_local->format(format: 'M d, Y')}</span>
+<span>{$this->getElection()->starts_at_local->format(format: 'h:i A')}</span>
+<span>{$this->getElection()->starts_at_local->format(format: '(T)')}</span>
+</div>
 <span>to</span>
-<b>{$this->getElection()->ends_at_local->format(format: 'M d, Y h:i A (T)')}</b>
+<div class="flex flex-col md:flex-row flex-grow justify-center items-start md:gap-2 font-bold">
+<span>{$this->getElection()->ends_at_local->format(format: 'M d, Y')}</span>
+<span>{$this->getElection()->ends_at_local->format(format: 'h:i A')}</span>
+<span>{$this->getElection()->ends_at_local->format(format: '(T)')}</span>
+</div>
 </div>
 HTML
         );

@@ -1,10 +1,12 @@
 <?php
 
-namespace App\Filament\Election\Pages;
+namespace App\Filament\Election\Pages\Ballot;
 
 use App\Enums\BallotType;
 use App\Facades\Kudvo;
+use App\Filament\Election\Pages\BasePage;
 use App\Forms\Components\VotePicker;
+use App\Models\Ballot;
 use App\Models\Position;
 use App\Models\Vote;
 use Filament\Facades\Filament;
@@ -13,16 +15,15 @@ use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
 use Filament\Support\Enums\ActionSize;
+use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Session;
 use Livewire\Attributes\On;
 
-class BallotPage extends BasePage
+class Index extends BasePage
 {
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
-
-    protected static string $view = 'filament.election.pages.ballot';
+    protected static string $view = 'filament.election.pages.ballot.index';
 
     protected static ?string $slug = 'ballot';
 
@@ -34,21 +35,19 @@ class BallotPage extends BasePage
 
     public function mountCanAuthorizeAccess(): void
     {
-        if (! static::canAccess()) {
-            $this->redirect(url: Filament::getUrl());
-
-            return;
-        }
-
-        $ballot = $this->getElector()->ballot;
-        if (filled($ballot) && ! $this->getElection()->preference->voted_ballot_update) {
-            $this->redirect(url: Filament::getUrl());
+        if (
+            ! static::canAccess(mock: $this->isMock()) ||
+            (
+                filled($this->getBallot()) && ! $this->getElection()->preference->voted_ballot_update
+            )
+        ) {
+            $this->redirect(url: $this->getRedirectUrl(), navigate: $this->isSpa());
 
             return;
         }
 
         $this->form->fill(
-            state: $ballot?->votes
+            state: $this->getBallot()?->votes
                 ->mapWithKeys(
                     callback: fn(Vote $vote): array => [
                         $vote->key => Arr::map($vote->secret, fn ($item) => $item['key'])
@@ -59,9 +58,9 @@ class BallotPage extends BasePage
         );
     }
 
-    public static function canAccess(): bool
+    public static function canAccess(bool $mock = false): bool
     {
-        return static::can(action: 'vote');
+        return static::can(action: $mock ? 'mockVote' : 'vote');
     }
 
     public function form(Form $form): Form
@@ -93,17 +92,29 @@ class BallotPage extends BasePage
 
                 Actions::make(actions: [
                     Actions\Action::make(name: 'Back')
-                        ->action(action: fn (self $livewire) => $livewire->preview = false)
+                        ->action(action: function (self $livewire) {
+                            $livewire->preview = false;
+
+                            $livewire->dispatch(event: 'scroll-to-top');
+                        })
                         ->color(color: 'gray')
                         ->hidden(condition: fn (self $livewire): bool => $livewire->flashVotes)
                         ->size(size: ActionSize::ExtraLarge)
                         ->visible(condition: fn (self $livewire): bool => $livewire->preview),
 
-                    Actions\Action::make(name: 'submit')
-                        ->label(label: fn (self $livewire): string => $livewire->preview ? 'Confirm' : 'Continue')
-                        ->hidden(condition: fn (self $livewire): bool => $livewire->flashVotes)
+                    Actions\Action::make(name: 'continue')
+                        ->label(label: 'Continue')
+                        ->action(action: 'submit')
+                        ->hidden(condition: fn (self $livewire): bool => $livewire->flashVotes || $livewire->preview)
                         ->size(size: ActionSize::ExtraLarge)
                         ->submit(form: 'submit'),
+
+                    Actions\Action::make(name: 'confirm')
+                        ->requiresConfirmation()
+                        ->action(action: 'submit')
+                        ->label(label: 'Confirm')
+                        ->hidden(condition: fn (self $livewire): bool => $livewire->flashVotes || ! $livewire->preview)
+                        ->size(size: ActionSize::ExtraLarge),
                 ])
                 ->alignCenter(),
             ]);
@@ -111,8 +122,10 @@ class BallotPage extends BasePage
 
     public function submit(): void
     {
-        if (! static::canAccess()) {
-            $this->redirect(url: Filament::getUrl());
+        sleep(5);
+
+        if (! static::canAccess(mock: $this->isMock())) {
+            $this->redirect(url: $this->getRedirectUrl(), navigate: $this->isSpa());
 
             return;
         }
@@ -131,6 +144,7 @@ class BallotPage extends BasePage
                 'type' => Kudvo::isBoothDevice() ? BallotType::Booth : BallotType::Direct,
                 'ip_address' => request()->ip(),
                 'voted_at' => now(),
+                'mock' => $this->isMock(),
                 'auth_session_id' => $this->getElector()->authSession->getKey(),
             ]);
 
@@ -138,6 +152,7 @@ class BallotPage extends BasePage
             $vote = Vote::create(attributes: [
                 'key' => $key,
                 'secret' => $secret,
+                'mock' => $this->isMock(),
                 'ballot_id' => $this->getElection()->preference->dnt_votes ? null : $ballot->getKey(),
             ]);
         }
@@ -151,10 +166,25 @@ class BallotPage extends BasePage
             return;
         }
 
-        Session::put(key: 'elector_'.$this->getElector()->getKey().'_votes', value: encrypt(value: $data));
-        Cookie::queue(Cookie::forever(name: 'election_'.Kudvo::getElection()->getKey().'_ballot', value: $ballot->getKey()));
+        Session::put(
+            key: 'elector_'.$this->getElector()->getKey().'_votes'.($this->isMock() ? '_mock': ''),
+            value: encrypt(value: $data)
+        );
+        Cookie::queue(Cookie::forever(
+            name: 'election_'.Kudvo::getElection()->getKey().'_ballot'.($this->isMock() ? '_mock': ''),
+            value: $ballot->getKey()
+        ));
 
         $this->redirect(url: Filament::getUrl());
+    }
+
+    protected function getBallot(): ?Ballot
+    {
+        if ($this->isMock()) {
+            return $this->getElector()->mockBallot;
+        }
+
+        return $this->getElector()->ballot;
     }
 
     #[On(event: 'session-expired')]
@@ -165,6 +195,6 @@ class BallotPage extends BasePage
         session()->invalidate();
         session()->regenerateToken();
 
-        $this->redirect(url: Filament::getUrl());
+        $this->redirect(url: $this->getRedirectUrl(), navigate: $this->isSpa());
     }
 }

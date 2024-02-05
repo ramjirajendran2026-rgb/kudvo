@@ -6,8 +6,16 @@
     @apply rounded-full px-12;
 }
 
+.fi-main {
+    & .fi-section {
+        @apply rounded-none md:rounded-xl;
+    }
+
+    @apply px-0 md:px-6 lg:px-8;
+}
+
 .fi-topbar {
-    @apply mx-auto w-full lg:px-8 max-w-5xl;
+    @apply mx-auto w-full lg:px-8 max-w-5xl relative;
 
     nav {
         @apply lg:rounded-b-xl h-auto min-h-16 py-4 md:px-4;
@@ -40,13 +48,25 @@
 .fi-vote-picker {
     & .fi-section-header {
         & .fi-section-header-heading {
-            @apply text-xl
+            @apply text-xl;
         }
 
-        @apply text-center
+        @apply sticky top-0 text-center bg-inherit rounded-t-xl border-b border-gray-200 dark:border-white/10;
+    }
+
+    &.fi-invalid .fi-section-header-description {
+        @apply text-danger-600 dark:text-danger-400;
+    }
+
+    & .fi-section-content-ctn {
+        @apply border-none;
+
+        & .fi-section-content {
+            @apply p-4 md:p-6;
+        }
     }
 
     & .fi-checkbox-input {
-        @apply w-4 h-4 md:w-8 md:h-8 rounded-full hover:ring-primary-600 dark:hover:ring-primary-500
+        @apply w-4 h-4 md:w-8 md:h-8 rounded-full hover:ring-primary-600 dark:hover:ring-primary-500;
     }
 }

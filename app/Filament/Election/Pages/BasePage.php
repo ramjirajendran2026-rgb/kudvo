@@ -8,10 +8,12 @@ use App\Filament\Contracts\HasElector;
 use App\Filament\Election\Pages\Concerns\InteractsWithElection;
 use App\Filament\Election\Pages\Concerns\InteractsWithElector;
 use App\Models\Election;
+use Filament\Facades\Filament;
 use Filament\Forms\Form;
 use Filament\Pages\Page;
 use Filament\Resources\Resource;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Http\Request;
 use function Filament\authorize;
 
 /**
@@ -22,6 +24,13 @@ abstract class BasePage extends Page implements HasElector, HasElection
     use InteractsWithElector;
     use InteractsWithElection;
 
+    public bool $mock;
+
+    public function mount(Request $request): void
+    {
+        $this->mock = $request->query(key: 'mock', default: false);
+    }
+
     public static function can(string $action)
     {
         try {
@@ -29,5 +38,21 @@ abstract class BasePage extends Page implements HasElector, HasElection
         } catch (AuthorizationException $exception) {
             return $exception->toResponse()->allowed();
         }
+    }
+
+    public function isSpa(): bool
+    {
+        return Filament::getCurrentPanel()->hasSpaMode();
+    }
+
+    public function isMock(): bool
+    {
+        return $this->mock;
+    }
+
+    public function getRedirectUrl(): ?string
+    {
+        return Filament::getUrl().
+            ($this->isMock() ? '?mock=1' : '');
     }
 }

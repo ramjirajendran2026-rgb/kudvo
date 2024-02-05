@@ -59,23 +59,19 @@ class Verify extends Page implements HasElection
     #[Locked]
     public ?OneTimePassword $oneTimePassword;
 
-    public bool $spaMode;
-
     public function mount(Agent $agent): void
     {
-        $this->spaMode = Filament::getCurrentPanel()->hasSpaMode();
-
         if (
             $this->getElector()->authSession?->isMfaCompleted() ||
             ! $this->getElection()->isMfaRequired()
         ) {
-            $this->redirect(url: Filament::getUrl(), navigate: $this->spaMode);
+            $this->redirect(url: Filament::getUrl(), navigate: $this->isSpa());
 
             return;
         }
 
         if (! Session::has(key: Notice::getMfaSessionKey($this->getElector()))) {
-            $this->redirect(url: Notice::getUrl(), navigate: $this->spaMode);
+            $this->redirect(url: Notice::getUrl(), navigate: $this->isSpa());
 
             return;
         }
@@ -83,7 +79,7 @@ class Verify extends Page implements HasElection
         $this->oneTimePassword = OneTimePassword::find(id: Session::get(key: Notice::getMfaSessionKey($this->getElector())));
 
         if ($this->oneTimePassword?->isVerified()) {
-            $this->redirect(url: Filament::getUrl(), navigate: $this->spaMode);
+            $this->redirect(url: Filament::getUrl(), navigate: $this->isSpa());
 
             return;
         }
@@ -91,7 +87,7 @@ class Verify extends Page implements HasElection
         if (blank(value: $this->oneTimePassword) || $this->oneTimePassword->isExpired()) {
             Session::remove(key: Notice::getMfaSessionKey(elector: $this->getElector()));
 
-            $this->redirect(url: Notice::getUrl(), navigate: $this->spaMode);
+            $this->redirect(url: Notice::getUrl(), navigate: $this->isSpa());
 
             return;
         }
@@ -165,7 +161,7 @@ class Verify extends Page implements HasElection
 
         $this->getElector()->authSession?->touch(attribute: 'mfa_completed_at');
 
-        $this->redirectIntended(default: Filament::getUrl(), navigate: Filament::getCurrentPanel()->hasSpaMode());
+        $this->redirectIntended(default: Filament::getUrl(), navigate: $this->isSpa());
     }
 
     public function resend(): void
@@ -194,6 +190,11 @@ class Verify extends Page implements HasElection
             ->title(title: 'OTP resent')
             ->success()
             ->send();
+    }
+
+    public function isSpa(): bool
+    {
+        return Filament::getCurrentPanel()->hasSpaMode();
     }
 
     protected function getNoticeText(): string
