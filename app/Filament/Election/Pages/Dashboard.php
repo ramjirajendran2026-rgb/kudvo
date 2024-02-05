@@ -2,6 +2,7 @@
 
 namespace App\Filament\Election\Pages;
 
+use App\Facades\Kudvo;
 use App\Filament\Contracts\HasElection;
 use App\Filament\Contracts\HasElector;
 use App\Filament\Election\Http\Middleware\EnsureDeviceIsAllowed;
@@ -14,11 +15,14 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Dompdf\Dompdf;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
+use Filament\Http\Controllers\Auth\LogoutController;
+use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Session;
 use Jenssegers\Agent\Agent;
 use Livewire\Attributes\Locked;
+use Livewire\Attributes\On;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
@@ -110,6 +114,11 @@ class Dashboard extends \Filament\Pages\Dashboard
     protected function isAlreadyVoted(): bool
     {
         return (bool) $this->getElector()->ballot?->isVoted();
+    }
+
+    public function hasSessionVotes(): bool
+    {
+        return filled($this->sessionVotes);
     }
 
     protected function getVotedAtLocal(): ?Carbon

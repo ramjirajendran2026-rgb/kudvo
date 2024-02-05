@@ -5,21 +5,18 @@ namespace App\Filament\Election\Pages;
 use App\Enums\BallotType;
 use App\Facades\Kudvo;
 use App\Forms\Components\VotePicker;
-use App\Models\Ballot;
 use App\Models\Position;
 use App\Models\Vote;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Actions;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
-use Filament\Notifications\Notification;
 use Filament\Support\Enums\ActionSize;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cookie;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
-use Symfony\Component\HttpFoundation\Response;
+use Livewire\Attributes\On;
 
 class BallotPage extends BasePage
 {
@@ -32,6 +29,8 @@ class BallotPage extends BasePage
     public array $data = [];
 
     public bool $preview = false;
+
+    public bool $flashVotes = false;
 
     public function mountCanAuthorizeAccess(): void
     {
@@ -73,6 +72,18 @@ class BallotPage extends BasePage
             ->operation(operation: $this->preview ? 'preview' : 'create')
             ->statePath(path: 'data')
             ->schema(components: [
+                Section::make()
+                    ->compact()
+                    ->visible(condition: fn (self $livewire): bool => $livewire->flashVotes)
+                    ->schema(components: [
+                        Placeholder::make(name: 'flashText')
+                            ->content(content: 'Your votes are submitted as follows. This page will be automatically expire in 10 seconds.')
+                            ->extraAttributes(attributes: [
+                                'class' => 'text-success-600 dark:text-success-500 text-center'
+                            ])
+                            ->hiddenLabel(),
+                    ]),
+
                 ...$this->getElection()->positions
                     ->map(
                         callback: fn (Position $position) => VotePicker::makeFor(position: $position)
@@ -84,11 +95,13 @@ class BallotPage extends BasePage
                     Actions\Action::make(name: 'Back')
                         ->action(action: fn (self $livewire) => $livewire->preview = false)
                         ->color(color: 'gray')
+                        ->hidden(condition: fn (self $livewire): bool => $livewire->flashVotes)
                         ->size(size: ActionSize::ExtraLarge)
                         ->visible(condition: fn (self $livewire): bool => $livewire->preview),
 
                     Actions\Action::make(name: 'submit')
                         ->label(label: fn (self $livewire): string => $livewire->preview ? 'Confirm' : 'Continue')
+                        ->hidden(condition: fn (self $livewire): bool => $livewire->flashVotes)
                         ->size(size: ActionSize::ExtraLarge)
                         ->submit(form: 'submit'),
                 ])
@@ -109,6 +122,7 @@ class BallotPage extends BasePage
         if (! $this->preview) {
             $this->preview = true;
 
+            $this->dispatch(event: 'scroll-to-top');
             return;
         }
 
@@ -128,10 +142,28 @@ class BallotPage extends BasePage
             ]);
         }
 
-        if (! Kudvo::isBoothDevice()) {
-            Session::put(key: 'elector_'.$this->getElector()->getKey().'_votes', value: encrypt(value: $data));
-            Cookie::queue(Cookie::forever(name: 'election_'.Kudvo::getElection()->getKey().'_ballot', value: $ballot->getKey()));
+        if (Kudvo::isBoothDevice()) {
+            $this->flashVotes = true;
+
+            $this->dispatch(event: 'scroll-to-top');
+            $this->dispatch(event: 'flash-session-timeout');
+
+            return;
         }
+
+        Session::put(key: 'elector_'.$this->getElector()->getKey().'_votes', value: encrypt(value: $data));
+        Cookie::queue(Cookie::forever(name: 'election_'.Kudvo::getElection()->getKey().'_ballot', value: $ballot->getKey()));
+
+        $this->redirect(url: Filament::getUrl());
+    }
+
+    #[On(event: 'session-expired')]
+    public function destroySession(): void
+    {
+        Filament::auth()->logout();
+
+        session()->invalidate();
+        session()->regenerateToken();
 
         $this->redirect(url: Filament::getUrl());
     }
