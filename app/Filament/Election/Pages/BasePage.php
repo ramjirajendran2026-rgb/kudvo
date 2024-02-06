@@ -7,6 +7,7 @@ use App\Filament\Contracts\HasElection;
 use App\Filament\Contracts\HasElector;
 use App\Filament\Election\Pages\Concerns\InteractsWithElection;
 use App\Filament\Election\Pages\Concerns\InteractsWithElector;
+use App\Filament\ElectionPanel;
 use App\Models\Election;
 use Filament\Facades\Filament;
 use Filament\Forms\Form;
@@ -40,6 +41,14 @@ abstract class BasePage extends Page implements HasElector, HasElection
         }
     }
 
+    public function getPanel(): ElectionPanel
+    {
+        /** @var ElectionPanel $panel */
+        $panel = Filament::getCurrentPanel();
+
+        return $panel;
+    }
+
     public function isSpa(): bool
     {
         return Filament::getCurrentPanel()->hasSpaMode();
@@ -52,7 +61,6 @@ abstract class BasePage extends Page implements HasElector, HasElection
 
     public function getRedirectUrl(): ?string
     {
-        return Filament::getUrl().
-            ($this->isMock() ? '?mock=1' : '');
+        return Dashboard::getUrl(parameters: $this->isMock() ? ['mock' => 1] : []);
     }
 }

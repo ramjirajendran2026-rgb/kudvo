@@ -122,8 +122,6 @@ class Index extends BasePage
 
     public function submit(): void
     {
-        sleep(5);
-
         if (! static::canAccess(mock: $this->isMock())) {
             $this->redirect(url: $this->getRedirectUrl(), navigate: $this->isSpa());
 

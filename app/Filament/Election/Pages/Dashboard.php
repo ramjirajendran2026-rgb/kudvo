@@ -2,16 +2,22 @@
 
 namespace App\Filament\Election\Pages;
 
+use App\Enums\ElectionPanelDashboardState;
+use App\Enums\ElectionPanelDashboardState as PanelState;
 use App\Filament\Election\Http\Middleware\EnsureDeviceIsAllowed;
 use App\Filament\Election\Pages\Ballot\Index;
 use App\Filament\Election\Pages\Concerns\InteractsWithElection;
 use App\Filament\Election\Pages\Concerns\InteractsWithElector;
+use App\Filament\ElectionPanel;
 use App\Filament\Pages\Concerns\HasStateSection;
 use App\Models\Nominee;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Dompdf\Dompdf;
 use Filament\Actions\Action;
+use Filament\Facades\Filament;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Session;
 use Livewire\Attributes\Locked;
@@ -20,21 +26,27 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 /**
  * @property Collection<Nominee> $nominees
  */
-class Dashboard extends \Filament\Pages\Dashboard
+class Dashboard extends BasePage
 {
     use HasStateSection;
-    use InteractsWithElector;
-    use InteractsWithElection;
 
     protected static string $view = 'filament.election.pages.dashboard';
 
+    protected static ?int $navigationSort = -2;
+
     protected static string | array $withoutRouteMiddleware = EnsureDeviceIsAllowed::class;
+
+    protected $listeners = [
+        'refresh' => 'reload'
+    ];
 
     #[Locked]
     public ?array $sessionVotes = null;
 
-    public function mount(): void
+    public function mount(Request $request): void
     {
+        parent::mount(request: $request);
+
         if (Index::canAccess()) {
             $this->redirect(Index::getUrl());
 
@@ -46,50 +58,40 @@ class Dashboard extends \Filament\Pages\Dashboard
         }
     }
 
-    public function getStateHeading(): ?string
+    public function getState(): ?PanelState
     {
         return match (true) {
-            $this->isVotedNow() => 'Voted successfully',
-            $this->isAlreadyVoted() => 'Already voted',
-            $this->getElection()->is_closed,
-            $this->getElection()->is_completed => 'Voting closed',
-            $this->getElection()->is_expired => 'Ballot expired',
+            $this->getElection()->is_upcoming => PanelState::YetToStart,
+            $this->isVotedNow() => PanelState::VotedNow,
+            $this->isAlreadyVoted() => PanelState::AlreadyVoted,
+            $this->getElection()->is_closed => PanelState::Closed,
+            $this->getElection()->is_completed => PanelState::Completed,
+            $this->getElection()->is_expired => PanelState::Expired,
             default => null,
         };
+    }
+
+    public function getStateHeading(): string | Htmlable | null
+    {
+        return $this->getState()?->getLabel(election: $this->getElection());
     }
 
     public function getStateIcon(): ?string
     {
-        return match (true) {
-            $this->isVotedNow(),
-            $this->isAlreadyVoted() => 'heroicon-o-check-badge',
-            $this->getElection()->is_closed,
-            $this->getElection()->is_completed => 'heroicon-o-clock',
-            $this->getElection()->is_expired => 'heroicon-o-clock',
-            default => null,
-        };
+        return $this->getState()?->getIcon(election: $this->getElection());
     }
 
-    public function getStateDescription(): ?string
+    public function getStateDescription(): string | Htmlable | null
     {
-        return match (true) {
-            $this->isVotedNow() => 'You vote has been submitted successfully '.
-                $this->getVotedAtLocal()?->format(format: 'M d, Y h:i A (T)'),
-            $this->isAlreadyVoted() => 'You have already casted your vote on '.
-                $this->getVotedAtLocal()?->format(format: 'M d, Y h:i A (T)'),
-            $this->getElection()->is_closed,
-            $this->getElection()->is_completed => 'Voting for this election has been closed on '.
-                $this->getElection()->closed_at?->timezone(value: $this->getElection()->timezone)->format(format: 'M d, Y h:i A (T)'),
-            $this->getElection()->is_expired => 'Voting ballot has been expired on '.
-                $this->getElection()->ends_at_local->format(format: 'M d, Y h:i A (T)'),
-            default => null,
-        };
+        return $this->getState()?->getDescription(election: $this->getElection());
     }
 
     protected function getStateActions(): array
     {
-        return match (true) {
-            $this->isVotedNow() => [
+        $state = $this->getState();
+
+        return match ($state) {
+            PanelState::VotedNow => [
                 Action::make(name: 'downloadMyBallot')
                     ->action(action: 'downloadMyBallot')
                     ->visible(condition: fn (self $livewire): bool => $livewire->isVotedNow()),
@@ -150,5 +152,10 @@ class Dashboard extends \Filament\Pages\Dashboard
                 },
                 name: "ballot-{$this->getElection()->code}.pdf",
             );
+    }
+
+    public function reload(): void
+    {
+        $this->redirect(url: Filament::getUrl(), navigate: $this->isSpa());
     }
 }

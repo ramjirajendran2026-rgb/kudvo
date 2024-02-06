@@ -19,6 +19,7 @@ use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\MaxWidth;
+use Filament\View\PanelsRenderHook;
 use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -72,8 +73,8 @@ class ElectionPanelProvider extends PanelProvider
             ->brandLogo(logo: fn (): string => Kudvo::getOrganisation()?->getFilamentAvatarUrl())
             ->spa()
             ->renderHook(
-                name: 'panels::footer',
-                hook: fn () => Blade::render('<x-filament.nomination.footer />')
+                name: PanelsRenderHook::FOOTER,
+                hook: fn () => Blade::render(string: '<x-filament.nomination.footer />')
             );
     }
 

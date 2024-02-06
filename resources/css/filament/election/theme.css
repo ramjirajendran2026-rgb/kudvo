@@ -54,8 +54,12 @@
         @apply sticky top-0 text-center bg-inherit rounded-t-xl border-b border-gray-200 dark:border-white/10;
     }
 
-    &.fi-invalid .fi-section-header-description {
-        @apply text-danger-600 dark:text-danger-400;
+    &.fi-invalid {
+        @apply ring-danger-600;
+
+        & .fi-section-header-description {
+            @apply text-danger-600 dark:text-danger-400;
+        }
     }
 
     & .fi-section-content-ctn {

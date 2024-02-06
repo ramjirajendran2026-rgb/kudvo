@@ -18,17 +18,17 @@ use function Filament\authorize;
 trait InteractsWithElector
 {
     #[Locked]
-    protected Elector $elector;
+    protected ?Elector $elector = null;
 
     public function bootInteractsWithElector(): void
     {
-        /** @var Elector $elector */
+        /** @var ?Elector $elector */
         $elector = Filament::auth()->user();
 
         $this->elector = $elector;
     }
 
-    public function getElector(): Elector
+    public function getElector(): ?Elector
     {
         return $this->elector;
     }

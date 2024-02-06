@@ -4,6 +4,7 @@ namespace App\Filament\Pages\Concerns;
 
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Illuminate\Contracts\Support\Htmlable;
 use InvalidArgumentException;
 
 trait HasStateSection
@@ -64,12 +65,12 @@ trait HasStateSection
         return [];
     }
 
-    public function getStateDescription(): ?string
+    public function getStateDescription(): string | Htmlable | null
     {
         return null;
     }
 
-    public function getStateHeading(): ?string
+    public function getStateHeading(): string | Htmlable | null
     {
         return null;
     }

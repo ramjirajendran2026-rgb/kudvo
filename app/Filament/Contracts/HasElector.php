@@ -7,5 +7,5 @@ use Illuminate\Contracts\Auth\Authenticatable;
 
 interface HasElector
 {
-    public function getElector(): Elector|Authenticatable;
+    public function getElector(): Elector|Authenticatable|null;
 }
