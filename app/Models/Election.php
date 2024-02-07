@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Data\ElectionPreferenceData;
+use App\Data\WebAppManifestData;
 use App\Enums\ElectionStatus;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -18,6 +19,7 @@ class Election extends Model
         'name',
         'description',
         'preference',
+        'web_app_manifest',
         'timezone',
         'starts_at',
         'ends_at',
@@ -30,6 +32,7 @@ class Election extends Model
 
     protected $casts = [
         'preference' => ElectionPreferenceData::class,
+        'web_app_manifest' => WebAppManifestData::class,
         'starts_at' => 'datetime',
         'ends_at' => 'datetime',
         'published_at' => 'datetime',

@@ -3,15 +3,21 @@
 namespace App\Filament\Election\Pages;
 
 use App\Enums\ElectionPanelState;
+use App\Facades\Kudvo;
+use App\Filament\Election\Http\Middleware\EnsureStateIsAllowed;
+use App\Filament\Election\Pages\Concerns\InteractsWithElection;
 use App\Filament\Pages\Concerns\HasStateSection;
+use App\Models\Elector;
+use Filament\Facades\Filament;
 use Filament\Pages\Page;
 use Filament\Panel;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Http\Request;
 
-class Index extends BasePage
+class Index extends Page
 {
     use HasStateSection;
+    use InteractsWithElection;
 
     protected static string $view = 'filament.election.pages.index';
 
@@ -19,13 +25,13 @@ class Index extends BasePage
 
     public ?ElectionPanelState $state = null;
 
-    protected static bool $isDiscovered = false;
+    public bool $mock;
 
     public function mount(Request $request): void
     {
-        parent::mount($request);
+        $this->mock = $request->query(key: 'mock', default: false);
 
-        $this->resolveState();
+        $this->state = Kudvo::getElectionPanelState();
 
         if ($this->state == ElectionPanelState::Open) {
             $this->redirect(url: Dashboard::getUrl(), navigate: $this->isSpa());
@@ -34,20 +40,20 @@ class Index extends BasePage
 
     public static function getWithoutRouteMiddleware(Panel $panel): string|array
     {
-        return $panel->getAuthMiddleware();
+        return [
+            EnsureStateIsAllowed::class,
+            ...$panel->getAuthMiddleware()
+        ];
     }
 
-    protected function resolveState(): void
+    public function isSpa(): bool
     {
-        $election = $this->getElection();
+        return Filament::getCurrentPanel()->hasSpaMode();
+    }
 
-        $this->state = match (true) {
-            $election->is_upcoming => ElectionPanelState::YetToStart,
-            $election->is_closed => ElectionPanelState::Closed,
-            $election->is_expired => ElectionPanelState::Ended,
-            $election->is_open => ElectionPanelState::Open,
-            default => null,
-        };
+    public function isMock(): bool
+    {
+        return $this->mock;
     }
 
     public function getState(): ?ElectionPanelState
@@ -67,6 +73,14 @@ class Index extends BasePage
 
     public function getStateDescription(): string|Htmlable|null
     {
-        return $this->getState()?->getDescription(election: $this->getElection());
+        return $this->getState()?->getDescription(election: $this->getElection(), elector: $this->getElector());
+    }
+
+    protected function getElector()
+    {
+        /** @var ?Elector $elector */
+        $elector = Filament::auth()->user();
+
+        return $elector;
     }
 }

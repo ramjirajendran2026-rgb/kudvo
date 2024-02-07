@@ -97,6 +97,7 @@ class Login extends BasePage
     protected function getPhoneComponent()
     {
         return PhoneInput::make(name: 'phone')
+            ->autofocus()
             ->defaultCountry(value: 'IN')
             ->label(label: 'Your phone number')
             ->required()

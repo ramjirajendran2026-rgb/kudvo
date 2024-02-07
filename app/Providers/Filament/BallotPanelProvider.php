@@ -14,6 +14,8 @@ use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Filament\Support\Enums\MaxWidth;
+use Filament\View\PanelsRenderHook;
 use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -21,6 +23,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class BallotPanelProvider extends PanelProvider
@@ -53,9 +56,21 @@ class BallotPanelProvider extends PanelProvider
             ->login(action: Login::class)
             ->brandName(name: fn (): string => Kudvo::getOrganisation()?->name)
             ->brandLogo(logo: fn (): string => Kudvo::getOrganisation()?->getFilamentAvatarUrl())
-            ->navigation(builder: false)
             ->colors(colors: [
                 'primary' => Color::Amber,
-            ]);
+            ])
+            ->font(family: 'Poppins')
+            ->viteTheme(theme: 'resources/css/filament/election/theme.css')
+            ->navigation(builder: false)
+            ->databaseNotifications(condition: false)
+            ->breadcrumbs(condition: false)
+            ->maxContentWidth(maxContentWidth: MaxWidth::FiveExtraLarge)
+            ->brandName(name: fn (): string => Kudvo::getOrganisation()?->name)
+            ->brandLogo(logo: fn (): string => Kudvo::getOrganisation()?->getFilamentAvatarUrl())
+            ->spa()
+            ->renderHook(
+                name: PanelsRenderHook::FOOTER,
+                hook: fn () => Blade::render(string: '<x-filament.nomination.footer />')
+            );
     }
 }

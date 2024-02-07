@@ -3,6 +3,7 @@
 namespace App\Enums;
 
 use App\Models\Election;
+use App\Models\Elector;
 use BladeUI\Heroicons\BladeHeroiconsServiceProvider;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
@@ -13,9 +14,11 @@ enum ElectionPanelState: string
 
     case Open = 'open';
 
-    case Ended = 'ended';
-
     case Closed = 'closed';
+
+    case Voted = 'voted';
+
+    case Cancelled = 'cancelled';
 
     case DeviceAlreadyUsed = 'device_already_used';
 
@@ -25,8 +28,9 @@ enum ElectionPanelState: string
     {
         return match ($this) {
             self::YetToStart => 'Yet to start',
-            self::Ended,
-            self::Closed => 'Voting closed',
+            self::Closed => 'Closed',
+            self::Voted => 'Submitted',
+            self::Cancelled => 'Cancelled',
             self::DeviceAlreadyUsed => 'Restricted device',
             self::DeviceNotSupported => 'Unsupported device',
             default => null,
@@ -37,15 +41,16 @@ enum ElectionPanelState: string
     {
         return match ($this) {
             self::YetToStart,
-            self::Ended,
             self::Closed => 'heroicon-o-clock',
+            self::Voted => 'heroicon-o-shield-check',
+            self::Cancelled => 'heroicon-o-x-mark',
             self::DeviceAlreadyUsed => 'heroicon-o-flag',
             self::DeviceNotSupported => 'heroicon-o-no-symbol',
             default => null,
         };
     }
 
-    public function getDescription(Election $election): string | HtmlString |null
+    public function getDescription(Election $election, ?Elector $elector = null): string | HtmlString |null
     {
         return match ($this) {
             self::YetToStart => new HtmlString(
@@ -57,8 +62,9 @@ enum ElectionPanelState: string
                             />"
                 )
             ),
-            self::Ended,
             self::Closed => 'Voting for this election was closed.',
+            self::Voted => 'You have submitted your votes.',
+            self::Cancelled => 'This election has been cancelled. Please contact Election Officer(s) for more information.',
             self::DeviceAlreadyUsed => 'This device is already used to cast vote for this election.',
             self::DeviceNotSupported => 'This device is not supported for this election. Please use any of Chrome (Android) and Safari (iOS)',
             default => null,

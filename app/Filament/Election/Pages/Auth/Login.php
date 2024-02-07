@@ -3,7 +3,7 @@
 namespace App\Filament\Election\Pages\Auth;
 
 use App\Facades\Kudvo;
-use App\Filament\Election\Http\Middleware\EnsureDeviceIsAllowed;
+use App\Filament\Election\Http\Middleware\EnsureStateIsAllowed;
 use App\Models\Election;
 use App\Models\Elector;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;

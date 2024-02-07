@@ -169,8 +169,14 @@ class Index extends BasePage
             value: encrypt(value: $data)
         );
         Cookie::queue(Cookie::forever(
-            name: 'election_'.Kudvo::getElection()->getKey().'_ballot'.($this->isMock() ? '_mock': ''),
-            value: $ballot->getKey()
+            name: 'election_'.Kudvo::getElection()->getKey().'_ballots'.($this->isMock() ? '_mock': ''),
+            value: array_merge(
+                Cookie::get(
+                    key: 'election_'.Kudvo::getElection()->getKey().'_ballots'.($this->isMock() ? '_mock': ''),
+                    default: [],
+                ),
+                $ballot->getKey(),
+            )
         ));
 
         $this->redirect(url: Filament::getUrl());

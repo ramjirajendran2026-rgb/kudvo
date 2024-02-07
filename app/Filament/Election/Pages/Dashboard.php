@@ -4,7 +4,7 @@ namespace App\Filament\Election\Pages;
 
 use App\Enums\ElectionPanelDashboardState;
 use App\Enums\ElectionPanelDashboardState as PanelState;
-use App\Filament\Election\Http\Middleware\EnsureDeviceIsAllowed;
+use App\Filament\Election\Http\Middleware\EnsureStateIsAllowed;
 use App\Filament\Election\Pages\Ballot\Index;
 use App\Filament\Election\Pages\Concerns\InteractsWithElection;
 use App\Filament\Election\Pages\Concerns\InteractsWithElector;
@@ -32,10 +32,6 @@ class Dashboard extends BasePage
 
     protected static string $view = 'filament.election.pages.dashboard';
 
-    protected static ?int $navigationSort = -2;
-
-    protected static string | array $withoutRouteMiddleware = EnsureDeviceIsAllowed::class;
-
     protected $listeners = [
         'refresh' => 'reload'
     ];
@@ -56,6 +52,11 @@ class Dashboard extends BasePage
         if ($this->getElector()->ballot?->isVoted() && Session::has(key: 'elector_'.$this->getElector()->getKey().'_votes')) {
             $this->sessionVotes =  decrypt(value: Session::pull(key: 'elector_'.$this->getElector()->getKey().'_votes'));
         }
+    }
+
+    public static function canAccess(): bool
+    {
+        return static::can(action: 'viewBallotDashboard');
     }
 
     public function getState(): ?PanelState

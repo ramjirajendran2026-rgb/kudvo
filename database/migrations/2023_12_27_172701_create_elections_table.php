@@ -19,6 +19,7 @@ return new class extends Migration
                 $table->longText(column: 'description')->nullable();
 
                 $table->json(column: 'preference')->nullable();
+                $table->json(column: 'web_app_manifest')->nullable();
 
                 $table->string(column: 'timezone')->nullable();
                 $table->timestamp(column: 'starts_at')->nullable();

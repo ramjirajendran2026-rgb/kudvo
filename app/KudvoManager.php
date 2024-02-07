@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Enums\ElectionPanelState;
 use App\Models\Election;
 use App\Models\Nomination;
 use App\Models\Organisation;
@@ -15,14 +16,11 @@ class KudvoManager
 
     protected ?Organisation $organisation = null;
 
-    public function getElection(): ?Election
-    {
-        return $this->election;
-    }
+    protected ?ElectionPanelState $electionPanelState = null;
 
-    public function getNomination(): ?Nomination
+    public function setOrganisation(?Organisation $organisation): void
     {
-        return $this->nomination;
+        $this->organisation = $organisation;
     }
 
     public function getOrganisation(): ?Organisation
@@ -37,6 +35,11 @@ class KudvoManager
         $this->setOrganisation(organisation: $election?->organisation);
     }
 
+    public function getElection(): ?Election
+    {
+        return $this->election;
+    }
+
     public function setNomination(?Nomination $nomination): void
     {
         $this->nomination = $nomination;
@@ -44,9 +47,19 @@ class KudvoManager
         $this->setOrganisation(organisation: $nomination?->organisation);
     }
 
-    public function setOrganisation(?Organisation $organisation): void
+    public function getNomination(): ?Nomination
     {
-        $this->organisation = $organisation;
+        return $this->nomination;
+    }
+
+    public function setElectionPanelState(?ElectionPanelState $state): void
+    {
+        $this->electionPanelState = $state;
+    }
+
+    public function getElectionPanelState(): ?ElectionPanelState
+    {
+        return $this->electionPanelState;
     }
 
     public function isBoothDevice(?Election $election = null): bool

@@ -3,9 +3,11 @@
 namespace App\Providers\Filament;
 
 use App\Facades\Kudvo;
+use App\Filament\Election\Http\Controllers\WebManifestController;
 use App\Filament\Election\Http\Middleware\AuthenticateSession;
-use App\Filament\Election\Http\Middleware\EnsureDeviceIsAllowed;
+use App\Filament\Election\Http\Middleware\EnsureStateIsAllowed;
 use App\Filament\Election\Http\Middleware\EnsureMfaCompleted;
+use App\Filament\Election\Http\Middleware\IdentifyPanelState;
 use App\Filament\Election\Pages\Auth\Login;
 use App\Filament\Election\Pages\Dashboard;
 use App\Filament\ElectionPanel;
@@ -54,12 +56,17 @@ class ElectionPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
             ])
-            ->middleware(middleware: [EnsureDeviceIsAllowed::class], isPersistent: true)
+            ->middleware(middleware: [IdentifyPanelState::class, EnsureStateIsAllowed::class], isPersistent: true)
             ->authMiddleware(middleware: [
                 Authenticate::class,
                 EnsureMfaCompleted::class,
             ])
             ->login(action: Login::class)
+            ->routes(routes: function (): void {
+                Route::get(uri: 'app.webmanifest', action: WebManifestController::class)
+                    ->withoutMiddleware(middleware: EnsureStateIsAllowed::class)
+                    ->name(name: 'web-app-manifest');
+            })
             ->colors(colors: [
                 'primary' => Color::Green,
             ])
@@ -72,6 +79,12 @@ class ElectionPanelProvider extends PanelProvider
             ->brandName(name: fn (): string => Kudvo::getOrganisation()?->name)
             ->brandLogo(logo: fn (): string => Kudvo::getOrganisation()?->getFilamentAvatarUrl())
             ->spa()
+            ->renderHook(
+                name: PanelsRenderHook::HEAD_START,
+                hook: fn () => Kudvo::getElection()?->web_app_manifest ?
+                    '<link rel="manifest" href="'.Filament::getCurrentPanel()->route(name: 'web-app-manifest').'">' :
+                    null,
+            )
             ->renderHook(
                 name: PanelsRenderHook::FOOTER,
                 hook: fn () => Blade::render(string: '<x-filament.nomination.footer />')
