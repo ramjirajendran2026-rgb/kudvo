@@ -217,6 +217,11 @@ class Election extends Model
         return $this->preference->mfa_sms_auto_fill_only;
     }
 
+    public function isPwaEnabled(): bool
+    {
+        return filled($this->web_app_manifest);
+    }
+
     public function getElectorGroups(): array
     {
         return $this

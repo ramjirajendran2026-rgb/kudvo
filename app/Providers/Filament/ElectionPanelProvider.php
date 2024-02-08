@@ -81,7 +81,7 @@ class ElectionPanelProvider extends PanelProvider
             ->spa()
             ->renderHook(
                 name: PanelsRenderHook::HEAD_START,
-                hook: fn () => Kudvo::getElection()?->web_app_manifest ?
+                hook: fn () => Kudvo::getElection()?->isPwaEnabled() ?
                     '<link rel="manifest" href="'.Filament::getCurrentPanel()->route(name: 'web-app-manifest').'">' :
                     null,
             )
