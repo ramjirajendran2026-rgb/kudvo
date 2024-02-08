@@ -52,18 +52,26 @@ class Login extends BasePage
             $this->throwFailureValidationException();
         }
 
-        Filament::auth()->login(user: $elector);
-
-        /** @var Elector $elector */
-        $elector = Filament::auth()->user();
-
         if (! $elector->canAccessPanel(Filament::getCurrentPanel())) {
-            Filament::auth()->logout();
-
             $this->throwFailureValidationException();
         }
 
+        if ($elector->ballot?->isVoted()) {
+            Notification::make()
+                ->title(title: 'Already voted')
+                ->warning()
+                ->send();
+
+            $this->redirect(url: Filament::getLoginUrl(), navigate: Filament::getCurrentPanel()->hasSpaMode());
+
+            return null;
+        }
+
+        Filament::auth()->login(user: $elector);
         session()->regenerate();
+
+        /** @var Elector $elector */
+        $elector = Filament::auth()->user();
 
         $elector->createAuthSession(
             sessionId: session()->getId(),
@@ -71,7 +79,7 @@ class Login extends BasePage
             request: request(),
         );
 
-        return app(LoginResponse::class);
+        return app(abstract: LoginResponse::class);
     }
 
     protected function getCredentialsFromFormData(array $data): array

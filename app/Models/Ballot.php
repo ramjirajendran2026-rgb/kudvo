@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\BallotType;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -39,6 +40,26 @@ class Ballot extends Model
     public function votes(): HasMany
     {
         return $this->hasMany(related: Vote::class);
+    }
+
+    public function scopeMock(Builder $query): Builder
+    {
+        return $query->where('mock', true);
+    }
+
+    public function scopeLive(Builder $query): Builder
+    {
+        return $query->where('mock', false);
+    }
+
+    public function scopeVoted(Builder $query): Builder
+    {
+        return $query->whereNotNull(columns: 'voted_at');
+    }
+
+    public function scopeNonVoted(Builder $query): Builder
+    {
+        return $query->whereNull(columns: 'voted_at');
     }
 
     public function isVoted(): bool

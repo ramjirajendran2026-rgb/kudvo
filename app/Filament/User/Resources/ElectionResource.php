@@ -98,6 +98,7 @@ class ElectionResource extends Resource
             'preference' => Pages\Preference::route(path: '/{record}/preference'),
             'electors' => Pages\Electors::route(path: '/{record}/electors'),
             'ballot.setup' => Pages\BallotSetup::route(path: '/{record}/ballot/setup'),
+            'monitor_tokens' => Pages\MonitorTokens::route(path: '/{record}/monitor-tokens'),
         ];
     }
 
@@ -108,6 +109,7 @@ class ElectionResource extends Resource
             Pages\Preference::class,
             Pages\Electors::class,
             Pages\BallotSetup::class,
+            Pages\MonitorTokens::class,
         ]);
     }
 

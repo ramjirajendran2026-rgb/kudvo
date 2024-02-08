@@ -46,6 +46,15 @@ trait InteractsWithElection
         return $this->election;
     }
 
+    public function getWidgetData(): array
+    {
+        return array_merge(
+            parent::getWidgetData(),
+
+            ['election' => $this->getElection()],
+        );
+    }
+
     public function getHeading(): string|Htmlable
     {
         return $this->getElection()->name;

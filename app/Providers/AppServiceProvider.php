@@ -8,9 +8,13 @@ use App\KudvoManager;
 use App\Services\TwentyFourSevenSms\TwentyFourSevenSmsChannel;
 use Filament\Actions\CreateAction;
 use Filament\Facades\Filament;
+use Filament\Notifications\Livewire\Notifications;
 use Filament\Pages\Page;
+use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\VerticalAlignment;
 use Filament\Tables\Actions\CreateAction as TableCreateAction;
 use Filament\Tables\Columns\Column;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\ChannelManager;
 use Illuminate\Support\Arr;
@@ -73,6 +77,11 @@ class AppServiceProvider extends ServiceProvider
         );
 
         Filament::serving(callback: function (): void {
+            Table::$defaultDateTimeDisplayFormat = 'M j, Y h:i:s A';
+
+            Notifications::alignment(alignment: Alignment::Center);
+            Notifications::verticalAlignment(alignment: VerticalAlignment::Start);
+
             Column::configureUsing(modifyUsing: function (Column $component) {
                 $component->wrapHeader();
             });

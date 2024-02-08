@@ -14,6 +14,7 @@ use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Support\Enums\ActionSize;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -71,18 +72,6 @@ class Index extends BasePage
             ->operation(operation: $this->preview ? 'preview' : 'create')
             ->statePath(path: 'data')
             ->schema(components: [
-                Section::make()
-                    ->compact()
-                    ->visible(condition: fn (self $livewire): bool => $livewire->flashVotes)
-                    ->schema(components: [
-                        Placeholder::make(name: 'flashText')
-                            ->content(content: 'Your votes are submitted as follows. This page will be automatically expire in 10 seconds.')
-                            ->extraAttributes(attributes: [
-                                'class' => 'text-success-600 dark:text-success-500 text-center'
-                            ])
-                            ->hiddenLabel(),
-                    ]),
-
                 ...$this->getElection()->positions
                     ->map(
                         callback: fn (Position $position) => VotePicker::makeFor(position: $position)
@@ -133,6 +122,12 @@ class Index extends BasePage
         if (! $this->preview) {
             $this->preview = true;
 
+            Notification::make()
+                ->title(title: 'Confirmation')
+                ->body(body: 'Please review your selection and confirm')
+                ->warning()
+                ->send();
+
             $this->dispatch(event: 'scroll-to-top');
             return;
         }
@@ -160,6 +155,12 @@ class Index extends BasePage
 
             $this->dispatch(event: 'scroll-to-top');
             $this->dispatch(event: 'flash-session-timeout');
+
+            Notification::make()
+                ->title(title: 'Submitted')
+                ->body(body: 'Your votes are submitted successfully. This page will be automatically expire in 10 seconds.')
+                ->success()
+                ->send();
 
             return;
         }
