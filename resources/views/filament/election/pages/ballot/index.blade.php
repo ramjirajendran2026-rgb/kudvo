@@ -1,4 +1,5 @@
 <x-filament-panels::page
+    :full-height="true"
     x-data="{}"
     x-on:flash-session-timeout="
         setTimeout(
@@ -18,7 +19,7 @@
         )
     "
 >
-    <form wire:submit="submit">
+    <form wire:submit="submit" class="my-auto">
         {{ $this->form }}
     </form>
 </x-filament-panels::page>

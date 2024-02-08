@@ -46,6 +46,11 @@ class Index extends Page
         ];
     }
 
+    public function getTitle(): string|Htmlable
+    {
+        return $this->getElection()->name;
+    }
+
     public function isSpa(): bool
     {
         return Filament::getCurrentPanel()->hasSpaMode();

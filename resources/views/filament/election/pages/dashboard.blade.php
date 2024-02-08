@@ -1,6 +1,6 @@
-<x-filament-panels::page>
+<x-filament-panels::page :full-height="true">
     @if($state = $this->getStateHeading())
-        <x-filament::section>
+        <x-filament::section class="my-auto">
             <x-filament.state
                 :actions="$this->getCachedStateActions()"
                 :description="$this->getStateDescription()"
