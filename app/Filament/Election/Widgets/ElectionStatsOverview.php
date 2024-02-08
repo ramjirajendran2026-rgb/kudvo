@@ -12,6 +12,8 @@ class ElectionStatsOverview extends BaseWidget
 {
     public Election $election;
 
+    protected static ?string $pollingInterval = '10s';
+
     protected function getStats(): array
     {
         $total = $this->election->electors()->count();

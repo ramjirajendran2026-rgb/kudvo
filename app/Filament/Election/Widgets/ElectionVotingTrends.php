@@ -20,6 +20,8 @@ class ElectionVotingTrends extends ChartWidget
 
     protected static ?string $maxHeight = '300px';
 
+    protected static ?string $pollingInterval = '10s';
+
     protected function getData(): array
     {
         $total = $this->election->electors()->count();
