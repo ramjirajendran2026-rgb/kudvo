@@ -64,9 +64,9 @@ class MonitorTokens extends ElectionPage implements HasTable
                 TextColumn::make(name: 'activated_at')
                     ->dateTime(timezone: $this->getElection()->timezone),
 
-                TextColumn::make(name: 'device')
-                    ->getStateUsing(callback: fn (ElectionMonitorToken $record): ?Agent => blank($record->user_agent) ? null : new Agent(userAgent: $record->user_agent))
-                    ->formatStateUsing(callback: fn (?Agent $state): ?string => blank($state) ? null : ($state->device().'/'.$state->browser())),
+                TextColumn::make(name: 'user_agent')
+                    ->formatStateUsing(callback: fn (?Agent $state): ?string => filled($state) ? $state->platform().' - '.$state->browser() : null)
+                    ->label(label: 'Device'),
             ])
             ->actions(actions: [
                 DeleteAction::make()
