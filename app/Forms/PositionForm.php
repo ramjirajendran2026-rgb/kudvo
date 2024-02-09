@@ -6,6 +6,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Get;
+use LaraZeus\Quantity\Components\Quantity;
 
 readonly class PositionForm
 {
@@ -27,7 +28,7 @@ readonly class PositionForm
 
     public static function quotaComponent(): TextInput
     {
-        return TextInput::make(name: 'quota')
+        return Quantity::make(name: 'quota')
             ->default(state: 1)
             ->label(label: 'Available posts')
             ->maxValue(value: 25)
@@ -44,7 +45,7 @@ readonly class PositionForm
 
     public static function thresholdComponent(): TextInput
     {
-        return TextInput::make(name: 'threshold')
+        return Quantity::make(name: 'threshold')
             ->default(state: 0)
             ->label(label: 'Min selection')
             ->minValue(value: 0)

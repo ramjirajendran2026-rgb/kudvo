@@ -6,7 +6,6 @@ use App\Facades\Kudvo;
 use App\Filament\Contracts\HasElection;
 use App\Filament\Contracts\HasElectorGroups;
 use App\Filament\User\Resources\ElectionResource;
-use App\Filament\User\Resources\NominationResource\Pages\Dashboard;
 use App\Forms\Components\VotePicker;
 use App\Models\Election;
 use App\Models\Position;
@@ -20,6 +19,7 @@ use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\Page;
 use Filament\Support\Enums\Alignment;
+use Illuminate\Auth\Access\Gate;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
@@ -139,6 +139,12 @@ HTML
         static::authorizeResourceAccess();
 
         if (! static::canAccessPage(election: $this->election)) {
+            Notification::make()
+                ->title(title: 'Not allowed')
+                ->body(body: 'Complete previous steps before accessing this page')
+                ->warning()
+                ->send();
+
             $this->redirect(Dashboard::getUrl(parameters: [$this->election]));
         }
     }
@@ -175,6 +181,7 @@ HTML
     protected function getPreviewBallotAction()
     {
         return Action::make(name: 'previewBallot')
+            ->authorize(abilities: 'preview')
             ->action(action: function (Action $action, array $data, Form $form): void {
                 $preview = $data['preview'];
 
@@ -228,7 +235,7 @@ HTML
     {
         return Action::make(name: 'useAsBoothDevice')
             ->requiresConfirmation()
-            ->authorize(abilities: fn (self $livewire): bool => static::can(action: 'enableBoothDevice', election: $livewire->getElection()))
+            ->authorize(abilities: 'useAsBoothDevice')
             ->color(color: 'success')
             ->action(action: function (self $livewire, Action $action): void {
                 Cookie::queue(Cookie::forever(name: 'election_booth_device', value: $livewire->getElection()->getKey()));
@@ -243,9 +250,9 @@ HTML
     {
         return Action::make(name: 'removeFromBoothDevice')
             ->requiresConfirmation()
-            ->authorize(abilities: fn (self $livewire): bool => static::can(action: 'disableBoothDevice', election: $livewire->getElection()))
+            ->authorize(abilities: 'removeFromBoothDevice')
             ->color(color: 'danger')
-            ->action(action: function (self $livewire, Action $action): void {
+            ->action(action: function (Action $action): void {
                 Cookie::queue(Cookie::forget(name: 'election_booth_device'));
 
                 $action->success();

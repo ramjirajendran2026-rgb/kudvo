@@ -4,8 +4,11 @@ namespace App\Policies;
 
 use App\Models\Election;
 use App\Models\Elector;
+use App\Models\Organisation;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 
 class ElectionPolicy
 {
@@ -33,7 +36,7 @@ class ElectionPolicy
 
     public function update(User $user, Election $election): bool
     {
-        return $election->is_draft;
+        return $election->is_draft || $election->is_published;
     }
 
     public function delete(User $user, Election $election): bool
@@ -44,30 +47,37 @@ class ElectionPolicy
     public function setTiming(User $user, Election $election): bool
     {
         return $election->is_draft &&
-            blank(value: $election->starts_at) &&
+            ! $election->isTimingConfigured() &&
+            filled($election->preference) &&
             ($election->electors_count ?? $election->loadCount(relations: ['electors'])->electors_count) > 0 &&
             ($election->positions_count ?? $election->loadCount(relations: ['positions'])->positions_count) > 0 &&
-            filled(value: $election->preference);
+            $election->positions()
+                ->whereHas(
+                    relation: 'candidates',
+                    count: DB::raw(value: 'positions.quota')
+                )
+                ->count() == $election->positions_count;
     }
 
     public function updateTiming(User $user, Election $election): bool
     {
-        return ($election->is_draft || $election->is_published) &&
-            filled(value: $election->starts_at) &&
-            ($election->electors_count ?? $election->loadCount(relations: ['electors'])->electors_count) > 0 &&
-            ($election->positions_count ?? $election->loadCount(relations: ['positions'])->positions_count) > 0 &&
-            filled(value: $election->preference);
+        return $election->is_published ||
+            ($election->is_draft && $election->isTimingConfigured());
     }
 
     public function publish(User $user, Election $election): bool
     {
         return $election->is_draft &&
-            filled(value: $election->starts_at) &&
-            filled(value: $election->ends_at) &&
-            filled(value: $election->timezone) &&
+            $election->isTimingConfigured() &&
+            filled($election->preference) &&
             ($election->electors_count ?? $election->loadCount(relations: ['electors'])->electors_count) > 0 &&
             ($election->positions_count ?? $election->loadCount(relations: ['positions'])->positions_count) > 0 &&
-            filled(value: $election->preference);
+            $election->positions()
+                ->whereHas(
+                    relation: 'candidates',
+                    count: DB::raw(value: 'positions.quota')
+                )
+                ->count() == $election->positions_count;
     }
 
     public function close(User $user, Election $election): bool
@@ -84,6 +94,27 @@ class ElectionPolicy
     {
         return ! $election->is_cancelled &&
             ! $election->is_completed;
+    }
+
+    public function preview(User $user, Election $election): bool
+    {
+        return ($election->positions_count ?? $election->loadCount(relations: ['positions'])->positions_count) > 0 &&
+            $election->positions()
+                ->whereHas(
+                    relation: 'candidates',
+                    count: DB::raw(value: 'positions.quota')
+                )
+                ->count() == $election->positions_count;
+    }
+
+    public function useAsBoothDevice(User $user, Election $election): bool
+    {
+        return $election->is_draft || $election->is_published;
+    }
+
+    public function removeFromBoothDevice(User $user, Election $election): bool
+    {
+        return $election->is_draft || $election->is_published;
     }
 
     public function viewPreference(User $user, Election $election): bool
@@ -148,6 +179,31 @@ class ElectionPolicy
     }
 
     public function deleteAnyPosition(User $user, Election $election): bool
+    {
+        return $election->is_draft;
+    }
+
+    public function createCandidate(User $user, Election $election): bool
+    {
+        return $election->is_draft;
+    }
+
+    public function reorderCandidate(User $user, Election $election): bool
+    {
+        return $election->is_draft;
+    }
+
+    public function viewAnyCandidate(User $user, Election $election): bool
+    {
+        return $election->is_draft;
+    }
+
+    public function updateAnyCandidate(User $user, Election $election): bool
+    {
+        return $election->is_draft;
+    }
+
+    public function deleteAnyCandidate(User $user, Election $election): bool
     {
         return $election->is_draft;
     }

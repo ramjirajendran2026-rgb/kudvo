@@ -36,6 +36,7 @@ use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 
@@ -55,7 +56,11 @@ class BallotSetup extends ElectionPage
                     ->contained(condition: false)
                     ->extraAttributes(attributes: ['class' => 'position-repeatable-entry'])
                     ->hiddenLabel()
-                    ->placeholder(placeholder: 'No positions')
+                    ->placeholder(placeholder: fn () => $this->generateEmptyStatePlaceholder(
+                        heading: 'No positions',
+                        icon: 'heroicon-o-x-mark',
+                        actions: [$this->getCreatePositionAction]
+                    ))
                     ->schema(components: [
                         Section::make(heading: fn (Position $state): ?string => $state->name)
                             ->compact()
@@ -73,7 +78,11 @@ class BallotSetup extends ElectionPage
                                 RepeatableEntry::make(name: 'candidates')
                                     ->extraAttributes(attributes: ['class' => 'candidate-repeatable-entry'])
                                     ->hiddenLabel()
-                                    ->placeholder(placeholder: 'No candidates')
+                                    ->placeholder(placeholder: $this->generateEmptyStatePlaceholder(
+                                        heading: 'No candidates',
+                                        description: 'Create new candidate',
+                                        icon: 'heroicon-o-x-mark',
+                                    ))
                                     ->schema(components: [
                                         Split::make(schema: [
                                             SpatieMediaLibraryImageEntry::make(name: 'photo')
@@ -118,6 +127,30 @@ class BallotSetup extends ElectionPage
     {
         return parent::makeInfolist()
             ->record($this->getElection());
+    }
+
+    protected function generateEmptyStatePlaceholder(string $heading, ?string $description = null, ?string $icon = null, array $actions = []): HtmlString
+    {
+        return new HtmlString(
+            html: Blade::render(
+                string: <<<'HTML'
+<x-filament::section>
+    <x-filament.state
+        :heading="$heading"
+        :description="$description"
+        :icon="$icon"
+        :actions="$actions"
+    />
+</x-filament::section>
+HTML,
+                data: [
+                    'heading' => $heading,
+                    'description' => $description,
+                    'icon' => $icon,
+                    'actions' => $actions,
+                ]
+            ),
+        );
     }
 
     protected function getHeaderActions(): array
@@ -336,10 +369,12 @@ class BallotSetup extends ElectionPage
                     election: $livewire->getElection()
                 )
             )
-            ->action(action: function (Candidate $record, array $data): void {
+            ->action(action: function (Candidate $record, array $data, InfolistAction $action): void {
                 $record->fill(attributes: $data);
 
                 $record->save();
+
+                $action->success();
             })
             ->fillForm(data: fn (Candidate $record): array => $record->attributesToArray())
             ->form(
@@ -348,9 +383,9 @@ class BallotSetup extends ElectionPage
             )
             ->icon(icon: 'heroicon-m-pencil-square')
             ->iconButton()
-            ->modalFooterActionsAlignment(alignment: Alignment::End)
             ->modalHeading(heading: fn (Candidate $record): string => "Edit $record->full_name")
-            ->modalSubmitActionLabel(label: 'Save changes');
+            ->modalSubmitActionLabel(label: 'Save changes')
+            ->successNotificationTitle(title: 'Saved');
     }
 
     protected function getDeleteCandidateAction(): InfolistAction

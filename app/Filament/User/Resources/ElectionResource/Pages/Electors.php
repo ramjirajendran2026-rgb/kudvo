@@ -94,6 +94,7 @@ class Electors extends ElectionPage implements HasTable
     protected function getSendBallotLinkAction(): TableAction
     {
         return TableAction::make(name: 'sendBallotLink')
+            ->authorize(abilities: 'sendBallotLink')
             ->requiresConfirmation()
             ->action(action: function (HasElection $livewire, Elector $elector) {
                 $elector->sendBallotLink();
