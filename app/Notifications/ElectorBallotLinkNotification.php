@@ -63,8 +63,8 @@ class ElectorBallotLinkNotification extends Notification
     protected function formatTemplate(string $template): string
     {
         $variables = [
-            static::VAR_BALLOT_LINK => url('/'),
-            static::VAR_BALLOT_LINK_SHORT => url('/b/'.$this->getElector()->short_code),
+            static::VAR_BALLOT_LINK => url(path: '/'),
+            static::VAR_BALLOT_LINK_SHORT => url(path: '/b/'.$this->getElector()->short_code),
             static::VAR_ELECTION_NAME => $this->getElection()->name,
             static::VAR_ELECTION_NAME_SHORT => Str::maxLimit(value: $this->getElection()->name, limit: 30),
             static::VAR_ELECTOR_NAME => $this->getElector()->display_name,
