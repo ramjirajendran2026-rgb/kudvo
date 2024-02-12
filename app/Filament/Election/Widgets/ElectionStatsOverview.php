@@ -31,6 +31,7 @@ class ElectionStatsOverview extends BaseWidget
                 value: $total,
             )
                 ->color(color: 'info')
+                ->extraAttributes(attributes: ['class' => '[&_div.text-3xl]:text-info-600 [&_div.text-3xl]:dark:text-info-400'])
                 ->icon(icon: 'heroicon-o-user-group'),
 
             Stat::make(
@@ -38,6 +39,7 @@ class ElectionStatsOverview extends BaseWidget
                 value: $voted.' ('.Number::percentage(number: ($voted / $total) * 100, maxPrecision: 2).')',
             )
                 ->color(color: 'success')
+                ->extraAttributes(attributes: ['class' => '[&_div.text-3xl]:text-success-600 [&_div.text-3xl]:dark:text-success-400'])
                 ->icon(icon: 'heroicon-o-face-smile'),
 
             Stat::make(
@@ -45,6 +47,7 @@ class ElectionStatsOverview extends BaseWidget
                 value: $nonVoted,
             )
                 ->color(color: 'warning')
+                ->extraAttributes(attributes: ['class' => '[&_div.text-3xl]:text-warning-600 [&_div.text-3xl]:dark:text-warning-400'])
                 ->icon(icon: 'heroicon-o-face-frown'),
         ];
     }

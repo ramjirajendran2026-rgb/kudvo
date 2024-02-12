@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
 class Election extends Model
@@ -42,6 +43,16 @@ class Election extends Model
         'cancelled_at' => 'datetime',
         'organisation_id' => 'int',
     ];
+
+    protected function ballotLinkVia(): Attribute
+    {
+        return Attribute::make(
+            get: fn($value, array $attributes) => [
+                ...Arr::wrap(value: $this->preference?->ballot_link_mail ? 'mail': null),
+                ...Arr::wrap(value: $this->preference?->ballot_link_sms ? 'sms': null),
+            ],
+        );
+    }
 
     protected function startsAtLocal(): Attribute
     {

@@ -2,8 +2,11 @@
 
 namespace App\Models;
 
+use App\Data\ElectorBallotLinkNotificationData;
 use App\Facades\Kudvo;
 use App\Filament\BallotPanel;
+use App\Filament\Election\Pages\Dashboard;
+use App\Filament\Election\Pages\Index;
 use App\Filament\ElectionPanel;
 use App\Filament\NominationPanel;
 use App\Notifications\ElectorBallotLinkNotification;
@@ -205,8 +208,29 @@ class Elector extends Model implements
             ]);
     }
 
-    public function sendBallotLink(): void
+    public function sendBallotLink(?Election $election = null): void
     {
-        $this->notify(instance: new ElectorBallotLinkNotification(elector: $this));
+        /** @var Election $election */
+        $election ??= $this->event;
+
+        $this->notify(instance: new ElectorBallotLinkNotification(
+            data: new ElectorBallotLinkNotificationData(
+                electionName: $election->name,
+                ballotLink: Index::getUrl(
+                    parameters: [
+                        'election' => $election->getRouteKey(),
+                    ],
+                    panel: 'election',
+                ),
+                ballotLinkShort: Index::getUrl(
+                    parameters: [
+                        'election' => $election->getRouteKey(),
+                    ],
+                    panel: 'election',
+                ),
+                electorName: $this->display_name,
+            ),
+            via: $election->ballot_link_via,
+        ));
     }
 }

@@ -2,11 +2,15 @@
 
 namespace App\Filament\User\Resources\ElectionResource\Pages;
 
+use App\Enums\ElectionDashboardState;
 use App\Enums\ElectionStatus;
+use App\Facades\Kudvo;
 use App\Filament\Pages\Concerns\HasStateSection;
 use App\Filament\User\Resources\ElectionResource;
+use Cookie;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Illuminate\Support\HtmlString;
 
 class Dashboard extends ElectionPage
 {
@@ -18,59 +22,60 @@ class Dashboard extends ElectionPage
 
     protected static ?string $activeNavigationIcon = 'heroicon-s-home';
 
-    public function getStateHeading(): ?string
+    public ElectionDashboardState $state;
+
+    public function mount(int|string $record): void
     {
+        parent::mount($record);
+
+        $this->state = $this->resolveState();
+    }
+
+    protected function resolveState(): ElectionDashboardState
+    {
+        $election = $this->getElection();
+
         return match (true) {
-            $this->hasPendingPreferenceSetup() => 'Get started',
-            $this->hasPendingElectorSetup() => 'Voters information',
-            $this->hasPendingBallotSetup() => 'Configure ballot',
-            $this->canSetTiming() => 'Configure timing',
-            $this->canPublish() => 'All set!',
-            $this->canClose() => 'Election Published',
-            $this->canGenerateResult() => 'Election Closed',
-            default => null,
+            $election->is_cancelled => ElectionDashboardState::Cancelled,
+            $election->is_completed => ElectionDashboardState::Completed,
+            $election->is_closed => ElectionDashboardState::Closed,
+            $election->is_expired => ElectionDashboardState::Expired,
+            $election->is_open => ElectionDashboardState::Open,
+            $election->is_upcoming => ElectionDashboardState::Upcoming,
+            static::can(action: 'setTiming', election: $election) => ElectionDashboardState::PendingTiming,
+            static::can(action: 'publish', election: $election) => ElectionDashboardState::ReadyToPublish,
+            BallotSetup::canAccessPage(election: $election) => ElectionDashboardState::PendingBallotSetup,
+            Electors::canAccessPage(election: $election) => ElectionDashboardState::PendingElectorsList,
+            Preference::canAccessPage(election: $election) => ElectionDashboardState::PendingPreference,
         };
     }
 
-    public function getStateDescription(): ?string
+    public function getStateHeading(): ?string
     {
-        return match (true) {
-            $this->hasPendingPreferenceSetup() => 'Continue to configure election preferences',
-            $this->hasPendingElectorSetup() => 'Bulk import or add manually',
-            $this->hasPendingBallotSetup() => 'Add positions and candidates',
-            $this->canSetTiming() => 'Set start time and end time for the elections',
-            $this->canPublish() => 'Once published, you are not allowed to modify any of elector and position information.',
-            default => null,
-        };
+        return $this->state->getLabel(election: $this->getElection());
+    }
+
+    public function getStateDescription(): string | HtmlString | null
+    {
+        return $this->state->getDescription(election: $this->getElection());
     }
 
     public function getStateIcon(): ?string
     {
-        return match (true) {
-            $this->hasPendingPreferenceSetup() => Preference::getNavigationIcon(),
-            $this->hasPendingElectorSetup() => Electors::getNavigationIcon(),
-            $this->hasPendingBallotSetup() => BallotSetup::getNavigationIcon(),
-            $this->canSetTiming() => 'heroicon-o-clock',
-            $this->canPublish() => ElectionStatus::PUBLISHED->getIcon(),
-            default => null,
-        };
+        return $this->state->getIcon(election: $this->getElection());
     }
 
     protected function getStateActions(): array
     {
-        return [
-            $this->getPreferencePageAction(),
-
-            $this->getElectorsPageAction(),
-
-            $this->getBallotPageAction(),
-
-            ElectionResource::getSetTimingAction(),
-
-            ElectionResource::getPublishAction(),
-
-            ElectionResource::getCloseAction(),
-        ];
+        return match ($this->state) {
+            ElectionDashboardState::PendingPreference => [$this->getPreferencePageAction()],
+            ElectionDashboardState::PendingElectorsList => [$this->getElectorsPageAction()],
+            ElectionDashboardState::PendingBallotSetup => [$this->getBallotPageAction()],
+            ElectionDashboardState::PendingTiming => [ElectionResource::getSetTimingAction()],
+            ElectionDashboardState::ReadyToPublish => [ElectionResource::getPublishAction()],
+            ElectionDashboardState::Open => [ElectionResource::getCloseAction()],
+            default => [],
+        };
     }
 
     protected function getHeaderActions(): array
@@ -116,6 +121,36 @@ class Dashboard extends ElectionPage
             ->authorize(abilities: $this->hasPendingBallotSetup())
             ->label(label: 'Continue setup')
             ->url(url: BallotSetup::getUrl(parameters: [$this->getElection()]));
+    }
+
+    public function getUseAsBoothDeviceAction(): Action
+    {
+        return Action::make(name: 'useAsBoothDevice')
+            ->requiresConfirmation()
+            ->authorize(abilities: 'useAsBoothDevice')
+            ->color(color: 'success')
+            ->action(action: function (self $livewire, Action $action): void {
+                Cookie::queue(Cookie::forever(name: 'election_booth_device', value: $livewire->getElection()->getKey()));
+
+                $action->success();
+            })
+            ->successNotificationTitle(title: 'Enabled for booth voting.')
+            ->visible(condition: fn (self $livewire): bool => Cookie::get(key: 'election_booth_device') != $livewire->getElection()->getKey());
+    }
+
+    public function getRemoveFromBoothDeviceAction(): Action
+    {
+        return Action::make(name: 'removeFromBoothDevice')
+            ->requiresConfirmation()
+            ->authorize(abilities: 'removeFromBoothDevice')
+            ->color(color: 'danger')
+            ->action(action: function (Action $action): void {
+                Cookie::queue(Cookie::forget(name: 'election_booth_device'));
+
+                $action->success();
+            })
+            ->successNotificationTitle(title: 'Disabled for booth voting.')
+            ->visible(condition: fn (self $livewire): bool => Kudvo::isBoothDevice(election: $livewire->getElection()));
     }
 
     protected function hasPendingPreferenceSetup(): bool

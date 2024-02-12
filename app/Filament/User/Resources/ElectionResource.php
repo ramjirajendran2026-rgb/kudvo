@@ -8,6 +8,7 @@ use App\Filament\User\Resources\ElectionResource\Pages;
 use App\Filament\User\Resources\ElectionResource\RelationManagers;
 use App\Forms\ElectionForm;
 use App\Models\Election;
+use App\Models\Elector;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Facades\Filament;
@@ -22,6 +23,7 @@ use Filament\Support\Enums\MaxWidth;
 use Filament\Tables;
 use Filament\Tables\Actions\CreateAction as TableCreateAction;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;
 
@@ -208,8 +210,21 @@ class ElectionResource extends Resource
     public static function getPublishAction(): Action
     {
         return Action::make(name: 'publish')
+            ->requiresConfirmation()
             ->action(action: function (HasElection $livewire, Action $action, array $data): void {
                 $livewire->getElection()->publish();
+
+                if (isset($data['notify_electors']) && $data['notify_electors']) {
+                    $livewire->getElection()->electors()
+                        ->chunkById(
+                            count: 300,
+                            callback: fn (Collection $collection) => $collection
+                                ->each(
+                                    callback: fn (Elector $elector) => $elector
+                                        ->sendBallotLink(election: $livewire->getElection())
+                                )
+                        );
+                }
 
                 $action->success();
             })
@@ -219,8 +234,11 @@ class ElectionResource extends Resource
                     record: $livewire->getElection()
                 )
             )
-            ->requiresConfirmation()
             ->color(color: ElectionStatus::PUBLISHED->getColor())
+            ->form(form: [
+                Toggle::make(name: 'notify_electors')
+                    ->label(label: 'Send ballot link all electors'),
+            ])
             ->modalIcon(icon: ElectionStatus::PUBLISHED->getIcon())
             ->successNotificationTitle(title: 'Published');
     }

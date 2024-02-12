@@ -48,7 +48,7 @@ class IdentifyPanelState
             $elector?->ballot?->isVoted() => ElectionPanelState::Voted,
 
             !Kudvo::isBoothDevice(election: $election) && (
-                filled(Cookie::get(key: "election_{$election->getKey()}_ballots", default: [])) ||
+                filled(Cookie::get(key: "election_{$election->getKey()}_ballot")) ||
                 (
                     $election->preference->ip_restriction_threshold &&
                     Ballot::query()

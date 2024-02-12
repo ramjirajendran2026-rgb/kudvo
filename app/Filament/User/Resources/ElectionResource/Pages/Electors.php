@@ -97,7 +97,7 @@ class Electors extends ElectionPage implements HasTable
             ->authorize(abilities: 'sendBallotLink')
             ->requiresConfirmation()
             ->action(action: function (HasElection $livewire, Elector $elector) {
-                $elector->sendBallotLink();
+                $elector->sendBallotLink(election: $livewire->getElection());
             })
             ->icon(icon: 'heroicon-m-bell-alert')
             ->iconButton();
