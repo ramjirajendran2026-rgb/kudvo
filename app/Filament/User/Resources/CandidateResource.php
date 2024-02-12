@@ -2,6 +2,7 @@
 
 namespace App\Filament\User\Resources;
 
+use App\Filament\Contracts\HasElection;
 use App\Forms\CandidateForm;
 use App\Models\Candidate;
 use Filament\Forms\Components\Group;
@@ -60,7 +61,8 @@ class CandidateResource extends Resource
                             CandidateForm::phoneComponent(),
                         ]),
 
-                    CandidateForm::photoComponent(),
+                    CandidateForm::photoComponent()
+                        ->visible(condition: fn (HasElection $livewire): bool => $livewire->getElection()->preference->candidate_photo),
                 ]),
         ];
     }

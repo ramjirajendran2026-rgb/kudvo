@@ -5,23 +5,15 @@ namespace App\Filament\User\Resources\ElectionResource\Pages;
 use App\Filament\Contracts\HasElection;
 use App\Filament\User\Resources\CandidateResource;
 use App\Filament\User\Resources\PositionResource;
-use App\Forms\CandidateForm;
-use App\Forms\Components\VotePicker;
-use App\Forms\PositionForm;
 use App\Models\Candidate;
 use App\Models\Election;
 use App\Models\Position;
-use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
-use Filament\Actions\StaticAction;
-use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
-use Filament\Forms\Set;
 use Filament\Infolists\Components\Actions\Action as InfolistAction;
 use Filament\Infolists\Components\Group;
 use Filament\Infolists\Components\RepeatableEntry;
@@ -30,12 +22,9 @@ use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
 use Filament\Infolists\Components\Split;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
-use Filament\Notifications\Notification;
 use Filament\Support\Enums\ActionSize;
-use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\MaxWidth;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
@@ -91,18 +80,20 @@ class BallotSetup extends ElectionPage
                                                 ->defaultImageUrl(url: fn (Candidate $record): ?string => filament()->getUserAvatarUrl($record))
                                                 ->grow(condition: false)
                                                 ->hiddenLabel()
-                                                ->size(size: 80),
+                                                ->size(size: 80)
+                                                ->visible(condition: $this->getElection()->preference?->candidate_photo),
 
                                             Group::make()
                                                 ->schema(components: [
-                                                    TextEntry::make(name: 'full_name')
+                                                    TextEntry::make(name: 'display_name')
                                                         ->hiddenLabel()
                                                         ->size(size: TextEntry\TextEntrySize::Large)
                                                         ->suffixActions(actions: [
                                                             $this->getEditCandidateAction(),
 
                                                             $this->getDeleteCandidateAction(),
-                                                        ]),
+                                                        ])
+                                                        ->weight(weight: FontWeight::Medium),
 
                                                     TextEntry::make(name: 'membership_number')
                                                         ->color(color: 'gray')
@@ -116,6 +107,15 @@ class BallotSetup extends ElectionPage
                                                         ->hiddenLabel()
                                                         ->visible(condition: fn (?string $state): bool => filled($state)),
                                                 ]),
+
+                                            SpatieMediaLibraryImageEntry::make(name: 'symbol')
+                                                ->collection(collection: Candidate::MEDIA_COLLECTION_SYMBOL)
+                                                ->defaultImageUrl(url: fn (Candidate $record): ?string => $record->symbol_url)
+                                                ->extraImgAttributes(attributes: ['class' => 'rounded-xl'])
+                                                ->grow(condition: false)
+                                                ->hiddenLabel()
+                                                ->size(size: 80)
+                                                ->visible(condition: $this->getElection()->preference?->candidate_symbol),
                                         ]),
                                     ]),
                             ]),
@@ -157,6 +157,8 @@ HTML,
     {
         return [
             $this->getCreatePositionAction(),
+
+            $this->getPreviewBallotAction(),
 
             $this->getReorderPositionAction(),
 
@@ -206,8 +208,10 @@ HTML,
                 Repeater::make(name: 'positions')
                     ->addable(condition: false)
                     ->deletable(condition: false)
-                    ->relationship()
+                    ->hiddenLabel()
                     ->orderColumn()
+                    ->relationship()
+                    ->reorderable() // TODO: Bug in filament
                     ->simple(field: TextInput::make(name: 'name')->disabled()),
             ])
             ->icon(icon: 'heroicon-m-arrows-up-down')
@@ -280,8 +284,10 @@ HTML,
                         Repeater::make(name: 'candidates')
                             ->addable(condition: false)
                             ->deletable(condition: false)
-                            ->relationship()
+                            ->hiddenLabel()
                             ->orderColumn()
+                            ->relationship()
+                            ->reorderable() // TODO: Bug in filament
                             ->simple(
                                 field: TextInput::make(name: 'display_name')
                                     ->disabled()

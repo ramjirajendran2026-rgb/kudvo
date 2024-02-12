@@ -2,15 +2,19 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Spatie\EloquentSortable\Sortable;
+use Spatie\EloquentSortable\SortableTrait;
 
-class Position extends Model
+class Position extends Model implements Sortable
 {
     use HasUuids;
+    use SortableTrait;
 
     protected $fillable = [
         'name',
@@ -74,5 +78,11 @@ class Position extends Model
     public function uniqueIds(): array
     {
         return ['uuid'];
+    }
+
+    public function buildSortQuery(): Builder
+    {
+        return static::query()
+            ->where('event_id', $this->event_id);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Filament\User\Resources\ElectionResource\Pages;
 
+use App\Data\ElectionPreferenceData;
 use App\Enums\CandidateSort;
 use App\Filament\User\Resources\ElectionResource;
 use App\Models\Election;
@@ -9,6 +10,7 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Split;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
@@ -20,6 +22,7 @@ use Filament\Resources\Pages\Page;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\IconSize;
 use Illuminate\Support\Arr;
+use LaraZeus\Quantity\Components\Quantity;
 
 class Preference extends ElectionPage
 {
@@ -39,7 +42,10 @@ class Preference extends ElectionPage
     {
         parent::mount($record);
 
-        $this->form->fill($this->getElection()->attributesToArray());
+        $election = $this->getElection();
+        $election->preference ??= new ElectionPreferenceData();
+
+        $this->form->fill($election->attributesToArray());
     }
 
     public function form(Form $form): Form
@@ -53,136 +59,132 @@ class Preference extends ElectionPage
                     ->statePath(path: 'preference')
                     ->schema(
                         components: [
-                            Section::make('EUL Delivery')
-                                ->description('Encrypted Unique Link for each voters will be sent through this medium')
-                                ->schema([
-                                    Toggle::make('eul_mail')
-                                        ->label('Email')
-                                        ->default(true),
+                            Section::make(heading:'Ballot Access')
+                                ->columnSpan(span: 1)
+                                ->description(description: 'Electors will be able to access their eligible ballot by these options')
+                                ->schema(components: [
+                                    Toggle::make(name: 'ballot_link_common')
+                                        ->label(label: 'Common link')
+                                        ->default(state: true),
 
-                                    Toggle::make('eul_sms')
-                                        ->label('SMS'),
-                                ])
-                                ->columns(3)
-                                ->columnSpan(1),
-
-                            Section::make('MFA Code Delivery')
-                                ->description('Multi-Factor Authentication code for each voters will be sent through this medium')
-                                ->columns(3)
-                                ->columnSpan(1)
-                                ->schema([
-                                    Toggle::make('mfa_mail')
-                                        ->label('Email')
-                                        ->default(true),
-
-                                    Toggle::make('mfa_sms')
-                                        ->label('SMS'),
+                                    Toggle::make(name: 'ballot_link_unique')
+                                        ->label(label: 'Unique link'),
                                 ]),
 
-                            Section::make('Ballot Acknowledgement')
-                                ->description('Elector will receive acknowledgement message for submitting their votes')
-                                ->columns(3)
-                                ->columnSpan(1)
-                                ->schema([
-                                    Toggle::make('voted_confirmation_mail')
-                                        ->label('Email')
-                                        ->default(true),
+                            Section::make(heading:'Ballot Link Delivery')
+                                ->columnSpan(span: 1)
+                                ->description(description: 'Ballot Link for each voters will be sent through this medium')
+                                ->schema(components: [
+                                    Toggle::make(name: 'ballot_link_mail')
+                                        ->default(state: true)
+                                        ->label(label: 'Email'),
 
-                                    Toggle::make('voted_confirmation_sms')
-                                        ->label('SMS'),
+                                    Toggle::make(name: 'ballot_link_sms')
+                                        ->label(label: 'SMS'),
                                 ]),
 
-                            Section::make('IP Restriction')
-                                ->description('Restrict electors voting from same IP address')
-                                ->columnSpan(1)
-                                ->schema([
-                                    Toggle::make('ip_restriction')
+                            Section::make(heading: 'MFA Code Delivery')
+                                ->columnSpan(span: 1)
+                                ->description(description: 'Multi-Factor Authentication code for each voters will be sent through this medium')
+                                ->schema(components: [
+                                    Toggle::make(name: 'mfa_mail')
+                                        ->default(state: true)
+                                        ->label(label: 'Email'),
+
+                                    Toggle::make(name: 'mfa_sms')
+                                        ->label(label: 'SMS'),
+                                ]),
+
+                            Section::make(heading: 'Ballot Acknowledgement')
+                                ->description(description: 'Elector will receive acknowledgement message for submitting their votes')
+                                ->columnSpan(span: 1)
+                                ->schema(components: [
+                                    Toggle::make(name: 'voted_confirmation_mail')
+                                        ->label(label: 'Email')
+                                        ->default(state: true),
+
+                                    Toggle::make(name: 'voted_confirmation_sms')
+                                        ->label(label: 'SMS'),
+                                ]),
+
+                            Section::make(heading: 'Sharing of Electors\'s Ballot Copy')
+                                ->columnSpan(span: 1)
+                                ->description(description: 'Voted ballot copy will be shared to electors through email and / or they can also download directly after submitting their votes')
+                                ->schema(components: [
+                                    Toggle::make(name: 'voted_ballot_mail')
+                                        ->label(label: 'Email'),
+
+                                    Toggle::make(name: 'voted_ballot_download')
+                                        ->label(label: 'Direct download'),
+                                ]),
+
+                            Section::make(heading: 'IP Restriction')
+                                ->columnSpan(span: 1)
+                                ->description(description: 'Restrict electors voting from same IP address')
+                                ->schema(components: [
+                                    Toggle::make(name: 'ip_restriction')
                                         ->dehydrated()
-                                        ->label('Enable')
-                                        ->live(),
+                                        ->label(label: 'Enable')
+                                        ->live()
+                                        ->grow(condition: false),
 
-                                    TextInput::make('ip_restriction_threshold')
-                                        ->extraInputAttributes(['class' => 'text-center text-xl font-bold'])
-                                        ->formatStateUsing(static fn (?int $state) => $state ?: 1)
+                                    Quantity::make(name: 'ip_restriction_threshold')
+                                        ->formatStateUsing(callback: static fn (?int $state): ?int => $state ?: 1)
                                         ->hiddenLabel()
-                                        ->prefix('Max. votes')
-                                        ->maxValue(10000)
-                                        ->minValue(1)
+                                        ->heading(heading: 'Max. votes')
+                                        ->maxValue(value: 10000)
+                                        ->minValue(value: 1)
                                         ->numeric()
                                         ->required()
-                                        ->suffixActions(
-                                            actions: [\Filament\Forms\Components\Actions\Action::make('decrement')
-                                                ->action(fn (TextInput $component, ?int $state) => $component->state((filled($state) ? $state : 2) - 1))
-                                                ->icon('heroicon-m-minus')
-                                                ->iconSize(IconSize::Small)
-                                                ->hidden(fn (?int $state) => $state <= 1),
-
-                                                \Filament\Forms\Components\Actions\Action::make('increment')
-                                                    ->action(fn (TextInput $component, ?int $state) => $component->state((filled($state) ? $state : 0) + 1))
-                                                    ->icon('heroicon-m-plus')
-                                                    ->iconSize(IconSize::Small),
-                                            ],
-                                        )
-                                        ->visible(static fn (Get $get) => $get('ip_restriction')),
+                                        ->visible(condition: static fn (Get $get): bool => $get(path: 'ip_restriction')),
                                 ]),
 
-                            Section::make('Sharing of Electors\'s Ballot Copy')
-                                ->description('Voted ballot copy will be shared to electors through email and / or they can also download directly after submitting their votes')
-                                ->columns(3)
-                                ->schema([
-                                    Toggle::make('voted_ballot_mail')
-                                        ->label('Email'),
-
-                                    Toggle::make('voted_ballot_download')
-                                        ->label('Direct download'),
-                                ]),
-
-                            Section::make('Security preference')
+                            Section::make(heading: 'Security preference')
                                 ->columns()
-                                ->schema([
-                                    Toggle::make('dnt_votes')
-                                        ->afterStateUpdated(function (bool $state, Set $set) {
+                                ->schema(components: [
+                                    Toggle::make(name: 'dnt_votes')
+                                        ->afterStateUpdated(callback: function (bool $state, Set $set): void {
                                             if (! $state) {
                                                 return;
                                             }
 
-                                            $set('voted_ballot_update', false);
+                                            $set(path: 'voted_ballot_update', state: false);
                                         })
-                                        ->default(true)
-                                        ->helperText('This ensures nobody can track which elector voted for whom. However some additional options will be disabled when enabling this option.')
-                                        ->label('Do Not Track electors\'s votes')
+                                        ->default(state: true)
+                                        ->helperText(text: 'This ensures nobody can track which elector voted for whom. However some additional options will be disabled when enabling this option.')
+                                        ->label(label: 'Do Not Track electors\'s votes')
                                         ->live(),
 
-                                    Toggle::make('voted_ballot_update')
-                                        ->helperText('Elector\'s can change their votes even after submitting their votes until election closes')
-                                        ->label('Editable votes')
-                                        ->disabled(fn (Get $get) => $get('dnt_votes')),
+                                    Toggle::make(name: 'voted_ballot_update')
+                                        ->helperText(text: 'Elector\'s can change their votes even after submitting their votes until election closes')
+                                        ->label(label: 'Editable votes')
+                                        ->disabled(condition: fn (Get $get): bool => $get(path: 'dnt_votes')),
                                 ]),
 
-                            Section::make('Candidate preference')
+                            Section::make(heading: 'Candidate preference')
                                 ->columns()
-                                ->schema([
-                                    Select::make('candidate_sort')
-                                        ->label('Display order')
+                                ->schema(components: [
+                                    Select::make(name: 'candidate_sort')
+                                        ->label(label: 'Display order')
                                         ->columnSpanFull()
-                                        ->default(CandidateSort::MANUAL->value)
+                                        ->default(state: CandidateSort::MANUAL->value)
                                         ->dehydrated(condition: fn (?string $state): bool => filled($state))
-                                        ->enum(CandidateSort::class)
-                                        ->columns(6)
-                                        ->native(false)
-                                        ->options(Arr::mapWithKeys(
-                                            CandidateSort::cases(),
-                                            fn (CandidateSort $case) => [$case->value => $case->getLabel()]
+                                        ->enum(enum: CandidateSort::class)
+                                        ->columns(columns: 6)
+                                        ->native(condition: false)
+                                        ->options(options: Arr::mapWithKeys(
+                                            array: CandidateSort::cases(),
+                                            callback: fn (CandidateSort $case): array => [$case->value => $case->getLabel()]
                                         )),
 
-                                    Toggle::make('candidate_photo')
-                                        ->label('Allow candidate photo'),
+                                    Toggle::make(name: 'candidate_photo')
+                                        ->label(label: 'Allow candidate photo'),
 
-                                    Toggle::make('candidate_bio')
-                                        ->label('Allow candidate bio text'),
+                                    Toggle::make(name: 'candidate_bio')
+                                        ->label(label: 'Allow candidate bio text'),
 
-                                    Toggle::make('candidate_attachment')
-                                        ->label('Allow candidate attachments'),
+                                    Toggle::make(name: 'candidate_attachment')
+                                        ->label(label: 'Allow candidate attachments'),
                                 ]),
                         ]
                     ),

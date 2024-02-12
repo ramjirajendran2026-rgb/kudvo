@@ -6,24 +6,30 @@ use Filament\AvatarProviders\UiAvatarsProvider;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
 use Filament\Support\Facades\FilamentColor;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\Color\Rgb;
+use Spatie\EloquentSortable\Sortable;
+use Spatie\EloquentSortable\SortableTrait;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Candidate extends Model implements HasMedia, HasName, HasAvatar
+class Candidate extends Model implements HasMedia, HasName, HasAvatar, Sortable
 {
     use HasUuids;
     use InteractsWithMedia;
+    use SortableTrait;
 
     public const MEDIA_COLLECTION_ATTACHMENTS = 'attachments';
 
     public const MEDIA_COLLECTION_BIO = 'bio';
 
     public const MEDIA_COLLECTION_PHOTO = 'photo';
+
+    public const MEDIA_COLLECTION_SYMBOL = 'symbol';
 
     protected $fillable = [
         'membership_number',
@@ -50,8 +56,9 @@ class Candidate extends Model implements HasMedia, HasName, HasAvatar
     protected function displayName(): Attribute
     {
         return Attribute::make(
-            get: fn($value, array $attributes) => $this->full_name.
-                (filled(value: $this->membership_number) ? ' ('.$this->membership_number.')' : ''),
+            get: fn($value, array $attributes) => collect(value: [$this->title, $this->full_name])
+                ->filter(callback: fn (?string $item): bool => filled($item))
+                ->implode(value: ' ')
         );
     }
 
@@ -92,6 +99,12 @@ class Candidate extends Model implements HasMedia, HasName, HasAvatar
     public function uniqueIds(): array
     {
         return ['uuid'];
+    }
+
+    public function buildSortQuery(): Builder
+    {
+        return static::query()
+            ->where('position_id', $this->position_id);
     }
 
     public function getFilamentAvatarUrl(): ?string

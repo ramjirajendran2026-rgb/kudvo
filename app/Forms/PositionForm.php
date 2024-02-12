@@ -51,7 +51,7 @@ readonly class PositionForm
             ->minValue(value: 0)
             ->numeric()
             ->required()
-            ->rule(rule: fn (Get $get): string => 'max:'.$get(path: 'quota') ?? 0)
+            ->rule(rule: fn (Get $get): string => 'max:'.(($get(path: 'quota') ?? 1) - 1))
             ->visible(condition: fn (Get $get): bool => $get(path: 'abstain') ?? false);
     }
 }

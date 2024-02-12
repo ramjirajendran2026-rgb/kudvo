@@ -75,7 +75,9 @@ class Index extends BasePage
                 ...$this->getElection()->positions
                     ->map(
                         callback: fn (Position $position) => VotePicker::makeFor(position: $position)
-                            ->preview(condition: fn (self $livewire): bool => $livewire->preview),
+                            ->photo(condition: $this->getElection()->preference->candidate_photo)
+                            ->preview(condition: fn (self $livewire): bool => $livewire->preview)
+                            ->symbol(condition: $this->getElection()->preference->candidate_symbol),
                     )
                     ->toArray(),
 

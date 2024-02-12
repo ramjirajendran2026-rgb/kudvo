@@ -215,15 +215,17 @@
                             "
                                 />
 
-                                <img
-                                    src="{{ $getPhotoUrl($value) }}"
-                                    alt="{{ $label }}'s photo"
-                                    class="max-w-none object-cover object-center rounded-full w-10 h-10 md:w-20 md:h-20"
-                                />
+                                @if($hasPhoto())
+                                    <img
+                                        src="{{ $getPhotoUrl($value) }}"
+                                        alt="{{ $label }}'s photo"
+                                        class="max-w-none object-cover object-center rounded-full w-10 h-10 md:w-20 md:h-20"
+                                    />
+                                @endif
 
                                 <div class="grid flex-1 text-sm leading-6">
                             <span
-                                class="fi-fo-checkbox-list-option-label font-medium text-gray-950 dark:text-white"
+                                class="fi-fo-checkbox-list-option-label font-medium text-lg text-gray-950 dark:text-white"
                             >
                                 {{ $label }}
                             </span>
@@ -237,11 +239,13 @@
                                     @endif
                                 </div>
 
-                                <img
-                                    src="{{ $getSymbolUrl($value) }}"
-                                    alt="{{ $label }}'s symbol"
-                                    class="max-w-none object-cover object-center rounded-xl w-10 h-10 md:w-20 md:h-20"
-                                />
+                                @if($hasSymbol())
+                                    <img
+                                        src="{{ $getSymbolUrl($value) }}"
+                                        alt="{{ $label }}'s symbol"
+                                        class="max-w-none object-cover object-center rounded-xl w-10 h-10 md:w-20 md:h-20"
+                                    />
+                                @endif
                             </label>
                         </div>
                     @endforeach

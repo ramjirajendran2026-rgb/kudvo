@@ -133,6 +133,7 @@ class ElectionResource extends Resource
             )
             ->form(form: fn (Form $form): Form => static::form(form: $form))
             ->icon(icon: 'heroicon-m-pencil-square')
+            ->label(label: 'Edit title')
             ->modalCancelAction(action: false)
             ->modalFooterActionsAlignment(alignment: Alignment::Center)
             ->modalWidth(width: MaxWidth::ExtraLarge);
@@ -174,7 +175,7 @@ class ElectionResource extends Resource
                     record: $livewire->getElection()
                 )
             )
-            ->label(label: 'Update Timing')
+            ->label(label: 'Edit Timing')
             ->name(name: 'editTiming');
     }
 

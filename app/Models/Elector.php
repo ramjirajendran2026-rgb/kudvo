@@ -73,7 +73,9 @@ class Elector extends Model implements
     protected function displayName(): Attribute
     {
         return Attribute::make(
-            get: fn($value, array $attributes) => ($this->full_name ?: 'Member').' ('.$this->membership_number.')',
+            get: fn($value, array $attributes) => collect(value: [$this->title, $this->full_name])
+                ->filter(callback: fn (?string $item): bool => filled($item))
+                ->implode(value: ' ')
         );
     }
 

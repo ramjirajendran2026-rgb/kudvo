@@ -72,8 +72,9 @@ class Nominee extends Model implements HasMedia
     protected function displayName(): Attribute
     {
         return Attribute::make(
-            get: fn($value, array $attributes) => $this->membership_number.
-                (filled(value: $this->full_name) ? ' ('.$this->full_name.')' : ''),
+            get: fn($value, array $attributes) => collect(value: [$this->title, $this->full_name])
+                ->filter(callback: fn (?string $item): bool => filled($item))
+                ->implode(value: ' ')
         );
     }
 

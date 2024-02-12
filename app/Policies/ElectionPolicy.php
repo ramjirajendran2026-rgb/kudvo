@@ -208,6 +208,11 @@ class ElectionPolicy
         return $election->is_draft;
     }
 
+    public function viewAnyMonitorToken(User $user, Election $election): bool
+    {
+        return ! $election->is_draft;
+    }
+
     public function vote(Elector $elector, Election $election): bool
     {
         if (! $election->is_open || $elector->ballot?->isVoted()) {

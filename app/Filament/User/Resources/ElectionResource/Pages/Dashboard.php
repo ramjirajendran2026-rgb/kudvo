@@ -6,6 +6,7 @@ use App\Enums\ElectionStatus;
 use App\Filament\Pages\Concerns\HasStateSection;
 use App\Filament\User\Resources\ElectionResource;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 
 class Dashboard extends ElectionPage
 {
@@ -69,6 +70,27 @@ class Dashboard extends ElectionPage
             ElectionResource::getPublishAction(),
 
             ElectionResource::getCloseAction(),
+        ];
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            $this->getPreviewBallotAction(),
+
+            ActionGroup::make(actions: [
+                ElectionResource::getEditAction(),
+
+                ElectionResource::getEditTimingAction()
+                    ->modalHeading(heading: fn (self $livewire) => $livewire->getRecordTitle()),
+
+                ElectionResource::getCancelAction(),
+
+                $this->getUseAsBoothDeviceAction(),
+
+                $this->getRemoveFromBoothDeviceAction(),
+
+            ])->dropdownPlacement(placement: 'bottom-end'),
         ];
     }
 

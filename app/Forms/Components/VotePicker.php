@@ -33,6 +33,10 @@ class VotePicker extends CheckboxList
 
     protected bool | Closure $preview = false;
 
+    protected bool | Closure $photo = false;
+
+    protected bool | Closure $symbol = false;
+
     public static function makeFor(Position $position): static
     {
         $static = app(abstract: static::class, parameters: ['name' => $position->uuid]);
@@ -61,6 +65,30 @@ class VotePicker extends CheckboxList
     public function isPreview(): bool
     {
         return $this->evaluate(value: $this->preview);
+    }
+
+    public function photo(bool | Closure $condition = true): static
+    {
+        $this->photo = $condition;
+
+        return $this;
+    }
+
+    public function hasPhoto(): bool
+    {
+        return (bool) $this->evaluate(value: $this->photo);
+    }
+
+    public function symbol(bool | Closure $condition = true): static
+    {
+        $this->symbol = $condition;
+
+        return $this;
+    }
+
+    public function hasSymbol(): bool
+    {
+        return (bool) $this->evaluate(value: $this->symbol);
     }
 
     protected function setUp(): void

@@ -11,7 +11,6 @@ use App\Models\Election;
 use App\Models\Position;
 use Cookie;
 use Filament\Actions\Action;
-use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Form;
@@ -19,7 +18,6 @@ use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\Page;
 use Filament\Support\Enums\Alignment;
-use Illuminate\Auth\Access\Gate;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
@@ -156,28 +154,6 @@ HTML
             ->recordTitle($this->getRecordTitle());
     }
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            $this->getPreviewBallotAction(),
-
-            ElectionResource::getEditAction()
-                ->iconButton(),
-
-            ActionGroup::make(actions: [
-                ElectionResource::getEditTimingAction()
-                    ->modalHeading(heading: fn (self $livewire) => $livewire->getRecordTitle()),
-
-                ElectionResource::getCancelAction(),
-
-                $this->getUseAsBoothDeviceAction(),
-
-                $this->getRemoveFromBoothDeviceAction(),
-
-            ])->dropdownPlacement(placement: 'bottom-end'),
-        ];
-    }
-
     protected function getPreviewBallotAction()
     {
         return Action::make(name: 'previewBallot')
@@ -214,14 +190,15 @@ HTML
                             ->map(
                                 callback: fn (Position $position) => VotePicker::makeFor(position: $position)
                                     ->disabled(condition: fn (Get $get): bool => $get(path: '../preview'))
-                                    ->preview(condition: fn (Get $get): bool => $get(path: '../preview')),
+                                    ->photo(condition: $this->getElection()->preference->candidate_photo)
+                                    ->preview(condition: fn (Get $get): bool => $get(path: '../preview'))
+                                    ->symbol(condition: $this->getElection()->preference->candidate_symbol),
                             )
                             ->toArray()
                         )
                 ]
             )
             ->icon(icon: 'heroicon-m-eye')
-            ->iconButton()
             ->label(label: 'Preview')
             ->modalFooterActionsAlignment(alignment: Alignment::Center)
             ->modalDescription(description: $this->getSubheading())

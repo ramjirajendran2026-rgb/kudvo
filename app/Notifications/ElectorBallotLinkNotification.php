@@ -37,8 +37,8 @@ class ElectorBallotLinkNotification extends Notification
         $preference = $this->getElection()->preference;
 
         return [
-            ...Arr::wrap(value: $preference->eul_mail ? 'mail' : null),
-            ...Arr::wrap(value: $preference->eul_sms ? $this->getSmsChannel(notifiable: $notifiable) : null),
+            ...Arr::wrap(value: $preference->ballot_link_mail ? 'mail' : null),
+            ...Arr::wrap(value: $preference->ballot_link_sms ? $this->getSmsChannel(notifiable: $notifiable) : null),
         ];
     }
 

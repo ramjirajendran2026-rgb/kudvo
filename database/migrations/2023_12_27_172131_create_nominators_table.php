@@ -21,7 +21,7 @@ return new class extends Migration
                 $table->string(column: 'last_name')->nullable();
                 $table->string(column: 'full_name')
                     ->virtualAs(
-                        expression: 'CONCAT_WS(" ", NULLIF(title, ""), NULLIF(first_name, ""), NULLIF(last_name, ""))'
+                        expression: 'CONCAT_WS(" ", NULLIF(first_name, ""), NULLIF(last_name, ""))'
                     );
                 $table->string(column: 'email')->nullable();
                 $table->string(column: 'phone')->nullable();

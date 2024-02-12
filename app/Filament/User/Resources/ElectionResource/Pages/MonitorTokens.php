@@ -23,9 +23,9 @@ class MonitorTokens extends ElectionPage implements HasTable
 
     protected static string $view = 'filament.user.resources.election-resource.pages.monitor-tokens';
 
-    protected static ?string $navigationIcon = 'heroicon-o-user-group';
+    protected static ?string $navigationIcon = 'heroicon-o-finger-print';
 
-    protected static ?string $activeNavigationIcon = 'heroicon-s-user-group';
+    protected static ?string $activeNavigationIcon = 'heroicon-s-finger-print';
 
     public static function getRelationshipName(): string
     {
@@ -72,5 +72,11 @@ class MonitorTokens extends ElectionPage implements HasTable
                 DeleteAction::make()
                     ->iconButton(),
             ]);
+    }
+
+    public static function canAccessPage(Election $election): bool
+    {
+        return parent::canAccessPage(election: $election) &&
+            static::can(action: 'viewAnyMonitorToken', election: $election);
     }
 }
