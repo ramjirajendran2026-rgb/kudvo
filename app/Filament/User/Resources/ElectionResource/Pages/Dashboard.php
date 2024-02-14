@@ -11,6 +11,7 @@ use Cookie;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Illuminate\Support\HtmlString;
+use Livewire\Attributes\On;
 
 class Dashboard extends ElectionPage
 {
@@ -28,14 +29,21 @@ class Dashboard extends ElectionPage
     {
         parent::mount($record);
 
-        $this->state = $this->resolveState();
+        $this->resolveState();
     }
 
-    protected function resolveState(): ElectionDashboardState
+    #[On('refresh')]
+    public function clearCachedSubNavigation(): void
+    {
+        unset($this->cachedSubNavigation);
+    }
+
+    #[On('refresh')]
+    public function resolveState(): void
     {
         $election = $this->getElection();
 
-        return match (true) {
+        $this->state = match (true) {
             $election->is_cancelled => ElectionDashboardState::Cancelled,
             $election->is_completed => ElectionDashboardState::Completed,
             $election->is_closed => ElectionDashboardState::Closed,
@@ -48,6 +56,10 @@ class Dashboard extends ElectionPage
             Electors::canAccessPage(election: $election) => ElectionDashboardState::PendingElectorsList,
             Preference::canAccessPage(election: $election) => ElectionDashboardState::PendingPreference,
         };
+
+        $this->cacheStateActions();
+
+        unset($this->cachedSubNavigation);
     }
 
     public function getStateHeading(): ?string
@@ -65,6 +77,32 @@ class Dashboard extends ElectionPage
         return $this->state->getIcon(election: $this->getElection());
     }
 
+    protected function getHeaderWidgets(): array
+    {
+        return match ($this->state) {
+            ElectionDashboardState::Open,
+            ElectionDashboardState::Expired =>[
+                ElectionResource\Widgets\ElectionStatsOverview::class,
+                ElectionResource\Widgets\ElectionVotingTrends::class,
+                ElectionResource\Widgets\RecentlyVotedMembers::class,
+            ],
+            default => [],
+        };
+    }
+
+    protected function getFooterWidgets(): array
+    {
+        return match ($this->state) {
+            ElectionDashboardState::Closed,
+            ElectionDashboardState::Completed =>[
+                ElectionResource\Widgets\ElectionStatsOverview::class,
+                ElectionResource\Widgets\ElectionVotingTrends::class,
+                ElectionResource\Widgets\RecentlyVotedMembers::class,
+            ],
+            default => [],
+        };
+    }
+
     protected function getStateActions(): array
     {
         return match ($this->state) {
@@ -73,7 +111,10 @@ class Dashboard extends ElectionPage
             ElectionDashboardState::PendingBallotSetup => [$this->getBallotPageAction()],
             ElectionDashboardState::PendingTiming => [ElectionResource::getSetTimingAction()],
             ElectionDashboardState::ReadyToPublish => [ElectionResource::getPublishAction()],
-            ElectionDashboardState::Open => [ElectionResource::getCloseAction()],
+            ElectionDashboardState::Open,
+            ElectionDashboardState::Expired => [ElectionResource::getCloseAction()],
+            ElectionDashboardState::Closed => [ElectionResource::getGenerateResultAction()],
+            ElectionDashboardState::Completed => [$this->getResultPageAction()],
             default => [],
         };
     }
@@ -87,6 +128,7 @@ class Dashboard extends ElectionPage
                 ElectionResource::getEditAction(),
 
                 ElectionResource::getEditTimingAction()
+                    ->after(callback: fn (self $livewire) => $livewire->resolveState())
                     ->modalHeading(heading: fn (self $livewire) => $livewire->getRecordTitle()),
 
                 ElectionResource::getCancelAction(),
@@ -121,6 +163,14 @@ class Dashboard extends ElectionPage
             ->authorize(abilities: $this->hasPendingBallotSetup())
             ->label(label: 'Continue setup')
             ->url(url: BallotSetup::getUrl(parameters: [$this->getElection()]));
+    }
+
+    protected function getResultPageAction(): Action
+    {
+        return Action::make(name: 'result_page')
+            ->authorize(abilities: fn (self $livewire): bool => Result::canAccessPage(election: $livewire->getElection()))
+            ->label(label: 'View Result')
+            ->url(url: Result::getUrl(parameters: [$this->getElection()]));
     }
 
     public function getUseAsBoothDeviceAction(): Action

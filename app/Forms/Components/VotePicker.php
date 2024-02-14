@@ -2,6 +2,7 @@
 
 namespace App\Forms\Components;
 
+use App\Data\VoteSecretData;
 use App\Models\Candidate;
 use App\Models\Position;
 use Closure;
@@ -131,7 +132,7 @@ class VotePicker extends CheckboxList
             'min' => fn (self $component): ?string => $component->getDescriptionHint(),
         ]);
 
-        $this->mutateDehydratedStateUsing(callback: fn ($state) => Arr::map($state, fn ($item) => ['key' => $item, 'value' => 1]));
+        $this->mutateDehydratedStateUsing(callback: fn ($state) => Arr::map($state, fn ($item) => new VoteSecretData(key: $item, value: 1)));
     }
 
     public function description(string | Htmlable | Closure | null $description = null): static

@@ -63,6 +63,16 @@ class Electors extends ElectionPage implements HasTable
             ]);
     }
 
+    protected function getHeaderWidgets(): array
+    {
+        return match (true) {
+            $this->canShowStats() => [
+                ElectionResource\Widgets\ElectionStatsOverview::class,
+            ],
+            default => [],
+        };
+    }
+
     protected function getImportAction(): TableImportAction
     {
         return ElectorResource::getTableImportAction()
@@ -107,6 +117,16 @@ class Electors extends ElectionPage implements HasTable
     {
         return parent::canAccessPage(election: $election) &&
             static::can(action: 'viewAnyElector', election: $election);
+    }
+
+    protected function canShowStats(): bool
+    {
+        $election = $this->getElection();
+
+        return $election->is_open ||
+            $election->is_expired ||
+            $election->is_closed ||
+            $election->is_completed;
     }
 
     protected function canCreate(): bool

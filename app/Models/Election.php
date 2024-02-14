@@ -3,10 +3,13 @@
 namespace App\Models;
 
 use App\Data\ElectionPreferenceData;
+use App\Data\ElectionResultMetaData;
+use App\Data\VoteSecretData;
 use App\Data\WebAppManifestData;
 use App\Enums\ElectionStatus;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -14,6 +17,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Spatie\LaravelData\DataCollection;
 
 class Election extends Model
 {
@@ -165,6 +169,12 @@ class Election extends Model
         return $this->hasMany(related: ElectionMonitorToken::class);
     }
 
+    public function result(): HasOne
+    {
+        return $this->hasOne(related: ElectionResult::class)
+            ->latestOfMany();
+    }
+
     public function scopeCancelled(Builder $query): Builder
     {
         return $query->whereNotNull(columns: 'cancelled_at');
@@ -266,5 +276,65 @@ class Election extends Model
     public function publish(): bool
     {
         return $this->touch(attribute: 'published_at');
+    }
+
+    public function generateResult(): void
+    {
+        $result = $this->result()->create([
+            'total_votes' => Vote::query()
+                ->whereHas(
+                    relation: 'position',
+                    callback: fn (Builder $query) => $query->where('event_id', $this->getKey())
+                )
+                ->count(),
+        ]);
+
+        $data = Candidate::query()
+            ->whereHas(
+                relation: 'position',
+                callback: fn (Builder $query) => $query->where('event_id', $this->getKey())
+            )
+            ->pluck(column: 'uuid', key: 'uuid')
+            ->map(callback: fn ($item) => 0)
+            ->toArray();
+
+        Vote::query()
+            ->whereHas(
+                relation: 'position',
+                callback: fn (Builder $query) => $query->where('event_id', $this->getKey())
+            )
+            ->chunkById(
+                count: 300,
+                callback: function (Collection $votes) use (&$data, $result) {
+                    $votes->each(callback: function (Vote $vote) use (&$data) {
+                        $vote->secret->each(callback: function (VoteSecretData $secret) use (&$data) {
+                            $data[$secret->key] ??= 0;
+                            $data[$secret->key] += $secret->value;
+                        });
+                    });
+
+                    $result->increment(column: 'processed_votes', amount: $votes->count());
+                }
+            );
+
+        $result->meta = [];
+        foreach ($data as $key => $value) {
+            $result->meta[] = new ElectionResultMetaData(key: $key, value: $value);
+        }
+        $result->completed_at = now();
+        $result->save();
+
+        $this->touch(attribute: 'completed_at');
+
+        $data = Arr::sort(array: $data);
+        $data = array_keys(array: $data);
+        $data = array_reverse(array: $data);
+        Candidate::query()
+            ->whereHas(
+                relation: 'position',
+                callback: fn (Builder $query) => $query->where('event_id', $this->getKey())
+            )
+            ->get()
+            ->each(callback: fn (Candidate $candidate) => $candidate->update(attributes: ['rank' => array_search(needle: $candidate->uuid, haystack: $data) + 1]));
     }
 }

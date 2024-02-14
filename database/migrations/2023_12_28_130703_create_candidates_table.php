@@ -28,6 +28,7 @@ return new class extends Migration
                 $table->string(column: 'phone')->nullable();
 
                 $table->integer(column: 'sort')->nullable();
+                $table->integer(column: 'rank')->nullable();
 
                 $table->foreignIdFor(model: Position::class)
                     ->constrained()->cascadeOnUpdate()->cascadeOnDelete();

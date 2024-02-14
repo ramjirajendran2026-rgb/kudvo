@@ -9,9 +9,6 @@ use InvalidArgumentException;
 
 trait HasStateSection
 {
-    /**
-     * @var array<Action | ActionGroup>
-     */
     protected array $cachedStateActions = [];
 
     public function bootedHasStateSection(): void
@@ -27,39 +24,22 @@ trait HasStateSection
             fn (): array => $this->getStateActions(),
         );
 
-        foreach ($actions as $action) {
+        $this->cachedStateActions = array_map(function ($action) {
             if ($action instanceof ActionGroup) {
                 $action->livewire($this);
-
-                /** @var array<string, Action> $flatActions */
-                $flatActions = $action->getFlatActions();
-
-                $this->mergeCachedActions($flatActions);
-                $this->cachedStateActions[] = $action;
-
-                continue;
-            }
-
-            if (! $action instanceof Action) {
+                $this->mergeCachedActions($action->getFlatActions());
+            } elseif (! $action instanceof Action) {
                 throw new InvalidArgumentException('State actions must be an instance of ' . Action::class . ', or ' . ActionGroup::class . '.');
             }
-
-            $this->cacheAction($action);
-            $this->cachedStateActions[] = $action;
-        }
+            return $action;
+        }, $actions);
     }
 
-    /**
-     * @return array<Action | ActionGroup>
-     */
     public function getCachedStateActions(): array
     {
         return $this->cachedStateActions;
     }
 
-    /**
-     * @return array<Action | ActionGroup>
-     */
     protected function getStateActions(): array
     {
         return [];

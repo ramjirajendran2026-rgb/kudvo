@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Data\EncryptedDataCollection;
+use App\Data\VoteSecretData;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -19,7 +21,7 @@ class Vote extends Model
     ];
 
     protected $casts = [
-        'secret' => 'encrypted:array',
+        'secret' => EncryptedDataCollection::class.':'.VoteSecretData::class,
         'mock' => 'bool',
         'ballot_id' => 'int',
     ];

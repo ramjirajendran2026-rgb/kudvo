@@ -39,12 +39,14 @@ class Candidate extends Model implements HasMedia, HasName, HasAvatar, Sortable
         'email',
         'phone',
         'sort',
+        'rank',
         'position_id',
         'elector_id',
     ];
 
     protected $casts = [
         'sort' => 'int',
+        'rank' => 'int',
         'position_id' => 'int',
         'elector_id' => 'int',
     ];

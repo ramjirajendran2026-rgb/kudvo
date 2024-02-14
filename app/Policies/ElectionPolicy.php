@@ -210,7 +210,17 @@ class ElectionPolicy
 
     public function viewAnyMonitorToken(User $user, Election $election): bool
     {
-        return ! $election->is_draft;
+        return $election->is_published;
+    }
+
+    public function generateResult(User $user, Election $election): bool
+    {
+        return $election->is_closed && blank($election->result);
+    }
+
+    public function viewResult(User $user, Election $election): bool
+    {
+        return $election->is_completed;
     }
 
     public function vote(Elector $elector, Election $election): bool

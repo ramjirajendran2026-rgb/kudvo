@@ -79,4 +79,9 @@ class MonitorTokens extends ElectionPage implements HasTable
         return parent::canAccessPage(election: $election) &&
             static::can(action: 'viewAnyMonitorToken', election: $election);
     }
+
+    public static function shouldRegisterNavigation(array $parameters = []): bool
+    {
+        return static::canAccessPage(election: $parameters['record']);
+    }
 }

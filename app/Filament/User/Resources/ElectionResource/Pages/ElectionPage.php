@@ -32,6 +32,8 @@ abstract class ElectionPage extends Page implements HasElectorGroups, HasElectio
 {
     protected static string $resource = ElectionResource::class;
 
+    protected $listeners = ['refresh' => '$refresh'];
+
     #[Locked]
     public Election $election;
 
@@ -119,25 +121,11 @@ HTML
         return ElectionResource::getRecordSubNavigation($this);
     }
 
-    public function generateNavigationItems(array $components): array
-    {
-        $election = $this->getElection();
-
-        if (
-            in_array(needle: MonitorTokens::class, haystack: $components) &&
-            ! $election->is_published
-        ) {
-            unset($components[array_search(needle: MonitorTokens::class, haystack: $components)]);
-        }
-
-        return parent::generateNavigationItems($components);
-    }
-
     public function getWidgetData(): array
     {
         return [
             'record' => $this->getElection(),
-            'nomination' => $this->getElection(),
+            'election' => $this->getElection(),
         ];
     }
 

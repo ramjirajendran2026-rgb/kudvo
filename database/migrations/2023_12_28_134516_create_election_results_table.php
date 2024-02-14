@@ -17,7 +17,7 @@ return new class extends Migration
                 $table->unsignedInteger(column: 'total_votes')->default(value: 0);
                 $table->unsignedInteger(column: 'processed_votes')->default(value: 0);
                 $table->timestamp(column: 'completed_at')->nullable();
-                $table->longText(column: 'content')->nullable();
+                $table->longText(column: 'meta')->nullable();
 
                 $table->foreignIdFor(model: Election::class)
                     ->constrained()->cascadeOnUpdate()->cascadeOnDelete();

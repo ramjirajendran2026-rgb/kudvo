@@ -6,6 +6,9 @@ use App\Enums\ElectionStatus;
 use App\Filament\Contracts\HasElection;
 use App\Filament\User\Resources\ElectionResource\Pages;
 use App\Filament\User\Resources\ElectionResource\RelationManagers;
+use App\Filament\User\Resources\ElectionResource\Widgets\ElectionStatsOverview;
+use App\Filament\User\Resources\ElectionResource\Widgets\ElectionVotingTrends;
+use App\Filament\User\Resources\ElectionResource\Widgets\RecentlyVotedMembers;
 use App\Forms\ElectionForm;
 use App\Models\Election;
 use App\Models\Elector;
@@ -100,6 +103,7 @@ class ElectionResource extends Resource
             'preference' => Pages\Preference::route(path: '/{record}/preference'),
             'electors' => Pages\Electors::route(path: '/{record}/electors'),
             'ballot.setup' => Pages\BallotSetup::route(path: '/{record}/ballot/setup'),
+            'result' => Pages\Result::route(path: '/{record}/result'),
             'monitor_tokens' => Pages\MonitorTokens::route(path: '/{record}/monitor-tokens'),
         ];
     }
@@ -111,8 +115,18 @@ class ElectionResource extends Resource
             Pages\Preference::class,
             Pages\Electors::class,
             Pages\BallotSetup::class,
+            Pages\Result::class,
             Pages\MonitorTokens::class,
         ]);
+    }
+
+    public static function getWidgets(): array
+    {
+        return [
+            ElectionStatsOverview::class,
+            ElectionVotingTrends::class,
+            RecentlyVotedMembers::class,
+        ];
     }
 
     public static function getTableCreateAction(): TableCreateAction
@@ -250,6 +264,8 @@ class ElectionResource extends Resource
                 $livewire->getElection()->close();
 
                 $action->success();
+
+                $livewire->dispatch(event: 'refresh');
             })
             ->authorize(
                 abilities: fn (HasElection $livewire): bool => static::can(
@@ -260,7 +276,30 @@ class ElectionResource extends Resource
             ->requiresConfirmation()
             ->color(color: ElectionStatus::CLOSED->getColor())
             ->icon(icon: ElectionStatus::CLOSED->getIcon())
+            ->label(label: fn (HasElection $livewire): string => $livewire->getElection()->is_open ? 'Pre-close' : 'Close')
             ->modalIcon(icon: ElectionStatus::CLOSED->getIcon())
             ->successNotificationTitle(title: 'Closed');
+    }
+
+    public static function getGenerateResultAction(): Action
+    {
+        return Action::make(name: 'generateResult')
+            ->action(action: function (HasElection $livewire, Action $action): void {
+                $livewire->getElection()->generateResult();
+
+                $action->success();
+
+                $livewire->dispatch(event: 'refresh');
+            })
+            ->authorize(
+                abilities: fn (HasElection $livewire): bool => static::can(
+                    action: 'generateResult',
+                    record: $livewire->getElection()
+                )
+            )
+            ->color(color: 'success')
+            ->icon(icon: 'heroicon-o-chart-pie')
+            ->label(label: 'Generate Result')
+            ->successNotificationTitle(title: 'Result generated');
     }
 }

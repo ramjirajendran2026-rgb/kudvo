@@ -55,11 +55,10 @@ enum ElectionDashboardState: string
             self::PendingPreference => 'heroicon-o-cog',
             self::PendingElectorsList => 'heroicon-o-user-add',
             self::PendingBallotSetup => 'heroicon-o-document-text',
-            self::PendingTiming, self::Upcoming => 'heroicon-o-clock',
+            self::PendingTiming, self::Upcoming, self::Expired => 'heroicon-o-clock',
             self::ReadyToPublish => 'heroicon-o-check-circle',
-            self::Open => 'heroicon-o-play',
-            self::Expired => 'heroicon-o-x-circle',
-            self::Closed => 'heroicon-o-stop',
+            self::Open => 'heroicon-o-archive-box',
+            self::Closed => 'heroicon-o-archive-box-x-mark',
             self::Completed => 'heroicon-o-check',
             self::Cancelled => 'heroicon-o-x',
         };
@@ -70,12 +69,23 @@ enum ElectionDashboardState: string
         return match ($this) {
             self::Upcoming => new HtmlString(
                 html: Blade::render(
-                    string: '<x-timer-countdown target="'.$election->starts_at->unix().'"'.
+                    string: '<x-timer-countdown wire:key="open-timer-'.$election->starts_at->unix().'" target="'.$election->starts_at->unix().'"'.
                     ' label="Voting for this election will starts in "'.
                     ' reload="true" />'
                 )
             ),
+            self::Open => new HtmlString(
+                html: Blade::render(
+                    string: '<x-timer-countdown wire:key="close-timer-'.$election->ends_at->unix().'" target="'.$election->ends_at->unix().'"'.
+                    ' label="Voting for this election will ends in "'.
+                    ' reload="true" />'
+                )
+            ),
             self::PendingTiming => 'Set election start and end date and time',
+            self::Closed => 'Voting is closed for this election on '.
+                $election->closed_at->timezone($election->timezone)->format(format: 'M d, Y h:i A (T)'),
+            self::Cancelled => 'This election is cancelled on '.
+                $election->cancelled_at->timezone($election->timezone)->format(format: 'M d, Y h:i A (T)'),
             default => null,
         };
     }
