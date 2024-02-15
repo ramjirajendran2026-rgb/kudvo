@@ -2,6 +2,7 @@
 
 namespace App\Filament\User\Resources\ElectionResource\Pages;
 
+use App\Data\VoteSecretData;
 use App\Facades\Kudvo;
 use App\Filament\Contracts\HasElection;
 use App\Filament\Contracts\HasElectorGroups;
@@ -173,7 +174,7 @@ HTML
                 }
 
                 $data['preview'] = true;
-                $data['votes'] = Arr::mapWithKeys($data['votes'], fn ($item, $key) => [$key => Arr::map($item, fn ($subItem) => $subItem['key'])]);
+                $data['votes'] = Arr::mapWithKeys($data['votes'], fn (VoteSecretData $item, $key) => [$key => Arr::map($item->toArray(), fn ($subItem) => $subItem['key'])]);
 
                 $form->fill(state: $data);
 
