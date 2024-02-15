@@ -20,13 +20,13 @@ trait HasShortCode
     {
         do {
             try {
-                $this->short_code = Str::random(length: 6);
+                $this->forceFill(attributes: ['short_code' => Str::random(length: 6)]);
                 $this->save();
             } catch (UniqueConstraintViolationException) {
-                $this->short_code = null;
+                $this->forceFill(attributes: ['short_code' => null]);
             }
-        } while (blank($this->short_code));
+        } while (blank($this->getAttributes()['short_code']));
 
-        return $this->short_code;
+        return $this->getAttributes()['short_code'];
     }
 }
