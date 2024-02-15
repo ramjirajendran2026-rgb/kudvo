@@ -41,7 +41,7 @@
         @endif
 
         @if ($actions)
-            <x-filament-tables::actions
+            <x-filament::actions
                 :actions="$actions"
                 :alignment="Alignment::Center"
                 :wrap="true"

@@ -33,12 +33,6 @@ class Dashboard extends ElectionPage
     }
 
     #[On('refresh')]
-    public function clearCachedSubNavigation(): void
-    {
-        unset($this->cachedSubNavigation);
-    }
-
-    #[On('refresh')]
     public function resolveState(): void
     {
         $election = $this->getElection();
@@ -109,11 +103,23 @@ class Dashboard extends ElectionPage
             ElectionDashboardState::PendingPreference => [$this->getPreferencePageAction()],
             ElectionDashboardState::PendingElectorsList => [$this->getElectorsPageAction()],
             ElectionDashboardState::PendingBallotSetup => [$this->getBallotPageAction()],
-            ElectionDashboardState::PendingTiming => [ElectionResource::getSetTimingAction()],
-            ElectionDashboardState::ReadyToPublish => [ElectionResource::getPublishAction()],
+            ElectionDashboardState::PendingTiming => [
+                ElectionResource::getSetTimingAction()
+                    ->after(callback: fn (self $livewire) => $livewire->dispatch(event: 'refresh')),
+            ],
+            ElectionDashboardState::ReadyToPublish => [
+                ElectionResource::getPublishAction()
+                    ->after(callback: fn (self $livewire) => $livewire->dispatch(event: 'refresh')),
+            ],
             ElectionDashboardState::Open,
-            ElectionDashboardState::Expired => [ElectionResource::getCloseAction()],
-            ElectionDashboardState::Closed => [ElectionResource::getGenerateResultAction()],
+            ElectionDashboardState::Expired => [
+                ElectionResource::getCloseAction()
+                    ->after(callback: fn (self $livewire) => $livewire->dispatch(event: 'refresh')),
+            ],
+            ElectionDashboardState::Closed => [
+                ElectionResource::getGenerateResultAction()
+                    ->after(callback: fn (self $livewire) => $livewire->dispatch(event: 'refresh')),
+            ],
             ElectionDashboardState::Completed => [$this->getResultPageAction()],
             default => [],
         };
@@ -206,19 +212,19 @@ class Dashboard extends ElectionPage
     protected function hasPendingPreferenceSetup(): bool
     {
         return Preference::canAccessPage(election: $this->getElection()) &&
-            ! Electors::canAccessPage(election: $this->getElection());
+            $this->state == ElectionDashboardState::PendingPreference;
     }
 
     protected function hasPendingElectorSetup(): bool
     {
         return Electors::canAccessPage(election: $this->getElection()) &&
-            ! BallotSetup::canAccessPage(election: $this->getElection());
+            $this->state == ElectionDashboardState::PendingElectorsList;
     }
 
     protected function hasPendingBallotSetup(): bool
     {
         return BallotSetup::canAccessPage(election: $this->getElection()) &&
-            ($this->getElection()->positions_count ?? $this->getElection()->loadCount(relations: ['positions'])->positions_count) < 1;
+            $this->state == ElectionDashboardState::PendingBallotSetup;
     }
 
     protected function canSetTiming(): bool

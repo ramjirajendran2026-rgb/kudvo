@@ -195,13 +195,13 @@ return [
     'organisation' => [
         'code' => [
             'prefix' => 'ORG',
-            'length' => 5,
+            'length' => 7,
         ],
     ],
 
     'nomination' => [
         'code' => [
-            'prefix' => 'NM',
+            'prefix' => 'NO',
             'length' => 8,
         ],
     ],

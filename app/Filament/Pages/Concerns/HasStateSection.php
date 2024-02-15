@@ -31,6 +31,8 @@ trait HasStateSection
             } elseif (! $action instanceof Action) {
                 throw new InvalidArgumentException('State actions must be an instance of ' . Action::class . ', or ' . ActionGroup::class . '.');
             }
+
+            $this->cacheAction($action);
             return $action;
         }, $actions);
     }

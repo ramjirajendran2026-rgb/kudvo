@@ -53,7 +53,7 @@ enum ElectionDashboardState: string
     {
         return match ($this) {
             self::PendingPreference => 'heroicon-o-cog',
-            self::PendingElectorsList => 'heroicon-o-user-add',
+            self::PendingElectorsList => 'heroicon-o-user-plus',
             self::PendingBallotSetup => 'heroicon-o-document-text',
             self::PendingTiming, self::Upcoming, self::Expired => 'heroicon-o-clock',
             self::ReadyToPublish => 'heroicon-o-check-circle',
