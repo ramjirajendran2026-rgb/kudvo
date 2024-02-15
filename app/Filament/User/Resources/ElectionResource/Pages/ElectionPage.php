@@ -174,7 +174,7 @@ HTML
                 }
 
                 $data['preview'] = true;
-                $data['votes'] = Arr::mapWithKeys($data['votes'], fn (VoteSecretData $item, $key) => [$key => Arr::map($item->toArray(), fn ($subItem) => $subItem['key'])]);
+                $data['votes'] = Arr::mapWithKeys($data['votes'], fn ($item, $key) => [$key => Arr::map($item, fn (VoteSecretData $subItem) => $subItem->key)]);
 
                 $form->fill(state: $data);
 
