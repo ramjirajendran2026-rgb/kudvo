@@ -21,6 +21,8 @@ return new class extends Migration
                 $table->json(column: 'preference')->nullable();
                 $table->json(column: 'web_app_manifest')->nullable();
 
+                $table->string(column: 'short_code')->collation(collation: 'utf8mb4_bin')->nullable()->unique();
+
                 $table->string(column: 'timezone')->nullable();
                 $table->timestamp(column: 'starts_at')->nullable();
                 $table->timestamp(column: 'ends_at')->nullable();

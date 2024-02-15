@@ -12,7 +12,9 @@ use Filament\Forms\Form;
 use Filament\Http\Responses\Auth\Contracts\LoginResponse;
 use Filament\Notifications\Notification;
 use Filament\Pages\Auth\Login as BasePage;
+use Filament\Panel;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
@@ -67,19 +69,21 @@ class Login extends BasePage
             return null;
         }
 
-        Filament::auth()->login(user: $elector);
-        session()->regenerate();
+        static::doLogin(elector: $elector, panel: Filament::getCurrentPanel(), request: request());
 
-        /** @var Elector $elector */
-        $elector = Filament::auth()->user();
+        return app(abstract: LoginResponse::class);
+    }
+
+    public static function doLogin(Elector $elector, Panel $panel, Request $request): void
+    {
+        $panel->auth()->login(user: $elector);
+        session()->regenerate();
 
         $elector->createAuthSession(
             sessionId: session()->getId(),
-            guardName: Filament::getAuthGuard(),
-            request: request(),
+            guardName: $panel->getAuthGuard(),
+            request: $request,
         );
-
-        return app(abstract: LoginResponse::class);
     }
 
     protected function getCredentialsFromFormData(array $data): array

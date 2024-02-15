@@ -12,11 +12,13 @@ use App\Filament\Election\Pages\Auth\Login;
 use App\Filament\Election\Pages\Dashboard;
 use App\Filament\ElectionPanel;
 use App\Filament\Http\Middleware\IdentifyElection;
+use App\Models\Elector;
 use App\Models\Organisation;
 use Filament\Facades\Filament;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Http\Responses\Auth\Contracts\LoginResponse;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
@@ -26,6 +28,7 @@ use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Blade;
@@ -66,6 +69,16 @@ class ElectionPanelProvider extends PanelProvider
                 Route::get(uri: 'app.webmanifest', action: WebManifestController::class)
                     ->withoutMiddleware(middleware: EnsureStateIsAllowed::class)
                     ->name(name: 'web-app-manifest');
+
+                Route::get(
+                    uri: 'eul/{elector}',
+                    action: function (Request $request) {
+                        Login::doLogin(elector: app(abstract: Elector::class)->resolveRouteBinding(value: $request->route(param: 'elector')), panel: Filament::getCurrentPanel(), request: $request);
+
+                        return app(abstract: LoginResponse::class);
+                    })
+                    ->middleware(middleware: 'signed')
+                    ->name(name: 'eul');
             })
             ->colors(colors: [
                 'primary' => Color::Green,

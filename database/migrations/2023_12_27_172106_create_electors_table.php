@@ -14,7 +14,6 @@ return new class extends Migration
             callback: function (Blueprint $table): void {
                 $table->id();
                 $table->uuid()->unique();
-                $table->string(column: 'short_code')->collation(collation: 'utf8mb4_bin');
 
                 $table->string(column: 'membership_number');
                 $table->string(column: 'title')->nullable();
@@ -27,6 +26,8 @@ return new class extends Migration
                 $table->string(column: 'email')->nullable();
                 $table->string(column: 'phone')->nullable();
                 $table->longText(column: 'groups')->nullable();
+
+                $table->string(column: 'short_code')->collation(collation: 'utf8mb4_bin')->nullable()->unique();
 
                 $table->string(column: 'current_session_id')->nullable();
 

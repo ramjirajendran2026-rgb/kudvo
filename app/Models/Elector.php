@@ -9,6 +9,7 @@ use App\Filament\Election\Pages\Dashboard;
 use App\Filament\Election\Pages\Index;
 use App\Filament\ElectionPanel;
 use App\Filament\NominationPanel;
+use App\Models\Concerns\HasShortCode;
 use App\Notifications\ElectorBallotLinkNotification;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
@@ -30,6 +31,7 @@ use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Http\Request;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -45,6 +47,7 @@ class Elector extends Model implements
     use Authenticatable;
     use Authorizable;
     use HasFactory;
+    use HasShortCode;
     use HasUuids;
     use InteractsWithMedia;
     use Notifiable;
@@ -144,10 +147,6 @@ class Elector extends Model implements
     protected static function booted(): void
     {
         static::saving(callback: function (Elector $elector) {
-            if (blank($elector->short_code)) {
-                $elector->short_code = Str::random(length: 6);
-            }
-
             if (!is_null($elector->groups)) {
                 $elector->groups = collect(value: explode(separator: ',', string: $elector->groups))
                     ->map(callback: fn (string $item): string => trim(string: $item))
@@ -216,18 +215,12 @@ class Elector extends Model implements
         $this->notify(instance: new ElectorBallotLinkNotification(
             data: new ElectorBallotLinkNotificationData(
                 electionName: $election->name,
-                ballotLink: Index::getUrl(
-                    parameters: [
-                        'election' => $election->getRouteKey(),
-                    ],
-                    panel: 'election',
-                ),
-                ballotLinkShort: Index::getUrl(
-                    parameters: [
-                        'election' => $election->getRouteKey(),
-                    ],
-                    panel: 'election',
-                ),
+                ballotLink: $election->preference->ballot_link_unique ?
+                    URL::signedRoute(name: 'filament.election.eul', parameters: ['election' => $election, 'elector' => $this]) :
+                    route(name: 'filament.election.pages..', parameters: ['election' => $election]),
+                ballotLinkShort: $election->preference->ballot_link_unique
+                    ? route(name: 'short_link.ballot', parameters: ['elector' => $this->short_code])
+                    : route(name: 'short_link.election', parameters: ['election' => $election->short_code]),
                 electorName: $this->display_name,
             ),
             via: $election->ballot_link_via,

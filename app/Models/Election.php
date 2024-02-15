@@ -7,6 +7,7 @@ use App\Data\ElectionResultMetaData;
 use App\Data\VoteSecretData;
 use App\Data\WebAppManifestData;
 use App\Enums\ElectionStatus;
+use App\Models\Concerns\HasShortCode;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
@@ -21,6 +22,8 @@ use Spatie\LaravelData\DataCollection;
 
 class Election extends Model
 {
+    use HasShortCode;
+
     protected $fillable = [
         'name',
         'description',
