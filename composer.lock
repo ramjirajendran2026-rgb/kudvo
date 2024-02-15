@@ -986,16 +986,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.298.9",
+            "version": "3.298.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "db225c3a1c5dabfbb5071349cfb7e4c396c3d9ec"
+                "reference": "99af8830cb0662e3edaebe1a976d1cc833a86091"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/db225c3a1c5dabfbb5071349cfb7e4c396c3d9ec",
-                "reference": "db225c3a1c5dabfbb5071349cfb7e4c396c3d9ec",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/99af8830cb0662e3edaebe1a976d1cc833a86091",
+                "reference": "99af8830cb0662e3edaebe1a976d1cc833a86091",
                 "shasum": ""
             },
             "require": {
@@ -1075,9 +1075,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.298.9"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.298.10"
             },
-            "time": "2024-02-13T19:08:16+00:00"
+            "time": "2024-02-14T19:05:54+00:00"
         },
         {
             "name": "bacon/bacon-qr-code",
@@ -1853,16 +1853,16 @@
         },
         {
             "name": "doctrine/dbal",
-            "version": "3.8.1",
+            "version": "3.8.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/dbal.git",
-                "reference": "c9ea252cdce4da324ede3d6c5913dd89f769afd2"
+                "reference": "a19a1d05ca211f41089dffcc387733a6875196cb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/dbal/zipball/c9ea252cdce4da324ede3d6c5913dd89f769afd2",
-                "reference": "c9ea252cdce4da324ede3d6c5913dd89f769afd2",
+                "url": "https://api.github.com/repos/doctrine/dbal/zipball/a19a1d05ca211f41089dffcc387733a6875196cb",
+                "reference": "a19a1d05ca211f41089dffcc387733a6875196cb",
                 "shasum": ""
             },
             "require": {
@@ -1946,7 +1946,7 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/dbal/issues",
-                "source": "https://github.com/doctrine/dbal/tree/3.8.1"
+                "source": "https://github.com/doctrine/dbal/tree/3.8.2"
             },
             "funding": [
                 {
@@ -1962,7 +1962,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-02-03T17:33:49+00:00"
+            "time": "2024-02-12T18:36:36+00:00"
         },
         {
             "name": "doctrine/deprecations",
@@ -8169,16 +8169,16 @@
         },
         {
             "name": "spatie/laravel-medialibrary",
-            "version": "11.2.0",
+            "version": "11.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/laravel-medialibrary.git",
-                "reference": "3c4021c0ec6d1180b57f40c772b51da5d4e60162"
+                "reference": "e0317b1c33331c6e5ff05b80b184bb13ce7b41d3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-medialibrary/zipball/3c4021c0ec6d1180b57f40c772b51da5d4e60162",
-                "reference": "3c4021c0ec6d1180b57f40c772b51da5d4e60162",
+                "url": "https://api.github.com/repos/spatie/laravel-medialibrary/zipball/e0317b1c33331c6e5ff05b80b184bb13ce7b41d3",
+                "reference": "e0317b1c33331c6e5ff05b80b184bb13ce7b41d3",
                 "shasum": ""
             },
             "require": {
@@ -8262,7 +8262,7 @@
             ],
             "support": {
                 "issues": "https://github.com/spatie/laravel-medialibrary/issues",
-                "source": "https://github.com/spatie/laravel-medialibrary/tree/11.2.0"
+                "source": "https://github.com/spatie/laravel-medialibrary/tree/11.3.0"
             },
             "funding": [
                 {
@@ -8274,7 +8274,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-01-29T07:53:43+00:00"
+            "time": "2024-02-14T12:57:24+00:00"
         },
         {
             "name": "spatie/laravel-package-tools",
