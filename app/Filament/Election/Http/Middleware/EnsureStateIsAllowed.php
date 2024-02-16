@@ -19,8 +19,12 @@ class EnsureStateIsAllowed
     public function handle(Request $request, Closure $next)
     {
         if (
-            Str::startsWith(haystack: $request->url(), needles: Filament::getLogoutUrl()) ||
-            Kudvo::getElectionPanelState() == ElectionPanelState::Open
+            Kudvo::getElectionPanelState() == ElectionPanelState::Open ||
+            $request->routeIs('filament.election.auth.logout') ||
+            (
+                $request->routeIs('filament.election.eul') &&
+                Kudvo::getElectionPanelState() == ElectionPanelState::UniqueLinkRequired
+            )
         ) {
             return $next($request);
         }

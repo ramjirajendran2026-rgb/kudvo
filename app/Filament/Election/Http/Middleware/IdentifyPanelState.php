@@ -34,7 +34,7 @@ class IdentifyPanelState
         $elector = Filament::auth()->user();
 
         Kudvo::setElectionPanelState(state: match (true) {
-            $request->routeIs('filament.election.auth.login') &&
+            blank($elector) &&
             !$election->preference->ballot_link_common => ElectionPanelState::UniqueLinkRequired,
 
             !Kudvo::isBoothDevice(election: $election) &&
