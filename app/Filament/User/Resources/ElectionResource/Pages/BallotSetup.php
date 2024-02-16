@@ -229,10 +229,12 @@ HTML,
                     election: $livewire->getElection()
                 )
             )
-            ->action(action: function (Position $record, array $data): void {
+            ->action(action: function (InfolistAction $action, Position $record, array $data): void {
                 $record->fill(attributes: $data);
 
                 $record->save();
+
+                $action->success();
             })
             ->fillForm(data: fn (Position $record): array => $record->attributesToArray())
             ->form(form: fn (Form $form): Form => PositionResource::form(form: $form))
@@ -240,7 +242,8 @@ HTML,
             ->iconButton()
             ->modalHeading(heading: fn (Position $record): string => "Edit $record->name")
             ->modalSubmitActionLabel(label: 'Save changes')
-            ->modalWidth(width: MaxWidth::ExtraLarge);
+            ->modalWidth(width: MaxWidth::ExtraLarge)
+            ->successNotificationTitle(title: 'Saved');
     }
 
     protected function getDeletePositionAction(): InfolistAction
@@ -253,13 +256,16 @@ HTML,
                 )
             )
             ->requiresConfirmation()
-            ->action(action: function (Position $record): void {
+            ->action(action: function (InfolistAction $action, Position $record): void {
                 $record->delete();
+
+                $action->success();
             })
             ->color(color: 'danger')
             ->icon(icon: 'heroicon-m-trash')
             ->iconButton()
-            ->modalHeading(heading: fn (Position $record): string => "Delete $record->name");
+            ->modalHeading(heading: fn (Position $record): string => "Delete $record->name")
+            ->successNotificationTitle(title: 'Deleted');
     }
 
     protected function getReorderCandidateAction(): InfolistAction
@@ -271,10 +277,12 @@ HTML,
                     election: $livewire->getElection()
                 )
             )
-            ->action(action: function (Position $record, array $data): void {
+            ->action(action: function (InfolistAction $action, Position $record, array $data): void {
                 $record->fill(attributes: $data);
 
                 $record->save();
+
+                $action->success();
             })
             ->fillForm(data: fn (Position $record): array => $record->attributesToArray())
             ->form(
@@ -298,7 +306,8 @@ HTML,
             ->iconButton()
             ->modalHeading(heading: fn (Position $record): string => "Reorder $record->name Candidates")
             ->modalSubmitActionLabel(label: 'Save changes')
-            ->modalWidth(width: MaxWidth::ExtraLarge);
+            ->modalWidth(width: MaxWidth::ExtraLarge)
+            ->successNotificationTitle(title: 'Saved');
     }
 
     protected function getCreateCandidateAction(): InfolistAction
@@ -326,6 +335,8 @@ HTML,
 
                     $form->fill();
 
+                    $action->success();
+
                     $action->halt();
                 }
 
@@ -340,7 +351,8 @@ HTML,
             ->label(label: 'New candidate')
             ->modalSubmitActionLabel(label: __('filament-actions::create.single.modal.actions.create.label'))
             ->outlined()
-            ->size(size: ActionSize::Small);
+            ->size(size: ActionSize::Small)
+            ->successNotificationTitle(title: 'Created');
     }
 
     protected function getCreateCandidatesAction(): InfolistAction
@@ -404,13 +416,16 @@ HTML,
                 )
             )
             ->requiresConfirmation()
-            ->action(action: function (Candidate $record): void {
+            ->action(action: function (InfolistAction $action, Candidate $record): void {
                 $record->delete();
+
+                $action->success();
             })
             ->color(color: 'danger')
             ->icon(icon: 'heroicon-m-trash')
             ->iconButton()
-            ->modalHeading(heading: fn (Candidate $record): string => "Delete $record->full_name");
+            ->modalHeading(heading: fn (Candidate $record): string => "Delete $record->full_name")
+            ->successNotificationTitle(title: 'Deleted');
     }
 
     public static function canAccessPage(Election $election): bool
