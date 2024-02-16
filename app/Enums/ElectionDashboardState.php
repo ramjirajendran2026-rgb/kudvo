@@ -60,7 +60,7 @@ enum ElectionDashboardState: string
             self::Open => 'heroicon-o-archive-box',
             self::Closed => 'heroicon-o-archive-box-x-mark',
             self::Completed => 'heroicon-o-check',
-            self::Cancelled => 'heroicon-o-x',
+            self::Cancelled => 'heroicon-o-x-mark',
         };
     }
 
