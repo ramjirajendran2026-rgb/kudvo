@@ -70,6 +70,15 @@ class Election extends Model
         );
     }
 
+    protected function votedBallotCopyShareVia(): Attribute
+    {
+        return Attribute::make(
+            get: fn($value, array $attributes) => [
+                ...Arr::wrap(value: $this->preference?->voted_ballot_mail ? 'mail': null),
+            ],
+        );
+    }
+
     protected function startsAtLocal(): Attribute
     {
         return Attribute::make(

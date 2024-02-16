@@ -9,6 +9,7 @@ use App\Forms\Components\VotePicker;
 use App\Models\Ballot;
 use App\Models\Position;
 use App\Models\Vote;
+use App\Notifications\Election\VotedBallotCopyNotification;
 use App\Notifications\Election\VotedConfirmationNotification;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Actions;
@@ -158,6 +159,16 @@ class Index extends BasePage
                 new VotedConfirmationNotification(
                     ballot: $ballot,
                     via: $acknowledgementVia,
+                )
+            );
+        }
+
+        if (filled($ballotCopyVia = $this->getElection()->voted_ballot_copy_share_via)) {
+            $this->getElector()->notify(
+                new VotedBallotCopyNotification(
+                    ballot: $ballot,
+                    votes: encrypt(value: $data),
+                    via: $ballotCopyVia,
                 )
             );
         }
