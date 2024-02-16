@@ -6,7 +6,9 @@ use App\Data\ElectionPreferenceData;
 use App\Enums\CandidateSort;
 use App\Filament\User\Resources\ElectionResource;
 use App\Models\Election;
+use Closure;
 use Filament\Actions\Action;
+use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -64,11 +66,28 @@ class Preference extends ElectionPage
                                 ->description(description: 'Electors will be able to access their eligible ballot by these options')
                                 ->schema(components: [
                                     Toggle::make(name: 'ballot_link_common')
+                                        ->default(state: true)
                                         ->label(label: 'Common link')
-                                        ->default(state: true),
+                                        ->rule(
+                                            rule: 'accepted_if:data.preference.ballot_link_unique,false'
+                                        )
+                                        ->validationMessages(messages: [
+                                            'accepted_if' => 'This must be enabled when unique link is disabled'
+                                        ]),
 
                                     Toggle::make(name: 'ballot_link_unique')
-                                        ->label(label: 'Unique link'),
+                                        ->label(label: 'Unique link')
+                                        ->rule(
+                                            rule: fn (Get $get) => function (string $attribute, bool $value, Closure $fail) use ($get): void{
+                                                if (
+                                                    $value &&
+                                                    !$get(path: 'ballot_link_email') &&
+                                                    !$get(path: 'ballot_link_sms')
+                                                ) {
+                                                    $fail('When this is enabled, at least one delivery method must be enabled');
+                                                }
+                                            }
+                                        ),
                                 ]),
 
                             Section::make(heading:'Ballot Link Delivery')
