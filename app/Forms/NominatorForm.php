@@ -6,6 +6,7 @@ use App\Filament\Contracts\HasElector;
 use App\Filament\Contracts\HasNomination;
 use App\Models\Elector;
 use App\Models\Nomination;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
@@ -95,9 +96,7 @@ readonly class NominatorForm
     public static function phoneComponent(): PhoneInput
     {
         return PhoneInput::make(name: 'phone')
-            ->defaultCountry(value: config(key: 'app.default_phone_country'))
             ->label(label: 'Phone number')
-            ->useFullscreenPopup()
             ->validateFor();
     }
 

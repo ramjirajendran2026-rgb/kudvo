@@ -5,6 +5,7 @@ namespace App\Filament\User\Resources;
 use App\Filament\Contracts\HasElection;
 use App\Forms\CandidateForm;
 use App\Models\Candidate;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -58,7 +59,10 @@ class CandidateResource extends Resource
 
                             CandidateForm::emailComponent(),
 
-                            CandidateForm::phoneComponent(),
+                            CandidateForm::phoneComponent()
+                                ->defaultCountry(value: Filament::getTenant()?->country ?: config(key: 'app.default_phone_country'))
+                                ->disableIpLookUp()
+                                ->initialCountry(value: Filament::getTenant()?->country ?: config(key: 'app.default_phone_country')),
                         ]),
 
                     CandidateForm::photoComponent()

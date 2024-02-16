@@ -5,6 +5,7 @@ namespace App\Filament\User\Resources;
 use App\Filament\Imports\ElectorImporter;
 use App\Forms\ElectorForm;
 use App\Models\Elector;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Split;
 use Filament\Forms\Form;
@@ -51,7 +52,10 @@ class ElectorResource extends Resource
 
                 ElectorForm::emailComponent(),
 
-                ElectorForm::phoneComponent(),
+                ElectorForm::phoneComponent()
+                    ->defaultCountry(value: Filament::getTenant()?->country ?: config(key: 'app.default_phone_country'))
+                    ->disableIpLookUp()
+                    ->initialCountry(value: Filament::getTenant()?->country ?: config(key: 'app.default_phone_country')),
 
                 ElectorForm::groupsComponent(),
             ]);

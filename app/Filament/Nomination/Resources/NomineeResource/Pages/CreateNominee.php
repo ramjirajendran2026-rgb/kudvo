@@ -13,6 +13,7 @@ use App\Forms\NominatorForm;
 use App\Forms\NomineeForm;
 use App\Models\Nominee;
 use Filament\Actions;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\Actions\Action as FormAction;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Group;
@@ -121,7 +122,10 @@ class CreateNominee extends CreateRecord implements HasElector, HasNomination
                                     NomineeForm::emailComponent()
                                         ->readOnly(),
 
-                                    NomineeForm::phoneComponent(),
+                                    NomineeForm::phoneComponent()
+                                        ->defaultCountry(value: Filament::getTenant()?->country ?: config(key: 'app.default_phone_country'))
+                                        ->disableIpLookUp()
+                                        ->initialCountry(value: Filament::getTenant()?->country ?: config(key: 'app.default_phone_country')),
                                 ]),
 
                             NomineeForm::photoComponent()
@@ -195,7 +199,10 @@ class CreateNominee extends CreateRecord implements HasElector, HasNomination
                             NominatorForm::emailComponent()
                                 ->readOnly(),
 
-                            NominatorForm::phoneComponent(),
+                            NominatorForm::phoneComponent()
+                                ->defaultCountry(value: Filament::getTenant()?->country ?: config(key: 'app.default_phone_country'))
+                                ->disableIpLookUp()
+                                ->initialCountry(value: Filament::getTenant()?->country ?: config(key: 'app.default_phone_country')),
                         ]),
                 ]),
 

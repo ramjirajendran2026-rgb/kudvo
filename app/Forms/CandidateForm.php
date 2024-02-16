@@ -7,6 +7,7 @@ use App\Models\Candidate;
 use App\Models\Election;
 use App\Models\Elector;
 use App\Models\Nominee;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
@@ -100,9 +101,7 @@ readonly class CandidateForm
     public static function phoneComponent(): PhoneInput
     {
         return PhoneInput::make(name: 'phone')
-            ->defaultCountry(value: config(key: 'app.default_phone_country'))
             ->label(label: 'Phone number')
-            ->useFullscreenPopup()
             ->validateFor();
     }
 
