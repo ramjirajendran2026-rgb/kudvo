@@ -9,6 +9,7 @@ use App\Forms\Components\VotePicker;
 use App\Models\Ballot;
 use App\Models\Position;
 use App\Models\Vote;
+use App\Notifications\Election\VotedConfirmationNotification;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Placeholder;
@@ -150,6 +151,15 @@ class Index extends BasePage
                 'mock' => $this->isMock(),
                 'ballot_id' => $this->getElection()->preference->dnt_votes ? null : $ballot->getKey(),
             ]);
+        }
+
+        if (filled($acknowledgementVia = $this->getElection()->voted_confirmation_via)) {
+            $this->getElector()->notify(
+                new VotedConfirmationNotification(
+                    ballot: $ballot,
+                    via: $acknowledgementVia,
+                )
+            );
         }
 
         if (Kudvo::isBoothDevice()) {

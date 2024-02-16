@@ -60,17 +60,27 @@ class Election extends Model
         );
     }
 
+    protected function votedConfirmationVia(): Attribute
+    {
+        return Attribute::make(
+            get: fn($value, array $attributes) => [
+                ...Arr::wrap(value: $this->preference?->voted_confirmation_mail ? 'mail': null),
+                ...Arr::wrap(value: $this->preference?->voted_confirmation_sms ? 'sms': null),
+            ],
+        );
+    }
+
     protected function startsAtLocal(): Attribute
     {
         return Attribute::make(
-            get: fn($value, array $attributes) => $this->starts_at?->tz(value: $this->timezone ?? 'UTC'),
+            get: fn($value, array $attributes) => $this->starts_at?->tz(value: $this->timezone),
         );
     }
 
     protected function endsAtLocal(): Attribute
     {
         return Attribute::make(
-            get: fn($value, array $attributes) => $this->ends_at?->tz(value: $this->timezone ?? 'UTC'),
+            get: fn($value, array $attributes) => $this->ends_at?->tz(value: $this->timezone),
         );
     }
 

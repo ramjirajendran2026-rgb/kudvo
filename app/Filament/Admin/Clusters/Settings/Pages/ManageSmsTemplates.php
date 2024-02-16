@@ -5,6 +5,7 @@ namespace App\Filament\Admin\Clusters\Settings\Pages;
 use App\Filament\Admin\Clusters\Settings;
 use App\Notifications\Election\MfaCodeNotification;
 use App\Notifications\Election\BallotLinkNotification;
+use App\Notifications\Election\VotedConfirmationNotification;
 use App\Settings\SmsTemplates;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -67,6 +68,29 @@ class ManageSmsTemplates extends SettingsPage
                     ))
                     ->schema(components: [
                         Forms\Components\Textarea::make(name: 'elector_ballot_mfa')
+                            ->autosize()
+                            ->hiddenLabel(),
+                    ]),
+
+                Forms\Components\Section::make(heading: 'Voted Confirmation')
+                    ->compact()
+                    ->headerActions(actions: Arr::map(
+                        array: [
+                            'ELECTION_NAME' => VotedConfirmationNotification::VAR_ELECTION_NAME_SHORT,
+                            'ELECTOR_NAME' => VotedConfirmationNotification::VAR_ELECTOR_NAME_SHORT,
+                            'VOTED_AT' => VotedConfirmationNotification::VAR_VOTED_AT,
+                        ],
+                        callback: fn (string $value, string $key) => Forms\Components\Actions\Action::make(name: 'insert'.Str::title($key))
+                            ->alpineClickHandler(
+                                handler: 'target = document.getElementById(\'data.elector_voted_confirmation\');$wire.data.elector_voted_confirmation = target.value.substring(0, target.selectionStart) + \''.$value.'\' + target.value.substring(target.selectionEnd)'
+                            )
+                            ->color(color: 'info')
+                            ->label(label: $key)
+                            ->link()
+                            ->size(size: ActionSize::Small),
+                    ))
+                    ->schema(components: [
+                        Forms\Components\Textarea::make(name: 'elector_voted_confirmation')
                             ->autosize()
                             ->hiddenLabel(),
                     ]),

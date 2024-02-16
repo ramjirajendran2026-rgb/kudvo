@@ -12,6 +12,8 @@ class SmsTemplates extends Settings
 
     public string $elector_nomination_mfa;
 
+    public string $elector_voted_confirmation;
+
     public static function group(): string
     {
         return 'sms_templates';
