@@ -23,7 +23,7 @@ class EnsureStateIsAllowed
             $request->routeIs('filament.election.auth.logout') ||
             (
                 $request->routeIs('filament.election.eul') &&
-                Kudvo::getElectionPanelState() == ElectionPanelState::UniqueLinkRequired
+                Kudvo::getElectionPanelState() == ElectionPanelState::CommonLinkRestricted
             )
         ) {
             return $next($request);

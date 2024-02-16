@@ -35,7 +35,7 @@ class IdentifyPanelState
 
         Kudvo::setElectionPanelState(state: match (true) {
             blank($elector) &&
-            !$election->preference->ballot_link_common => ElectionPanelState::UniqueLinkRequired,
+            !$election->preference->ballot_link_common => ElectionPanelState::CommonLinkRestricted,
 
             !Kudvo::isBoothDevice(election: $election) &&
             !$this->agent->isiOS() &&
