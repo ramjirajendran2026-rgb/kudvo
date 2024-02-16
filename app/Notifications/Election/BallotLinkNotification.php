@@ -2,8 +2,8 @@
 
 namespace App\Notifications\Election;
 
-use App\Data\Election\BallotLinkNotificationData;
 use App\Notifications\Concerns\HasSmsChannel;
+use App\Notifications\Election\Data\BallotLinkNotificationData;
 use App\Settings\SmsTemplates;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;

@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
-use App\Data\Election\BallotLinkNotificationData;
 use App\Facades\Kudvo;
 use App\Filament\BallotPanel;
 use App\Filament\ElectionPanel;
 use App\Filament\NominationPanel;
 use App\Models\Concerns\HasShortCode;
 use App\Notifications\Election\BallotLinkNotification;
+use App\Notifications\Election\Data\BallotLinkNotificationData;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
