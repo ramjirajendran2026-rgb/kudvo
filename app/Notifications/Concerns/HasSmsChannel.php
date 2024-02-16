@@ -25,15 +25,14 @@ trait HasSmsChannel
 
     protected function prepareSmsChannel(object $notifiable, array $via): array
     {
-        if (in_array(needle: 'sms', haystack: $via)) {
-            unset($via[in_array(needle: 'sms', haystack: $via)]);
-
-            $via = [
-                ...$via,
-                ...Arr::wrap(value: $this->getSmsChannel(notifiable: $notifiable))
-            ];
-        }
-
-        return $via;
+        return collect($via)
+            ->when(
+                value: in_array(needle: 'sms', haystack: $via),
+                callback: fn ($collection) => $collection
+                    ->reject(callback: fn ($channel) => $channel === 'sms')
+                    ->merge($this->getSmsChannel(notifiable: $notifiable)),
+                default: fn ($collection) => $collection
+            )
+            ->toArray();
     }
 }
