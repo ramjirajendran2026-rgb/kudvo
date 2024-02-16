@@ -24,6 +24,8 @@ enum ElectionPanelState: string
 
     case DeviceNotSupported = 'device_not_supported';
 
+    case UniqueLinkRequired = 'unique_link_required';
+
     public function getLabel(Election $election): HtmlString|string|null
     {
         return match ($this) {
@@ -33,6 +35,7 @@ enum ElectionPanelState: string
             self::Cancelled => 'Cancelled',
             self::DeviceAlreadyUsed => 'Restricted device',
             self::DeviceNotSupported => 'Unsupported device',
+            self::UniqueLinkRequired => 'Unique link required',
             default => null,
         };
     }
@@ -45,7 +48,8 @@ enum ElectionPanelState: string
             self::Voted => 'heroicon-o-shield-check',
             self::Cancelled => 'heroicon-o-x-mark',
             self::DeviceAlreadyUsed => 'heroicon-o-flag',
-            self::DeviceNotSupported => 'heroicon-o-no-symbol',
+            self::DeviceNotSupported,
+            self::UniqueLinkRequired => 'heroicon-o-no-symbol',
             default => null,
         };
     }
@@ -67,6 +71,7 @@ enum ElectionPanelState: string
             self::Cancelled => 'This election has been cancelled. Please contact Election Officer(s) for more information.',
             self::DeviceAlreadyUsed => 'This device is already used to cast vote for this election.',
             self::DeviceNotSupported => 'This device is not supported for this election. Please use any of Chrome (Android) and Safari (iOS)',
+            self::UniqueLinkRequired => 'You need to use unique link to cast vote for this election. You might received a unique link in your email or SMS. Please use that link to cast vote.',
             default => null,
         };
     }
