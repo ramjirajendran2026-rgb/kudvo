@@ -72,14 +72,17 @@ class ElectorResource extends Resource
 
                 TextColumn::make(name: 'full_name')
                     ->label(label: 'Full name')
+                    ->searchable()
                     ->wrap(),
 
                 TextColumn::make(name: 'phone')
-                    ->label(label: 'Phone number'),
+                    ->label(label: 'Phone number')
+                    ->searchable(),
 
                 TextColumn::make(name: 'email')
                     ->label(label: 'Email address')
-                    ->wrap(),
+                    ->wrap()
+                    ->searchable(),
 
                 TextColumn::make(name: 'groups')
                     ->badge()
