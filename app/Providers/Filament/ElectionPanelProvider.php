@@ -10,6 +10,7 @@ use App\Filament\Election\Http\Middleware\EnsureMfaCompleted;
 use App\Filament\Election\Http\Middleware\IdentifyPanelState;
 use App\Filament\Election\Pages\Auth\Login;
 use App\Filament\Election\Pages\Dashboard;
+use App\Filament\Election\Pages\Index;
 use App\Filament\ElectionPanel;
 use App\Filament\Http\Middleware\IdentifyElection;
 use App\Models\Elector;
@@ -73,7 +74,16 @@ class ElectionPanelProvider extends PanelProvider
                 Route::get(
                     uri: 'eul/{elector}',
                     action: function (Request $request) {
-                        Login::doLogin(elector: app(abstract: Elector::class)->resolveRouteBinding(value: $request->route(param: 'elector')), panel: Filament::getCurrentPanel(), request: $request);
+                        $elector = app(abstract: Elector::class)->resolveRouteBinding(value: $request->route(param: 'elector'));
+
+                        if (
+                            blank($elector) ||
+                            !Kudvo::getElection()->preference->ballot_link_unique
+                        ) {
+                            return redirect(to: Index::getUrl());
+                        }
+
+                        Login::doLogin(elector: $elector, panel: Filament::getCurrentPanel(), request: $request);
 
                         return app(abstract: LoginResponse::class);
                     })
