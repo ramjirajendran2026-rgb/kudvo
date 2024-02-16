@@ -2,9 +2,8 @@
 
 namespace App\Filament\User\Resources\ElectionResource\Pages;
 
-use App\Data\ElectionPreferenceData;
+use App\Data\Election\PreferenceData;
 use App\Enums\CandidateSort;
-use App\Filament\User\Resources\ElectionResource;
 use App\Models\Election;
 use Closure;
 use Filament\Actions\Action;
@@ -12,17 +11,13 @@ use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Split;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
-use Filament\Resources\Pages\Page;
 use Filament\Support\Enums\Alignment;
-use Filament\Support\Enums\IconSize;
 use Illuminate\Support\Arr;
 use LaraZeus\Quantity\Components\Quantity;
 
@@ -45,7 +40,7 @@ class Preference extends ElectionPage
         parent::mount($record);
 
         $election = $this->getElection();
-        $election->preference ??= new ElectionPreferenceData();
+        $election->preference ??= new PreferenceData();
 
         $this->form->fill($election->attributesToArray());
     }
@@ -66,10 +61,9 @@ class Preference extends ElectionPage
                                 ->description(description: 'Electors will be able to access their eligible ballot by these options')
                                 ->schema(components: [
                                     Toggle::make(name: 'ballot_link_common')
-                                        ->default(state: true)
                                         ->label(label: 'Common link')
                                         ->rule(
-                                            rule: 'accepted_if:data.preference.ballot_link_unique,false'
+                                            rule: fn (Field $component) => 'accepted_if:'.$component->getContainer()->getStatePath().'.ballot_link_unique,false'
                                         )
                                         ->validationMessages(messages: [
                                             'accepted_if' => 'This must be enabled when unique link is disabled'
@@ -90,62 +84,15 @@ class Preference extends ElectionPage
                                         ),
                                 ]),
 
-                            Section::make(heading:'Ballot Link Delivery')
-                                ->columnSpan(span: 1)
-                                ->description(description: 'Ballot Link for each voters will be sent through this medium')
-                                ->schema(components: [
-                                    Toggle::make(name: 'ballot_link_mail')
-                                        ->default(state: true)
-                                        ->label(label: 'Email'),
-
-                                    Toggle::make(name: 'ballot_link_sms')
-                                        ->label(label: 'SMS'),
-                                ]),
-
-                            Section::make(heading: 'MFA Code Delivery')
-                                ->columnSpan(span: 1)
-                                ->description(description: 'Multi-Factor Authentication code for each voters will be sent through this medium')
-                                ->schema(components: [
-                                    Toggle::make(name: 'mfa_mail')
-                                        ->default(state: true)
-                                        ->label(label: 'Email'),
-
-                                    Toggle::make(name: 'mfa_sms')
-                                        ->label(label: 'SMS'),
-                                ]),
-
-                            Section::make(heading: 'Ballot Acknowledgement')
-                                ->description(description: 'Elector will receive acknowledgement message for submitting their votes')
-                                ->columnSpan(span: 1)
-                                ->schema(components: [
-                                    Toggle::make(name: 'voted_confirmation_mail')
-                                        ->label(label: 'Email')
-                                        ->default(state: true),
-
-                                    Toggle::make(name: 'voted_confirmation_sms')
-                                        ->label(label: 'SMS'),
-                                ]),
-
-                            Section::make(heading: 'Sharing of Electors\'s Ballot Copy')
-                                ->columnSpan(span: 1)
-                                ->description(description: 'Voted ballot copy will be shared to electors through email and / or they can also download directly after submitting their votes')
-                                ->schema(components: [
-                                    Toggle::make(name: 'voted_ballot_mail')
-                                        ->label(label: 'Email'),
-
-                                    Toggle::make(name: 'voted_ballot_download')
-                                        ->label(label: 'Direct download'),
-                                ]),
-
                             Section::make(heading: 'IP Restriction')
                                 ->columnSpan(span: 1)
                                 ->description(description: 'Restrict electors voting from same IP address')
                                 ->schema(components: [
                                     Toggle::make(name: 'ip_restriction')
                                         ->dehydrated()
+                                        ->formatStateUsing(callback: static fn (Get $get): bool => $get(path: 'ip_restriction_threshold'))
                                         ->label(label: 'Enable')
-                                        ->live()
-                                        ->grow(condition: false),
+                                        ->live(),
 
                                     Quantity::make(name: 'ip_restriction_threshold')
                                         ->formatStateUsing(callback: static fn (?int $state): ?int => $state ?: 1)
@@ -156,6 +103,70 @@ class Preference extends ElectionPage
                                         ->numeric()
                                         ->required()
                                         ->visible(condition: static fn (Get $get): bool => $get(path: 'ip_restriction')),
+                                ]),
+
+                            Section::make(heading:'Ballot Link Delivery')
+                                ->columnSpan(span: 1)
+                                ->description(description: 'Ballot Link for each voters will be sent through this medium')
+                                ->schema(components: [
+                                    Toggle::make(name: 'ballot_link_mail')
+                                        ->label(label: 'Email'),
+
+                                    Toggle::make(name: 'ballot_link_sms')
+                                        ->label(label: 'SMS'),
+
+                                    Toggle::make(name: 'ballot_link_whatsapp')
+                                        ->disabled()
+                                        ->hint(hint: 'Coming soon')
+                                        ->label(label: 'Whatsapp'),
+                                ]),
+
+                            Section::make(heading: 'MFA Code Delivery')
+                                ->columnSpan(span: 1)
+                                ->description(description: 'Multi-Factor Authentication code for each voters will be sent through this medium')
+                                ->schema(components: [
+                                    Toggle::make(name: 'mfa_mail')
+                                        ->label(label: 'Email'),
+
+                                    Toggle::make(name: 'mfa_sms')
+                                        ->label(label: 'SMS'),
+
+                                    Toggle::make(name: 'mfa_whatsapp')
+                                        ->disabled()
+                                        ->hint(hint: 'Coming soon')
+                                        ->label(label: 'Whatsapp'),
+                                ]),
+
+                            Section::make(heading: 'Ballot Acknowledgement')
+                                ->description(description: 'Elector will receive acknowledgement message for submitting their votes')
+                                ->columnSpan(span: 1)
+                                ->schema(components: [
+                                    Toggle::make(name: 'voted_confirmation_mail')
+                                        ->label(label: 'Email'),
+
+                                    Toggle::make(name: 'voted_confirmation_sms')
+                                        ->label(label: 'SMS'),
+
+                                    Toggle::make(name: 'voted_confirmation_whatsapp')
+                                        ->disabled()
+                                        ->hint(hint: 'Coming soon')
+                                        ->label(label: 'Whatsapp'),
+                                ]),
+
+                            Section::make(heading: 'Sharing of Electors\'s Ballot Copy')
+                                ->columnSpan(span: 1)
+                                ->description(description: 'Voted ballot copy will be shared to electors through email and / or they can also download directly after submitting their votes')
+                                ->schema(components: [
+                                    Toggle::make(name: 'voted_ballot_download')
+                                        ->label(label: 'Direct download'),
+
+                                    Toggle::make(name: 'voted_ballot_mail')
+                                        ->label(label: 'Email'),
+
+                                    Toggle::make(name: 'voted_ballot_whatsapp')
+                                        ->disabled()
+                                        ->hint(hint: 'Coming soon')
+                                        ->label(label: 'Whatsapp'),
                                 ]),
 
                             Section::make(heading: 'Security preference')

@@ -2,15 +2,13 @@
 
 namespace App\Models;
 
-use App\Data\ElectorBallotLinkNotificationData;
+use App\Data\Election\BallotLinkNotificationData;
 use App\Facades\Kudvo;
 use App\Filament\BallotPanel;
-use App\Filament\Election\Pages\Dashboard;
-use App\Filament\Election\Pages\Index;
 use App\Filament\ElectionPanel;
 use App\Filament\NominationPanel;
 use App\Models\Concerns\HasShortCode;
-use App\Notifications\ElectorBallotLinkNotification;
+use App\Notifications\Election\BallotLinkNotification;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
@@ -32,7 +30,6 @@ use Illuminate\Http\Request;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\URL;
-use Illuminate\Support\Str;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
@@ -212,8 +209,8 @@ class Elector extends Model implements
         /** @var Election $election */
         $election ??= $this->event;
 
-        $this->notify(instance: new ElectorBallotLinkNotification(
-            data: new ElectorBallotLinkNotificationData(
+        $this->notify(instance: new BallotLinkNotification(
+            data: new BallotLinkNotificationData(
                 electionName: $election->name,
                 ballotLink: $election->preference->ballot_link_unique ?
                     URL::signedRoute(name: 'filament.election.eul', parameters: ['election' => $election, 'elector' => $this]) :

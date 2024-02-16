@@ -3,8 +3,8 @@
 namespace App\Filament\Admin\Clusters\Settings\Pages;
 
 use App\Filament\Admin\Clusters\Settings;
-use App\Notifications\ElectionMfaNotification;
-use App\Notifications\ElectorBallotLinkNotification;
+use App\Notifications\Election\MfaCodeNotification;
+use App\Notifications\Election\BallotLinkNotification;
 use App\Settings\SmsTemplates;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -33,9 +33,9 @@ class ManageSmsTemplates extends SettingsPage
                     ->compact()
                     ->headerActions(actions: Arr::map(
                         array: [
-                            'BALLOT_LINK' => ElectorBallotLinkNotification::VAR_BALLOT_LINK_SHORT,
-                            'ELECTION_NAME' => ElectorBallotLinkNotification::VAR_ELECTION_NAME_SHORT,
-                            'ELECTOR_NAME' => ElectorBallotLinkNotification::VAR_ELECTOR_NAME_SHORT,
+                            'BALLOT_LINK' => BallotLinkNotification::VAR_BALLOT_LINK_SHORT,
+                            'ELECTION_NAME' => BallotLinkNotification::VAR_ELECTION_NAME_SHORT,
+                            'ELECTOR_NAME' => BallotLinkNotification::VAR_ELECTOR_NAME_SHORT,
                         ],
                         callback: fn (string $value, string $key) => Forms\Components\Actions\Action::make(name: 'insert'.Str::title($key))
                             ->alpineClickHandler(
@@ -55,7 +55,7 @@ class ManageSmsTemplates extends SettingsPage
                 Forms\Components\Section::make(heading: 'Ballot MFA')
                     ->compact()
                     ->headerActions(actions: Arr::map(
-                        array: ['CODE' => ElectionMfaNotification::VAR_CODE, 'APP_DOMAIN' => ElectionMfaNotification::VAR_APP_DOMAIN],
+                        array: ['CODE' => MfaCodeNotification::VAR_CODE, 'APP_DOMAIN' => MfaCodeNotification::VAR_APP_DOMAIN],
                         callback: fn (string $value, string $key) => Forms\Components\Actions\Action::make(name: 'insert'.Str::title($key))
                             ->alpineClickHandler(
                                 handler: 'target = document.getElementById(\'data.elector_ballot_mfa\');$wire.data.elector_ballot_mfa = target.value.substring(0, target.selectionStart) + \''.$value.'\' + target.value.substring(target.selectionEnd)'
@@ -74,7 +74,7 @@ class ManageSmsTemplates extends SettingsPage
                 Forms\Components\Section::make(heading: 'Nomination MFA')
                     ->compact()
                     ->headerActions(actions: Arr::map(
-                        array: ['CODE' => ElectionMfaNotification::VAR_CODE, 'APP_DOMAIN' => ElectionMfaNotification::VAR_APP_DOMAIN],
+                        array: ['CODE' => MfaCodeNotification::VAR_CODE, 'APP_DOMAIN' => MfaCodeNotification::VAR_APP_DOMAIN],
                         callback: fn (string $value, string $key) => Forms\Components\Actions\Action::make(name: 'insert'.Str::title($key))
                             ->alpineClickHandler(
                                 handler: 'target = document.getElementById(\'data.elector_nomination_mfa\');$wire.data.elector_nomination_mfa = target.value.substring(0, target.selectionStart) + \''.$value.'\' + target.value.substring(target.selectionEnd)'

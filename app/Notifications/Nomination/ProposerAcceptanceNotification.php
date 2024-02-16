@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Notifications;
+namespace App\Notifications\Nomination;
 
 use App\Filament\Nomination\Resources\NomineeResource\Pages\ManageNominees;
 use App\Models\Nomination;

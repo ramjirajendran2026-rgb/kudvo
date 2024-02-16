@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Data;
+namespace App\Data\Election;
 
 use Spatie\LaravelData\Data;
 

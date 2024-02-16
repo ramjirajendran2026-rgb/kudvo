@@ -2,8 +2,6 @@
 
 namespace App\Filament\User\Resources\ElectionResource\Pages;
 
-use App\Data\ElectionResultMetaData;
-use App\Filament\User\Resources\ElectionResource;
 use App\Models\Candidate;
 use App\Models\Election;
 use App\Models\Position;
@@ -16,7 +14,6 @@ use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
 use Filament\Infolists\Components\Split;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
-use Filament\Resources\Pages\Page;
 use Filament\Support\Enums\FontWeight;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;

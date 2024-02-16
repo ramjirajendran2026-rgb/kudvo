@@ -3,10 +3,9 @@
 namespace App\Listeners;
 
 use App\Events\NomineeNominated;
-use App\Notifications\NomineeAcceptanceNotification;
-use App\Notifications\ProposerAcceptanceNotification;
-use App\Notifications\SeconderAcceptanceNotification;
-use Illuminate\Support\Facades\Notification;
+use App\Notifications\Nomination\NomineeAcceptanceNotification;
+use App\Notifications\Nomination\ProposerAcceptanceNotification;
+use App\Notifications\Nomination\SeconderAcceptanceNotification;
 
 class SendNomineeNominatedNotifications
 {

@@ -6,12 +6,11 @@ use App\Filament\Contracts\HasNomination;
 use App\Filament\Nomination\Http\Middleware\EnsureMfaCompleted;
 use App\Filament\Nomination\Pages\Concerns\InteractsWithNomination;
 use App\Models\OneTimePassword;
-use App\Notifications\NominationMfaNotification;
+use App\Notifications\Nomination\MfaCodeNotification;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use DanHarrin\LivewireRateLimiting\WithRateLimiting;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
@@ -181,7 +180,7 @@ class Verify extends Page implements HasNomination
         }
 
         $this->oneTimePassword->send(
-            notification: new NominationMfaNotification(
+            notification: new MfaCodeNotification(
                 nomination: $this->getNomination(),
                 oneTimePassword: $this->oneTimePassword,
             )

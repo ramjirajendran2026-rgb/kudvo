@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Data\ElectionResultMetaData;
+use App\Data\Election\ResultMetaData;
 use App\Data\EncryptedDataCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -21,7 +21,7 @@ class ElectionResult extends Model
         'total_votes' => 'int',
         'processed_votes' => 'int',
         'completed_at' => 'datetime',
-        'meta' => EncryptedDataCollection::class.':'.ElectionResultMetaData::class.',default',
+        'meta' => EncryptedDataCollection::class.':'.ResultMetaData::class.',default',
         'election_id' => 'int',
     ];
 

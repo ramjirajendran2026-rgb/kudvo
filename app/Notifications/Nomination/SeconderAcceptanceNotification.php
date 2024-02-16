@@ -1,18 +1,19 @@
 <?php
 
-namespace App\Notifications;
+namespace App\Notifications\Nomination;
 
 use App\Filament\Nomination\Resources\NomineeResource\Pages\ManageNominees;
 use App\Models\Nomination;
+use App\Models\Nominator;
 use App\Models\Nominee;
-use Filament\Notifications\Actions\Action;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class NomineeAcceptanceNotification extends Notification
+class SeconderAcceptanceNotification extends Notification
 {
     public function __construct(
-        public Nominee $nominee
+        public Nominee $nominee,
+        public Nominator $seconder,
     )
     {
     }
@@ -30,14 +31,19 @@ class NomineeAcceptanceNotification extends Notification
         $nominee = $this->nominee;
         $position = $nominee->position;
         $proposer = $nominee->proposer;
+        $seconder = $this->seconder;
 
         /** @var Nomination $nomination */
         $nomination = $position->event;
 
         return (new MailMessage)
             ->subject(subject: "Action Required: Nomination Proposal for $nomination->name")
-            ->greeting(greeting: "Dear $nominee->display_name,")
-            ->line(line: "You have been nominated for the position of $position->name by $proposer->display_name. Congratulations on this nomination!")
+            ->greeting(greeting: "Dear $seconder->display_name,")
+            ->line(
+                line: "$nominee->display_name have been nominated for the position of $position->name by ".
+                ($nominee->self_nomination ? "themselves" : $proposer->display_name).
+                " and listed you as the one of the seconder for the nomination."
+            )
             ->line(line: "To proceed further, we kindly request you to review the nomination and indicate your acceptance of the proposal. Your response is crucial for the progression of the nomination process.")
             ->line(line: "Please click on the following button to access the nomination and respond accordingly.")
             ->action(text: "Click Here", url: ManageNominees::getUrl(parameters: ['nomination' => $nomination]))
@@ -61,12 +67,11 @@ class NomineeAcceptanceNotification extends Notification
 
         return \Filament\Notifications\Notification::make()
             ->title(title: "New Proposal for $position->name")
-            ->body(body: "You have been nominated for the position of $position->name by $proposer->display_name")
-            ->actions(actions: [
-                Action::make(name: 'view')
-                    ->markAsRead()
-                    ->url(url: ManageNominees::getUrl(parameters: ['nomination' => $nomination])),
-            ])
+            ->body(
+                body: "$nominee->display_name have been nominated for the position of $position->name by ".
+                ($nominee->self_nomination ? "themselves" : $proposer->display_name).
+                " and listed you as the one of the seconder for the nomination."
+            )
             ->getDatabaseMessage();
     }
 }

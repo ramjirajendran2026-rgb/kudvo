@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Data;
+namespace App\Data\Election;
 
 use Spatie\LaravelData\Data;
 
-class ElectorBallotLinkNotificationData extends Data
+class BallotLinkNotificationData extends Data
 {
     public function __construct(
         public string $electionName,

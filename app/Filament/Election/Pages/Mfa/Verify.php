@@ -9,7 +9,7 @@ use App\Filament\Election\Pages\Concerns\InteractsWithElection;
 use App\Filament\Election\Pages\Concerns\InteractsWithElector;
 use App\Forms\Components\OtpInput;
 use App\Models\OneTimePassword;
-use App\Notifications\ElectionMfaNotification;
+use App\Notifications\Election\MfaCodeNotification;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use DanHarrin\LivewireRateLimiting\WithRateLimiting;
 use Filament\Actions\Action;
@@ -19,18 +19,14 @@ use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
-use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\Page;
 use Filament\Support\Enums\Alignment;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\ValidationException;
 use Jenssegers\Agent\Agent;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
-use Livewire\Features\SupportRedirects\Redirector;
-use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
 /**
@@ -179,7 +175,7 @@ class Verify extends Page implements HasElection
         }
 
         $this->oneTimePassword->send(
-            notification: new ElectionMfaNotification(
+            notification: new MfaCodeNotification(
                 election: $this->getElection(),
                 oneTimePassword: $this->oneTimePassword,
             )

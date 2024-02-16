@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use App\Data\ElectionPreferenceData;
-use App\Data\ElectionResultMetaData;
-use App\Data\VoteSecretData;
+use App\Data\Election\PreferenceData;
+use App\Data\Election\ResultMetaData;
+use App\Data\Election\VoteSecretData;
 use App\Data\WebAppManifestData;
 use App\Enums\ElectionStatus;
 use App\Models\Concerns\HasShortCode;
@@ -18,7 +18,6 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Spatie\LaravelData\DataCollection;
 
 class Election extends Model
 {
@@ -40,7 +39,7 @@ class Election extends Model
     ];
 
     protected $casts = [
-        'preference' => ElectionPreferenceData::class,
+        'preference' => PreferenceData::class,
         'web_app_manifest' => WebAppManifestData::class,
         'starts_at' => 'datetime',
         'ends_at' => 'datetime',
@@ -322,7 +321,7 @@ class Election extends Model
 
         $result->meta = [];
         foreach ($data as $key => $value) {
-            $result->meta[] = new ElectionResultMetaData(key: $key, value: $value);
+            $result->meta[] = new ResultMetaData(key: $key, value: $value);
         }
         $result->completed_at = now();
         $result->save();

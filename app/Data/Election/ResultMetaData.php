@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Data;
+namespace App\Data\Election;
 
 use Spatie\LaravelData\Data;
 
-class ElectionResultMetaData extends Data
+class ResultMetaData extends Data
 {
     public function __construct(
         public string $key,

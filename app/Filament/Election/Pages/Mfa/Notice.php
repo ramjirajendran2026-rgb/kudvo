@@ -9,7 +9,7 @@ use App\Filament\Election\Pages\Concerns\InteractsWithElection;
 use App\Filament\Election\Pages\Concerns\InteractsWithElector;
 use App\Models\Elector;
 use App\Models\OneTimePassword;
-use App\Notifications\ElectionMfaNotification;
+use App\Notifications\Election\MfaCodeNotification;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use DanHarrin\LivewireRateLimiting\WithRateLimiting;
 use Filament\Actions\Action;
@@ -135,7 +135,7 @@ class Notice extends Page implements HasElection
             ]);
 
         $oneTimePassword->send(
-            notification: new ElectionMfaNotification(
+            notification: new MfaCodeNotification(
                 election: $this->getElection(),
                 oneTimePassword: $oneTimePassword,
             )

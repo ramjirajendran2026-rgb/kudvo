@@ -8,7 +8,7 @@ use App\Filament\Nomination\Http\Middleware\EnsureMfaCompleted;
 use App\Filament\Nomination\Pages\Concerns\InteractsWithNomination;
 use App\Models\Elector;
 use App\Models\OneTimePassword;
-use App\Notifications\NominationMfaNotification;
+use App\Notifications\Nomination\MfaCodeNotification;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use DanHarrin\LivewireRateLimiting\WithRateLimiting;
 use Filament\Actions\Action;
@@ -138,7 +138,7 @@ class Notice extends Page implements HasNomination
             ]);
 
         $oneTimePassword->send(
-            notification: new NominationMfaNotification(
+            notification: new MfaCodeNotification(
                 nomination: $this->getNomination(),
                 oneTimePassword: $oneTimePassword,
             )

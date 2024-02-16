@@ -1,19 +1,15 @@
 <?php
 
-namespace App\Notifications;
+namespace App\Notifications\Election;
 
-use App\Data\ElectionPreferenceData;
-use App\Data\ElectorBallotLinkNotificationData;
-use App\Models\Election;
-use App\Models\Elector;
+use App\Data\Election\BallotLinkNotificationData;
 use App\Notifications\Concerns\HasSmsChannel;
 use App\Settings\SmsTemplates;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
-class ElectorBallotLinkNotification extends Notification
+class BallotLinkNotification extends Notification
 {
     use HasSmsChannel;
 
@@ -30,8 +26,8 @@ class ElectorBallotLinkNotification extends Notification
     public const VAR_ELECTOR_NAME_SHORT = '{#ELECTOR_NAME_SHORT#}';
 
     public function __construct(
-        protected ElectorBallotLinkNotificationData $data,
-        protected array $via = [],
+        protected BallotLinkNotificationData $data,
+        protected array                      $via = [],
     ) { }
 
     public function via(object $notifiable): array

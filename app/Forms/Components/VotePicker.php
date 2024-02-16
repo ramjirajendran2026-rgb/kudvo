@@ -2,23 +2,19 @@
 
 namespace App\Forms\Components;
 
-use App\Data\VoteSecretData;
+use App\Data\Election\VoteSecretData;
 use App\Models\Candidate;
 use App\Models\Position;
 use Closure;
-use Filament\AvatarProviders\UiAvatarsProvider;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Concerns\CanLimitItemsLength;
 use Filament\Forms\Components\Concerns\HasPlaceholder;
 use Filament\Support\Concerns\HasHeading;
-use Filament\Support\Facades\FilamentColor;
-use Filament\Tables\Table\Concerns\HasEmptyState;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Arr;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
-use Spatie\Color\Rgb;
 
 class VotePicker extends CheckboxList
 {

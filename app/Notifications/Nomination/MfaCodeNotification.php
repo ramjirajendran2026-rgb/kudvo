@@ -1,45 +1,33 @@
 <?php
 
-namespace App\Notifications;
+namespace App\Notifications\Nomination;
 
-use App\Models\Election;
+use App\Models\Nomination;
 use App\Models\OneTimePassword;
-use App\Notifications\Concerns\HasSmsChannel;
-use App\Services\TwentyFourSevenSms\TwentyFourSevenSmsChannel;
 use App\Settings\SmsTemplates;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
-class ElectionMfaNotification extends Notification
+class MfaCodeNotification extends Notification
 {
-    use HasSmsChannel;
-
     public const VAR_CODE = '{#CODE#}';
 
     public const VAR_APP_DOMAIN = '{#APP_DOMAIN#}';
 
     public function __construct(
-        public Election $election,
+        public Nomination $nomination,
         public OneTimePassword $oneTimePassword
-    )
+    ) { }
+
+    public function via($notifiable): array
     {
+        return ['mail'];
     }
 
-    public function via(object $notifiable): array
+    public function toMail($notifiable): MailMessage
     {
-        $preference = $this->election->preference;
-
-        return [
-            ...Arr::wrap(value: $preference->mfa_mail ? 'mail' : null),
-            ...Arr::wrap(value: $preference->mfa_sms ? $this->getSmsChannel(notifiable: $notifiable) : null),
-        ];
-    }
-
-    public function toMail(object $notifiable): MailMessage
-    {
-        $nomination = $this->election;
+        $nomination = $this->nomination;
         $oneTimePassword = $this->oneTimePassword;
 
         return (new MailMessage)
@@ -49,10 +37,10 @@ class ElectionMfaNotification extends Notification
 
     public function toSms(object $notifiable): string
     {
-        return $this->formatTemplate(template: app(abstract: SmsTemplates::class)->elector_ballot_mfa);
+        return $this->formatTemplate(template: app(abstract: SmsTemplates::class)->nomination_mfa);
     }
 
-    public function toArray(object $notifiable): array
+    public function toArray($notifiable): array
     {
         return [];
     }

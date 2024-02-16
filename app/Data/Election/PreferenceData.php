@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Data;
+namespace App\Data\Election;
 
 use App\Enums\CandidateSort;
 use Spatie\LaravelData\Data;
 
-class ElectionPreferenceData extends Data
+class PreferenceData extends Data
 {
     public function __construct(
         public bool $ballot_link_common = false,

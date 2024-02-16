@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
+use App\Data\Election\VoteSecretData;
 use App\Data\EncryptedDataCollection;
-use App\Data\VoteSecretData;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

@@ -2,15 +2,13 @@
 
 namespace App\Filament\User\Resources\ElectionResource\Pages;
 
-use App\Data\VoteSecretData;
-use App\Facades\Kudvo;
+use App\Data\Election\VoteSecretData;
 use App\Filament\Contracts\HasElection;
 use App\Filament\Contracts\HasElectorGroups;
 use App\Filament\User\Resources\ElectionResource;
 use App\Forms\Components\VotePicker;
 use App\Models\Election;
 use App\Models\Position;
-use Cookie;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Hidden;
