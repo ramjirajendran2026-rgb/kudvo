@@ -93,7 +93,7 @@
             <tbody>
             @forelse($votes[$position->uuid] as $vote)
                 @php
-                    $candidate = $position->candidates->firstWhere('uuid', $vote['key']);
+                    $candidate = $position->candidates->firstWhere('uuid', $vote->key);
                 @endphp
                 <tr>
                     <td style="height: 16mm; width: 16mm;">
