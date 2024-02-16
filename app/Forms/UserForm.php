@@ -24,6 +24,7 @@ readonly class UserForm
             ->label(label: 'Email address')
             ->maxLength(length: 255)
             ->required()
+            ->rule(rule: 'email:rfc,dns')
             ->unique(ignoreRecord: true);
     }
 

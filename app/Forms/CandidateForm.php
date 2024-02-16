@@ -51,7 +51,8 @@ readonly class CandidateForm
         return TextInput::make(name: 'email')
             ->email()
             ->label(label: 'Email address')
-            ->maxLength(length: 100);
+            ->maxLength(length: 100)
+            ->rule(rule: 'email:rfc,dns');
     }
 
     public static function firstNameComponent(): TextInput
