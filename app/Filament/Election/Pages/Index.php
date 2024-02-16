@@ -81,7 +81,7 @@ class Index extends Page
         return $this->getState()?->getDescription(election: $this->getElection(), elector: $this->getElector());
     }
 
-    protected function getElector()
+    protected function getElector(): ?Elector
     {
         /** @var ?Elector $elector */
         $elector = Filament::auth()->user();
