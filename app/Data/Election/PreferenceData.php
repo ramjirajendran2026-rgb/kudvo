@@ -36,6 +36,10 @@ class PreferenceData extends Data
 
         public ?int $ip_restriction_threshold = null,
 
+        public bool $elector_duplicate_email = true,
+
+        public bool $elector_duplicate_phone = true,
+
         public CandidateSort $candidate_sort = CandidateSort::MANUAL,
 
         public bool $candidate_photo = false,

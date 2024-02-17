@@ -191,6 +191,18 @@ class Preference extends ElectionPage
                                         ->disabled(condition: fn (Get $get): bool => $get(path: 'dnt_votes')),
                                 ]),
 
+                            Section::make(heading: 'Elector preference')
+                                ->columns()
+                                ->schema(components: [
+                                    Toggle::make(name: 'elector_duplicate_email')
+                                        ->helperText(text: 'This will allow you to add multiple electors with same email address. However, this will also allow electors to vote multiple times.')
+                                        ->label(label: 'Duplicate email addresses'),
+
+                                    Toggle::make(name: 'elector_duplicate_phone')
+                                        ->helperText(text: 'This will allow you to add multiple electors with same phone number. However, this will also allow electors to vote multiple times.')
+                                        ->label(label: 'Duplicate phone numbers'),
+                                ]),
+
                             Section::make(heading: 'Candidate preference')
                                 ->columns()
                                 ->schema(components: [

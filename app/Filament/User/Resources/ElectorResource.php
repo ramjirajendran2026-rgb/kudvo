@@ -2,12 +2,15 @@
 
 namespace App\Filament\User\Resources;
 
+use App\Filament\Contracts\HasElection;
 use App\Filament\Imports\ElectorImporter;
 use App\Forms\ElectorForm;
+use App\Models\Election;
 use App\Models\Elector;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Split;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\Alignment;
@@ -21,6 +24,8 @@ use Filament\Tables\Actions\ImportAction as TableImportAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Guava\FilamentClusters\Forms\Cluster;
+use Illuminate\Validation\Rules\Unique;
+use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
 class ElectorResource extends Resource
 {
@@ -32,6 +37,8 @@ class ElectorResource extends Resource
 
     public static function form(Form $form): Form
     {
+        $formLivewire = $form->getLivewire();
+
         return $form
             ->schema(components: [
                 ElectorForm::membershipNumberComponent(),
@@ -51,12 +58,32 @@ class ElectorResource extends Resource
                     ->columns(columns: 5)
                     ->label(label: 'Full name'),
 
-                ElectorForm::emailComponent(),
+                ElectorForm::emailComponent()
+                    ->when(
+                        value: $formLivewire instanceof HasElection && !$formLivewire->getElection()->preference?->elector_duplicate_email,
+                        callback: fn (TextInput $component) => $component
+                            ->unique(
+                                ignoreRecord: true,
+                                modifyRuleUsing: fn (Unique $rule, HasElection $livewire) => $rule
+                                    ->where(column: 'event_type', value: Election::class)
+                                    ->where(column: 'event_id', value: $livewire->getElection()->getKey())
+                            )
+                    ),
 
                 ElectorForm::phoneComponent()
                     ->defaultCountry(value: Filament::getTenant()?->country ?: config(key: 'app.default_phone_country'))
                     ->disableIpLookUp()
-                    ->initialCountry(value: Filament::getTenant()?->country ?: config(key: 'app.default_phone_country')),
+                    ->initialCountry(value: Filament::getTenant()?->country ?: config(key: 'app.default_phone_country'))
+                    ->when(
+                        value: $formLivewire instanceof HasElection && !$formLivewire->getElection()->preference?->elector_duplicate_phone,
+                        callback: fn (PhoneInput $component) => $component
+                            ->unique(
+                                ignoreRecord: true,
+                                modifyRuleUsing: fn (Unique $rule, HasElection $livewire) => $rule
+                                    ->where(column: 'event_type', value: Election::class)
+                                    ->where(column: 'event_id', value: $livewire->getElection()->getKey())
+                            )
+                    ),
 
                 ElectorForm::groupsComponent(),
             ]);
@@ -111,7 +138,7 @@ class ElectorResource extends Resource
     {
         return TableCreateAction::make()
             ->createAnother(condition: false)
-            ->form(form: fn (Form $form): Form => static::form($form))
+            ->form(form: fn (Form $form): Form => static::form(form: $form))
             ->icon(icon: 'heroicon-m-plus')
             ->model(model: static::getModel())
             ->modalCancelAction(action: false)
