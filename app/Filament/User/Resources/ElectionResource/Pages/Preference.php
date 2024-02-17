@@ -128,7 +128,8 @@ class Preference extends ElectionPage
                                 ->description(description: 'Electors will receive MFA code through these medium. This will be used to verify the elector\'s identity before submitting their votes.')
                                 ->schema(components: [
                                     Toggle::make(name: 'mfa_mail')
-                                        ->label(label: 'Email'),
+                                        ->label(label: 'Email')
+                                        ->live(),
 
                                     Split::make(schema: [
                                         Toggle::make(name: 'mfa_sms')
@@ -138,7 +139,7 @@ class Preference extends ElectionPage
 
                                         Toggle::make(name: 'mfa_sms_auto_fill_only')
                                             ->label(label: 'Prevent manual entry')
-                                            ->visible(condition: static fn (Get $get): bool => $get(path: 'mfa_sms')),
+                                            ->visible(condition: static fn (Get $get): bool => $get(path: 'mfa_sms') && !$get(path: 'mfa_mail')),
                                     ])->label(label: 'SMS'),
 
                                     Toggle::make(name: 'mfa_whatsapp')
