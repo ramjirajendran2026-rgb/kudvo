@@ -61,7 +61,7 @@ readonly class CandidateForm
         return TextInput::make(name: 'first_name')
             ->label(label: 'First name')
             ->maxLength(length: 100)
-            ->requiredWithoutAll(statePaths: ['membership_number', 'last_name']);
+            ->requiredWithout(statePaths: ['last_name']);
     }
 
     public static function lastNameComponent(): TextInput
