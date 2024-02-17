@@ -42,6 +42,8 @@ class PreferenceData extends Data
 
         public bool $elector_duplicate_phone = true,
 
+        public bool $elector_update_after_publish = false,
+
         public CandidateSort $candidate_sort = CandidateSort::MANUAL,
 
         public bool $candidate_photo = false,

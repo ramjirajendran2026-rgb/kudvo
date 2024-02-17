@@ -144,7 +144,7 @@ class ElectionPolicy
 
     public function updateAnyElector(User $user, Election $election): bool
     {
-        return $election->is_draft;
+        return $election->is_draft || $election->is_published;
     }
 
     public function deleteAnyElector(User $user, Election $election): bool

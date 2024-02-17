@@ -236,6 +236,10 @@ class Preference extends ElectionPage
                                     Toggle::make(name: 'elector_duplicate_phone')
                                         ->helperText(text: 'This will allow you to add multiple electors with same phone number.')
                                         ->label(label: 'Duplicate phone numbers'),
+
+                                    Toggle::make(name: 'elector_update_after_publish')
+                                        ->helperText(text: 'This will allow you to update the elector details after the election is published.')
+                                        ->label(label: 'Allow elector update after publish'),
                                 ]),
 
                             Section::make(heading: 'Candidate preference')

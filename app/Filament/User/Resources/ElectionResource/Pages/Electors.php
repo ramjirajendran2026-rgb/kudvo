@@ -114,6 +114,7 @@ class Electors extends ElectionPage implements HasTable
     protected function getEditAction(): TableEditAction
     {
         return ElectorResource::getTableEditAction()
+            ->authorize(abilities: 'update')
             ->visible(condition: $this->canEdit());
     }
 
