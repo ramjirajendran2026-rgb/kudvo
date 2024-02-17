@@ -90,7 +90,7 @@ class Preference extends ElectionPage
                                 ->schema(components: [
                                     Toggle::make(name: 'ip_restriction')
                                         ->dehydrated()
-                                        ->formatStateUsing(callback: static fn (Get $get): bool => $get(path: 'ip_restriction_threshold'))
+                                        ->formatStateUsing(callback: static fn (Get $get): bool => $get(path: 'ip_restriction_threshold') ?? false)
                                         ->label(label: 'Enable')
                                         ->live(),
 
