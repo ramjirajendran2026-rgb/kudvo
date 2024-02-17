@@ -7,6 +7,7 @@ use App\Filament\User\Resources\ElectionResource;
 use App\Filament\User\Resources\ElectorResource;
 use App\Models\Election;
 use App\Models\Elector;
+use Filament\Actions\Action;
 use Filament\Forms\Form;
 use Filament\Resources\Concerns\InteractsWithRelationshipTable;
 use Filament\Resources\Pages\Page;
@@ -75,6 +76,23 @@ class Electors extends ElectionPage implements HasTable
             ],
             default => [],
         };
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            $this->getNextPageAction(),
+        ];
+    }
+
+    protected function getNextPageAction(): Action
+    {
+        return Action::make(name: 'nextPage')
+            ->authorize(abilities: fn (self $livewire) => BallotSetup::canAccessPage(election: $livewire->getElection()))
+            ->icon(icon: 'heroicon-s-chevron-double-right')
+            ->label(label: 'Next')
+            ->outlined()
+            ->url(url: BallotSetup::getUrl(parameters: [$this->getElection()]));
     }
 
     protected function getImportAction(): TableImportAction

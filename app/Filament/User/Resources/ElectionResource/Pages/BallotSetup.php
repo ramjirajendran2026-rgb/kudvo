@@ -8,6 +8,7 @@ use App\Filament\User\Resources\PositionResource;
 use App\Models\Candidate;
 use App\Models\Election;
 use App\Models\Position;
+use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Repeater;
@@ -156,14 +157,24 @@ HTML,
     protected function getHeaderActions(): array
     {
         return [
+            $this->getReorderPositionAction(),
+
             $this->getCreatePositionAction(),
 
             $this->getPreviewBallotAction(),
 
-            $this->getReorderPositionAction(),
-
-            ...parent::getHeaderActions(),
+            $this->getNextPageAction(),
         ];
+    }
+
+    protected function getNextPageAction(): Action
+    {
+        return Action::make(name: 'nextPage')
+            ->authorize(abilities: 'preview')
+            ->icon(icon: 'heroicon-s-chevron-double-right')
+            ->label(label: 'Next')
+            ->outlined()
+            ->url(url: Dashboard::getUrl(parameters: [$this->getElection()]));
     }
 
     protected function getCreatePositionAction(): CreateAction
