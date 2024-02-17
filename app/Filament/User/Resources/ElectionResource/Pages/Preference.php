@@ -138,6 +138,8 @@ class Preference extends ElectionPage
                                             ->live(),
 
                                         Toggle::make(name: 'mfa_sms_auto_fill_only')
+                                            ->hintIcon(icon: 'heroicon-o-information-circle')
+                                            ->hintIconTooltip(tooltip: 'Supports only on Android (Chrome) and iOS (Safari) devices. Voting from other devices will be restricted.')
                                             ->label(label: 'Prevent manual entry')
                                             ->visible(condition: static fn (Get $get): bool => $get(path: 'mfa_sms') && !$get(path: 'mfa_mail')),
                                     ])->label(label: 'SMS'),
