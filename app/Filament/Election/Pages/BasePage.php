@@ -61,6 +61,6 @@ abstract class BasePage extends Page implements HasElector, HasElection
 
     public function getRedirectUrl(): ?string
     {
-        return Dashboard::getUrl(parameters: $this->isMock() ? ['mock' => 1] : []);
+        return Index::getUrl(parameters: $this->isMock() ? ['mock' => 1] : []);
     }
 }
