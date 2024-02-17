@@ -7,10 +7,12 @@ use App\Enums\CandidateSort;
 use App\Models\Election;
 use Closure;
 use Filament\Actions\Action;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Split;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
@@ -107,7 +109,7 @@ class Preference extends ElectionPage
 
                             Section::make(heading:'Ballot Link Delivery')
                                 ->columnSpan(span: 1)
-                                ->description(description: 'Ballot Link for each voters will be sent through this medium')
+                                ->description(description: 'Electors will receive their ballot link through these medium.')
                                 ->schema(components: [
                                     Toggle::make(name: 'ballot_link_mail')
                                         ->label(label: 'Email'),
@@ -123,13 +125,21 @@ class Preference extends ElectionPage
 
                             Section::make(heading: 'MFA Code Delivery')
                                 ->columnSpan(span: 1)
-                                ->description(description: 'Multi-Factor Authentication code for each voters will be sent through this medium')
+                                ->description(description: 'Electors will receive MFA code through these medium. This will be used to verify the elector\'s identity before submitting their votes.')
                                 ->schema(components: [
                                     Toggle::make(name: 'mfa_mail')
                                         ->label(label: 'Email'),
 
-                                    Toggle::make(name: 'mfa_sms')
-                                        ->label(label: 'SMS'),
+                                    Split::make(schema: [
+                                        Toggle::make(name: 'mfa_sms')
+                                            ->grow(condition: false)
+                                            ->label(label: 'SMS')
+                                            ->live(),
+
+                                        Toggle::make(name: 'mfa_sms_auto_fill_only')
+                                            ->label(label: 'Prevent manual entry')
+                                            ->visible(condition: static fn (Get $get): bool => $get(path: 'mfa_sms')),
+                                    ])->label(label: 'SMS'),
 
                                     Toggle::make(name: 'mfa_whatsapp')
                                         ->disabled()
@@ -138,7 +148,7 @@ class Preference extends ElectionPage
                                 ]),
 
                             Section::make(heading: 'Ballot Acknowledgement')
-                                ->description(description: 'Elector will receive acknowledgement message for submitting their votes')
+                                ->description(description: 'Electors will receive confirmation of their votes through these medium.')
                                 ->columnSpan(span: 1)
                                 ->schema(components: [
                                     Toggle::make(name: 'voted_confirmation_mail')
@@ -155,7 +165,7 @@ class Preference extends ElectionPage
 
                             Section::make(heading: 'Sharing of Electors\'s Ballot Copy')
                                 ->columnSpan(span: 1)
-                                ->description(description: 'Voted ballot copy will be shared to electors through email and / or they can also download directly after submitting their votes')
+                                ->description(description: 'Electors will be able to share their voted ballot copy through these medium.')
                                 ->schema(components: [
                                     Toggle::make(name: 'voted_ballot_download')
                                         ->label(label: 'Direct download'),
@@ -181,12 +191,12 @@ class Preference extends ElectionPage
                                             $set(path: 'voted_ballot_update', state: false);
                                         })
                                         ->default(state: true)
-                                        ->helperText(text: 'This ensures nobody can track which elector voted for whom. However some additional options will be disabled when enabling this option.')
+                                        ->helperText(text: 'This will prevent the system from tracking the electors\' votes.')
                                         ->label(label: 'Do Not Track electors\'s votes')
                                         ->live(),
 
                                     Toggle::make(name: 'voted_ballot_update')
-                                        ->helperText(text: 'Elector\'s can change their votes even after submitting their votes until election closes')
+                                        ->helperText(text: 'This will allow electors to update their voted ballot.')
                                         ->label(label: 'Editable votes')
                                         ->disabled(condition: fn (Get $get): bool => $get(path: 'dnt_votes')),
                                 ]),
@@ -195,11 +205,11 @@ class Preference extends ElectionPage
                                 ->columns()
                                 ->schema(components: [
                                     Toggle::make(name: 'elector_duplicate_email')
-                                        ->helperText(text: 'This will allow you to add multiple electors with same email address. However, this will also allow electors to vote multiple times.')
+                                        ->helperText(text: 'This will allow you to add multiple electors with same email address.')
                                         ->label(label: 'Duplicate email addresses'),
 
                                     Toggle::make(name: 'elector_duplicate_phone')
-                                        ->helperText(text: 'This will allow you to add multiple electors with same phone number. However, this will also allow electors to vote multiple times.')
+                                        ->helperText(text: 'This will allow you to add multiple electors with same phone number.')
                                         ->label(label: 'Duplicate phone numbers'),
                                 ]),
 
