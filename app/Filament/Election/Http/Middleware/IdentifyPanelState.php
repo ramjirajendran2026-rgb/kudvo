@@ -38,6 +38,7 @@ class IdentifyPanelState
             !$election->preference->ballot_link_common => ElectionPanelState::CommonLinkRestricted,
 
             !Kudvo::isBoothDevice(election: $election) &&
+            $election->preference->mfa_sms_auto_fill_only &&
             !$this->agent->isiOS() &&
             !$this->agent->isAndroidOS() => ElectionPanelState::DeviceNotSupported,
 
