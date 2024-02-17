@@ -193,23 +193,37 @@ class Preference extends ElectionPage
                             Section::make(heading: 'Security preference')
                                 ->columns()
                                 ->schema(components: [
-                                    Toggle::make(name: 'dnt_votes')
-                                        ->afterStateUpdated(callback: function (bool $state, Set $set): void {
-                                            if (! $state) {
-                                                return;
-                                            }
+                                    Group::make()
+                                        ->columns()
+                                        ->columnSpanFull()
+                                        ->schema(components: [
+                                            Toggle::make(name: 'dnt_votes')
+                                                ->afterStateUpdated(callback: function (bool $state, Set $set): void {
+                                                    if (! $state) {
+                                                        return;
+                                                    }
 
-                                            $set(path: 'voted_ballot_update', state: false);
-                                        })
-                                        ->default(state: true)
-                                        ->helperText(text: 'This will prevent the system from tracking the electors\' votes.')
-                                        ->label(label: 'Do Not Track electors\'s votes')
-                                        ->live(),
+                                                    $set(path: 'voted_ballot_update', state: false);
+                                                })
+                                                ->default(state: true)
+                                                ->helperText(text: 'This will prevent the system from tracking the electors\' votes.')
+                                                ->label(label: 'Do Not Track electors\'s votes')
+                                                ->live(),
 
-                                    Toggle::make(name: 'voted_ballot_update')
-                                        ->helperText(text: 'This will allow electors to update their voted ballot.')
-                                        ->label(label: 'Editable votes')
-                                        ->disabled(condition: fn (Get $get): bool => $get(path: 'dnt_votes')),
+                                            Toggle::make(name: 'voted_ballot_update')
+                                                ->helperText(text: 'This will allow electors to update their voted ballot.')
+                                                ->label(label: 'Editable votes')
+                                                ->disabled(condition: fn (Get $get): bool => $get(path: 'dnt_votes')),
+                                        ]),
+
+                                    Toggle::make(name: 'prevent_duplicate_device')
+                                        ->label(label: 'Prevent duplicate device')
+                                        ->helperText(text: 'This will prevent electors from casting votes from same device.')
+                                        ->hint(hint: 'Experimental')
+                                        ->hintIcon(
+                                            icon: 'heroicon-o-information-circle',
+                                            tooltip: 'This is experimental and may not work as expected. Please use with caution.'
+                                        ),
                                 ]),
 
                             Section::make(heading: 'Elector preference')

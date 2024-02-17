@@ -52,7 +52,10 @@ class IdentifyPanelState
             $elector?->ballot?->isVoted() => ElectionPanelState::Voted,
 
             !Kudvo::isBoothDevice(election: $election) && (
-                filled(Cookie::get(key: "election_{$election->getKey()}_ballot")) ||
+                (
+                    $election->preference->prevent_duplicate_device &&
+                    filled(Cookie::get(key: "election_{$election->getKey()}_ballot"))
+                ) ||
                 (
                     $election->preference->ip_restriction_threshold &&
                     Ballot::query()

@@ -34,6 +34,8 @@ class PreferenceData extends Data
 
         public bool $voted_ballot_update = false,
 
+        public bool $prevent_duplicate_device = false,
+
         public ?int $ip_restriction_threshold = null,
 
         public bool $elector_duplicate_email = true,
