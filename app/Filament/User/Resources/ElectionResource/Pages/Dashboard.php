@@ -118,7 +118,7 @@ class Dashboard extends ElectionPage
             ],
             ElectionDashboardState::Closed => [
                 ElectionResource::getGenerateResultAction()
-                    ->after(callback: fn (self $livewire) => $livewire->dispatch(event: 'refresh')),
+                    ->successRedirectUrl(url: fn (self $livewire) => static::getUrl(parameters: [$livewire->getElection()])),
             ],
             ElectionDashboardState::Completed => [$this->getResultPageAction()],
             default => [],

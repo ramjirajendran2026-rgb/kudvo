@@ -260,12 +260,12 @@ class ElectionResource extends Resource
     public static function getCloseAction(): Action
     {
         return Action::make(name: 'close')
-            ->action(action: function (HasElection $livewire, Action $action): void {
+            ->action(action: function (HasElection $livewire, Action $action) {
                 $livewire->getElection()->close();
 
                 $action->success();
 
-                $livewire->dispatch(event: 'refresh');
+                $livewire->redirect(url: static::getUrl(name: 'dashboard', parameters: [$livewire->getElection()]));
             })
             ->authorize(
                 abilities: fn (HasElection $livewire): bool => static::can(
@@ -284,12 +284,11 @@ class ElectionResource extends Resource
     public static function getGenerateResultAction(): Action
     {
         return Action::make(name: 'generateResult')
+            ->requiresConfirmation()
             ->action(action: function (HasElection $livewire, Action $action): void {
                 $livewire->getElection()->generateResult();
 
                 $action->success();
-
-                $livewire->dispatch(event: 'refresh');
             })
             ->authorize(
                 abilities: fn (HasElection $livewire): bool => static::can(
