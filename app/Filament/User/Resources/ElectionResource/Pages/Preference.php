@@ -53,6 +53,14 @@ class Preference extends ElectionPage
             ->disabled(condition: !$this->canSave())
             ->schema(components: [
                 Group::make()
+                    ->mutateDehydratedStateUsing(callback: fn (array $state): array => array_merge(
+                        $state,
+                        [
+                            'mfa_sms_auto_fill_only' => ($state['mfa_sms'] ?? false) && !($state['mfa_mail'] ?? false) ?
+                                ($state['mfa_sms_auto_fill_only'] ?? false) :
+                                false,
+                        ]
+                    ))
                     ->columns()
                     ->columnSpanFull()
                     ->statePath(path: 'preference')
