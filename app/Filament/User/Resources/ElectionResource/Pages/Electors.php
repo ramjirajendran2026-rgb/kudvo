@@ -53,6 +53,10 @@ class Electors extends ElectionPage implements HasTable
 
                 $this->getSendBallotLinkAction(),
             ])
+            ->bulkActions(actions: [
+                ElectorResource::getBulkDeleteAction()
+                    ->authorize(abilities: fn (self $livewire): bool => static::can(action: 'deleteAnyElector', election: $livewire->getElection())),
+            ])
             ->emptyStateActions(actions: [
                 $this->getCreateAction(),
             ])

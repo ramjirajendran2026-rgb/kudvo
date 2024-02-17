@@ -15,6 +15,7 @@ use Filament\Support\Enums\MaxWidth;
 use Filament\Tables\Actions\Action as TableAction;
 use Filament\Tables\Actions\CreateAction as TableCreateAction;
 use Filament\Tables\Actions\DeleteAction as TableDeleteAction;
+use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction as TableEditAction;
 use Filament\Tables\Actions\ImportAction as TableImportAction;
 use Filament\Tables\Columns\TextColumn;
@@ -133,5 +134,10 @@ class ElectorResource extends Resource
     {
         return TableDeleteAction::make()
             ->iconButton();
+    }
+
+    public static function getBulkDeleteAction(): DeleteBulkAction
+    {
+        return DeleteBulkAction::make();
     }
 }
