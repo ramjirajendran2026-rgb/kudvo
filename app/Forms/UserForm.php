@@ -26,7 +26,7 @@ readonly class UserForm
             ->maxLength(length: 255)
             ->required()
             ->rule(rule: 'email:rfc,dns')
-            ->unique(table: app(abstract: User::class)->getTable());
+            ->unique(table: app(abstract: User::class)->getTable(), ignoreRecord: true);
     }
 
     public static function passwordComponent(): TextInput
