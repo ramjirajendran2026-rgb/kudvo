@@ -224,7 +224,6 @@ class Election extends Model
     public function scopeCompleted(Builder $query): Builder
     {
         return $query->whereNotNull(columns: 'completed_at')
-            ->whereNull(columns: 'closed_at')
             ->whereNull(columns: 'cancelled_at');
     }
 
