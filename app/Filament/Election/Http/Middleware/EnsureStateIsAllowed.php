@@ -4,6 +4,7 @@ namespace App\Filament\Election\Http\Middleware;
 
 use App\Enums\ElectionPanelState;
 use App\Facades\Kudvo;
+use App\Filament\Election\Pages\Ballot\Index as Ballot;
 use App\Filament\Election\Pages\Index;
 use Closure;
 use Filament\Facades\Filament;
@@ -24,6 +25,10 @@ class EnsureStateIsAllowed
             (
                 $request->routeIs('filament.election.eul') &&
                 Kudvo::getElectionPanelState() == ElectionPanelState::CommonLinkRestricted
+            ) ||
+            (
+                $request->routeIs('filament.election.pages.ballot') &&
+                Ballot::canAccess()
             )
         ) {
             return $next($request);

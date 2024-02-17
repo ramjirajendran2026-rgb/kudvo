@@ -38,12 +38,7 @@ class Index extends BasePage
 
     public function mountCanAuthorizeAccess(): void
     {
-        if (
-            ! static::canAccess(mock: $this->isMock()) ||
-            (
-                filled($this->getBallot()) && ! $this->getElection()->preference->voted_ballot_update
-            )
-        ) {
+        if (! static::canAccess(mock: $this->isMock())) {
             $this->redirect(url: $this->getRedirectUrl(), navigate: $this->isSpa());
 
             return;
@@ -53,7 +48,7 @@ class Index extends BasePage
             state: $this->getBallot()?->votes
                 ->mapWithKeys(
                     callback: fn(Vote $vote): array => [
-                        $vote->key => Arr::map($vote->secret, fn ($item) => $item['key'])
+                        $vote->key => Arr::map($vote->secret?->toArray(), fn ($item) => $item['key'])
                     ]
                 )
                 ->toArray() ??
@@ -137,13 +132,21 @@ class Index extends BasePage
         }
 
         $ballot = $this->getElector()->ballots()
-            ->create(attributes: [
-                'type' => Kudvo::isBoothDevice() ? BallotType::Booth : BallotType::Direct,
-                'ip_address' => request()->ip(),
-                'voted_at' => now(),
-                'mock' => $this->isMock(),
-                'auth_session_id' => $this->getElector()->authSession->getKey(),
-            ]);
+            ->updateOrCreate(
+                attributes: [
+                    'mock' => $this->isMock(),
+                ],
+                values: [
+                    'type' => Kudvo::isBoothDevice() ? BallotType::Booth : BallotType::Direct,
+                    'ip_address' => request()->ip(),
+                    'voted_at' => now(),
+                    'auth_session_id' => $this->getElector()->authSession->getKey(),
+                ]
+            );
+
+        if (! $ballot->wasRecentlyCreated) {
+            $ballot->votes()->delete();
+        }
 
         foreach ($data as $key => $secret) {
             $vote = Vote::create(attributes: [
