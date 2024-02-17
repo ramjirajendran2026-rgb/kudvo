@@ -80,6 +80,7 @@ readonly class CandidateForm
                     $livewire->getElection()->electors()->firstWhere('membership_number', $state);
 
                 $set(path: 'elector_id', state: $elector?->getKey());
+                $set(path: 'title', state: $elector?->title);
                 $set(path: 'first_name', state: $elector?->first_name);
                 $set(path: 'last_name', state: $elector?->last_name);
                 $set(path: 'email', state: $elector?->email);
