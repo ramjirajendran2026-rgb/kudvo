@@ -75,7 +75,7 @@ class Preference extends ElectionPage
                                             rule: fn (Get $get) => function (string $attribute, bool $value, Closure $fail) use ($get): void{
                                                 if (
                                                     $value &&
-                                                    !$get(path: 'ballot_link_email') &&
+                                                    !$get(path: 'ballot_link_mail') &&
                                                     !$get(path: 'ballot_link_sms')
                                                 ) {
                                                     $fail('When this is enabled, at least one delivery method must be enabled');
