@@ -335,8 +335,6 @@ HTML,
 
                     $form->fill();
 
-                    $action->success();
-
                     $action->halt();
                 }
 
