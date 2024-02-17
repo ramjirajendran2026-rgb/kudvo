@@ -5,6 +5,10 @@ export default {
     content: [
         './app/Filament/Nomination/**/*.php',
         './resources/views/filament/nomination/**/*.blade.php',
+
+        './app/Forms/**/*.php',
+        './resources/views/forms/**/*.blade.php',
+
         './vendor/filament/**/*.blade.php',
     ],
 }
