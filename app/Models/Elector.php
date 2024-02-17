@@ -214,7 +214,7 @@ class Elector extends Model implements
                 electionName: $election->name,
                 ballotLink: $election->preference->ballot_link_unique ?
                     URL::signedRoute(name: 'filament.election.eul', parameters: ['election' => $election, 'elector' => $this]) :
-                    route(name: 'filament.election.pages..', parameters: ['election' => $election]),
+                    route(name: 'filament.election.pages.index', parameters: ['election' => $election]),
                 ballotLinkShort: $election->preference->ballot_link_unique
                     ? route(name: 'short_link.ballot', parameters: ['elector' => $this->short_code])
                     : route(name: 'short_link.election', parameters: ['election' => $election->short_code]),

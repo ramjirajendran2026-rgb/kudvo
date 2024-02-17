@@ -50,6 +50,11 @@ class Index extends Page
         $this->sessionVotes = Session::pull(key: 'elector_'.($this->getElector()?->getKey()).'_votes');
     }
 
+    public static function getRelativeRouteName(): string
+    {
+        return 'index';
+    }
+
     public static function getWithoutRouteMiddleware(Panel $panel): string|array
     {
         return [
