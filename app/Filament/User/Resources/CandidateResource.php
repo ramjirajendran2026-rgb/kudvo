@@ -7,6 +7,7 @@ use App\Forms\CandidateForm;
 use App\Models\Candidate;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Group;
+use Filament\Forms\Components\Split;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Guava\FilamentClusters\Forms\Cluster;
@@ -30,44 +31,53 @@ class CandidateResource extends Resource
     public static function getFormComponents(): array
     {
         return [
-            Group::make()
-                ->columns(columns: 5)
-                ->schema(components: [
-                    Group::make()
-                        ->columns()
-                        ->columnSpan(span: 4)
-                        ->schema(components: [
-                            CandidateForm::membershipNumberComponent()
-                                ->live(onBlur: true)
-                                ->columnSpanFull(),
+            Split::make(schema: [
+                CandidateForm::photoComponent()
+                    ->grow(condition: false)
+                    ->hiddenLabel()
+                    ->maxWidth(width: 200)
+                    ->visible(condition: fn (HasElection $livewire): bool => $livewire->getElection()->preference->candidate_photo),
 
-                            Cluster::make(schema: [
-                                CandidateForm::titleComponent()
-                                    ->placeholder(placeholder: 'Title'),
+                Group::make()
+                    ->columns()
+                    ->schema(components: [
+                        CandidateForm::membershipNumberComponent()
+                            ->hiddenLabel()
+                            ->live(onBlur: true)
+                            ->columnSpanFull(),
 
-                                CandidateForm::firstNameComponent()
-                                    ->columnSpan(2)
-                                    ->placeholder(placeholder: 'First name'),
+                        Cluster::make(schema: [
+                            CandidateForm::titleComponent()
+                                ->placeholder(placeholder: 'Title'),
 
-                                CandidateForm::lastNameComponent()
-                                    ->columnSpan(2)
-                                    ->placeholder(placeholder: 'Last name'),
-                            ])
-                                ->columns(columns: 5)
-                                ->columnSpanFull()
-                                ->label(label: 'Full name'),
+                            CandidateForm::firstNameComponent()
+                                ->columnSpan(2)
+                                ->placeholder(placeholder: 'First name'),
 
-                            CandidateForm::emailComponent(),
+                            CandidateForm::lastNameComponent()
+                                ->columnSpan(2)
+                                ->placeholder(placeholder: 'Last name'),
+                        ])
+                            ->columns(columns: 5)
+                            ->columnSpanFull()
+                            ->hiddenLabel()
+                            ->label(label: 'Full name'),
 
-                            CandidateForm::phoneComponent()
-                                ->defaultCountry(value: Filament::getTenant()?->country ?: config(key: 'app.default_phone_country'))
-                                ->disableIpLookUp()
-                                ->initialCountry(value: Filament::getTenant()?->country ?: config(key: 'app.default_phone_country')),
-                        ]),
+                        CandidateForm::emailComponent()
+                            ->hiddenLabel(),
 
-                    CandidateForm::photoComponent()
-                        ->visible(condition: fn (HasElection $livewire): bool => $livewire->getElection()->preference->candidate_photo),
-                ]),
+                        CandidateForm::phoneComponent()
+                            ->defaultCountry(value: Filament::getTenant()?->country ?: config(key: 'app.default_phone_country'))
+                            ->disableIpLookUp()
+                            ->hiddenLabel()
+                            ->initialCountry(value: Filament::getTenant()?->country ?: config(key: 'app.default_phone_country')),
+                    ]),
+
+                CandidateForm::symbolComponent()
+                    ->grow(condition: false)
+                    ->hiddenLabel()
+                    ->visible(condition: fn (HasElection $livewire): bool => $livewire->getElection()->preference->candidate_symbol),
+            ]),
         ];
     }
 }

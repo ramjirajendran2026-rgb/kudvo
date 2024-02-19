@@ -53,6 +53,7 @@ readonly class CandidateForm
             ->email()
             ->label(label: 'Email address')
             ->maxLength(length: 100)
+            ->placeholder(placeholder: 'Email address')
             ->rule(rule: 'email:rfc,dns');
     }
 
@@ -95,6 +96,7 @@ readonly class CandidateForm
             )
             ->label(label: 'Membership number')
             ->maxLength(length: 50)
+            ->placeholder(placeholder: 'Membership number')
             ->validationMessages(messages: [
                 'exists' => 'This :attribute is not found in electors data',
             ]);
@@ -112,8 +114,9 @@ readonly class CandidateForm
         return SpatieMediaLibraryFileUpload::make(name: 'photo')
             ->avatar()
             ->circleCropper()
-            ->collection(collection: Nominee::MEDIA_COLLECTION_PHOTO)
-            ->imageEditor();
+            ->collection(collection: Candidate::MEDIA_COLLECTION_PHOTO)
+            ->imageEditor()
+            ->placeholder(placeholder: 'Drag & Drop your photo or <span class="filepond--label-action">Browse</span>');
     }
 
     public static function positionIdComponent(): Select
@@ -123,6 +126,16 @@ readonly class CandidateForm
             ->native(condition: false)
             ->placeholder(placeholder: 'Choose a position')
             ->required();
+    }
+
+    public static function symbolComponent(): SpatieMediaLibraryFileUpload
+    {
+        return SpatieMediaLibraryFileUpload::make(name: 'symbol')
+            ->avatar()
+            ->circleCropper()
+            ->collection(collection: Candidate::MEDIA_COLLECTION_SYMBOL)
+            ->imageEditor()
+            ->placeholder(placeholder: 'Drag & Drop your symbol or <span class="filepond--label-action">Browse</span>');
     }
 
     public static function titleComponent(): TextInput

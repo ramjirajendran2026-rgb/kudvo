@@ -78,7 +78,7 @@ class BallotSetup extends ElectionPage
                                             SpatieMediaLibraryImageEntry::make(name: 'photo')
                                                 ->circular()
                                                 ->collection(collection: Candidate::MEDIA_COLLECTION_PHOTO)
-                                                ->defaultImageUrl(url: fn (Candidate $record): ?string => filament()->getUserAvatarUrl($record))
+                                                ->defaultImageUrl(url: fn (Candidate $record): ?string => $record->photo_url)
                                                 ->grow(condition: false)
                                                 ->hiddenLabel()
                                                 ->size(size: 80)

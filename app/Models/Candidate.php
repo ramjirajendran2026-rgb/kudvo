@@ -67,15 +67,20 @@ class Candidate extends Model implements HasMedia, HasName, HasAvatar, Sortable
     protected function photoUrl(): Attribute
     {
         return Attribute::make(
-            get: fn($value, array $attributes) => $this->getFilamentAvatarUrl() ?:
-                app(abstract: UiAvatarsProvider::class)->get(record: $this),
+            get: fn($value, array $attributes) => $this->getFirstMediaUrl(collectionName: static::MEDIA_COLLECTION_PHOTO) ?:
+                'https://ui-avatars.com/api/?name=' .
+                $this->full_name .
+                '&color=FFFFFF&background=' .
+                str(Rgb::fromString('rgb(' . FilamentColor::getColors()['primary'][800] . ')')->toHex())
+                    ->after('#'),
         );
     }
 
     protected function symbolUrl(): Attribute
     {
         return Attribute::make(
-            get: fn($value, array $attributes) => 'https://ui-avatars.com/api/?name=' .
+            get: fn($value, array $attributes) => $this->getFirstMediaUrl(collectionName: static::MEDIA_COLLECTION_SYMBOL) ?:
+                'https://ui-avatars.com/api/?name=' .
                 $this->sort .
                 '&color=FFFFFF&background=' .
                 str(Rgb::fromString('rgb(' . FilamentColor::getColors()['info'][800] . ')')->toHex())
