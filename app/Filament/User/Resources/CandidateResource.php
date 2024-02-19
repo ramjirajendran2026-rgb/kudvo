@@ -70,11 +70,13 @@ class CandidateResource extends Resource
                             ->label(label: 'Full name'),
 
                         CandidateForm::emailComponent()
+                            ->hidden()
                             ->hiddenLabel(),
 
                         CandidateForm::phoneComponent()
                             ->defaultCountry(value: Filament::getTenant()?->country ?: config(key: 'app.default_phone_country'))
                             ->disableIpLookUp()
+                            ->hidden()
                             ->hiddenLabel()
                             ->initialCountry(value: Filament::getTenant()?->country ?: config(key: 'app.default_phone_country')),
                     ]),

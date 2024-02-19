@@ -101,13 +101,6 @@ class BallotSetup extends ElectionPage
 
                                                     TextEntry::make(name: 'membership_number')
                                                         ->color(color: 'gray')
-                                                        ->getStateUsing(
-                                                            callback: fn (Candidate $record): ?string => collect(value: [
-                                                                $record->membership_number,
-                                                                $record->email,
-                                                                $record->phone
-                                                            ])->filter(callback: fn (?string $item): bool => filled(value: $item))->implode(value: ' • ')
-                                                        )
                                                         ->hiddenLabel()
                                                         ->visible(condition: fn (?string $state): bool => filled($state)),
                                                 ]),
