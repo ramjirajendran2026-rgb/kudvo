@@ -124,7 +124,7 @@ class Index extends BasePage
             Notification::make()
                 ->title(title: 'Confirmation')
                 ->body(body: 'Please review your selection and confirm')
-                ->warning()
+                ->info()
                 ->send();
 
             $this->dispatch(event: 'scroll-to-top');
