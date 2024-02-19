@@ -192,6 +192,11 @@ HTML,
             ->form(form: fn (Form $form): Form => $form->schema(components: PositionResource::getFormComponents()))
             ->model(model: Position::class)
             ->modalWidth(width: MaxWidth::Large)
+            ->mutateFormDataUsing(callback: function (array $data): array {
+                $data['threshold'] = $data['abstain'] ? $data['threshold'] : $data['quota'];
+
+                return $data;
+            })
             ->record(record: null)
             ->relationship(relationship: fn(HasElection $livewire) => $livewire->getElection()->positions());
     }
@@ -244,6 +249,11 @@ HTML,
             ->modalHeading(heading: fn (Position $record): string => "Edit $record->name")
             ->modalSubmitActionLabel(label: 'Save changes')
             ->modalWidth(width: MaxWidth::ExtraLarge)
+            ->mutateFormDataUsing(callback: function (array $data): array {
+                $data['threshold'] = $data['abstain'] ? $data['threshold'] : $data['quota'];
+
+                return $data;
+            })
             ->successNotificationTitle(title: 'Saved');
     }
 
