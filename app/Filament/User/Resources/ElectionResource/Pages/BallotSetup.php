@@ -54,7 +54,10 @@ class BallotSetup extends ElectionPage
                     ->schema(components: [
                         Section::make(heading: fn (Position $state): ?string => $state->name)
                             ->compact()
-                            ->description(description: fn (Position $state): ?string => $state->quota.Str::plural(value: ' Post', count: $state->quota))
+                            ->description(
+                                description: fn (Position $state): ?string => Str::plural(value: $state->quota.' Post', count: $state->quota).
+                                    ($state->abstain ? Str::plural(value: " • Minimum $state->threshold selection", count: $state->threshold) : '')
+                            )
                             ->headerActions(actions: [
                                 $this->getCreateCandidateAction(),
 
