@@ -120,9 +120,9 @@ class Index extends Page
                     ->visible(condition: fn (self $livewire): bool => !Kudvo::isBoothDevice(election: $livewire->getElection()) && filled($livewire->sessionVotes)),
 
                 Action::make(name: 'editMyVotes')
-                    ->authorize(abilities: fn () => Ballot\Index::canAccess())
                     ->color(color: 'info')
                     ->url(url: Ballot\Index::getUrl())
+                    ->visible(condition: fn () => Ballot\Index::canAccess()),
             ],
             default => [],
         };
