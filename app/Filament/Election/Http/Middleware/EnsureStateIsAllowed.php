@@ -29,6 +29,10 @@ class EnsureStateIsAllowed
             (
                 $request->routeIs('filament.election.pages.ballot') &&
                 Ballot::canAccess()
+            ) ||
+            (
+                $request->routeIs('filament.election.pages.mfa.*') &&
+                Ballot::canAccess()
             )
         ) {
             return $next($request);
