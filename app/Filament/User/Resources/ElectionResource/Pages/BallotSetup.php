@@ -186,22 +186,9 @@ HTML,
                     election: $livewire->getElection()
                 )
             )
-            ->form(form: fn (Form $form): Form => $form->schema(components: [
-                ...PositionResource::getFormComponents(),
-
-                Repeater::make(name: 'candidates')
-                    ->addActionLabel(label: 'Add another candidate')
-                    ->defaultItems(count: 2)
-                    ->itemLabel(label: fn (string $uuid, Repeater $component): string => 'Candidate #'.(array_search($uuid, array_keys($component->getState())))+1)
-                    ->orderColumn()
-                    ->reorderable()
-                    ->relationship()
-                    ->rule(rule: fn (Get $get): string => 'min:'.($get(path: 'threshold') ?? $get(path: 'quota')))
-                    ->schema(components: CandidateResource::getFormComponents())
-                    ->visible(condition: false),
-            ]))
-            ->modalWidth(width: MaxWidth::Large)
+            ->form(form: fn (Form $form): Form => $form->schema(components: PositionResource::getFormComponents()))
             ->model(model: Position::class)
+            ->modalWidth(width: MaxWidth::Large)
             ->record(record: null)
             ->relationship(relationship: fn(HasElection $livewire) => $livewire->getElection()->positions());
     }
@@ -355,36 +342,13 @@ HTML,
                 $action->makeModalSubmitAction(name: 'createAnother', arguments: ['another' => true])
                     ->label(__('filament-actions::create.single.modal.actions.create_another.label'))
             ])
-            ->form(form: fn (Form $form) => CandidateResource::form(form: $form))
+            ->form(form: fn (Form $form, Position $record) => CandidateResource::form(form: $form, position: $record))
             ->icon(icon: 'heroicon-m-plus')
             ->label(label: 'New candidate')
             ->modalSubmitActionLabel(label: __('filament-actions::create.single.modal.actions.create.label'))
             ->outlined()
             ->size(size: ActionSize::Small)
             ->successNotificationTitle(title: 'Created');
-    }
-
-    protected function getCreateCandidatesAction(): InfolistAction
-    {
-        return InfolistAction::make(name: 'createCandidates')
-            ->authorize(
-                abilities: fn (HasElection $livewire): bool => static::can(
-                    action: 'createCandidates',
-                    election: $livewire->getElection()
-                )
-            )
-            ->action(action: function (Position $record, array $data): void {
-                foreach ($data['candidates'] as $candidate) {
-                    $record->candidates()->create(attributes: $candidate);
-                }
-            })
-            ->form(form: [
-                Repeater::make(name: 'candidates')
-                    ->defaultItems(1)
-                    ->schema(components: CandidateResource::getFormComponents()),
-            ])
-            ->icon(icon: 'heroicon-m-plus')
-            ->iconButton();
     }
 
     protected function getEditCandidateAction(): InfolistAction
@@ -405,7 +369,7 @@ HTML,
             })
             ->fillForm(data: fn (Candidate $record): array => $record->attributesToArray())
             ->form(
-                form: fn (Form $form, Candidate $record): Form => CandidateResource::form(form: $form)
+                form: fn (Form $form, Candidate $record): Form => CandidateResource::form(form: $form, position: $record->position)
                     ->model(model: $record)
             )
             ->icon(icon: 'heroicon-m-pencil-square')

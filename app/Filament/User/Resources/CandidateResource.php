@@ -5,12 +5,14 @@ namespace App\Filament\User\Resources;
 use App\Filament\Contracts\HasElection;
 use App\Forms\CandidateForm;
 use App\Models\Candidate;
+use App\Models\Position;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Split;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Guava\FilamentClusters\Forms\Cluster;
+use Illuminate\Validation\Rules\Unique;
 
 class CandidateResource extends Resource
 {
@@ -20,15 +22,15 @@ class CandidateResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'membership_number';
 
-    public static function form(Form $form): Form
+    public static function form(Form $form, ?Position $position = null): Form
     {
         return $form
             ->columns(null)
             ->model(model: static::getModel())
-            ->schema(components: static::getFormComponents());
+            ->schema(components: static::getFormComponents(position: $position));
     }
 
-    public static function getFormComponents(): array
+    public static function getFormComponents(?Position $position = null): array
     {
         return [
             Split::make(schema: [
@@ -44,7 +46,11 @@ class CandidateResource extends Resource
                         CandidateForm::membershipNumberComponent()
                             ->hiddenLabel()
                             ->live(onBlur: true)
-                            ->columnSpanFull(),
+                            ->columnSpanFull()
+                            ->unique(
+                                ignoreRecord: true,
+                                modifyRuleUsing: fn (Unique $rule) => $rule->where(column: 'position_id', value: $position?->getKey())
+                            ),
 
                         Cluster::make(schema: [
                             CandidateForm::titleComponent()
