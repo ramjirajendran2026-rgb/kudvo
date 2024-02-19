@@ -58,7 +58,7 @@ class Login extends BasePage
             $this->throwFailureValidationException();
         }
 
-        if ($elector->ballot?->isVoted()) {
+        if ($elector->ballot?->isVoted() && !Kudvo::getElection()?->preference?->voted_ballot_update) {
             Notification::make()
                 ->title(title: 'Already voted')
                 ->warning()
