@@ -201,10 +201,10 @@ HTML
             )
             ->icon(icon: 'heroicon-m-eye')
             ->label(label: 'Preview')
-            ->modalFooterActionsAlignment(alignment: Alignment::Center)
-            ->modalDescription(description: $this->getSubheading())
-            ->modalHeading(heading: $this->getHeading())
             ->modalCancelAction(action: false)
+            ->modalDescription(description: $this->getSubheading())
+            ->modalFooterActionsAlignment(alignment: Alignment::Center)
+            ->modalHeading(heading: $this->getHeading())
             ->modalSubmitActionLabel(label: fn (array $data): string => ($data['preview'] ?? false) ? 'Confirm' : 'Continue')
             ->slideOver();
     }
