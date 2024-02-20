@@ -7,12 +7,17 @@ use App\Enums\CandidateSort;
 use App\Models\Election;
 use Closure;
 use Filament\Actions\Action;
+use Filament\Forms\Components\BaseFileUpload;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Field;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Group;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Split;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
@@ -21,7 +26,10 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Support\Enums\Alignment;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use LaraZeus\Quantity\Components\Quantity;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use Symfony\Component\Mime\MimeTypes;
 
 class Preference extends ElectionPage
 {
@@ -269,6 +277,112 @@ class Preference extends ElectionPage
 
                                     Toggle::make(name: 'candidate_attachment')
                                         ->label(label: 'Enable candidate attachments'),
+                                ]),
+
+                            Section::make(heading: 'Booth voting')
+                                ->description(description: 'This will allow electors to cast votes from a specific location. This is useful for conducting elections in a physical location.')
+                                ->schema(components: [
+                                    Toggle::make(name: 'booth_voting')
+                                        ->label(label: 'Enable booth voting'),
+
+                                    Toggle::make(name: 'web_app_manifest_enabled')
+                                        ->afterStateUpdated(callback: function (bool $state, Set $set, Get $get, self $livewire): void {
+                                            $set(
+                                                path: 'web_app_manifest',
+                                                state: $state ? [
+                                                    'name' => $livewire->getElection()->name,
+                                                    'short_name' => $livewire->getElection()->name,
+                                                    'icons' => [(string) Str::uuid() => []],
+                                                ] : null
+                                            );
+                                        })
+                                        ->formatStateUsing(callback: static fn (Election $record): bool => filled($record->preference?->web_app_manifest))
+                                        ->helperText(text: 'This will allow you to add the election to the home screen of your booth devices.')
+                                        ->label(label: 'Enable PWA for booth voting')
+                                        ->live(),
+
+                                    Group::make()
+                                        ->columns()
+                                        ->columnSpanFull()
+                                        ->statePath(path: 'web_app_manifest')
+                                        ->visible(condition: static fn (Get $get): bool => $get(path: 'web_app_manifest_enabled'))
+                                        ->schema(components: [
+                                            TextInput::make(name: 'name')
+                                                ->label(label: 'Name')
+                                                ->maxLength(length: 100)
+                                                ->required(),
+
+                                            TextInput::make(name: 'short_name')
+                                                ->label(label: 'Short name')
+                                                ->maxLength(length: 12)
+                                                ->required(),
+
+                                            Repeater::make(name: 'icons')
+                                                ->addable(condition: false)
+                                                ->columns()
+                                                ->columnSpanFull()
+                                                ->defaultItems(count: 1)
+                                                ->deletable(condition: false)
+                                                ->hiddenLabel()
+                                                ->reorderable(condition: false)
+                                                ->schema(components: [
+                                                    FileUpload::make(name: 'src')
+                                                        ->afterStateUpdated(callback: function (BaseFileUpload $component, $state, Set $set): void {
+                                                            if ($state instanceof TemporaryUploadedFile) {
+                                                                $set(path: 'type', state: $state->getMimeType());
+
+                                                                $dimensions = $state->dimensions();
+                                                                $set(path: 'sizes', state: $dimensions[0].'x'.$dimensions[1]);
+
+                                                                return;
+                                                            }
+
+                                                            if (blank($state)) {
+                                                                return;
+                                                            }
+
+                                                            if (is_array($state)) {
+                                                                return;
+                                                            }
+
+                                                            $component->state([(string) Str::uuid() => $state]);
+                                                        })
+                                                        ->directory(directory: 'election/pwa-icons')
+                                                        ->getUploadedFileNameForStorageUsing(
+                                                            callback: fn (TemporaryUploadedFile $file, self $livewire, Get $get): string => $livewire->getElection()->code.'-'.$get(path: 'sizes').'.'.$file->guessExtension()
+                                                        )
+                                                        ->image()
+                                                        ->imageEditor()
+                                                        ->imageEditorAspectRatios(ratios: ['1:1'])
+                                                        ->imageCropAspectRatio('1:1')
+                                                        ->imageResizeMode('cover')
+                                                        ->imageResizeTargetHeight('512')
+                                                        ->imageResizeTargetWidth('512')
+                                                        ->label(label: 'Icon')
+                                                        ->live()
+                                                        ->openable()
+                                                        ->required(),
+
+                                                    Group::make()
+                                                        ->schema(components: [
+                                                            TextInput::make(name: 'sizes')
+                                                                ->distinct()
+                                                                ->helperText(text: 'Supported sizes: 512x512')
+                                                                ->hint(hint: 'Fetched from the uploaded icon')
+                                                                ->in(values: ['512x512'])
+                                                                ->label(label: 'Icon sizes')
+                                                                ->readOnly()
+                                                                ->required(),
+
+                                                            TextInput::make(name: 'type')
+                                                                ->helperText(text: 'Supported formats: PNG, JPEG, WebP')
+                                                                ->hint(hint: 'Fetched from the uploaded icon')
+                                                                ->in(values: ['image/png', 'image/jpeg', 'image/webp'])
+                                                                ->readOnly()
+                                                                ->required(),
+                                                        ]),
+                                                ]),
+                                        ]),
                                 ]),
                         ]
                     ),

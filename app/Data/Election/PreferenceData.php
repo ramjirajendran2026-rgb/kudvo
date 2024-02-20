@@ -2,6 +2,7 @@
 
 namespace App\Data\Election;
 
+use App\Data\WebAppManifestData;
 use App\Enums\CandidateSort;
 use Spatie\LaravelData\Data;
 
@@ -53,6 +54,10 @@ class PreferenceData extends Data
         public bool $candidate_bio = false,
 
         public bool $candidate_attachment = false,
+
+        public bool $booth_voting = false,
+
+        public ?WebAppManifestData $web_app_manifest = null,
     )
     {
     }

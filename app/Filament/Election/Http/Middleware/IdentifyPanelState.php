@@ -34,6 +34,7 @@ class IdentifyPanelState
         $elector = Filament::auth()->user();
 
         Kudvo::setElectionPanelState(state: match (true) {
+            !Kudvo::isBoothDevice(election: $election) &&
             blank($elector) &&
             !$election->preference->ballot_link_common => ElectionPanelState::CommonLinkRestricted,
 

@@ -266,7 +266,7 @@ class Election extends Model
 
     public function isPwaEnabled(): bool
     {
-        return filled($this->web_app_manifest);
+        return filled($this->preference?->web_app_manifest);
     }
 
     public function getElectorGroups(): array
