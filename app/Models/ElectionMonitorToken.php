@@ -45,6 +45,11 @@ class ElectionMonitorToken extends Model
         return $query->whereNotNull(columns: 'activated_at');
     }
 
+    public function getRouteKey(): string
+    {
+        return 'key';
+    }
+
     public function uniqueIds(): array
     {
         return ['key'];
