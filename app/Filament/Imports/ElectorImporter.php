@@ -3,6 +3,7 @@
 namespace App\Filament\Imports;
 
 use App\Forms\Components\CountryPicker;
+use App\Models\Election;
 use App\Models\Elector;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
@@ -14,7 +15,6 @@ use Illuminate\Validation\Rule;
 class ElectorImporter extends Importer
 {
     protected static ?string $model = Elector::class;
-
 
     public static function getColumns(): array
     {
@@ -39,17 +39,44 @@ class ElectorImporter extends Importer
                 ->rules(rules: ['max:100']),
 
             ImportColumn::make(name: 'phone')
+                ->castStateUsing(
+                    callback: fn (?string $state, array $options): ?string => $state &&
+                    ($phone = phone(number: $state, country: $options['phone_country'])) &&
+                    $phone->isValid() ?
+                        $phone->formatE164() :
+                        null
+                )
                 ->example(example: '9876543210')
                 ->fillRecordUsing(
                     callback: fn (?string $state, array $options, Elector $record) => $record->phone = ($phone = phone(number: $state, country: $options['phone_country']))->isValid() ? $phone->formatE164() : null
                 )
-                ->rules(rules: fn (array $options): array => [
-                    'phone:INTERNATIONAL,'.$options['phone_country'] ?? ''
-                ]),
+                ->rules(rules: function (array $options, Elector $record): array {
+                    $rules = ['phone:INTERNATIONAL,'.($options['phone_country'] ?? '')];
+
+                    if ($options['event_type'] === Election::class && Election::find(id: $options['event_id'])?->preference->elector_duplicate_phone === false) {
+                        $rules[] = Rule::unique(table: 'electors')
+                            ->ignoreModel(model: $record)
+                            ->where(column: 'event_type', value: $options['event_type'])
+                            ->where(column: 'event_id', value: $options['event_id']);
+                    }
+
+                    return $rules;
+                }),
 
             ImportColumn::make(name: 'email')
                 ->example(example: 'mem1001@association.com')
-                ->rules(rules: ['email', 'max:100']),
+                ->rules(rules: function (array $options, Elector $record): array {
+                    $rules = ['email', 'max:100'];
+
+                    if ($options['event_type'] === Election::class && Election::find(id: $options['event_id'])?->preference->elector_duplicate_email === false) {
+                        $rules[] = Rule::unique(table: 'electors')
+                            ->ignoreModel(model: $record)
+                            ->where(column: 'event_type', value: $options['event_type'])
+                            ->where(column: 'event_id', value: $options['event_id']);
+                    }
+
+                    return $rules;
+                }),
 
             ImportColumn::make(name: 'groups')
                 ->array()
