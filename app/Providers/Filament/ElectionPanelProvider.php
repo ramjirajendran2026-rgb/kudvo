@@ -8,7 +8,7 @@ use App\Filament\Election\Http\Controllers\WebManifestController;
 use App\Filament\Election\Http\Middleware\AuthenticateSession;
 use App\Filament\Election\Http\Middleware\EnsureMfaCompleted;
 use App\Filament\Election\Http\Middleware\EnsureStateIsAllowed;
-use App\Filament\Election\Http\Middleware\IdentifyBooth;
+use App\Filament\Election\Http\Middleware\IdentifyBoothToken;
 use App\Filament\Election\Http\Middleware\IdentifyPanelState;
 use App\Filament\Election\Pages\Auth\Login;
 use App\Filament\Election\Pages\Index;
@@ -47,7 +47,7 @@ class ElectionPanelProvider extends PanelProvider
             ->discoverResources(in: app_path(path: 'Filament/Election/Resources'), for: 'App\\Filament\\Election\\Resources')
             ->discoverPages(in: app_path(path: 'Filament/Election/Pages'), for: 'App\\Filament\\Election\\Pages')
             ->discoverWidgets(in: app_path(path: 'Filament/Election/Widgets'), for: 'App\\Filament\\Election\\Widgets')
-            ->middleware(middleware: [IdentifyElection::class, IdentifyBooth::class], isPersistent: true)
+            ->middleware(middleware: [IdentifyElection::class], isPersistent: true)
             ->middleware(middleware: [
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
@@ -59,7 +59,7 @@ class ElectionPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
             ])
-            ->middleware(middleware: [IdentifyPanelState::class, EnsureStateIsAllowed::class], isPersistent: true)
+            ->middleware(middleware: [IdentifyBoothToken::class, IdentifyPanelState::class, EnsureStateIsAllowed::class], isPersistent: true)
             ->authMiddleware(middleware: [
                 Authenticate::class,
                 EnsureMfaCompleted::class,
@@ -70,7 +70,7 @@ class ElectionPanelProvider extends PanelProvider
                     ->withoutMiddleware(middleware: EnsureStateIsAllowed::class)
                     ->name(name: 'web-app-manifest');
 
-                Route::get(uri: 'booth/{boothToken}', action: [BoothTokensController::class, 'activate'])
+                Route::get(uri: 'booth/{token}/activate', action: [BoothTokensController::class, 'activate'])
                     ->middleware(middleware: 'signed')
                     ->withoutMiddleware(middleware: EnsureStateIsAllowed::class)
                     ->name(name: 'booth.activate');
@@ -108,7 +108,7 @@ class ElectionPanelProvider extends PanelProvider
             ->spa()
             ->renderHook(
                 name: PanelsRenderHook::HEAD_START,
-                hook: fn () => Kudvo::getElection()?->isPwaEnabled() ?
+                hook: fn (Request $request) => Kudvo::getElection()?->isPwaEnabled() ?
                     '<link rel="manifest" href="'.Filament::getCurrentPanel()->route(name: 'web-app-manifest').'">' :
                     null,
             )

@@ -214,6 +214,11 @@ class ElectionPolicy
         return $election->is_published;
     }
 
+    public function viewAnyBoothToken(User $user, Election $election): bool
+    {
+        return $election->is_published && $election->isBoothVotingEnabled();
+    }
+
     public function generateResult(User $user, Election $election): bool
     {
         return $election->is_closed && blank($election->result);

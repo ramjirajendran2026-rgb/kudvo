@@ -8,7 +8,7 @@ use Filament\Facades\Filament;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
 
-class IdentifyBooth
+class IdentifyBoothToken
 {
     public function handle(Request $request, Closure $next)
     {

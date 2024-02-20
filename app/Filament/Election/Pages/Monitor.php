@@ -20,13 +20,13 @@ class Monitor extends Page
 
     protected static string $view = 'filament.election.pages.monitor';
 
+    protected static string | array $routeMiddleware = 'signed';
+
     public function mount(Request $request, Agent $agent): void
     {
         abort_if(boolean: $agent->isRobot(), code: Response::HTTP_NOT_ACCEPTABLE);
 
-        $key = $request->query(key: 'token');
-
-        $token = $this->getElection()->monitorTokens()->firstWhere('key', $key);
+        $token = $this->getElection()->monitorTokens()->firstWhere('key', $request->get(key: 'token'));
 
         abort_if(boolean: blank($token), code: Response::HTTP_UNAUTHORIZED);
 

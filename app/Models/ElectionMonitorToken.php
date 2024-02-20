@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\URL;
 use Jenssegers\Agent\Agent;
 
 class ElectionMonitorToken extends Model
@@ -45,7 +47,7 @@ class ElectionMonitorToken extends Model
         return $query->whereNotNull(columns: 'activated_at');
     }
 
-    public function getRouteKey(): string
+    public function getRouteKeyName(): string
     {
         return 'key';
     }
@@ -58,5 +60,10 @@ class ElectionMonitorToken extends Model
     public function isActivated(): bool
     {
         return filled($this->activated_at);
+    }
+
+    public function getLink(): string
+    {
+        return URL::signedRoute(name: 'filament.election.pages.monitor', parameters: ['election' => $this->election, 'token' => $this->getRouteKey()]);
     }
 }

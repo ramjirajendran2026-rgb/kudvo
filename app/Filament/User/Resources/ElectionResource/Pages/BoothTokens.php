@@ -18,19 +18,19 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Jenssegers\Agent\Agent;
 
-class MonitorTokens extends ElectionPage implements HasTable
+class BoothTokens extends ElectionPage implements HasTable
 {
     use InteractsWithRelationshipTable;
 
     protected static string $view = 'filament.user.resources.election-resource.pages.monitor-tokens';
 
-    protected static ?string $navigationIcon = 'heroicon-o-finger-print';
+    protected static ?string $navigationIcon = 'heroicon-o-archive-box';
 
-    protected static ?string $activeNavigationIcon = 'heroicon-s-finger-print';
+    protected static ?string $activeNavigationIcon = 'heroicon-s-archive-box';
 
     public static function getRelationshipName(): string
     {
-        return 'monitorTokens';
+        return 'boothTokens';
     }
 
     public function getOwnerRecord(): Election
@@ -47,7 +47,7 @@ class MonitorTokens extends ElectionPage implements HasTable
                     ->requiresConfirmation()
                     ->color(color: 'info')
                     ->action(action: function (self $livewire): void {
-                        $livewire->getElection()->monitorTokens()->create();
+                        $livewire->getElection()->boothTokens()->create();
 
                         Notification::make()
                             ->title(title: 'Created')
@@ -58,7 +58,7 @@ class MonitorTokens extends ElectionPage implements HasTable
             ->columns(components: [
                 TextColumn::make(name: 'key')
                     ->copyable()
-                    ->copyableState(state: fn (ElectionMonitorToken $token): string => $token->getLink())
+                    ->copyableState(state: fn (ElectionBoothToken $token): string => $token->getLink())
                     ->icon(icon: 'heroicon-m-document-duplicate')
                     ->iconPosition(iconPosition: IconPosition::After)
                     ->size(size: TextColumn\TextColumnSize::ExtraSmall),
@@ -79,7 +79,7 @@ class MonitorTokens extends ElectionPage implements HasTable
     public static function canAccessPage(Election $election): bool
     {
         return parent::canAccessPage(election: $election) &&
-            static::can(action: 'viewAnyMonitorToken', election: $election);
+            static::can(action: 'viewAnyBoothToken', election: $election);
     }
 
     public static function shouldRegisterNavigation(array $parameters = []): bool

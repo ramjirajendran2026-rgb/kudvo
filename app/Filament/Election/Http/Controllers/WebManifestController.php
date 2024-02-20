@@ -17,7 +17,7 @@ class WebManifestController extends Controller
 {
     public function __invoke(Election $election)
     {
-        abort_unless(boolean: $election->isPwaEnabled() && Kudvo::isBoothDevice(), code: Response::HTTP_NOT_FOUND);
+        abort_unless(boolean: $election->isPwaEnabled(), code: Response::HTTP_NOT_FOUND);
 
         $data = $election->preference->web_app_manifest;
         $data->start_url = Index::getUrl();

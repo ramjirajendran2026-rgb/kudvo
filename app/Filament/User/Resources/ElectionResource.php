@@ -105,6 +105,7 @@ class ElectionResource extends Resource
             'ballot.setup' => Pages\BallotSetup::route(path: '/{record}/ballot/setup'),
             'result' => Pages\Result::route(path: '/{record}/result'),
             'monitor_tokens' => Pages\MonitorTokens::route(path: '/{record}/monitor-tokens'),
+            'booth_tokens' => Pages\BoothTokens::route(path: '/{record}/booth-tokens'),
         ];
     }
 
@@ -117,6 +118,7 @@ class ElectionResource extends Resource
             Pages\BallotSetup::class,
             Pages\Result::class,
             Pages\MonitorTokens::class,
+            Pages\BoothTokens::class,
         ]);
     }
 
