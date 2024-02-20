@@ -3,10 +3,12 @@
 namespace App\Providers\Filament;
 
 use App\Facades\Kudvo;
+use App\Filament\Election\Http\Controllers\BoothTokensController;
 use App\Filament\Election\Http\Controllers\WebManifestController;
 use App\Filament\Election\Http\Middleware\AuthenticateSession;
 use App\Filament\Election\Http\Middleware\EnsureMfaCompleted;
 use App\Filament\Election\Http\Middleware\EnsureStateIsAllowed;
+use App\Filament\Election\Http\Middleware\IdentifyBooth;
 use App\Filament\Election\Http\Middleware\IdentifyPanelState;
 use App\Filament\Election\Pages\Auth\Login;
 use App\Filament\Election\Pages\Index;
@@ -45,7 +47,7 @@ class ElectionPanelProvider extends PanelProvider
             ->discoverResources(in: app_path(path: 'Filament/Election/Resources'), for: 'App\\Filament\\Election\\Resources')
             ->discoverPages(in: app_path(path: 'Filament/Election/Pages'), for: 'App\\Filament\\Election\\Pages')
             ->discoverWidgets(in: app_path(path: 'Filament/Election/Widgets'), for: 'App\\Filament\\Election\\Widgets')
-            ->middleware(middleware: [IdentifyElection::class], isPersistent: true)
+            ->middleware(middleware: [IdentifyElection::class, IdentifyBooth::class], isPersistent: true)
             ->middleware(middleware: [
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
@@ -67,6 +69,11 @@ class ElectionPanelProvider extends PanelProvider
                 Route::get(uri: 'app.webmanifest', action: WebManifestController::class)
                     ->withoutMiddleware(middleware: EnsureStateIsAllowed::class)
                     ->name(name: 'web-app-manifest');
+
+                Route::get(uri: 'booth/{boothToken}', action: [BoothTokensController::class, 'activate'])
+                    ->middleware(middleware: 'signed')
+                    ->withoutMiddleware(middleware: EnsureStateIsAllowed::class)
+                    ->name(name: 'booth.activate');
 
                 Route::get(
                     uri: 'eul/{elector}',

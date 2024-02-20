@@ -4,6 +4,7 @@ namespace App\Filament\Election\Http\Controllers;
 
 use App\Data\WebAppManifestIconData;
 use App\Enums\WebAppManifestDisplay;
+use App\Facades\Kudvo;
 use App\Filament\Election\Pages\Index;
 use App\Http\Controllers\Controller;
 use App\Models\Election;
@@ -16,7 +17,7 @@ class WebManifestController extends Controller
 {
     public function __invoke(Election $election)
     {
-        abort_unless(boolean: $election->isPwaEnabled(), code: Response::HTTP_NOT_FOUND);
+        abort_unless(boolean: $election->isPwaEnabled() && Kudvo::isBoothDevice(), code: Response::HTTP_NOT_FOUND);
 
         $data = $election->preference->web_app_manifest;
         $data->start_url = Index::getUrl();

@@ -4,6 +4,7 @@ namespace App;
 
 use App\Enums\ElectionPanelState;
 use App\Models\Election;
+use App\Models\ElectionBoothToken;
 use App\Models\Nomination;
 use App\Models\Organisation;
 use Cookie;
@@ -17,6 +18,8 @@ class KudvoManager
     protected ?Organisation $organisation = null;
 
     protected ?ElectionPanelState $electionPanelState = null;
+
+    protected ?ElectionBoothToken $electionBoothToken = null;
 
     public function setOrganisation(?Organisation $organisation): void
     {
@@ -62,10 +65,18 @@ class KudvoManager
         return $this->electionPanelState;
     }
 
-    public function isBoothDevice(?Election $election = null): bool
+    public function setElectionBoothToken(?ElectionBoothToken $token): void
     {
-        $election ??= $this->getElection();
+        $this->electionBoothToken = $token;
+    }
 
-        return filled($election) && Cookie::get(key: 'election_booth_device') == $election->getKey();
+    public function getElectionBoothToken(): ?ElectionBoothToken
+    {
+        return $this->electionBoothToken;
+    }
+
+    public function isBoothDevice(): bool
+    {
+        return filled($this->getElectionBoothToken());
     }
 }

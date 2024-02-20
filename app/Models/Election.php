@@ -190,6 +190,11 @@ class Election extends Model
         return $this->hasMany(related: ElectionMonitorToken::class);
     }
 
+    public function boothTokens(): HasMany
+    {
+        return $this->hasMany(related: ElectionBoothToken::class);
+    }
+
     public function result(): HasOne
     {
         return $this->hasOne(related: ElectionResult::class)

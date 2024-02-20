@@ -34,11 +34,11 @@ class IdentifyPanelState
         $elector = Filament::auth()->user();
 
         Kudvo::setElectionPanelState(state: match (true) {
-            !Kudvo::isBoothDevice(election: $election) &&
+            !Kudvo::isBoothDevice() &&
             blank($elector) &&
             !$election->preference->ballot_link_common => ElectionPanelState::CommonLinkRestricted,
 
-            !Kudvo::isBoothDevice(election: $election) &&
+            !Kudvo::isBoothDevice() &&
             $election->preference->mfa_sms_auto_fill_only &&
             !$this->agent->isiOS() &&
             !$this->agent->isAndroidOS() => ElectionPanelState::DeviceNotSupported,
@@ -52,7 +52,7 @@ class IdentifyPanelState
 
             $elector?->ballot?->isVoted() => ElectionPanelState::Voted,
 
-            !Kudvo::isBoothDevice(election: $election) && (
+            !Kudvo::isBoothDevice() && (
                 (
                     $election->preference->prevent_duplicate_device &&
                     filled(Cookie::get(key: "election_{$election->getKey()}_ballot"))

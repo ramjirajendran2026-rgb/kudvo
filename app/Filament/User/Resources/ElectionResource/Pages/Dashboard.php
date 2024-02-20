@@ -206,7 +206,7 @@ class Dashboard extends ElectionPage
                 $action->success();
             })
             ->successNotificationTitle(title: 'Disabled for booth voting.')
-            ->visible(condition: fn (self $livewire): bool => Kudvo::isBoothDevice(election: $livewire->getElection()));
+            ->visible(condition: fn (self $livewire): bool => Kudvo::isBoothDevice());
     }
 
     protected function hasPendingPreferenceSetup(): bool

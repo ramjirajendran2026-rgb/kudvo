@@ -1,7 +1,9 @@
+@php use App\Facades\Kudvo; @endphp
+
 <footer class="fi-footer">
     <div>
         <div>
-            Powered by
+            {{ Kudvo::isBoothDevice() ? 'Booth Voting by' : 'Powered by' }}
             <x-filament::link
                 :href="filament()->getHomeUrl()"
             >
