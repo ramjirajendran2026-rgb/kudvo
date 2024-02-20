@@ -269,6 +269,11 @@ class Election extends Model
         return filled($this->preference?->web_app_manifest);
     }
 
+    public function isBoothVotingEnabled(): bool
+    {
+        return $this->preference?->booth_voting ?? false;
+    }
+
     public function getElectorGroups(): array
     {
         return $this

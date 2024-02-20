@@ -109,7 +109,8 @@ class ElectionPolicy
 
     public function useAsBoothDevice(User $user, Election $election): bool
     {
-        return $election->is_draft || $election->is_published;
+        return $election->isBoothVotingEnabled() &&
+            ($election->is_draft || $election->is_published);
     }
 
     public function removeFromBoothDevice(User $user, Election $election): bool
