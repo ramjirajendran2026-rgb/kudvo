@@ -2,12 +2,16 @@
 
 namespace App\Filament\Election\Pages\Auth;
 
+use App\Enums\OneTimePasswordPurpose;
 use App\Facades\Kudvo;
 use App\Filament\Election\Http\Middleware\EnsureStateIsAllowed;
+use App\Filament\Election\Pages\Mfa\Notice;
 use App\Models\Election;
 use App\Models\Elector;
+use App\Notifications\Election\MfaCodeNotification;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use Filament\Facades\Filament;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Form;
 use Filament\Http\Responses\Auth\Contracts\LoginResponse;
 use Filament\Notifications\Notification;
@@ -15,6 +19,7 @@ use Filament\Pages\Auth\Login as BasePage;
 use Filament\Panel;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\ValidationException;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
@@ -71,6 +76,10 @@ class Login extends BasePage
 
         static::doLogin(elector: $elector, panel: Filament::getCurrentPanel(), request: request());
 
+        if (Kudvo::getElection()->isMfaRequired()) {
+            $this->sendMfaCode(elector: $elector);
+        }
+
         return app(abstract: LoginResponse::class);
     }
 
@@ -84,6 +93,27 @@ class Login extends BasePage
             guardName: $panel->getAuthGuard(),
             request: $request,
         );
+    }
+
+    protected function sendMfaCode(Elector $elector): void
+    {
+        $oneTimePassword = $elector
+            ->oneTimePasswords()
+            ->create(attributes: [
+                'purpose' => OneTimePasswordPurpose::MFA,
+
+                ...Kudvo::getElection()->preference->mfa_sms ? ['phone' => $elector->phone] : [],
+                ...Kudvo::getElection()->preference->mfa_mail ? ['email' => $elector->email] : [],
+            ]);
+
+        $oneTimePassword->send(
+            notification: new MfaCodeNotification(
+                election: Kudvo::getElection(),
+                oneTimePassword: $oneTimePassword,
+            )
+        );
+
+        Session::put(key: Notice::getMfaSessionKey(elector: $elector), value: $oneTimePassword->getKey());
     }
 
     protected function getCredentialsFromFormData(array $data): array
@@ -108,6 +138,8 @@ class Login extends BasePage
             ->schema(components: [
                 $this->getPhoneComponent()
                     ->initialCountry(value: Kudvo::getOrganisation()?->country),
+
+                $this->getMfaConsentComponent(),
             ]);
     }
 
@@ -117,5 +149,14 @@ class Login extends BasePage
             ->label(label: 'Your phone number')
             ->required()
             ->validateFor();
+    }
+
+    protected function getMfaConsentComponent()
+    {
+        return Checkbox::make(name: 'consent')
+            ->accepted()
+            ->label(label: 'I agree to receive OTP (One Time Password)')
+            ->validationAttribute(label: 'consent')
+            ->visible(condition: Kudvo::getElection()->isMfaRequired());
     }
 }
