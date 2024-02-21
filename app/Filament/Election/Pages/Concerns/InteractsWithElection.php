@@ -66,19 +66,26 @@ trait InteractsWithElection
             return null;
         }
 
+        $startsAt = $this->getElection()->starts_at_local;
+        $endsAt = $this->getElection()->starts_at_local;
+        if (Kudvo::isBoothDevice()) {
+            $startsAt = $this->getElection()->booth_starts_at_local;
+            $endsAt = $this->getElection()->booth_ends_at_local;
+        }
+
         return new HtmlString(
             html: <<<HTML
 <div class="flex justify-center items-center gap-4">
 <div class="flex flex-col md:flex-row flex-grow justify-center md:justify-end items-end md:gap-2 font-bold">
-<span>{$this->getElection()->starts_at_local->format(format: 'M d, Y')}</span>
-<span>{$this->getElection()->starts_at_local->format(format: 'h:i A')}</span>
-<span>{$this->getElection()->starts_at_local->format(format: '(T)')}</span>
+<span>{$startsAt->format(format: 'M d, Y')}</span>
+<span>{$startsAt->format(format: 'h:i A')}</span>
+<span>{$startsAt->format(format: '(T)')}</span>
 </div>
 <span>to</span>
 <div class="flex flex-col md:flex-row flex-grow justify-center md:justify-start items-start md:gap-2 font-bold">
-<span>{$this->getElection()->ends_at_local->format(format: 'M d, Y')}</span>
-<span>{$this->getElection()->ends_at_local->format(format: 'h:i A')}</span>
-<span>{$this->getElection()->ends_at_local->format(format: '(T)')}</span>
+<span>{$endsAt->format(format: 'M d, Y')}</span>
+<span>{$endsAt->format(format: 'h:i A')}</span>
+<span>{$endsAt->format(format: '(T)')}</span>
 </div>
 </div>
 HTML

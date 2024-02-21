@@ -188,8 +188,8 @@ class ElectionResource extends Resource
                 $data['ends_at'] ??= now(tz: $data['timezone'] ?? null)->addDays()->startOfDay()->addHours(value: 18);
 
                 if ($livewire->getElection()->isBoothVotingEnabled()) {
-                    $data['starts_at'] ??= now(tz: $data['timezone'] ?? null)->addDays(value: 2)->startOfDay()->addHours(value: 8);
-                    $data['ends_at'] ??= now(tz: $data['timezone'] ?? null)->addDays(value: 2)->startOfDay()->addHours(value: 18);
+                    $data['booth_starts_at'] ??= now(tz: $data['timezone'] ?? null)->addDays(value: 2)->startOfDay()->addHours(value: 8);
+                    $data['booth_ends_at'] ??= now(tz: $data['timezone'] ?? null)->addDays(value: 2)->startOfDay()->addHours(value: 18);
                 }
 
                 return $data;

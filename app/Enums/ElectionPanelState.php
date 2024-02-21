@@ -2,6 +2,7 @@
 
 namespace App\Enums;
 
+use App\Facades\Kudvo;
 use App\Models\Election;
 use App\Models\Elector;
 use BladeUI\Heroicons\BladeHeroiconsServiceProvider;
@@ -56,11 +57,13 @@ enum ElectionPanelState: string
 
     public function getDescription(Election $election, ?Elector $elector = null): string | HtmlString |null
     {
+        $startsAt = Kudvo::isBoothDevice() ? $election->booth_starts_at_local : $election->starts_at_local;
+
         return match ($this) {
             self::YetToStart => new HtmlString(
                 html: Blade::render(
                     string: "<x-timer-countdown
-                                target='{$election->starts_at?->unix()}'
+                                target='{$startsAt?->unix()}'
                                 reload='true'
                                 label='Voting for this election will starts in'
                             />"
