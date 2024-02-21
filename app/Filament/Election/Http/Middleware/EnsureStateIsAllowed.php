@@ -20,7 +20,7 @@ class EnsureStateIsAllowed
     public function handle(Request $request, Closure $next)
     {
         if (
-            Kudvo::getElectionPanelState() == ElectionPanelState::Open ||
+            (Kudvo::getElectionPanelState() == ElectionPanelState::Open) ||
             $request->routeIs('filament.election.auth.logout') ||
             (
                 $request->routeIs('filament.election.eul') &&

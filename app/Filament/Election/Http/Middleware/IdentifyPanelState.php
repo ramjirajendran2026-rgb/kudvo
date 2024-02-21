@@ -45,12 +45,14 @@ class IdentifyPanelState
 
             $election->is_cancelled => ElectionPanelState::Cancelled,
 
-            $election->is_upcoming => ElectionPanelState::YetToStart,
+            $elector?->ballot?->isVoted() => ElectionPanelState::Voted,
 
             $election->is_closed,
-            $election->is_expired => ElectionPanelState::Closed,
+            !Kudvo::isBoothDevice() && $election->is_expired,
+            Kudvo::isBoothDevice() && $election->is_booth_expired => ElectionPanelState::Closed,
 
-            $elector?->ballot?->isVoted() => ElectionPanelState::Voted,
+            !Kudvo::isBoothDevice() && $election->is_upcoming,
+            Kudvo::isBoothDevice() && $election->is_booth_upcoming => ElectionPanelState::YetToStart,
 
             !Kudvo::isBoothDevice() && (
                 (
@@ -71,7 +73,8 @@ class IdentifyPanelState
                 )
             ) => ElectionPanelState::DeviceAlreadyUsed,
 
-            $election->is_open => ElectionPanelState::Open,
+            !Kudvo::isBoothDevice() && $election->is_open,
+            Kudvo::isBoothDevice() && $election->is_booth_open => ElectionPanelState::Open,
 
             default => null,
         });

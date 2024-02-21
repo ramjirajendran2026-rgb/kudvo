@@ -58,7 +58,11 @@ class Index extends BasePage
 
     public static function canAccess(bool $mock = false): bool
     {
-        return static::can(action: $mock ? 'mockVote' : 'vote');
+        return static::can(action: match (true) {
+            $mock => 'mock',
+            Kudvo::isBoothDevice() => 'boothVote',
+            default => 'vote',
+        });
     }
 
     public function form(Form $form): Form

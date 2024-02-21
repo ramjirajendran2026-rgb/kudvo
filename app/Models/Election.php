@@ -93,6 +93,20 @@ class Election extends Model
         );
     }
 
+    protected function boothStartsAtLocal(): Attribute
+    {
+        return Attribute::make(
+            get: fn($value, array $attributes) => $this->booth_starts_at?->tz(value: $this->timezone),
+        );
+    }
+
+    protected function boothEndsAtLocal(): Attribute
+    {
+        return Attribute::make(
+            get: fn($value, array $attributes) => $this->booth_ends_at?->tz(value: $this->timezone),
+        );
+    }
+
     protected function status(): Attribute
     {
         return Attribute::make(
@@ -145,6 +159,27 @@ class Election extends Model
     {
         return Attribute::make(
             get: fn($value, array $attributes) => $this->status === ElectionStatus::CLOSED,
+        );
+    }
+
+    protected function isBoothUpcoming(): Attribute
+    {
+        return Attribute::make(
+            get: fn($value, array $attributes) => $this->is_published && $this->booth_starts_at->isFuture(),
+        );
+    }
+
+    protected function isBoothOpen(): Attribute
+    {
+        return Attribute::make(
+            get: fn($value, array $attributes) => $this->is_published && $this->booth_starts_at?->isPast() && $this->booth_ends_at?->isFuture(),
+        );
+    }
+
+    protected function isBoothExpired(): Attribute
+    {
+        return Attribute::make(
+            get: fn($value, array $attributes) => $this->is_published && $this->booth_ends_at?->isPast(),
         );
     }
 
@@ -256,6 +291,17 @@ class Election extends Model
     {
         return filled(value: $this->starts_at) &&
             filled(value: $this->ends_at) &&
+            filled(value: $this->timezone) &&
+            (
+                ! $this->isBoothVotingEnabled() ||
+                $this->isBoothTimingConfigured()
+            );
+    }
+
+    public function isBoothTimingConfigured(): bool
+    {
+        return filled(value: $this->booth_starts_at) &&
+            filled(value: $this->booth_ends_at) &&
             filled(value: $this->timezone);
     }
 

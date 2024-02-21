@@ -237,4 +237,13 @@ class ElectionPolicy
                 $election->preference->voted_ballot_update
             );
     }
+
+    public function boothVote(Elector $elector, Election $election): bool
+    {
+        return $election->is_booth_open &&
+            (
+                !$elector->ballot?->isVoted() ||
+                $election->preference->voted_ballot_update
+            );
+    }
 }
