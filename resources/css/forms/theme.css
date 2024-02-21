@@ -1,3 +1,7 @@
+.fi-checkbox-input {
+    @apply ring-gray-950/50;
+}
+
 .fi-vote-picker {
     & .fi-section-header {
         & .fi-section-header-heading {
