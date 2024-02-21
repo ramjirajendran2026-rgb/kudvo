@@ -60,6 +60,14 @@ class ElectionResource extends Resource
 
                 ElectionForm::endsAtComponent()
                     ->timezone(fn (Get $get): ?string => $get(path: 'timezone')),
+
+                ElectionForm::boothStartsAtComponent()
+                    ->timezone(fn (Get $get): ?string => $get(path: 'timezone'))
+                    ->visible(condition: fn (?Election $record): bool => $record?->isBoothVotingEnabled()),
+
+                ElectionForm::boothEndsAtComponent()
+                    ->timezone(fn (Get $get): ?string => $get(path: 'timezone'))
+                    ->visible(condition: fn (?Election $record): bool => $record?->isBoothVotingEnabled()),
             ]);
     }
 
@@ -174,10 +182,15 @@ class ElectionResource extends Resource
             ->modalFooterActionsAlignment(alignment: Alignment::Center)
             ->modalHeading(heading: fn (HasElection $livewire): ?string => $livewire->getElection()->name)
             ->modalWidth(width: MaxWidth::Medium)
-            ->mutateRecordDataUsing(callback: function (array $data): array {
+            ->mutateRecordDataUsing(callback: function (array $data, HasElection $livewire): array {
                 $data['timezone'] ??= Filament::getTenant()?->timezone;
                 $data['starts_at'] ??= now(tz: $data['timezone'] ?? null)->addDays()->startOfDay()->addHours(value: 8);
                 $data['ends_at'] ??= now(tz: $data['timezone'] ?? null)->addDays()->startOfDay()->addHours(value: 18);
+
+                if ($livewire->getElection()->isBoothVotingEnabled()) {
+                    $data['starts_at'] ??= now(tz: $data['timezone'] ?? null)->addDays(value: 2)->startOfDay()->addHours(value: 8);
+                    $data['ends_at'] ??= now(tz: $data['timezone'] ?? null)->addDays(value: 2)->startOfDay()->addHours(value: 18);
+                }
 
                 return $data;
             })

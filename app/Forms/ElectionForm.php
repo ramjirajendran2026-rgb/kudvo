@@ -9,6 +9,21 @@ use Filament\Forms\Components\TextInput;
 
 readonly class ElectionForm
 {
+    public static function boothStartsAtComponent(): DateTimePicker
+    {
+        return DateTimePicker::make(name: 'booth_starts_at')
+            ->required()
+            ->seconds(condition: false);
+    }
+
+    public static function boothEndsAtComponent(): DateTimePicker
+    {
+        return DateTimePicker::make(name: 'booth_ends_at')
+            ->after(date: 'booth_starts_at')
+            ->required()
+            ->seconds(condition: false);
+    }
+
     public static function descriptionComponent(): RichEditor
     {
         return RichEditor::make(name: 'description')
