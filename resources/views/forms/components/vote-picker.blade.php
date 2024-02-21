@@ -6,11 +6,15 @@
     $statePath = $getStatePath();
 
     $options = $getOptions();
+
+    $maxItems = $getMaxItems();
 @endphp
 
 <div
     x-data="{
         checkedOptionsCount: 0,
+
+        maxItems: @js($maxItems),
 
         areAllCheckboxesChecked: false,
 
@@ -22,10 +26,24 @@
 
         visibleCheckboxListOptions: [],
 
-        checkIfAllCheckboxesAreChecked: function () {
+        checkIfAllCheckboxesAreChecked: function (event) {
             this.checkedOptionsCount = this.checkboxListOptions.filter((checkboxLabel) =>
                     checkboxLabel.querySelector('input[type=checkbox]:checked'),
                 ).length
+
+            if (this.checkedOptionsCount > this.maxItems && event !== undefined) {
+                event.target.checked = false;
+
+                event.target.dispatchEvent(new Event('change'));
+
+                new FilamentNotification()
+                    .title('Maximum Selection Reached')
+                    .body('You can only select a maximum of ' + this.maxItems + ' candidates for this position. Please deselect a candidate before selecting another one.')
+                    .danger()
+                    .send();
+
+                return;
+            }
 
             this.areAllCheckboxesChecked =
                 this.visibleCheckboxListOptions.length ===
@@ -209,7 +227,7 @@
                                         'value' => $value,
                                         'wire:loading.attr' => 'disabled',
                                         $applyStateBindingModifiers('wire:model') => $statePath,
-                                        'x-on:change' => 'checkIfAllCheckboxesAreChecked()',
+                                        'x-on:change' => 'checkIfAllCheckboxesAreChecked($event)',
                                     ], escape: false)
                                     ->class(['mt-1 w-8 h-8'])
                             "
