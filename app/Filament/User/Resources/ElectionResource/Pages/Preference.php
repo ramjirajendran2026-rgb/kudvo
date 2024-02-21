@@ -299,6 +299,11 @@ class Preference extends ElectionPage
                                         })
                                         ->formatStateUsing(callback: static fn (Election $record): bool => filled($record->preference?->web_app_manifest))
                                         ->helperText(text: 'This will allow you to add the election to the home screen of your booth devices.')
+                                        ->hint(hint: 'Experimental')
+                                        ->hintIcon(
+                                            icon: 'heroicon-o-information-circle',
+                                            tooltip: 'This is experimental and may not work as expected. Please use with caution.'
+                                        )
                                         ->label(label: 'Enable PWA for booth voting')
                                         ->live(),
 
