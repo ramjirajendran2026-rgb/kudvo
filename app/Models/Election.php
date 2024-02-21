@@ -167,7 +167,7 @@ class Election extends Model
     protected function isBoothUpcoming(): Attribute
     {
         return Attribute::make(
-            get: fn($value, array $attributes) => $this->is_published && $this->booth_starts_at->isFuture(),
+            get: fn($value, array $attributes) => $this->is_published && $this->booth_starts_at?->isFuture(),
         );
     }
 
