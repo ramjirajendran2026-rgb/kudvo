@@ -139,10 +139,6 @@ class Dashboard extends ElectionPage
 
                 ElectionResource::getCancelAction(),
 
-                $this->getUseAsBoothDeviceAction(),
-
-                $this->getRemoveFromBoothDeviceAction(),
-
             ])->dropdownPlacement(placement: 'bottom-end'),
         ];
     }
@@ -177,36 +173,6 @@ class Dashboard extends ElectionPage
             ->authorize(abilities: fn (self $livewire): bool => Result::canAccessPage(election: $livewire->getElection()))
             ->label(label: 'View Result')
             ->url(url: Result::getUrl(parameters: [$this->getElection()]));
-    }
-
-    public function getUseAsBoothDeviceAction(): Action
-    {
-        return Action::make(name: 'useAsBoothDevice')
-            ->requiresConfirmation()
-            ->authorize(abilities: 'useAsBoothDevice')
-            ->color(color: 'success')
-            ->action(action: function (self $livewire, Action $action): void {
-                Cookie::queue(Cookie::forever(name: 'election_booth_device', value: $livewire->getElection()->getKey()));
-
-                $action->success();
-            })
-            ->successNotificationTitle(title: 'Enabled for booth voting.')
-            ->visible(condition: fn (self $livewire): bool => Cookie::get(key: 'election_booth_device') != $livewire->getElection()->getKey());
-    }
-
-    public function getRemoveFromBoothDeviceAction(): Action
-    {
-        return Action::make(name: 'removeFromBoothDevice')
-            ->requiresConfirmation()
-            ->authorize(abilities: 'removeFromBoothDevice')
-            ->color(color: 'danger')
-            ->action(action: function (Action $action): void {
-                Cookie::queue(Cookie::forget(name: 'election_booth_device'));
-
-                $action->success();
-            })
-            ->successNotificationTitle(title: 'Disabled for booth voting.')
-            ->visible(condition: fn (self $livewire): bool => Kudvo::isBoothDevice());
     }
 
     protected function hasPendingPreferenceSetup(): bool
