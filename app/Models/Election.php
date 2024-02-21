@@ -27,7 +27,6 @@ class Election extends Model
         'name',
         'description',
         'preference',
-        'web_app_manifest',
         'timezone',
         'starts_at',
         'ends_at',
@@ -40,7 +39,6 @@ class Election extends Model
 
     protected $casts = [
         'preference' => PreferenceData::class,
-        'web_app_manifest' => WebAppManifestData::class,
         'starts_at' => 'datetime',
         'ends_at' => 'datetime',
         'published_at' => 'datetime',
