@@ -18,6 +18,7 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Support\Enums\ActionSize;
+use Filament\Support\Enums\Alignment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cookie;
@@ -73,6 +74,10 @@ class Index extends BasePage
             ->operation(operation: $this->preview ? 'preview' : 'create')
             ->statePath(path: 'data')
             ->schema(components: [
+                Actions::make(actions: [
+                    $this->getBackAction(),
+                ]),
+
                 ...$this->getElection()->positions
                     ->map(
                         callback: fn (Position $position) => VotePicker::makeFor(position: $position)
@@ -83,16 +88,7 @@ class Index extends BasePage
                     ->toArray(),
 
                 Actions::make(actions: [
-                    Actions\Action::make(name: 'Back')
-                        ->action(action: function (self $livewire) {
-                            $livewire->preview = false;
-
-                            $livewire->dispatch(event: 'scroll-to-top');
-                        })
-                        ->color(color: 'gray')
-                        ->hidden(condition: fn (self $livewire): bool => $livewire->flashVotes)
-                        ->size(size: ActionSize::ExtraLarge)
-                        ->visible(condition: fn (self $livewire): bool => $livewire->preview),
+                    $this->getBackAction(),
 
                     Actions\Action::make(name: 'continue')
                         ->label(label: 'Continue')
@@ -108,8 +104,23 @@ class Index extends BasePage
                         ->hidden(condition: fn (self $livewire): bool => $livewire->flashVotes || ! $livewire->preview)
                         ->size(size: ActionSize::ExtraLarge),
                 ])
-                ->alignCenter(),
+                ->alignment(alignment: fn (self $livewire): Alignment => $livewire->preview ? Alignment::Between : Alignment::End),
             ]);
+    }
+
+    protected function getBackAction()
+    {
+        return Actions\Action::make(name: 'Back')
+            ->action(action: function (self $livewire) {
+                $livewire->preview = false;
+
+                $livewire->dispatch(event: 'scroll-to-top');
+            })
+            ->color(color: 'gray')
+            ->hidden(condition: fn (self $livewire): bool => $livewire->flashVotes)
+            ->icon(icon: 'heroicon-s-chevron-left')
+            ->size(size: ActionSize::ExtraLarge)
+            ->visible(condition: fn (self $livewire): bool => $livewire->preview);
     }
 
     public function submit(): void
