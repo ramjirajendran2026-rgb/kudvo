@@ -67,6 +67,7 @@ class Preference extends ElectionPage
                             'mfa_sms_auto_fill_only' => ($state['mfa_sms'] ?? false) && !($state['mfa_mail'] ?? false) ?
                                 ($state['mfa_sms_auto_fill_only'] ?? false) :
                                 false,
+                            'web_app_manifest' => ($state['web_app_manifest_enabled'] ?? false) ? $state['web_app_manifest'] : null,
                         ]
                     ))
                     ->columns()
