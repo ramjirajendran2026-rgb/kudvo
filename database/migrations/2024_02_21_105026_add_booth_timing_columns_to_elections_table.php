@@ -13,8 +13,8 @@ return new class extends Migration {
                 $table->after(
                     column: 'ends_at',
                     callback: function (Blueprint $table): void {
-                        $table->time(column: 'booth_starts_at')->nullable();
-                        $table->time(column: 'booth_ends_at')->nullable();
+                        $table->timestamp(column: 'booth_starts_at')->nullable();
+                        $table->timestamp(column: 'booth_ends_at')->nullable();
                     },
                 );
             },
