@@ -10,6 +10,7 @@ use App\Models\Election;
 use App\Models\Elector;
 use App\Notifications\Election\MfaCodeNotification;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
+use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Form;
@@ -130,6 +131,12 @@ class Login extends BasePage
         throw ValidationException::withMessages([
             'data.phone' => __('filament-panels::pages/auth/login.messages.failed'),
         ]);
+    }
+
+    protected function getAuthenticateFormAction(): Action
+    {
+        return parent::getAuthenticateFormAction()
+            ->label(label: Kudvo::getElection()->isMfaRequired() ? 'Get OTP' : 'Sign in');
     }
 
     public function form(Form $form): Form
