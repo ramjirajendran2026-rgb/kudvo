@@ -229,6 +229,11 @@ class ElectionPolicy
         return $election->is_completed;
     }
 
+    public function sendBallotLinkBulk(User $user, Election $election): bool
+    {
+        return $election->is_published;
+    }
+
     public function vote(Elector $elector, Election $election): bool
     {
         return $election->is_open &&

@@ -9,15 +9,17 @@ use App\Models\Election;
 use App\Models\Elector;
 use Filament\Actions\Action;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Concerns\InteractsWithRelationshipTable;
-use Filament\Resources\Pages\Page;
 use Filament\Tables\Actions\Action as TableAction;
+use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\CreateAction as TableCreateAction;
 use Filament\Tables\Actions\DeleteAction as TableDeleteAction;
 use Filament\Tables\Actions\EditAction as TableEditAction;
 use Filament\Tables\Actions\ImportAction as TableImportAction;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Collection;
 
 class Electors extends ElectionPage implements HasTable
 {
@@ -54,9 +56,11 @@ class Electors extends ElectionPage implements HasTable
 
                 $this->getSendBallotLinkAction(),
             ])
-            ->bulkActions(actions: [
+            ->groupedBulkActions(actions: [
                 ElectorResource::getBulkDeleteAction()
                     ->authorize(abilities: fn (self $livewire): bool => static::can(action: 'deleteAnyElector', election: $livewire->getElection())),
+
+                $this->sendBallotLinkBulkAction(),
             ])
             ->emptyStateActions(actions: [
                 $this->getCreateAction(),
@@ -134,6 +138,31 @@ class Electors extends ElectionPage implements HasTable
             })
             ->icon(icon: 'heroicon-m-bell-alert')
             ->iconButton();
+    }
+
+    protected function sendBallotLinkBulkAction()
+    {
+        return BulkAction::make(name: 'sendBallotLinkBulk')
+            ->authorize(abilities: fn (self $livewire): bool => static::can(action: 'sendBallotLinkBulk', election: $livewire->getElection()))
+            ->requiresConfirmation()
+            ->action(action: function (BulkAction $action, Collection $collection) {
+                $collection->each(
+                    callback: function (Elector $elector) {
+                        if (!$elector->ballot?->isVoted()) {
+                            $elector->sendBallotLink();
+                        }
+                    }
+                );
+
+                $action->success();
+            })
+            ->icon(icon: 'heroicon-m-bell-alert')
+            ->label(label: 'Send Ballot Links')
+            ->successNotification(
+                notification: fn (Notification $notification) => $notification
+                    ->title(title: 'Ballot Links Sent')
+                    ->body(body: 'Ballot links have been sent to selected electors who have not yet voted.')
+            );
     }
 
     public static function canAccessPage(Election $election): bool
