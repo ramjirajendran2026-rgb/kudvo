@@ -8,7 +8,7 @@
             @apply text-xl;
         }
 
-        @apply sticky top-0 text-center bg-inherit rounded-t-xl border-b border-gray-200 dark:border-white/10;
+        @apply sticky z-10 top-0 text-center bg-inherit rounded-t-xl border-b border-gray-200 dark:border-white/10;
     }
 
     &.fi-invalid {
