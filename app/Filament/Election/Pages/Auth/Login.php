@@ -162,6 +162,7 @@ class Login extends BasePage
     {
         return Checkbox::make(name: 'consent')
             ->accepted()
+            ->default(state: true)
             ->label(label: 'I agree to receive OTP (One Time Password)')
             ->validationAttribute(label: 'consent')
             ->visible(condition: Kudvo::getElection()->isMfaRequired());
