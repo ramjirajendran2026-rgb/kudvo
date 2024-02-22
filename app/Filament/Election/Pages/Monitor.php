@@ -5,7 +5,7 @@ namespace App\Filament\Election\Pages;
 use App\Filament\Election\Http\Middleware\EnsureStateIsAllowed;
 use App\Filament\Election\Pages\Concerns\InteractsWithElection;
 use App\Filament\Election\Widgets\ElectionStatsOverview;
-use App\Filament\Election\Widgets\ElectionVotingTrends;
+use App\Filament\Election\Widgets\ElectionVotingSummary;
 use App\Filament\Election\Widgets\RecentlyVotedElectors;
 use Filament\Pages\Page;
 use Filament\Panel;
@@ -59,7 +59,7 @@ class Monitor extends Page
     {
         return [
             ElectionStatsOverview::class,
-            ElectionVotingTrends::class,
+            ElectionVotingSummary::class,
             RecentlyVotedElectors::class,
         ];
     }

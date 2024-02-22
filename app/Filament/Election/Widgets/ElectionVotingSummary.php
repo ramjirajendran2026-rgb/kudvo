@@ -12,11 +12,11 @@ use Flowframe\Trend\Trend;
 use Flowframe\Trend\TrendValue;
 use Illuminate\Database\Eloquent\Builder;
 
-class ElectionVotingTrends extends ChartWidget
+class ElectionVotingSummary extends ChartWidget
 {
     public Election $election;
 
-    protected static ?string $heading = 'Voting Trends';
+    protected static ?string $heading = 'Voting Summary';
 
     protected static ?string $maxHeight = '300px';
 
