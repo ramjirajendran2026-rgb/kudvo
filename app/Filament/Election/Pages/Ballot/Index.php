@@ -232,10 +232,5 @@ class Index extends BasePage
     public function destroySession(): void
     {
         Filament::auth()->logout();
-
-        session()->invalidate();
-        session()->regenerateToken();
-
-        $this->redirect(url: $this->getRedirectUrl(), navigate: $this->isSpa());
     }
 }
