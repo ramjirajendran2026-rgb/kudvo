@@ -218,9 +218,10 @@
                                     'cursor-pointer md:hover:bg-gray-100 md:hover:px-4 dark:md:hover:bg-white/5' => ! $isDisabled,
                                 ])
                             >
-                                <x-filament::input.checkbox
-                                    :valid="! $errors->has($statePath)"
-                                    :attributes="
+                                <div class="relative">
+                                    <x-filament::input.checkbox
+                                        :valid="! $errors->has($statePath)"
+                                        :attributes="
                                 \Filament\Support\prepare_inherited_attributes($getExtraInputAttributeBag())
                                     ->merge([
                                         'disabled' => $isDisabled || $isOptionDisabled($value, $label),
@@ -229,9 +230,13 @@
                                         $applyStateBindingModifiers('wire:model') => $statePath,
                                         'x-on:change' => 'checkIfAllCheckboxesAreChecked($event)',
                                     ], escape: false)
-                                    ->class(['mt-1 w-8 h-8'])
+                                    ->class(['mt-1 w-8 h-8 peer'])
                             "
-                                />
+                                    />
+                                    <svg class="mt-1 w-8 h-8 absolute inset-0 hidden peer-checked:block" viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'>
+                                        <path d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/>
+                                    </svg>
+                                </div>
 
                                 @if($hasPhoto())
                                     <img
