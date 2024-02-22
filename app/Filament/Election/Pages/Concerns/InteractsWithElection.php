@@ -67,7 +67,7 @@ trait InteractsWithElection
         }
 
         $startsAt = $this->getElection()->starts_at_local;
-        $endsAt = $this->getElection()->starts_at_local;
+        $endsAt = $this->getElection()->ends_at_local;
         if (Kudvo::isBoothDevice()) {
             $startsAt = $this->getElection()->booth_starts_at_local;
             $endsAt = $this->getElection()->booth_ends_at_local;
