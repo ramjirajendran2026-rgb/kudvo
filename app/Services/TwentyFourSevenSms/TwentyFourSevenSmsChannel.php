@@ -65,7 +65,7 @@ class TwentyFourSevenSmsChannel
 
             Log::info(message: '[24x7SMS] SendSMS Response: '.$response);
 
-            SmsMessageSent::dispatch($response);
+            SmsMessageSent::dispatch($notifiable, $notification, $response);
 
             return $response;
         } catch (Throwable $e) {

@@ -2,10 +2,12 @@
 
 namespace App\Listeners;
 
-use App\Models\Enums\SmsMessageStatus;
+use App\Enums\SmsMessageStatus;
 use App\Models\SmsMessage;
+use App\Notifications\Contracts\HasSmsMessagePurpose;
 use App\Services\TwentyFourSevenSms\SmsMessageSent;
 use App\Services\TwentyFourSevenSms\TwentyFourSevenSmsChannel;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
@@ -13,7 +15,7 @@ class LogTwentyFourSevenSmsSentMessage
 {
     public function handle(SmsMessageSent $event): void
     {
-        if (blank($response = $event->response)) {
+        if (blank($response = $event->result)) {
             return;
         }
 
@@ -34,12 +36,22 @@ class LogTwentyFourSevenSmsSentMessage
                     'provider_message_id' => $message[1],
                 ],
                 [
+                    'purpose' => $event->notification instanceof HasSmsMessagePurpose
+                        ? $event->notification->getSmsMessagePurpose()
+                        : null,
                     'phone' => '+'.$message[2],
                     'status' => SmsMessageStatus::SENT,
                     'provider_status' => $message[4],
                     'provider_meta' => [
                         'response' => $message,
                     ],
+
+                    ...$event->notifiable instanceof Model ?
+                        [
+                            'smsable_type' => $event->notifiable->getMorphClass(),
+                            'smsable_id' => $event->notifiable->getKey(),
+                        ] :
+                        [],
                 ]
             );
         }

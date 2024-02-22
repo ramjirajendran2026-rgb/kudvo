@@ -2,16 +2,18 @@
 
 namespace App\Notifications\Election;
 
+use App\Enums\SmsMessagePurpose;
 use App\Models\Election;
 use App\Models\OneTimePassword;
 use App\Notifications\Concerns\HasSmsChannel;
+use App\Notifications\Contracts\HasSmsMessagePurpose;
 use App\Settings\SmsTemplates;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
-class MfaCodeNotification extends Notification
+class MfaCodeNotification extends Notification implements HasSmsMessagePurpose
 {
     use HasSmsChannel;
 
@@ -68,5 +70,10 @@ class MfaCodeNotification extends Notification
             replace: array_values($variables),
             subject: $template
         );
+    }
+
+    public function getSmsMessagePurpose(): SmsMessagePurpose
+    {
+        return SmsMessagePurpose::BallotMfaCode;
     }
 }

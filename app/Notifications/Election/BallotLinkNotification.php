@@ -2,14 +2,16 @@
 
 namespace App\Notifications\Election;
 
+use App\Enums\SmsMessagePurpose;
 use App\Notifications\Concerns\HasSmsChannel;
+use App\Notifications\Contracts\HasSmsMessagePurpose;
 use App\Notifications\Election\Data\BallotLinkNotificationData;
 use App\Settings\SmsTemplates;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Str;
 
-class BallotLinkNotification extends Notification
+class BallotLinkNotification extends Notification implements HasSmsMessagePurpose
 {
     use HasSmsChannel;
 
@@ -77,5 +79,10 @@ class BallotLinkNotification extends Notification
             replace: array_values($variables),
             subject: $template
         );
+    }
+
+    public function getSmsMessagePurpose(): SmsMessagePurpose
+    {
+        return SmsMessagePurpose::BallotLink;
     }
 }

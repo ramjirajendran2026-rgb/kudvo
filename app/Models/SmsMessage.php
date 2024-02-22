@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use App\Models\Enums\SmsMessageProvider;
-use App\Models\Enums\SmsMessagePurpose;
-use App\Models\Enums\SmsMessageStatus;
+use App\Enums\SmsMessageProvider;
+use App\Enums\SmsMessagePurpose;
+use App\Enums\SmsMessageStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
