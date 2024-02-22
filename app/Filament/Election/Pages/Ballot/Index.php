@@ -199,8 +199,9 @@ class Index extends BasePage
 
             Notification::make()
                 ->title(title: 'Submitted')
-                ->body(body: 'Your votes are submitted successfully. This page will be automatically expire in 10 seconds.')
+                ->body(body: 'Your votes are submitted successfully. This page will be automatically expire in 30 seconds.')
                 ->success()
+                ->seconds(seconds: 30)
                 ->send();
 
             return;

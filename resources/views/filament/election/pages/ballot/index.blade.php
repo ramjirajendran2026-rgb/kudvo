@@ -4,7 +4,7 @@
     x-on:flash-session-timeout="
         setTimeout(
             () => $dispatch('session-expired'),
-            10000,
+            30000,
         );
     "
     x-on:scroll-to-top.window="
