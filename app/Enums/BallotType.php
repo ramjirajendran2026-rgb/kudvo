@@ -2,9 +2,10 @@
 
 namespace App\Enums;
 
+use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
-enum BallotType: string implements HasLabel
+enum BallotType: string implements HasColor, HasLabel
 {
     case Direct = 'direct';
 
@@ -15,6 +16,14 @@ enum BallotType: string implements HasLabel
         return match ($this) {
             self::Direct => 'Direct',
             self::Booth => 'Booth',
+        };
+    }
+
+    public function getColor(): string|array|null
+    {
+        return match ($this) {
+            self::Direct => 'primary',
+            self::Booth => 'info',
         };
     }
 }

@@ -9,7 +9,7 @@ use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Database\Eloquent\Builder;
 
-class RecentlyVotedMembers extends BaseWidget
+class RecentlyVotedElectors extends BaseWidget
 {
     public Election $election;
 
@@ -42,6 +42,11 @@ class RecentlyVotedMembers extends BaseWidget
                     ->dateTime(
                         timezone: $this->election->timezone,
                     ),
+
+                Tables\Columns\TextColumn::make(name: 'type')
+                    ->badge()
+                    ->label(label: 'Method')
+                    ->visible(condition: $this->election->isBoothVotingEnabled()),
             ]);
     }
 }
