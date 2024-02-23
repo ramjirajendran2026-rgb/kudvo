@@ -3,16 +3,21 @@
 namespace App\Notifications\Election;
 
 use App\Enums\SmsMessagePurpose;
+use App\Models\Elector;
 use App\Notifications\Concerns\HasSmsChannel;
 use App\Notifications\Contracts\HasSmsMessagePurpose;
 use App\Notifications\Election\Data\BallotLinkNotificationData;
 use App\Settings\SmsTemplates;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Str;
 
-class BallotLinkNotification extends Notification implements HasSmsMessagePurpose
+class BallotLinkNotification extends Notification
+    implements HasSmsMessagePurpose, ShouldQueue
 {
+    use Queueable;
     use HasSmsChannel;
 
     public const VAR_BALLOT_LINK = '{#BALLOT_LINK#}';
@@ -79,6 +84,11 @@ class BallotLinkNotification extends Notification implements HasSmsMessagePurpos
             replace: array_values($variables),
             subject: $template
         );
+    }
+
+    public function shouldSend(object $notifiable, string $channel): bool
+    {
+        return $notifiable instanceof Elector && !$notifiable->ballot?->isVoted();
     }
 
     public function getSmsMessagePurpose(): SmsMessagePurpose
