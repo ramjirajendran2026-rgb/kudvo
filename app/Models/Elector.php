@@ -204,12 +204,12 @@ class Elector extends Model implements
             ]);
     }
 
-    public function sendBallotLink(?Election $election = null): void
+    public function sendBallotLink(?Election $election = null, bool $now = false): void
     {
         /** @var Election $election */
         $election ??= $this->event;
 
-        $this->notify(instance: new BallotLinkNotification(
+        $notification = new BallotLinkNotification(
             data: new BallotLinkNotificationData(
                 electionName: $election->name,
                 ballotLink: $election->preference->ballot_link_unique ?
@@ -221,6 +221,12 @@ class Elector extends Model implements
                 electorName: $this->display_name,
             ),
             via: $election->ballot_link_via,
-        ));
+        );
+
+        if ($now) {
+            $this->notifyNow(instance: $notification);
+        } else {
+            $this->notify(instance: $notification);
+        }
     }
 }
