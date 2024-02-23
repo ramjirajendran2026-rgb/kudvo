@@ -60,7 +60,7 @@ class Electors extends ElectionPage implements HasTable
                 ElectorResource::getBulkDeleteAction()
                     ->authorize(abilities: fn (self $livewire): bool => static::can(action: 'deleteAnyElector', election: $livewire->getElection())),
 
-                $this->sendBallotLinkBulkAction(),
+                $this->getSendBallotLinkBulkAction(),
             ])
             ->emptyStateActions(actions: [
                 $this->getCreateAction(),
@@ -147,7 +147,7 @@ class Electors extends ElectionPage implements HasTable
             );
     }
 
-    protected function sendBallotLinkBulkAction()
+    protected function getSendBallotLinkBulkAction(): BulkAction
     {
         return BulkAction::make(name: 'sendBallotLinkBulk')
             ->authorize(abilities: fn (self $livewire): bool => static::can(action: 'sendBallotLinkBulk', election: $livewire->getElection()))
