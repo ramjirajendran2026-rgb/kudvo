@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use App\Models\Organisation;
 use App\Models\User;
+use Filament\Facades\Filament;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class OrganisationPolicy
@@ -17,7 +18,8 @@ class OrganisationPolicy
 
     public function create(User $user): bool
     {
-        return $user->organisations()->count() < 1;
+        return $user->canAccessPanel(panel: Filament::getPanel(id: 'admin')) ||
+            $user->organisations()->count() < 1;
     }
 
     public function update(User $user, Organisation $organisation): bool
