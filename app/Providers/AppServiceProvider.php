@@ -2,25 +2,25 @@
 
 namespace App\Providers;
 
-use App\Facades\Kudvo;
-use App\Filament\Contracts\ResolvesElection;
 use App\KudvoManager;
 use App\Services\Clicksend\ClicksendChannel;
 use App\Services\TwentyFourSevenSms\TwentyFourSevenSmsChannel;
+use App\Settings\ServiceConfig;
+use ClickSend\Api\SMSApi;
+use ClickSend\Configuration;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Actions\Action as FormsAction;
 use Filament\Infolists\Components\Actions\Action as InfolistAction;
 use Filament\Notifications\Livewire\Notifications;
-use Filament\Pages\Page;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\VerticalAlignment;
 use Filament\Tables\Actions\Action as TableAction;
 use Filament\Tables\Actions\CreateAction as TableCreateAction;
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Model;
+use GuzzleHttp\Client;
 use Illuminate\Notifications\ChannelManager;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\App;
@@ -87,6 +87,19 @@ class AppServiceProvider extends ServiceProvider
                     callback: fn () => app(abstract: ClicksendChannel::class)
                 )
         );
+
+        $this->app->when(concrete: ClicksendChannel::class)
+            ->needs(abstract: SMSApi::class)
+            ->give(implementation: function () {
+                $serviceConfig = app(abstract: ServiceConfig::class);
+
+                return new SMSApi(
+                    client: new Client(),
+                    config: Configuration::getDefaultConfiguration()
+                        ->setUsername($serviceConfig->clicksend->username)
+                        ->setPassword($serviceConfig->clicksend->api_key)
+                );
+            });
 
         Filament::serving(callback: function (): void {
             Table::$defaultDateTimeDisplayFormat = 'M j, Y h:i:s A';

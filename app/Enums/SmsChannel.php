@@ -2,6 +2,7 @@
 
 namespace App\Enums;
 
+use App\Services\Clicksend\ClicksendChannel;
 use App\Services\TwentyFourSevenSms\TwentyFourSevenSmsChannel;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
@@ -9,7 +10,7 @@ use Illuminate\Support\Arr;
 
 enum SmsChannel: string implements HasLabel, HasColor
 {
-    case Clicksend = 'Clicksend';
+    case Clicksend = ClicksendChannel::NAME;
 
     case TwentyFourSevenSms = TwentyFourSevenSmsChannel::NAME;
 

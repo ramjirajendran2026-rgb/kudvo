@@ -43,6 +43,7 @@ class ClicksendChannel
         $message->setTo($route);
 
         try {
+            Log::info("[Clicksend] SendSMS Request: ".((string) $message));
             $response = $this->api->smsSendPost(
                 (new SmsMessageCollection())
                     ->setMessages([$message])
