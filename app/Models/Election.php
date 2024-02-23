@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class Election extends Model
 {
@@ -451,42 +452,36 @@ class Election extends Model
     public function replicateBallotSetup(Election $from): void
     {
         $from->positions()
-            ->chunkById(
-                count: 300,
-                callback: function (Collection $positions) {
-                    $positions->each(
-                        callback: function (Position $position) {
-                            $replica = $this->positions()
-                                ->create(
-                                    attributes: $position
-                                        ->replicate(except: [
-                                            'event_id',
-                                            'event_type',
-                                        ])
-                                        ->toArray()
-                                );
+            ->cursor()
+            ->each(
+                callback: function (Position $position) {
+                    $replicaPosition = $this->positions()
+                        ->create(
+                            attributes: $position
+                                ->replicate(except: [
+                                    'event_id',
+                                    'event_type',
+                                ])
+                                ->toArray()
+                        );
 
-                                $position->candidates()
-                                    ->chunkById(
-                                        count: 300,
-                                        callback: function (Collection $candidates) use ($replica) {
-                                            $candidates->each(
-                                                callback: fn (Candidate $candidate) => $replica->candidates()
-                                                    ->create(
-                                                        attributes: $candidate
-                                                            ->replicate(except: [
-                                                                'elector_id',
-                                                                'full_name',
-                                                                'position_id',
-                                                                'rank',
-                                                            ])
-                                                            ->toArray()
-                                                    )
-                                            );
-                                        }
+                    $position->candidates()
+                        ->cursor()
+                        ->each(
+                            callback: function (Candidate $candidate) use ($replicaPosition) {
+                                $replicaCandidate = $replicaPosition->candidates()
+                                    ->create(
+                                        attributes: $candidate
+                                            ->replicate(except: [
+                                                'elector_id',
+                                                'full_name',
+                                                'position_id',
+                                                'rank',
+                                            ])
+                                            ->toArray()
                                     );
-                        }
-                    );
+                            }
+                        );
                 }
             );
     }
