@@ -12,6 +12,7 @@ use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Concerns\InteractsWithRelationshipTable;
 use Filament\Tables\Actions\Action as TableAction;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\CreateAction as TableCreateAction;
 use Filament\Tables\Actions\DeleteAction as TableDeleteAction;
@@ -69,6 +70,10 @@ class Electors extends ElectionPage implements HasTable
                 $this->getImportAction(),
 
                 $this->getCreateAction(),
+
+                ActionGroup::make(actions: [
+                    $this->getGenerateShortCodesAction(),
+                ]),
             ]);
     }
 
@@ -169,6 +174,34 @@ class Electors extends ElectionPage implements HasTable
                 notification: fn (Notification $notification) => $notification
                     ->title(title: 'Ballot Links Sent')
                     ->body(body: 'Ballot links have been sent to selected electors who have not yet voted.')
+            );
+    }
+
+    public function getGenerateShortCodesAction(): TableAction
+    {
+        return TableAction::make(name: 'generateShortCodes')
+            ->requiresConfirmation()
+            ->action(action: function (TableAction $action, self $livewire) {
+                $livewire->getElection()->electors()->whereNull('short_code')
+                    ->cursor()
+                    ->each(
+                        callback: function (Elector $elector) {
+                            $elector->short_code;
+                        }
+                    );
+
+                $action->success();
+            })
+            ->icon(icon: 'heroicon-m-key')
+            ->label(label: 'Generate Short Codes')
+            ->successNotification(
+                notification: fn (Notification $notification) => $notification
+                    ->title(title: 'Short Codes Generated')
+                    ->body(body: 'Short codes have been generated for electors who do not have one.')
+            )
+            ->visible(
+                condition: $this->getElection()->is_published &&
+                $this->getElection()->electors()->whereNull('short_code')->count()
             );
     }
 
