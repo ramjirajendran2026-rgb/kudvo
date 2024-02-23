@@ -12,6 +12,7 @@
         "ext-mbstring": "*",
         "aws/aws-sdk-php": "^3.295",
         "barryvdh/laravel-dompdf": "^2.0",
+        "clicksend/clicksend-php": "^5.0",
         "filament/filament": "^3.2",
         "filament/spatie-laravel-media-library-plugin": "^3.2",
         "filament/spatie-laravel-settings-plugin": "^3.2",

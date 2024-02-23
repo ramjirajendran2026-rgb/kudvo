@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Facades\Kudvo;
 use App\Filament\Contracts\ResolvesElection;
 use App\KudvoManager;
+use App\Services\Clicksend\ClicksendChannel;
 use App\Services\TwentyFourSevenSms\TwentyFourSevenSmsChannel;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
@@ -77,6 +78,13 @@ class AppServiceProvider extends ServiceProvider
                 ->extend(
                     driver: TwentyFourSevenSmsChannel::NAME,
                     callback: fn () => app(abstract: TwentyFourSevenSmsChannel::class)
+                )
+        );
+        Notification::resolved(
+            fn (ChannelManager $service) => $service
+                ->extend(
+                    driver: ClicksendChannel::NAME,
+                    callback: fn () => app(abstract: ClicksendChannel::class)
                 )
         );
 
