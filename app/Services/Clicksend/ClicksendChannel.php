@@ -57,7 +57,7 @@ class ClicksendChannel
 
             $responseData = SendSmsResponseData::from(json_decode($response, associative: true)['data']);
 
-            SmsSent::dispatch($responseData);
+            SmsSent::dispatch($notifiable, $notification, $responseData);
 
             return $responseData;
         } catch (ApiException|Throwable $e) {

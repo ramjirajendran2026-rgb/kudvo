@@ -5,6 +5,7 @@ use App\Filament\Election\Pages\Ballot\Index as BallotPage;
 use App\Filament\Election\Pages\Index as ElectionPanel;
 use App\Models\Election;
 use App\Models\Elector;
+use App\Services\Clicksend\Http\Controllers\WebhookController as ClicksendWebhookController;
 use Filament\Facades\Filament;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -31,3 +32,5 @@ Route::get(
     uri: 'b/{elector:short_code}',
     action: fn (Request $request, Elector $elector) => redirect(to: URL::signedRoute(name: 'filament.election.eul', parameters: ['election' => $elector->event, 'elector' => $elector]))
 )->name(name: 'short_link.ballot');
+
+Route::post(uri: 'clicksend/webhook', action: ClicksendWebhookController::class);

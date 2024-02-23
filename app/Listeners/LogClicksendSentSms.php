@@ -8,6 +8,7 @@ use App\Services\Clicksend\Actions\GetSmsStatusForProviderStatus;
 use App\Services\Clicksend\ClicksendChannel;
 use App\Services\Clicksend\Data\SendSmsResponseMessageData;
 use App\Services\Clicksend\SmsSent;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 
 class LogClicksendSentSms
@@ -41,6 +42,13 @@ class LogClicksendSentSms
                     'provider_meta' => [
                         'response' => $message->toArray(),
                     ],
+
+                    ...$event->notifiable instanceof Model ?
+                        [
+                            'smsable_type' => $event->notifiable->getMorphClass(),
+                            'smsable_id' => $event->notifiable->getKey(),
+                        ] :
+                        [],
                 ]
             );
         }

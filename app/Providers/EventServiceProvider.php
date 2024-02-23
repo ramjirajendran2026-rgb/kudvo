@@ -4,8 +4,10 @@ namespace App\Providers;
 
 use App\Events\NomineeNominated;
 use App\Listeners\DestroyBrowserSession;
+use App\Listeners\LogClicksendSentSms;
 use App\Listeners\LogTwentyFourSevenSmsSentMessage;
 use App\Listeners\SendNomineeNominatedNotifications;
+use App\Services\Clicksend\SmsSent;
 use App\Services\TwentyFourSevenSms\SmsMessageSent;
 use Illuminate\Auth\Events\CurrentDeviceLogout;
 use Illuminate\Auth\Events\Logout;
@@ -35,6 +37,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         SmsMessageSent::class => [
             LogTwentyFourSevenSmsSentMessage::class,
+        ],
+        SmsSent::class => [
+            LogClicksendSentSms::class,
         ],
     ];
 
