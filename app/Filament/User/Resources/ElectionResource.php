@@ -25,6 +25,7 @@ use Filament\Support\Enums\IconPosition;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Tables;
 use Filament\Tables\Actions\CreateAction as TableCreateAction;
+use Filament\Tables\Actions\DeleteAction as DeleteTableAction;
 use Filament\Tables\Actions\ReplicateAction as ReplicateTableAction;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Collection;
@@ -93,7 +94,11 @@ class ElectionResource extends Resource
                     ->badge(),
             ])
             ->actions(actions: [
-                static::getReplicateAction(),
+                Tables\Actions\ActionGroup::make(actions: [
+                    static::getReplicateAction(),
+
+                    DeleteTableAction::make(),
+                ]),
             ])
             ->emptyStateActions(actions: [
                 static::getTableCreateAction(),

@@ -41,7 +41,7 @@ class ElectionPolicy
 
     public function delete(User $user, Election $election): bool
     {
-        return false;
+        return $election->is_draft;
     }
 
     public function setTiming(User $user, Election $election): bool
