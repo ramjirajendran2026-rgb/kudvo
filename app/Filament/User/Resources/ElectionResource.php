@@ -25,6 +25,7 @@ use Filament\Support\Enums\IconPosition;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Tables;
 use Filament\Tables\Actions\CreateAction as TableCreateAction;
+use Filament\Tables\Actions\ReplicateAction as ReplicateTableAction;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -90,6 +91,9 @@ class ElectionResource extends Resource
                 Tables\Columns\TextColumn::make(name: 'status')
                     ->alignCenter()
                     ->badge(),
+            ])
+            ->actions(actions: [
+                static::getReplicateAction(),
             ])
             ->emptyStateActions(actions: [
                 static::getTableCreateAction(),
@@ -315,5 +319,36 @@ class ElectionResource extends Resource
             ->icon(icon: 'heroicon-o-chart-pie')
             ->label(label: 'Generate Result')
             ->successNotificationTitle(title: 'Result generated');
+    }
+
+    public static function getReplicateAction(): ReplicateTableAction
+    {
+        return ReplicateTableAction::make()
+            ->after(callback: function (Election $replica, Election $record, array $data): void {
+                if ($data['replicate_electors'] ?? false) {
+                    $replica->replicateElectors(from: $record);
+                }
+
+                if ($data['replicate_ballot_setup'] ?? false) {
+                    $replica->replicateBallotSetup(from: $record);
+                }
+            })
+            ->excludeAttributes(attributes: [
+                'cancelled_at',
+                'code',
+                'completed_at',
+                'closed_at',
+                'published_at',
+                'short_code',
+            ])
+            ->form(form: [
+                ElectionForm::nameComponent(),
+
+                Toggle::make(name: 'replicate_electors')
+                    ->label(label: 'Include electors'),
+
+                Toggle::make(name: 'replicate_ballot_setup')
+                    ->label(label: 'Include ballot setup'),
+            ]);
     }
 }

@@ -415,4 +415,71 @@ class Election extends Model
             ->get()
             ->each(callback: fn (Candidate $candidate) => $candidate->update(attributes: ['rank' => array_search(needle: $candidate->uuid, haystack: $data) + 1]));
     }
+
+    public function replicateElectors(Election $from): void
+    {
+        $from->electors()
+            ->chunkById(
+                count: 300,
+                callback: function (Collection $electors) {
+                    $electors->each(
+                        callback: fn (Elector $elector) => $this->electors()
+                            ->create(
+                                attributes: $elector
+                                    ->replicate(except: [
+                                        'current_session_id',
+                                        'event_id',
+                                        'event_type',
+                                        'full_name',
+                                        'short_code',
+                                    ])
+                                    ->toArray()
+                            )
+                    );
+                }
+            );
+    }
+
+    public function replicateBallotSetup(Election $from): void
+    {
+        $from->positions()
+            ->chunkById(
+                count: 300,
+                callback: function (Collection $positions) {
+                    $positions->each(
+                        callback: function (Position $position) {
+                            $replica = $this->positions()
+                                ->create(
+                                    attributes: $position
+                                        ->replicate(except: [
+                                            'event_id',
+                                            'event_type',
+                                        ])
+                                        ->toArray()
+                                );
+
+                                $position->candidates()
+                                    ->chunkById(
+                                        count: 300,
+                                        callback: function (Collection $candidates) use ($replica) {
+                                            $candidates->each(
+                                                callback: fn (Candidate $candidate) => $replica->candidates()
+                                                    ->create(
+                                                        attributes: $candidate
+                                                            ->replicate(except: [
+                                                                'elector_id',
+                                                                'full_name',
+                                                                'position_id',
+                                                                'rank',
+                                                            ])
+                                                            ->toArray()
+                                                    )
+                                            );
+                                        }
+                                    );
+                        }
+                    );
+                }
+            );
+    }
 }
