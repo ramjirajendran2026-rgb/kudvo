@@ -345,9 +345,11 @@ class ElectionResource extends Resource
                 ElectionForm::nameComponent(),
 
                 Toggle::make(name: 'replicate_electors')
+                    ->default(state: true)
                     ->label(label: 'Include electors'),
 
                 Toggle::make(name: 'replicate_ballot_setup')
+                    ->default(state: true)
                     ->label(label: 'Include ballot setup'),
             ]);
     }
