@@ -104,7 +104,7 @@ class ElectionPanelProvider extends PanelProvider
             ->breadcrumbs(condition: false)
             ->maxContentWidth(maxContentWidth: MaxWidth::FiveExtraLarge)
             ->brandName(name: fn (): string => Kudvo::getOrganisation()?->name)
-            ->brandLogo(logo: fn (): string => Kudvo::getOrganisation()?->getFilamentAvatarUrl())
+            ->brandLogo(logo: fn (): HtmlString => $this->getBrandLogo())
             ->spa()
             ->renderHook(
                 name: PanelsRenderHook::HEAD_START,
@@ -125,19 +125,14 @@ class ElectionPanelProvider extends PanelProvider
 
         return new HtmlString(
             html: <<<HTML
+<img
+    alt="$organisation->name\'s logo"
+    src="$logoUrl"
+/>
 <div
-    class="flex items-center gap-4"
+    class="text-xl font-bold leading-5 tracking-tight text-gray-950 dark:text-white"
 >
-    <img
-        alt="$organisation->name\'s logo"
-        src="$logoUrl"
-        style="height: 2.5rem;"
-    />
-    <div
-        class="text-xl font-bold leading-5 tracking-tight text-gray-950 dark:text-white"
-    >
-        $organisation->name
-    </div>
+    $organisation->name
 </div>
 HTML
         );

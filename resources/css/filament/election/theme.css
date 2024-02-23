@@ -27,6 +27,14 @@
     }
 }
 
+.fi-logo {
+    @apply flex items-center justify-center gap-x-4 h-auto;
+
+    & img {
+        @apply h-8 md:h-12 w-auto;
+    }
+}
+
 .fi-header {
     > div:first-child:last-child {
         @apply sm:flex-grow text-center;
