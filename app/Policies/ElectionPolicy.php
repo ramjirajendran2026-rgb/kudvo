@@ -130,7 +130,11 @@ class ElectionPolicy
 
     public function createElector(User $user, Election $election): bool
     {
-        return $election->is_draft;
+        return $election->is_draft ||
+            (
+                $election->is_published &&
+                $election->preference->elector_update_after_publish
+            );
     }
 
     public function importElector(User $user, Election $election): bool
