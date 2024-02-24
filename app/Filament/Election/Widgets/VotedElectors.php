@@ -16,6 +16,8 @@ class VotedElectors extends BaseWidget
 
     protected int | string | array $columnSpan = 'full';
 
+    protected static ?string $heading = 'Voted Electors';
+
     public function table(Table $table): Table
     {
         return $table
