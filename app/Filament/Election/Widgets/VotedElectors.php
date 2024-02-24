@@ -24,21 +24,27 @@ class VotedElectors extends BaseWidget
             ->description(description: fn (): string => "Updated at ".now(tz: $this->election->timezone)->format(format: Table::$defaultDateTimeDisplayFormat))
             ->poll()
             ->query(
-                Elector::whereMorphedTo(relation: 'event', model: $this->election)
-                    ->with(relations: 'ballot')
+                Ballot::query()
+                    ->live()
+                    ->voted()
                     ->whereHas(
-                        relation: 'ballot',
-                        callback: fn (Builder $query) => $query->whereNotNull('voted_at'),
-                    ),
+                        relation: 'elector',
+                        callback: fn (Builder $query) => $query
+                            ->whereMorphedTo(
+                                relation: 'event',
+                                model: $this->election,
+                            )
+                    )
+                    ->latest(column: 'voted_at')
             )
             ->columns([
-                Tables\Columns\TextColumn::make(name: 'membership_number')
+                Tables\Columns\TextColumn::make(name: 'elector.membership_number')
                     ->label(label: 'Code'),
 
-                Tables\Columns\TextColumn::make(name: 'full_name')
+                Tables\Columns\TextColumn::make(name: 'elector.full_name')
                     ->wrap(),
 
-                Tables\Columns\TextColumn::make(name: 'ballot.voted_at')
+                Tables\Columns\TextColumn::make(name: 'voted_at')
                     ->dateTime(
                         timezone: $this->election->timezone,
                     ),
