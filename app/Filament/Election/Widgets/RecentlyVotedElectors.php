@@ -27,8 +27,7 @@ class RecentlyVotedElectors extends BaseWidget
                     ->whereHas(
                         relation: 'ballot',
                         callback: fn (Builder $query) => $query->whereNotNull('voted_at'),
-                    )
-                    ->orderByDesc(column: 'ballot.voted_at'),
+                    ),
             )
             ->columns([
                 Tables\Columns\TextColumn::make(name: 'membership_number')
