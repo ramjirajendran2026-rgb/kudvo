@@ -10,7 +10,7 @@ use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Database\Eloquent\Builder;
 
-class RecentlyVotedElectors extends BaseWidget
+class VotedElectors extends BaseWidget
 {
     public Election $election;
 
