@@ -43,7 +43,7 @@ class VotedElectors extends BaseWidget
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make(name: 'elector.display_name')
-                    ->searchable()
+                    ->searchable(condition: 'full_name')
                     ->wrap(),
 
                 Tables\Columns\TextColumn::make(name: 'voted_at')

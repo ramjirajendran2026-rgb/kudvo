@@ -35,7 +35,7 @@ class NonVotedElectors extends BaseWidget
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make(name: 'display_name')
-                    ->searchable()
+                    ->searchable(condition: 'full_name')
                     ->wrap(),
             ]);
     }
