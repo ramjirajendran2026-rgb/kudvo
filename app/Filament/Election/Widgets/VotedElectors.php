@@ -41,7 +41,7 @@ class VotedElectors extends BaseWidget
                 Tables\Columns\TextColumn::make(name: 'elector.membership_number')
                     ->label(label: 'Code'),
 
-                Tables\Columns\TextColumn::make(name: 'elector.full_name')
+                Tables\Columns\TextColumn::make(name: 'elector.display_name')
                     ->wrap(),
 
                 Tables\Columns\TextColumn::make(name: 'voted_at')
