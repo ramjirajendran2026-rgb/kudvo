@@ -33,7 +33,7 @@ class NonVotedElectors extends BaseWidget
                 Tables\Columns\TextColumn::make(name: 'membership_number')
                     ->label(label: 'Code'),
 
-                Tables\Columns\TextColumn::make(name: 'full_name')
+                Tables\Columns\TextColumn::make(name: 'display_name')
                     ->wrap(),
             ]);
     }
