@@ -9,7 +9,7 @@ use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Database\Eloquent\Builder;
 
-class RecentlyVotedElectors extends BaseWidget
+class NonVotedElectors extends BaseWidget
 {
     public Election $election;
 
@@ -22,7 +22,7 @@ class RecentlyVotedElectors extends BaseWidget
             ->poll()
             ->query(
                 $this->election->electors()
-                    ->whereHas(
+                    ->whereDoesntHave(
                         relation: 'ballot',
                         callback: fn (Builder $query) => $query->whereNotNull('voted_at'),
                     ),
@@ -33,16 +33,6 @@ class RecentlyVotedElectors extends BaseWidget
 
                 Tables\Columns\TextColumn::make(name: 'full_name')
                     ->wrap(),
-
-                Tables\Columns\TextColumn::make(name: 'ballot.voted_at')
-                    ->dateTime(
-                        timezone: $this->election->timezone,
-                    ),
-
-                Tables\Columns\TextColumn::make(name: 'type')
-                    ->badge()
-                    ->label(label: 'Method')
-                    ->visible(condition: $this->election->isBoothVotingEnabled()),
             ]);
     }
 }
