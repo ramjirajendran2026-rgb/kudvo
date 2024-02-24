@@ -31,9 +31,11 @@ class NonVotedElectors extends BaseWidget
             )
             ->columns([
                 Tables\Columns\TextColumn::make(name: 'membership_number')
-                    ->label(label: 'Code'),
+                    ->label(label: 'Code')
+                    ->searchable(),
 
                 Tables\Columns\TextColumn::make(name: 'display_name')
+                    ->searchable()
                     ->wrap(),
             ]);
     }

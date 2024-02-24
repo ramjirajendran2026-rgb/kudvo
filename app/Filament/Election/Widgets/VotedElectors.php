@@ -35,19 +35,22 @@ class VotedElectors extends BaseWidget
                                 model: $this->election,
                             )
                     )
-                    ->latest(column: 'voted_at')
             )
+            ->defaultSort(column: 'voted_at', direction: 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make(name: 'elector.membership_number')
-                    ->label(label: 'Code'),
+                    ->label(label: 'Code')
+                    ->searchable(),
 
                 Tables\Columns\TextColumn::make(name: 'elector.display_name')
+                    ->searchable()
                     ->wrap(),
 
                 Tables\Columns\TextColumn::make(name: 'voted_at')
                     ->dateTime(
                         timezone: $this->election->timezone,
-                    ),
+                    )
+                    ->sortable(),
 
                 Tables\Columns\TextColumn::make(name: 'type')
                     ->badge()
