@@ -2,8 +2,10 @@
 
 namespace App\Filament\Election\Widgets;
 
+use App\Filament\User\Resources\NominationResource\Pages\Electors;
 use App\Models\Ballot;
 use App\Models\Election;
+use App\Models\Elector;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
@@ -21,7 +23,7 @@ class NonVotedElectors extends BaseWidget
             ->description(description: fn (): string => "Updated at ".now(tz: $this->election->timezone)->format(format: Table::$defaultDateTimeDisplayFormat))
             ->poll()
             ->query(
-                $this->election->electors()
+                Elector::whereMorphedTo(relation: 'event', model: $this->election)
                     ->whereDoesntHave(
                         relation: 'ballot',
                         callback: fn (Builder $query) => $query->whereNotNull('voted_at'),
