@@ -2,6 +2,7 @@
 
 namespace App\Filament\User\Resources\ElectionResource\Widgets;
 
+use App\Enums\BallotType;
 use App\Models\Election;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
@@ -23,10 +24,16 @@ class ElectionStatsOverview extends BaseWidget
         $voted = $this->election->electors()
             ->whereHas(
                 relation: 'ballot',
-                callback: fn (Builder $query) => $query->scopes(scopes: 'voted')
+                callback: fn (Builder $query) => $query->where('type', BallotType::Direct->value)->scopes(scopes: 'voted')
             )
             ->count();
-        $nonVoted = $total - $voted;
+        $boothVoted = $this->election->electors()
+            ->whereHas(
+                relation: 'ballot',
+                callback: fn (Builder $query) => $query->where('type', BallotType::Booth->value)->scopes(scopes: 'voted')
+            )
+            ->count();
+        $nonVoted = $total - $voted - $boothVoted;
 
         return [
             Stat::make(
@@ -38,8 +45,16 @@ class ElectionStatsOverview extends BaseWidget
                 ->icon(icon: 'heroicon-o-user-group'),
 
             Stat::make(
-                label: 'Voted',
+                label: 'Voted (Online)',
                 value: $voted.' ('.Number::percentage(number: ($voted / $total) * 100, maxPrecision: 2).')',
+            )
+                ->color(color: 'success')
+                ->extraAttributes(attributes: ['class' => '[&_div.text-3xl]:text-success-600 [&_div.text-3xl]:dark:text-success-400'])
+                ->icon(icon: 'heroicon-o-face-smile'),
+
+            Stat::make(
+                label: 'Voted (Booth)',
+                value: $boothVoted.' ('.Number::percentage(number: ($boothVoted / $total) * 100, maxPrecision: 2).')',
             )
                 ->color(color: 'success')
                 ->extraAttributes(attributes: ['class' => '[&_div.text-3xl]:text-success-600 [&_div.text-3xl]:dark:text-success-400'])
