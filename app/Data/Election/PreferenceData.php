@@ -55,6 +55,8 @@ class PreferenceData extends Data
 
         public bool $candidate_attachment = false,
 
+        public bool $candidate_group = false,
+
         public bool $booth_voting = false,
 
         public ?WebAppManifestData $web_app_manifest = null,

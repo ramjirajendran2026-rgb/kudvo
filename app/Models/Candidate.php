@@ -41,6 +41,7 @@ class Candidate extends Model implements HasMedia, HasName, HasAvatar, Sortable
         'sort',
         'rank',
         'position_id',
+        'candidate_group_id',
         'elector_id',
     ];
 
@@ -48,6 +49,7 @@ class Candidate extends Model implements HasMedia, HasName, HasAvatar, Sortable
         'sort' => 'int',
         'rank' => 'int',
         'position_id' => 'int',
+        'candidate_group_id' => 'int',
         'elector_id' => 'int',
     ];
 
@@ -91,6 +93,11 @@ class Candidate extends Model implements HasMedia, HasName, HasAvatar, Sortable
     public function position(): BelongsTo
     {
         return $this->belongsTo(related: Position::class);
+    }
+
+    public function candidateGroup(): BelongsTo
+    {
+        return $this->belongsTo(related: CandidateGroup::class);
     }
 
     public function elector(): BelongsTo

@@ -119,6 +119,25 @@ class VotePicker extends CheckboxList
                 )
                 ->mapWithKeys(callback: fn(Candidate $candidate) => [$candidate->uuid => $candidate->display_name])
         );
+        $this->descriptions(
+            descriptions: fn (string $operation, array $state, self $component) => $position
+                ->candidates
+                ->when(
+                    value: $component->isPreview(),
+                    callback: fn (Collection $collection) => $collection->whereIn(
+                        key: 'uuid',
+                        values: $state,
+                    )
+                )
+                ->mapWithKeys(callback: fn(Candidate $candidate) => [
+                    $candidate->uuid => collect(value: [
+                        $candidate->membership_number,
+                        $this->position->event->preference->candidate_group ? $candidate->candidateGroup?->name : null,
+                    ])
+                        ->filter(callback: fn (?string $item): bool => filled($item))
+                        ->implode(value: ' • ')
+                ])
+        );
         $this->searchable(condition: $position->candidates->count() > 10);
         $this->maxItems(count: $position->quota);
         $this->minItems(count: $position->threshold);

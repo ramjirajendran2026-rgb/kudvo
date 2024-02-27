@@ -268,16 +268,19 @@ class Preference extends ElectionPage
                                         )),
 
                                     Toggle::make(name: 'candidate_photo')
-                                        ->label(label: 'Enable candidate photo'),
+                                        ->label(label: 'Candidate photo'),
 
                                     Toggle::make(name: 'candidate_symbol')
-                                        ->label(label: 'Enable candidate symbol'),
+                                        ->label(label: 'Candidate symbol'),
 
                                     Toggle::make(name: 'candidate_bio')
-                                        ->label(label: 'Enable candidate bio text'),
+                                        ->label(label: 'Candidate bio text'),
 
                                     Toggle::make(name: 'candidate_attachment')
-                                        ->label(label: 'Enable candidate attachments'),
+                                        ->label(label: 'Candidate attachments'),
+
+                                    Toggle::make(name: 'candidate_group')
+                                        ->label(label: 'Candidate group'),
                                 ]),
 
                             Section::make(heading: 'Booth voting')

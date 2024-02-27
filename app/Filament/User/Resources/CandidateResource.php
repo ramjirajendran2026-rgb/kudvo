@@ -69,6 +69,10 @@ class CandidateResource extends Resource
                             ->hiddenLabel()
                             ->label(label: 'Full name'),
 
+                        CandidateForm::candidateGroupIdComponent()
+                            ->columnSpanFull()
+                            ->hiddenLabel(),
+
                         CandidateForm::emailComponent()
                             ->hidden()
                             ->hiddenLabel(),

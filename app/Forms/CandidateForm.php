@@ -14,6 +14,7 @@ use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Set;
 use Illuminate\Validation\Rules\Exists;
+use Illuminate\Validation\Rules\Unique;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
 readonly class CandidateForm
@@ -45,6 +46,45 @@ readonly class CandidateForm
                     ->where(column: 'event_type', value: Election::class)
                     ->where(column: 'event_id', value: $livewire->getElection()->getKey())
             );
+    }
+
+    public static function candidateGroupIdComponent(): Select
+    {
+        return Select::make(name: 'candidate_group_id')
+            ->createOptionForm(schema: [
+                TextInput::make(name: 'name')
+                    ->label(label: 'Group name')
+                    ->maxLength(length: 100)
+                    ->required()
+                    ->unique(
+                        ignoreRecord: true,
+                        modifyRuleUsing: fn (Unique $rule, HasElection $livewire) => $rule
+                            ->where(column: 'election_id', value: $livewire->getElection()->getKey())
+                    ),
+
+                TextInput::make(name: 'short_name')
+                    ->label(label: 'Short name')
+                    ->maxLength(length: 10)
+                    ->required()
+                    ->unique(
+                        ignoreRecord: true,
+                        modifyRuleUsing: fn (Unique $rule, HasElection $livewire) => $rule
+                            ->where(column: 'election_id', value: $livewire->getElection()->getKey())
+                    ),
+
+                Hidden::make(name: 'election_id')
+                    ->dehydrateStateUsing(callback: fn(HasElection $livewire) => $livewire->getElection()->getKey())
+            ])
+            ->placeholder(placeholder: 'Choose a group')
+            ->preload()
+            ->relationship(
+                name: 'candidateGroup',
+                titleAttribute: 'short_name',
+                modifyQueryUsing: fn (HasElection $livewire, $query) => $query->where('election_id', $livewire->getElection()->getKey())
+            )
+            ->required()
+            ->searchable()
+            ->visible(condition: fn (HasElection $livewire): bool => $livewire->getElection()->preference->candidate_group);
     }
 
     public static function emailComponent(): TextInput

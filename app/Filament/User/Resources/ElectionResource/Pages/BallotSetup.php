@@ -26,6 +26,7 @@ use Filament\Infolists\Infolist;
 use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\MaxWidth;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
@@ -87,23 +88,23 @@ class BallotSetup extends ElectionPage
                                                 ->size(size: 80)
                                                 ->visible(condition: $this->getElection()->preference?->candidate_photo),
 
-                                            Group::make()
-                                                ->schema(components: [
-                                                    TextEntry::make(name: 'display_name')
-                                                        ->hiddenLabel()
-                                                        ->size(size: TextEntry\TextEntrySize::Large)
-                                                        ->suffixActions(actions: [
-                                                            $this->getEditCandidateAction(),
+                                            TextEntry::make(name: 'display_name')
+                                                ->helperText(
+                                                    text: fn (Candidate $record): ?string => collect(value: [
+                                                        $record->membership_number,
+                                                        $this->getElection()->preference->candidate_group ? $record->candidateGroup?->name : null,
+                                                    ])
+                                                        ->filter(callback: fn (?string $item): bool => filled($item))
+                                                        ->implode(value: ' • ')
+                                                )
+                                                ->hiddenLabel()
+                                                ->size(size: TextEntry\TextEntrySize::Large)
+                                                ->suffixActions(actions: [
+                                                    $this->getEditCandidateAction(),
 
-                                                            $this->getDeleteCandidateAction(),
-                                                        ])
-                                                        ->weight(weight: FontWeight::Medium),
-
-                                                    TextEntry::make(name: 'membership_number')
-                                                        ->color(color: 'gray')
-                                                        ->hiddenLabel()
-                                                        ->visible(condition: fn (?string $state): bool => filled($state)),
-                                                ]),
+                                                    $this->getDeleteCandidateAction(),
+                                                ])
+                                                ->weight(weight: FontWeight::Medium),
 
                                             SpatieMediaLibraryImageEntry::make(name: 'symbol')
                                                 ->collection(collection: Candidate::MEDIA_COLLECTION_SYMBOL)
