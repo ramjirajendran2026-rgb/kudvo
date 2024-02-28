@@ -121,13 +121,14 @@ class ElectionPanelProvider extends PanelProvider
     protected function getBrandLogo(): HtmlString
     {
         $organisation = Kudvo::getOrganisation();
-        $logoUrl = $organisation->getFilamentAvatarUrl();
+        $logoUrl = $organisation->logo_url;
 
         return new HtmlString(
             html: <<<HTML
 <img
     alt="$organisation->name\'s logo"
     src="$logoUrl"
+    class="rounded-xl"
 />
 <div
     class="text-xl font-bold leading-5 tracking-tight text-gray-950 dark:text-white"

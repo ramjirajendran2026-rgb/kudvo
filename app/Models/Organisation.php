@@ -3,12 +3,14 @@
 namespace App\Models;
 
 use Filament\Models\Contracts\HasAvatar;
+use Filament\Support\Facades\FilamentColor;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
+use Spatie\Color\Rgb;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
@@ -29,7 +31,12 @@ class Organisation extends Model implements HasAvatar, HasMedia
     protected function logoUrl(): Attribute
     {
         return Attribute::make(
-            get: fn($value, array $attributes) => $this->getFirstMediaUrl(collectionName: static::MEDIA_COLLECTION_LOGO),
+            get: fn($value, array $attributes) => $this->getFirstMediaUrl(collectionName: static::MEDIA_COLLECTION_LOGO) ?:
+                'https://ui-avatars.com/api/?name=' .
+                $this->name .
+                '&color=FFFFFF&background=' .
+                str(Rgb::fromString('rgb(' . FilamentColor::getColors()['primary'][800] . ')')->toHex())
+                    ->after('#'),
         );
     }
 

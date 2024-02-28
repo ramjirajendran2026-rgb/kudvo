@@ -190,6 +190,7 @@ HTML
                         ->schema(components: $livewire->getElection()->positions
                             ->map(
                                 callback: fn (Position $position) => VotePicker::makeFor(position: $position)
+                                    ->candidateGroup(condition: $this->getElection()->preference->candidate_group)
                                     ->disabled(condition: fn (Get $get): bool => $get(path: '../preview'))
                                     ->photo(condition: $this->getElection()->preference->candidate_photo)
                                     ->preview(condition: fn (Get $get): bool => $get(path: '../preview'))

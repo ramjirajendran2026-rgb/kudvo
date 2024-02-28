@@ -16,6 +16,8 @@
 
         maxItems: @js($maxItems),
 
+        group: 'all',
+
         areAllCheckboxesChecked: false,
 
         checkboxListOptions: Array.from(
@@ -66,23 +68,36 @@
         },
 
         updateVisibleCheckboxListOptions: function () {
-            this.visibleCheckboxListOptions = this.checkboxListOptions.filter(
-                (checkboxListItem) => {
-                    if (
-                        checkboxListItem
-                            .querySelector('.fi-fo-checkbox-list-option-label')
+            this.visibleCheckboxListOptions = this.checkboxListOptions
+                .filter((checkboxListItem) => {
+                    return this.group === 'all' ||
+                        this.group === checkboxListItem.dataset.candidateGroup ||
+                        (this.group === 'independent' && ! checkboxListItem.dataset.candidateGroup)
+                })
+                .filter(
+                    (checkboxListItem) => {
+                        if (
+                            checkboxListItem
+                                .querySelector('.fi-fo-checkbox-list-option-label')
+                                ?.innerText.toLowerCase()
+                                .includes(this.search.toLowerCase())
+                        ) {
+                            return true
+                        }
+
+                        return checkboxListItem
+                            .querySelector('.fi-fo-checkbox-list-option-description')
                             ?.innerText.toLowerCase()
                             .includes(this.search.toLowerCase())
-                    ) {
-                        return true
-                    }
+                    },
+                )
+        },
 
-                    return checkboxListItem
-                        .querySelector('.fi-fo-checkbox-list-option-description')
-                        ?.innerText.toLowerCase()
-                        .includes(this.search.toLowerCase())
-                },
-            )
+        selectCandidateGroup: function (group) {
+            this.group = group
+
+            this.updateVisibleCheckboxListOptions()
+            this.checkIfAllCheckboxesAreChecked()
         },
     }"
     x-init="
@@ -127,6 +142,27 @@
     >
         <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
             <div>
+                @if ($hasCandidateGroup())
+                    <div class="flex flex-wrap justify-center gap-4 mb-4">
+                        @foreach ($getCandidateGroups() as $key => $group)
+                            <button
+                                type="button"
+                                @click="selectCandidateGroup('{{ $key }}')"
+                                @class([
+                                    'fi-badge flex items-center justify-center gap-x-1 rounded-md text-xs font-medium ring-1 ring-inset',
+                                    'px-2 min-w-[theme(spacing.6)] py-1',
+                                ])
+                                :class="{
+                                'bg-success-50 text-success-600 ring-success-600/10 dark:bg-success-400/10 dark:text-success-400 dark:ring-success-400/30': group === '{{ $key }}',
+                                'bg-info-50 text-info-600 ring-info-600/10 dark:bg-info-400/10 dark:text-info-400 dark:ring-info-400/20': group !== '{{ $key }}'
+                            }"
+                            >
+                                {{ $group }}
+                            </button>
+                        @endforeach
+                    </div>
+                @endif
+
                 @if (! $isDisabled)
                     @if ($isSearchable)
                         <x-filament::input.wrapper
@@ -157,7 +193,7 @@
                             wire:key="{{ $this->getId() }}.{{ $getStatePath() }}.{{ $field::class }}.actions"
                         >
                     <span
-                        x-show="! areAllCheckboxesChecked"
+                        x-show="! areAllCheckboxesChecked && checkedOptionsCount < maxItems && visibleCheckboxListOptions.length <= maxItems - checkedOptionsCount"
                         x-on:click="toggleAllCheckboxes()"
                         wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.actions.select_all"
                     >
@@ -165,7 +201,7 @@
                     </span>
 
                             <span
-                                x-show="areAllCheckboxesChecked"
+                                x-show="areAllCheckboxesChecked && visibleCheckboxListOptions.length > 0"
                                 x-on:click="toggleAllCheckboxes()"
                                 wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.actions.deselect_all"
                             >
@@ -188,7 +224,7 @@
                 \Filament\Support\prepare_inherited_attributes($attributes)
                     ->merge($getExtraAttributes(), escape: false)
                     ->class([
-                        'fi-fo-checkbox-list gap-0 divide-y',
+                        'fi-fo-checkbox-list gap-0',
                         '-my-4' => $gridDirection === 'column',
                     ])
             "
@@ -196,23 +232,26 @@
                     @foreach ($options as $value => $label)
                         <div
                             wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.options.{{ $value }}"
-                            @if ($isSearchable)
-                                x-show="
-                            $el
-                                .querySelector('.fi-fo-checkbox-list-option-label')
-                                ?.innerText.toLowerCase()
-                                .includes(search.toLowerCase()) ||
-                                $el
-                                    .querySelector('.fi-fo-checkbox-list-option-description')
-                                    ?.innerText.toLowerCase()
-                                    .includes(search.toLowerCase())
-                        "
-                            @endif
+                            x-show="
+                                    (group === 'all' ||
+                                    group === '{{ $getCandidateGroupId($value) }}' ||
+                                    (group === 'independent' && ! '{{ $getCandidateGroupId($value) }}')) &&
+                                    (
+                                        @js(!$isSearchable) ||
+                                        $el.querySelector('.fi-fo-checkbox-list-option-label')
+                                            ?.innerText.toLowerCase()
+                                            .includes(search.toLowerCase()) ||
+                                        $el.querySelector('.fi-fo-checkbox-list-option-description')
+                                            ?.innerText.toLowerCase()
+                                            .includes(search.toLowerCase())
+                                    )
+                                "
                             @class([
                                 'break-inside-avoid py-2 border-gray-200 dark:border-white/10' => $gridDirection === 'column',
                             ])
                         >
                             <label
+                                data-candidate-group="{{ $getCandidateGroupId($value) }}"
                                 @class([
                                     'fi-fo-checkbox-list-option-label flex items-center gap-x-3 py-2 rounded-xl',
                                     'cursor-pointer md:hover:bg-gray-100 md:hover:px-4 dark:md:hover:bg-white/5' => ! $isDisabled,
@@ -283,15 +322,13 @@
                     </div>
                 @endif
 
-                @if ($isSearchable)
                     <div
                         x-cloak
-                        x-show="search && ! visibleCheckboxListOptions.length"
-                        class="fi-fo-checkbox-list-no-search-results-message text-sm text-gray-500 dark:text-gray-400"
+                        x-show="! visibleCheckboxListOptions.length"
+                        class="text-center text-base font-semibold leading-6 text-gray-950 dark:text-white px-6 py-12"
                     >
                         {{ $getNoSearchResultsMessage() }}
                     </div>
-                @endif
             </div>
         </x-dynamic-component>
     </x-filament::section>

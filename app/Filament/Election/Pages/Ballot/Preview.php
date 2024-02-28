@@ -94,6 +94,7 @@ class Preview extends Page implements HasElection
                 ...$this->getElection()->positions
                     ->map(
                         callback: fn (Position $position) => VotePicker::makeFor(position: $position)
+                            ->candidateGroup(condition: $this->getElection()->preference->candidate_group)
                             ->photo(condition: $this->getElection()->preference->candidate_photo)
                             ->preview(condition: fn (self $livewire): bool => $livewire->preview)
                             ->symbol(condition: $this->getElection()->preference->candidate_symbol),

@@ -82,7 +82,6 @@ readonly class CandidateForm
                 titleAttribute: 'short_name',
                 modifyQueryUsing: fn (HasElection $livewire, $query) => $query->where('election_id', $livewire->getElection()->getKey())
             )
-            ->required()
             ->searchable()
             ->visible(condition: fn (HasElection $livewire): bool => $livewire->getElection()->preference->candidate_group);
     }

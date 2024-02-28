@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Spatie\EloquentSortable\Sortable;
 use Spatie\EloquentSortable\SortableTrait;
@@ -65,6 +66,14 @@ class Position extends Model implements Sortable
     {
         return $this->hasMany(related: Candidate::class)
             ->oldest(column: 'rank');
+    }
+
+    public function candidateGroups(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            related: CandidateGroup::class,
+            through: Candidate::class,
+        );
     }
 
     protected static function booted(): void

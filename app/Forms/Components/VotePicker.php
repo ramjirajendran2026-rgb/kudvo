@@ -4,6 +4,7 @@ namespace App\Forms\Components;
 
 use App\Data\Election\VoteSecretData;
 use App\Models\Candidate;
+use App\Models\CandidateGroup;
 use App\Models\Position;
 use Closure;
 use Filament\Forms\Components\CheckboxList;
@@ -33,6 +34,8 @@ class VotePicker extends CheckboxList
     protected bool | Closure $photo = false;
 
     protected bool | Closure $symbol = false;
+
+    protected bool | Closure $candidateGroup = false;
 
     public static function makeFor(Position $position): static
     {
@@ -88,6 +91,18 @@ class VotePicker extends CheckboxList
         return (bool) $this->evaluate(value: $this->symbol);
     }
 
+    public function candidateGroup(bool | Closure $condition = true): static
+    {
+        $this->candidateGroup = $condition;
+
+        return $this;
+    }
+
+    public function hasCandidateGroup(): bool
+    {
+        return $this->evaluate(value: $this->candidateGroup) && ! $this->isPreview();
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -129,16 +144,21 @@ class VotePicker extends CheckboxList
                         values: $state,
                     )
                 )
+                ->when(
+                    value: $component->hasCandidateGroup(),
+                    callback: fn (Collection $collection) => $collection->load(relations: 'candidateGroup')
+                )
                 ->mapWithKeys(callback: fn(Candidate $candidate) => [
                     $candidate->uuid => collect(value: [
                         $candidate->membership_number,
-                        $this->position->event->preference->candidate_group ? $candidate->candidateGroup?->name : null,
+                        $component->hasCandidateGroup() ? $candidate->candidateGroup?->name : null,
                     ])
                         ->filter(callback: fn (?string $item): bool => filled($item))
                         ->implode(value: ' • ')
                 ])
         );
-        $this->searchable(condition: $position->candidates->count() > 10);
+        $this->bulkToggleable();
+        $this->searchable(condition: $position->candidates->count() > 5);
         $this->maxItems(count: $position->quota);
         $this->minItems(count: $position->threshold);
 
@@ -187,5 +207,19 @@ class VotePicker extends CheckboxList
             " upto $position->quota ".
             Str::plural('candidate', $position->quota) :
             "Choose exactly $position->quota ".Str::plural("candidate", $position->quota);
+    }
+
+    public function getCandidateGroupId(string $uuid): ?int
+    {
+        return $this->getCandidate(uuid: $uuid)->candidate_group_id;
+    }
+
+    public function getCandidateGroups()
+    {
+        return CandidateGroup::query()
+            ->whereBelongsTo(related: $this->position->event)
+            ->pluck(column: 'name', key: 'id')
+            ->put(key: 'independent', value: 'Independent')
+            ->prepend(value: 'All', key: 'all');
     }
 }
