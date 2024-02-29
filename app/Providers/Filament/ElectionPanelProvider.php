@@ -46,6 +46,7 @@ class ElectionPanelProvider extends PanelProvider
             ->authGuard(guard: 'elector')
             ->discoverResources(in: app_path(path: 'Filament/Election/Resources'), for: 'App\\Filament\\Election\\Resources')
             ->discoverPages(in: app_path(path: 'Filament/Election/Pages'), for: 'App\\Filament\\Election\\Pages')
+            ->discoverWidgets(in: app_path(path: 'Filament/Base/Widgets'), for: 'App\\Filament\\Base\\Widgets')
             ->discoverWidgets(in: app_path(path: 'Filament/Election/Widgets'), for: 'App\\Filament\\Election\\Widgets')
             ->middleware(middleware: [IdentifyElection::class], isPersistent: true)
             ->middleware(middleware: [

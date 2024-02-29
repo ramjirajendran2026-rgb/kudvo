@@ -6,6 +6,9 @@ export default {
         './app/Filament/Nomination/**/*.php',
         './resources/views/filament/nomination/**/*.blade.php',
 
+        './app/Filament/Base/**/*.php',
+        './resources/views/filament/base/**/*.blade.php',
+
         './app/Forms/**/*.php',
         './resources/views/forms/**/*.blade.php',
 

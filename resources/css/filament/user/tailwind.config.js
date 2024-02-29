@@ -6,6 +6,9 @@ export default {
         './app/Filament/User/**/*.php',
         './resources/views/filament/user/**/*.blade.php',
 
+        './app/Filament/Base/**/*.php',
+        './resources/views/filament/base/**/*.blade.php',
+
         './app/Forms/**/*.php',
         './resources/views/forms/**/*.blade.php',
 
