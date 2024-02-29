@@ -8,6 +8,7 @@
     $options = $getOptions();
 
     $maxItems = $getMaxItems();
+    $isPreview = $isPreview();
 @endphp
 
 <div
@@ -232,7 +233,7 @@
                     :xl="$getColumns('xl')"
                     :two-xl="$getColumns('2xl')"
                     :direction="$gridDirection"
-                    :x-show="$isSearchable ? 'visibleCheckboxListOptions.length' : null"
+                    :x-show="! $isPreview && $isSearchable ? 'visibleCheckboxListOptions.length' : null"
                     :attributes="
                 \Filament\Support\prepare_inherited_attributes($attributes)
                     ->merge($getExtraAttributes(), escape: false)
@@ -245,7 +246,8 @@
                     @foreach ($options as $value => $label)
                         <div
                             wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.options.{{ $value }}"
-                            x-show="
+                            @if(! $isPreview)
+                                x-show="
                                     (group === 'all' ||
                                     group === '{{ $getCandidateGroupId($value) }}' ||
                                     (group === 'independent' && ! '{{ $getCandidateGroupId($value) }}')) &&
@@ -259,6 +261,7 @@
                                             .includes(search.toLowerCase())
                                     )
                                 "
+                            @endif
                             @class([
                                 'break-inside-avoid py-2 border-gray-200 dark:border-white/10' => $gridDirection === 'column',
                             ])
@@ -335,13 +338,15 @@
                     </div>
                 @endif
 
-                    <div
-                        x-cloak
-                        x-show="! visibleCheckboxListOptions.length"
-                        class="text-center text-base font-semibold leading-6 text-gray-950 dark:text-white px-6 py-12"
-                    >
-                        {{ $getNoSearchResultsMessage() }}
-                    </div>
+                    @if(! $isPreview)
+                        <div
+                            x-cloak
+                            x-show="! visibleCheckboxListOptions.length"
+                            class="text-center text-base font-semibold leading-6 text-gray-950 dark:text-white px-6 py-12"
+                        >
+                            {{ $getNoSearchResultsMessage() }}
+                        </div>
+                    @endif
             </div>
         </x-dynamic-component>
     </x-filament::section>
