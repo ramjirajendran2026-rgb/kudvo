@@ -75,6 +75,27 @@ readonly class CandidateForm
                 Hidden::make(name: 'election_id')
                     ->dehydrateStateUsing(callback: fn(HasElection $livewire) => $livewire->getElection()->getKey())
             ])
+            ->editOptionForm(schema: [
+                TextInput::make(name: 'name')
+                    ->label(label: 'Group name')
+                    ->maxLength(length: 100)
+                    ->required()
+                    ->unique(
+                        ignoreRecord: true,
+                        modifyRuleUsing: fn (Unique $rule, HasElection $livewire) => $rule
+                            ->where(column: 'election_id', value: $livewire->getElection()->getKey())
+                    ),
+
+                TextInput::make(name: 'short_name')
+                    ->label(label: 'Short name')
+                    ->maxLength(length: 10)
+                    ->required()
+                    ->unique(
+                        ignoreRecord: true,
+                        modifyRuleUsing: fn (Unique $rule, HasElection $livewire) => $rule
+                            ->where(column: 'election_id', value: $livewire->getElection()->getKey())
+                    ),
+            ])
             ->placeholder(placeholder: 'Choose a group')
             ->preload()
             ->relationship(

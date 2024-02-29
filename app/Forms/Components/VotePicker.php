@@ -218,7 +218,7 @@ class VotePicker extends CheckboxList
     {
         return CandidateGroup::query()
             ->whereBelongsTo(related: $this->position->event)
-            ->pluck(column: 'name', key: 'id')
+            ->pluck(column: 'short_name', key: 'id')
             ->put(key: 'independent', value: 'Independent')
             ->prepend(value: 'All', key: 'all');
     }
