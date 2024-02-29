@@ -2,9 +2,7 @@
 
 namespace App\Enums;
 
-use App\Filament\ElectionPanel;
 use App\Models\Election;
-use Filament\Panel;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 

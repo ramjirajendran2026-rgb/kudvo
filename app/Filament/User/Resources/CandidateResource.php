@@ -2,7 +2,7 @@
 
 namespace App\Filament\User\Resources;
 
-use App\Filament\Contracts\HasElection;
+use App\Filament\Base\Contracts\HasElection;
 use App\Forms\CandidateForm;
 use App\Models\Candidate;
 use App\Models\Position;

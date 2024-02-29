@@ -62,6 +62,16 @@ class Ballot extends Model
         return $query->whereNull(columns: 'voted_at');
     }
 
+    public function scopeBooth(Builder $query): Builder
+    {
+        return $query->where('type', BallotType::Booth);
+    }
+
+    public function scopeDirect(Builder $query): Builder
+    {
+        return $query->where('type', BallotType::Direct);
+    }
+
     public function isVoted(): bool
     {
         return filled($this->voted_at);

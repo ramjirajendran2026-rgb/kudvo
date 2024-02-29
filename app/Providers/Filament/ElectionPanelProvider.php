@@ -3,6 +3,8 @@
 namespace App\Providers\Filament;
 
 use App\Facades\Kudvo;
+use App\Filament\Base\Http\Middleware\IdentifyElection;
+use App\Filament\Election\ElectionPanel;
 use App\Filament\Election\Http\Controllers\BoothTokensController;
 use App\Filament\Election\Http\Controllers\WebManifestController;
 use App\Filament\Election\Http\Middleware\AuthenticateSession;
@@ -12,8 +14,6 @@ use App\Filament\Election\Http\Middleware\IdentifyBoothToken;
 use App\Filament\Election\Http\Middleware\IdentifyPanelState;
 use App\Filament\Election\Pages\Auth\Login;
 use App\Filament\Election\Pages\Index;
-use App\Filament\ElectionPanel;
-use App\Filament\Http\Middleware\IdentifyElection;
 use App\Models\Elector;
 use Filament\Facades\Filament;
 use Filament\Http\Middleware\Authenticate;

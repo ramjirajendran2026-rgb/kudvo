@@ -3,12 +3,11 @@
 namespace App\Filament\User\Resources;
 
 use App\Enums\ElectionStatus;
-use App\Filament\Contracts\HasElection;
+use App\Filament\Base\Contracts\HasElection;
 use App\Filament\User\Resources\ElectionResource\Pages;
 use App\Filament\User\Resources\ElectionResource\RelationManagers;
 use App\Filament\User\Resources\ElectionResource\Widgets\ElectionStatsOverview;
-use App\Filament\User\Resources\ElectionResource\Widgets\ElectionVotingTrends;
-use App\Filament\User\Resources\ElectionResource\Widgets\RecentlyVotedMembers;
+use App\Filament\User\Resources\ElectionResource\Widgets\VotedBallots;
 use App\Forms\ElectionForm;
 use App\Models\Election;
 use App\Models\Elector;
@@ -143,8 +142,7 @@ class ElectionResource extends Resource
     {
         return [
             ElectionStatsOverview::class,
-            ElectionVotingTrends::class,
-            RecentlyVotedMembers::class,
+            VotedBallots::class,
         ];
     }
 

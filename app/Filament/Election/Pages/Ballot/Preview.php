@@ -2,39 +2,23 @@
 
 namespace App\Filament\Election\Pages\Ballot;
 
-use App\Enums\BallotType;
-use App\Facades\Kudvo;
-use App\Filament\Contracts\HasElection;
-use App\Filament\Election\Http\Middleware\EnsureMfaCompleted;
+use App\Filament\Base\Contracts\HasElection;
+use App\Filament\Election\ElectionPanel;
 use App\Filament\Election\Http\Middleware\EnsureStateIsAllowed;
 use App\Filament\Election\Http\Middleware\IdentifyBoothToken;
 use App\Filament\Election\Http\Middleware\IdentifyPanelState;
-use App\Filament\Election\Pages\BasePage;
 use App\Filament\Election\Pages\Concerns\InteractsWithElection;
-use App\Filament\Election\Pages\Index;
-use App\Filament\ElectionPanel;
-use App\Filament\Pages\Page;
 use App\Forms\Components\VotePicker;
-use App\Models\Ballot;
 use App\Models\Position;
-use App\Models\Vote;
-use App\Notifications\Election\VotedBallotCopyNotification;
-use App\Notifications\Election\VotedConfirmationNotification;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
+use Filament\Pages\Page;
 use Filament\Panel;
 use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\Alignment;
-use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Session;
-use Livewire\Attributes\On;
 use Symfony\Component\HttpFoundation\Response;
 
 class Preview extends Page implements HasElection

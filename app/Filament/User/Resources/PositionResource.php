@@ -2,10 +2,9 @@
 
 namespace App\Filament\User\Resources;
 
-use App\Filament\Contracts\HasElectorGroups;
+use App\Filament\Base\Contracts\HasElectorGroups;
 use App\Forms\PositionForm;
 use App\Models\Position;
-use Filament\Forms\Components\Repeater;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\Alignment;

@@ -2,12 +2,9 @@
 
 namespace App\Forms;
 
-use App\Filament\Contracts\HasElection;
+use App\Filament\Base\Contracts\HasElection;
 use App\Models\Candidate;
 use App\Models\Election;
-use App\Models\Elector;
-use App\Models\Nominee;
-use Filament\Facades\Filament;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;

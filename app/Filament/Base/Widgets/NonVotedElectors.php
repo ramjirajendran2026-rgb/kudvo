@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Filament\Election\Widgets;
+namespace App\Filament\Base\Widgets;
 
-use App\Filament\User\Resources\NominationResource\Pages\Electors;
-use App\Models\Ballot;
+use App\Facades\Kudvo;
 use App\Models\Election;
 use App\Models\Elector;
 use Filament\Tables;
@@ -21,7 +20,7 @@ class NonVotedElectors extends BaseWidget
     {
         return $table
             ->description(description: fn (): string => "Updated at ".now(tz: $this->election->timezone)->format(format: Table::$defaultDateTimeDisplayFormat))
-            ->poll()
+            ->poll(interval: fn () => (Kudvo::isBoothDevice() && $this->election->is_booth_open) || $this->election->is_open ? '10s' : null)
             ->query(
                 Elector::whereMorphedTo(relation: 'event', model: $this->election)
                     ->whereDoesntHave(
@@ -31,12 +30,13 @@ class NonVotedElectors extends BaseWidget
             )
             ->columns([
                 Tables\Columns\TextColumn::make(name: 'membership_number')
-                    ->label(label: 'Code')
-                    ->searchable(),
+                    ->searchable()
+                    ->wrapHeader(),
 
                 Tables\Columns\TextColumn::make(name: 'display_name')
                     ->searchable(condition: 'full_name')
-                    ->wrap(),
+                    ->wrap()
+                    ->wrapHeader(),
             ]);
     }
 }

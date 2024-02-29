@@ -1,12 +1,14 @@
 <?php
 
-namespace App\Filament\Concerns;
+namespace App\Filament\Nomination;
 
 use App\Facades\Kudvo;
+use App\Filament\Base\Contracts\ResolvesNomination;
 use App\Models\Nomination;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
-trait CanResolveNomination
+class NominationPanel extends Panel implements ResolvesNomination
 {
     public function resolveNomination(string $key, ?string $field = null): Nomination
     {

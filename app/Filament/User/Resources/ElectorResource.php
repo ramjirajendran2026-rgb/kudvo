@@ -2,20 +2,17 @@
 
 namespace App\Filament\User\Resources;
 
-use App\Filament\Contracts\HasElection;
+use App\Filament\Base\Contracts\HasElection;
 use App\Filament\Imports\ElectorImporter;
 use App\Forms\ElectorForm;
 use App\Models\Election;
 use App\Models\Elector;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\Group;
-use Filament\Forms\Components\Split;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\MaxWidth;
-use Filament\Tables\Actions\Action as TableAction;
 use Filament\Tables\Actions\CreateAction as TableCreateAction;
 use Filament\Tables\Actions\DeleteAction as TableDeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;

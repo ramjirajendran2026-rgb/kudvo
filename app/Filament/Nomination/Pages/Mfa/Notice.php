@@ -3,7 +3,7 @@
 namespace App\Filament\Nomination\Pages\Mfa;
 
 use App\Enums\OneTimePasswordPurpose;
-use App\Filament\Contracts\HasNomination;
+use App\Filament\Base\Contracts\HasNomination;
 use App\Filament\Nomination\Http\Middleware\EnsureMfaCompleted;
 use App\Filament\Nomination\Pages\Concerns\InteractsWithNomination;
 use App\Models\Elector;

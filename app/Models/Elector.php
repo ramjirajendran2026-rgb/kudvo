@@ -3,9 +3,8 @@
 namespace App\Models;
 
 use App\Facades\Kudvo;
-use App\Filament\BallotPanel;
-use App\Filament\ElectionPanel;
-use App\Filament\NominationPanel;
+use App\Filament\Election\ElectionPanel;
+use App\Filament\Nomination\NominationPanel;
 use App\Models\Concerns\HasShortCode;
 use App\Notifications\Election\BallotLinkNotification;
 use App\Notifications\Election\Data\BallotLinkNotificationData;
@@ -168,8 +167,7 @@ class Elector extends Model implements
     {
         return match (true) {
             $panel instanceof NominationPanel => $this->event->is(model: Kudvo::getNomination()),
-            $panel instanceof ElectionPanel,
-                $panel instanceof BallotPanel => $this->event->is(model: Kudvo::getElection()),
+            $panel instanceof ElectionPanel => $this->event->is(model: Kudvo::getElection()),
             default => false,
         };
     }

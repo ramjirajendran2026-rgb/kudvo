@@ -2,7 +2,7 @@
 
 namespace App\Filament\User\Resources\ElectionResource\Pages;
 
-use App\Filament\Contracts\HasElection;
+use App\Filament\Base\Contracts\HasElection;
 use App\Filament\User\Resources\CandidateResource;
 use App\Filament\User\Resources\PositionResource;
 use App\Models\Candidate;
@@ -14,9 +14,7 @@ use Filament\Actions\EditAction;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
-use Filament\Forms\Get;
 use Filament\Infolists\Components\Actions\Action as InfolistAction;
-use Filament\Infolists\Components\Group;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
@@ -26,7 +24,6 @@ use Filament\Infolists\Infolist;
 use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\MaxWidth;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;

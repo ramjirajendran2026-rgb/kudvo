@@ -2,12 +2,10 @@
 
 namespace App\Forms;
 
-use App\Filament\Contracts\HasElection;
-use App\Filament\Contracts\HasNomination;
+use App\Filament\Base\Contracts\HasElection;
+use App\Filament\Base\Contracts\HasNomination;
 use App\Models\Election;
 use App\Models\Nomination;
-use Filament\Facades\Filament;
-use Filament\Forms\Components\Split;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Validation\Rules\Unique;

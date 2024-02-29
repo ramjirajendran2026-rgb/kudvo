@@ -3,8 +3,8 @@
 namespace App\Filament\User\Resources\ElectionResource\Pages;
 
 use App\Data\Election\VoteSecretData;
-use App\Filament\Contracts\HasElection;
-use App\Filament\Contracts\HasElectorGroups;
+use App\Filament\Base\Contracts\HasElection;
+use App\Filament\Base\Contracts\HasElectorGroups;
 use App\Filament\User\Resources\ElectionResource;
 use App\Forms\Components\VotePicker;
 use App\Models\Election;

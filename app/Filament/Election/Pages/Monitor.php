@@ -2,12 +2,11 @@
 
 namespace App\Filament\Election\Pages;
 
+use App\Filament\Base\Widgets\ElectionStatsOverview;
+use App\Filament\Base\Widgets\NonVotedElectors;
+use App\Filament\Base\Widgets\VotedBallots;
 use App\Filament\Election\Http\Middleware\EnsureStateIsAllowed;
 use App\Filament\Election\Pages\Concerns\InteractsWithElection;
-use App\Filament\Election\Widgets\ElectionStatsOverview;
-use App\Filament\Election\Widgets\ElectionVotingSummary;
-use App\Filament\Election\Widgets\NonVotedElectors;
-use App\Filament\Election\Widgets\VotedElectors;
 use Filament\Pages\Page;
 use Filament\Panel;
 use Illuminate\Http\Request;
@@ -61,7 +60,7 @@ class Monitor extends Page
         return [
             ElectionStatsOverview::class,
 //            ElectionVotingSummary::class,
-            VotedElectors::class,
+            VotedBallots::class,
             NonVotedElectors::class,
         ];
     }

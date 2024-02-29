@@ -2,7 +2,7 @@
 
 namespace App\Filament\User\Resources\ElectionResource\Pages;
 
-use App\Filament\Contracts\HasElection;
+use App\Filament\Base\Contracts\HasElection;
 use App\Filament\User\Resources\ElectionResource;
 use App\Filament\User\Resources\ElectorResource;
 use App\Models\Election;

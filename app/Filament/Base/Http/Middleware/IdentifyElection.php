@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Filament\Http\Middleware;
+namespace App\Filament\Base\Http\Middleware;
 
 use App\Facades\Kudvo;
-use App\Filament\Contracts\ResolvesElection;
+use App\Filament\Base\Contracts\ResolvesElection;
 use Closure;
 use Filament\Facades\Filament;
 use Illuminate\Http\Request;

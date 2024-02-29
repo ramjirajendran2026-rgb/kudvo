@@ -4,9 +4,9 @@ namespace App\Filament\Election\Pages;
 
 use App\Enums\ElectionPanelState;
 use App\Facades\Kudvo;
+use App\Filament\Base\Pages\Concerns\HasStateSection;
 use App\Filament\Election\Http\Middleware\EnsureStateIsAllowed;
 use App\Filament\Election\Pages\Concerns\InteractsWithElection;
-use App\Filament\Pages\Concerns\HasStateSection;
 use App\Models\Elector;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Dompdf\Dompdf;

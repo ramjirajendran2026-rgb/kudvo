@@ -3,8 +3,8 @@
 namespace App\Filament\Nomination\Resources\NomineeResource\Pages;
 
 use App\Facades\Kudvo;
-use App\Filament\Contracts\HasElector;
-use App\Filament\Contracts\HasNomination;
+use App\Filament\Base\Contracts\HasElector;
+use App\Filament\Base\Contracts\HasNomination;
 use App\Filament\Nomination\Pages\Concerns\InteractsWithNomination;
 use App\Filament\Nomination\Resources\NomineeResource;
 use Filament\Resources\Pages\ManageRecords;

@@ -3,11 +3,8 @@
 namespace App\Filament\User\Resources\ElectionResource\Pages;
 
 use App\Enums\ElectionDashboardState;
-use App\Enums\ElectionStatus;
-use App\Facades\Kudvo;
-use App\Filament\Pages\Concerns\HasStateSection;
+use App\Filament\Base\Pages\Concerns\HasStateSection;
 use App\Filament\User\Resources\ElectionResource;
-use Cookie;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Illuminate\Support\HtmlString;
@@ -77,8 +74,7 @@ class Dashboard extends ElectionPage
             ElectionDashboardState::Open,
             ElectionDashboardState::Expired =>[
                 ElectionResource\Widgets\ElectionStatsOverview::class,
-                ElectionResource\Widgets\ElectionVotingTrends::class,
-                ElectionResource\Widgets\RecentlyVotedMembers::class,
+                ElectionResource\Widgets\VotedBallots::class,
             ],
             default => [],
         };
@@ -90,8 +86,7 @@ class Dashboard extends ElectionPage
             ElectionDashboardState::Closed,
             ElectionDashboardState::Completed =>[
                 ElectionResource\Widgets\ElectionStatsOverview::class,
-                ElectionResource\Widgets\ElectionVotingTrends::class,
-                ElectionResource\Widgets\RecentlyVotedMembers::class,
+                ElectionResource\Widgets\VotedBallots::class,
             ],
             default => [],
         };

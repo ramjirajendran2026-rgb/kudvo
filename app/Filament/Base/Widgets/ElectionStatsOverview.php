@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Election\Widgets;
+namespace App\Filament\Base\Widgets;
 
 use App\Models\Election;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
@@ -16,19 +16,21 @@ class ElectionStatsOverview extends BaseWidget
 
     protected function getStats(): array
     {
-        $total = $this->election->electors()->count();
-        $voted = $this->election->electors()
+        $electorsCount = $this->election->electors()->count();
+
+        $votedElectorsCount = $this->election->electors()
             ->whereHas(
                 relation: 'ballot',
-                callback: fn (Builder $query) => $query->scopes(scopes: 'voted')
+                callback: fn (Builder $query) => $query->scopes(scopes: ['live', 'voted'])
             )
             ->count();
-        $nonVoted = $total - $voted;
+
+        $nonVotedElectorsCount = $electorsCount - $votedElectorsCount;
 
         return [
             Stat::make(
                 label: 'Total Electors',
-                value: $total,
+                value: $electorsCount,
             )
                 ->color(color: 'info')
                 ->extraAttributes(attributes: ['class' => '[&_div.text-3xl]:text-info-600 [&_div.text-3xl]:dark:text-info-400'])
@@ -36,7 +38,7 @@ class ElectionStatsOverview extends BaseWidget
 
             Stat::make(
                 label: 'Voted',
-                value: $voted.' ('.Number::percentage(number: ($voted / $total) * 100, maxPrecision: 2).')',
+                value: $votedElectorsCount.' ('.Number::percentage(number: ($votedElectorsCount / $electorsCount) * 100, maxPrecision: 2).')',
             )
                 ->color(color: 'success')
                 ->extraAttributes(attributes: ['class' => '[&_div.text-3xl]:text-success-600 [&_div.text-3xl]:dark:text-success-400'])
@@ -44,7 +46,7 @@ class ElectionStatsOverview extends BaseWidget
 
             Stat::make(
                 label: 'Non-Voted',
-                value: $nonVoted,
+                value: $nonVotedElectorsCount,
             )
                 ->color(color: 'warning')
                 ->extraAttributes(attributes: ['class' => '[&_div.text-3xl]:text-warning-600 [&_div.text-3xl]:dark:text-warning-400'])

@@ -1,13 +1,30 @@
 <?php
 
-namespace App\Filament\Concerns;
+namespace App\Filament\Election;
 
+use App\Enums\ElectionPanelState;
 use App\Facades\Kudvo;
+use App\Filament\Base\Contracts\ResolvesElection;
 use App\Models\Election;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
-trait CanResolveElection
+class ElectionPanel extends Panel implements ResolvesElection
 {
+    protected ?ElectionPanelState $state = null;
+
+    public function setState(?ElectionPanelState $state): static
+    {
+        $this->state = $state;
+
+        return $this;
+    }
+
+    public function getState(): ?ElectionPanelState
+    {
+        return $this->state;
+    }
+
     public function resolveElection(string $key, ?string $field = null): Election
     {
         $election = app(abstract: Election::class)

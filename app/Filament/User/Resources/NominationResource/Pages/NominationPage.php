@@ -2,8 +2,8 @@
 
 namespace App\Filament\User\Resources\NominationResource\Pages;
 
-use App\Filament\Contracts\HasElectorGroups;
-use App\Filament\Contracts\HasNomination;
+use App\Filament\Base\Contracts\HasElectorGroups;
+use App\Filament\Base\Contracts\HasNomination;
 use App\Filament\User\Resources\NominationResource;
 use App\Models\Nomination;
 use Filament\Actions\Action;

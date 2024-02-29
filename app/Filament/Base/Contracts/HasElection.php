@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Contracts;
+namespace App\Filament\Base\Contracts;
 
 use App\Models\Election;
 

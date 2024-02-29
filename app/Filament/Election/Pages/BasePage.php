@@ -3,16 +3,15 @@
 namespace App\Filament\Election\Pages;
 
 use App\Facades\Kudvo;
-use App\Filament\Contracts\HasElection;
-use App\Filament\Contracts\HasElector;
+use App\Filament\Base\Contracts\HasElection;
+use App\Filament\Base\Contracts\HasElector;
+use App\Filament\Election\ElectionPanel;
 use App\Filament\Election\Pages\Concerns\InteractsWithElection;
 use App\Filament\Election\Pages\Concerns\InteractsWithElector;
-use App\Filament\ElectionPanel;
 use App\Models\Election;
 use Filament\Facades\Filament;
 use Filament\Forms\Form;
 use Filament\Pages\Page;
-use Filament\Resources\Resource;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use function Filament\authorize;
