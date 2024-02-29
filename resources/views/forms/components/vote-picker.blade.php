@@ -93,12 +93,23 @@
                 )
         },
 
+        candidateGroupSelected: function (group) {
+            if (this.checkedOptionsCount < 1 && group !== this.group) {
+                this.group = group
+
+                this.updateVisibleCheckboxListOptions()
+                this.checkIfAllCheckboxesAreChecked()
+            }
+        },
+
         selectCandidateGroup: function (group) {
             this.group = group
 
             this.updateVisibleCheckboxListOptions()
             this.checkIfAllCheckboxesAreChecked()
-        },
+
+            $dispatch('candidate-group-selected', {group: group})
+        }
     }"
     x-init="
         updateVisibleCheckboxListOptions()
@@ -143,7 +154,9 @@
         <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
             <div>
                 @if ($hasCandidateGroup())
-                    <div class="flex flex-wrap justify-center gap-4 mb-4">
+                    <div class="flex flex-wrap justify-center gap-4 mb-4"
+                         @candidate-group-selected.window="candidateGroupSelected($event.detail.group)"
+                        >
                         @foreach ($getCandidateGroups() as $key => $group)
                             <button
                                 type="button"
