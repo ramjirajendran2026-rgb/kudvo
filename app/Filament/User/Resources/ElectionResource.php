@@ -23,7 +23,7 @@ use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\IconPosition;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Tables;
-use Filament\Tables\Actions\CreateAction as TableCreateAction;
+use Filament\Tables\Actions\CreateAction as CreateTableAction;
 use Filament\Tables\Actions\DeleteAction as DeleteTableAction;
 use Filament\Tables\Actions\ReplicateAction as ReplicateTableAction;
 use Filament\Tables\Table;
@@ -50,26 +50,38 @@ class ElectionResource extends Resource
             ]);
     }
 
+    public static function editFormSchema(): array
+    {
+        return [
+            ElectionForm::nameComponent(),
+        ];
+    }
+
     public static function timingForm(Form $form): Form
     {
         return $form
-            ->schema(components: [
-                ElectionForm::timezoneComponent(),
+            ->schema(components: static::timingFormSchema());
+    }
 
-                ElectionForm::startsAtComponent()
-                    ->timezone(fn (Get $get): ?string => $get(path: 'timezone')),
+    public static function timingFormSchema(): array
+    {
+        return [
+            ElectionForm::timezoneComponent(),
 
-                ElectionForm::endsAtComponent()
-                    ->timezone(fn (Get $get): ?string => $get(path: 'timezone')),
+            ElectionForm::startsAtComponent()
+                ->timezone(fn (Get $get): ?string => $get(path: 'timezone')),
 
-                ElectionForm::boothStartsAtComponent()
-                    ->timezone(fn (Get $get): ?string => $get(path: 'timezone'))
-                    ->visible(condition: fn (?Election $record): bool => $record?->isBoothVotingEnabled()),
+            ElectionForm::endsAtComponent()
+                ->timezone(fn (Get $get): ?string => $get(path: 'timezone')),
 
-                ElectionForm::boothEndsAtComponent()
-                    ->timezone(fn (Get $get): ?string => $get(path: 'timezone'))
-                    ->visible(condition: fn (?Election $record): bool => $record?->isBoothVotingEnabled()),
-            ]);
+            ElectionForm::boothStartsAtComponent()
+                ->timezone(fn (Get $get): ?string => $get(path: 'timezone'))
+                ->visible(condition: fn (?Election $record): bool => $record?->isBoothVotingEnabled()),
+
+            ElectionForm::boothEndsAtComponent()
+                ->timezone(fn (Get $get): ?string => $get(path: 'timezone'))
+                ->visible(condition: fn (?Election $record): bool => $record?->isBoothVotingEnabled()),
+        ];
     }
 
     public static function table(Table $table): Table
@@ -100,11 +112,11 @@ class ElectionResource extends Resource
                 ]),
             ])
             ->emptyStateActions(actions: [
-                static::getTableCreateAction(),
+                static::getCreateTableAction(),
             ])
             ->emptyStateIcon(icon: static::getNavigationIcon())
             ->headerActions(actions: [
-                static::getTableCreateAction(),
+                static::getCreateTableAction(),
             ])
             ->heading(heading: Str::title(value: static::getPluralModelLabel()))
             ->recordUrl(url: fn (Election $election) => static::getUrl(name: 'dashboard', parameters: [$election]))
@@ -146,9 +158,9 @@ class ElectionResource extends Resource
         ];
     }
 
-    public static function getTableCreateAction(): TableCreateAction
+    public static function getCreateTableAction(): CreateTableAction
     {
-        return TableCreateAction::make()
+        return CreateTableAction::make()
             ->createAnother(condition: false)
             ->modalFooterActionsAlignment(alignment: Alignment::End)
             ->modalWidth(width: MaxWidth::ExtraLarge)
@@ -158,13 +170,8 @@ class ElectionResource extends Resource
     public static function getEditAction(): EditAction
     {
         return EditAction::make()
-            ->authorize(
-                abilities: fn (HasElection $livewire): bool => static::can(
-                    action: 'update',
-                    record: $livewire->getElection()
-                )
-            )
-            ->form(form: fn (Form $form): Form => static::form(form: $form))
+            ->authorize(abilities: 'update')
+            ->form(form: static::editFormSchema())
             ->icon(icon: 'heroicon-m-pencil-square')
             ->label(label: 'Edit title')
             ->modalCancelAction(action: false)
@@ -175,13 +182,8 @@ class ElectionResource extends Resource
     public static function getSetTimingAction(): EditAction
     {
         return EditAction::make(name: 'setTiming')
-            ->authorize(
-                abilities: fn (HasElection $livewire): bool => static::can(
-                    action: 'setTiming',
-                    record: $livewire->getElection()
-                )
-            )
-            ->form(form: fn (Form $form): Form => static::timingForm(form: $form))
+            ->authorize(abilities: 'setTiming')
+            ->form(form: static::timingFormSchema())
             ->groupedIcon(icon: 'heroicon-m-clock')
             ->icon(icon: 'heroicon-m-clock')
             ->label(label: 'Set Timing')
@@ -207,12 +209,7 @@ class ElectionResource extends Resource
     public static function getEditTimingAction(): EditAction
     {
         return static::getSetTimingAction()
-            ->authorize(
-                abilities: fn (HasElection $livewire): bool => static::can(
-                    action: 'updateTiming',
-                    record: $livewire->getElection()
-                )
-            )
+            ->authorize(abilities: 'updateTiming')
             ->label(label: 'Edit Timing')
             ->name(name: 'editTiming');
     }
@@ -227,12 +224,7 @@ class ElectionResource extends Resource
                     $action->success();
                 }
             )
-            ->authorize(
-                abilities: fn (HasElection $livewire): bool => static::can(
-                    action: 'cancel',
-                    record: $livewire->getElection()
-                )
-            )
+            ->authorize(abilities: 'cancel')
             ->requiresConfirmation()
             ->color(color: ElectionStatus::CANCELLED->getColor())
             ->icon(icon: ElectionStatus::CANCELLED->getIcon())
