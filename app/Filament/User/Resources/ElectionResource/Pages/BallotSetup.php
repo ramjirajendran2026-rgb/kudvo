@@ -3,6 +3,7 @@
 namespace App\Filament\User\Resources\ElectionResource\Pages;
 
 use App\Filament\Base\Contracts\HasElection;
+use App\Filament\Imports\CandidateImporter;
 use App\Filament\User\Resources\CandidateResource;
 use App\Filament\User\Resources\PositionResource;
 use App\Models\Candidate;
@@ -11,6 +12,7 @@ use App\Models\Position;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ImportAction;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -156,6 +158,8 @@ HTML,
             $this->getCreatePositionAction(),
 
             $this->getPreviewBallotAction(),
+
+            $this->getImportCandidateAction(),
 
             $this->getNextPageAction(),
         ];
@@ -310,6 +314,19 @@ HTML,
             ->modalSubmitActionLabel(label: 'Save changes')
             ->modalWidth(width: MaxWidth::ExtraLarge)
             ->successNotificationTitle(title: 'Saved');
+    }
+
+    protected function getImportCandidateAction(): ImportAction
+    {
+        return ImportAction::make(name: 'importCandidate')
+            ->authorize(abilities: 'importCandidate')
+            ->icon(icon: 'heroicon-m-arrow-up-tray')
+            ->importer(importer: CandidateImporter::class)
+            ->label(label: 'Import')
+            ->modalWidth(width: MaxWidth::ExtraLarge)
+            ->options(options: [
+                'election_id' => $this->getElection()->getKey(),
+            ]);
     }
 
     protected function getCreateCandidateAction(): InfolistAction

@@ -193,6 +193,11 @@ class ElectionPolicy
         return $election->is_draft;
     }
 
+    public function importCandidate(User $user, Election $election): bool
+    {
+        return $election->is_draft;
+    }
+
     public function reorderCandidate(User $user, Election $election): bool
     {
         return $election->is_draft;
