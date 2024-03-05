@@ -286,6 +286,7 @@ class Election extends Model
         static::deleting(callback: function (Election $election) {
             $election->electors()->cursor()->each->delete();
             $election->positions()->cursor()->each->delete();
+            $election->candidateGroups()->cursor()->each->delete();
             $election->monitorTokens()->cursor()->each->delete();
             $election->boothTokens()->cursor()->each->delete();
             $election->result()->cursor()->each->delete();

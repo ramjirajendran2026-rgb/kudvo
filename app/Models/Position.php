@@ -83,6 +83,10 @@ class Position extends Model implements Sortable
                 $position->quota
                 : $position->threshold;
         });
+
+        static::deleting(callback: function (Position $position) {
+            $position->candidates()->cursor()->each->delete();
+        });
     }
 
     public function getRouteKeyName(): string
