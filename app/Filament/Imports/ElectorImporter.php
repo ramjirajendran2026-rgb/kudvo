@@ -44,7 +44,7 @@ class ElectorImporter extends Importer
                     ($phone = phone(number: $state, country: $options['phone_country'])) &&
                     $phone->isValid() ?
                         $phone->formatE164() :
-                        null
+                        $state
                 )
                 ->example(example: '9876543210')
                 ->fillRecordUsing(
@@ -66,7 +66,7 @@ class ElectorImporter extends Importer
             ImportColumn::make(name: 'email')
                 ->example(example: 'mem1001@association.com')
                 ->rules(rules: function (array $options, Elector $record): array {
-                    $rules = ['email', 'max:100'];
+                    $rules = ['nullable', 'email', 'max:100'];
 
                     if ($options['event_type'] === Election::class && Election::find(id: $options['event_id'])?->preference->elector_duplicate_email === false) {
                         $rules[] = Rule::unique(table: 'electors')
