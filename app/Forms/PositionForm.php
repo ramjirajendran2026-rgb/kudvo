@@ -31,7 +31,7 @@ readonly class PositionForm
         return Quantity::make(name: 'quota')
             ->default(state: 1)
             ->label(label: 'Available posts')
-            ->maxValue(value: 25)
+            ->maxValue(value: 500)
             ->minValue(value: 1)
             ->numeric()
             ->required();
