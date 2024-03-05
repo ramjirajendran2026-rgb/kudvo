@@ -223,6 +223,11 @@ class Election extends Model
             ->oldest(column: 'sort');
     }
 
+    public function candidateGroups(): HasMany
+    {
+        return $this->hasMany(related: CandidateGroup::class);
+    }
+
     public function monitorTokens(): HasMany
     {
         return $this->hasMany(related: ElectionMonitorToken::class);
@@ -476,10 +481,53 @@ class Election extends Model
                                                 'elector_id',
                                                 'full_name',
                                                 'position_id',
-                                                'rank',
+                                                'candidate_group_id',
                                             ])
                                             ->toArray()
                                     );
+
+                                if ($this->preference->candidate_group && filled($candidate->candidate_group_id)) {
+                                    $candidateGroup = $this->candidateGroups()
+                                        ->where('name', $candidate->candidateGroup->name)
+                                        ->where('short_name', $candidate->candidateGroup->short_name)
+                                        ->firstOr(fn () => $this->candidateGroups()->create(
+                                            attributes: $candidate->candidateGroup
+                                                ->replicate(except: [
+                                                    'election_id',
+                                                ])
+                                                ->toArray()
+                                        ));
+
+                                    $replicaCandidate->update(attributes: ['candidate_group_id' => $candidateGroup->getKey()]);
+                                }
+
+                                if ($this->preference->candidate_photo) {
+                                    $candidate->getMedia(collectionName: Candidate::MEDIA_COLLECTION_PHOTO)
+                                        ->each(
+                                            callback: function (Media $media) use ($replicaCandidate) {
+                                                $replicaCandidate->addMedia(file: $media->getPath())
+                                                    ->preservingOriginal()
+                                                    ->toMediaCollection(
+                                                        collectionName: Candidate::MEDIA_COLLECTION_PHOTO,
+                                                        diskName: config('filament.default_filesystem_disk'),
+                                                    );
+                                            }
+                                        );
+                                }
+
+                                if ($this->preference->candidate_symbol) {
+                                    $candidate->getMedia(collectionName: Candidate::MEDIA_COLLECTION_SYMBOL)
+                                        ->each(
+                                            callback: function (Media $media) use ($replicaCandidate) {
+                                                $replicaCandidate->addMedia(file: $media->getPath())
+                                                    ->preservingOriginal()
+                                                    ->toMediaCollection(
+                                                        collectionName: Candidate::MEDIA_COLLECTION_SYMBOL,
+                                                        diskName: config('filament.default_filesystem_disk'),
+                                                    );
+                                            }
+                                        );
+                                }
                             }
                         );
                 }
