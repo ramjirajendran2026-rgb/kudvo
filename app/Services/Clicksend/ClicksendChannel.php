@@ -25,7 +25,7 @@ class ClicksendChannel
 
     public function send(object $notifiable, Notification $notification): ?SendSmsResponseData
     {
-        if (blank($route = $this->getSmsRoute($notifiable, $notification, self::NAME))) {
+        if (blank($route = $this->getSmsRoute($notifiable, $notification, self::NAME)) || ! phone($route)->isValid()) {
             return null;
         }
 

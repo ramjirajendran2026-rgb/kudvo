@@ -26,7 +26,7 @@ class TwentyFourSevenSmsChannel
             channel: static::NAME,
         );
 
-        if (blank($route)) {
+        if (blank($route) || ! phone($route)->isValid()) {
             return null;
         }
 
