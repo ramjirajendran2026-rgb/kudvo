@@ -51,7 +51,10 @@ class ElectorImporter extends Importer
                     callback: fn (?string $state, array $options, Elector $record) => $record->phone = ($phone = phone(number: $state, country: $options['phone_country']))->isValid() ? $phone->formatE164() : null
                 )
                 ->rules(rules: function (array $options, Elector $record): array {
-                    $rules = ['nullable', 'phone:INTERNATIONAL,'.($options['phone_country'] ?? '')];
+                    $rules = [
+                        'nullable',
+//                        'phone:INTERNATIONAL,'.($options['phone_country'] ?? '')
+                    ];
 
                     if ($options['event_type'] === Election::class && Election::find(id: $options['event_id'])?->preference->elector_duplicate_phone === false) {
                         $rules[] = Rule::unique(table: 'electors')
