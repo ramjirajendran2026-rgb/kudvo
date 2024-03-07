@@ -61,6 +61,8 @@ class Electors extends ElectionPage implements HasTable
                 ElectorResource::getBulkDeleteAction()
                     ->authorize(abilities: fn (self $livewire): bool => static::can(action: 'deleteAnyElector', election: $livewire->getElection())),
 
+                $this->getNotifyVotingInstructionsBulkAction(),
+
                 $this->getSendBallotLinkBulkAction(),
             ])
             ->emptyStateActions(actions: [
@@ -174,6 +176,31 @@ class Electors extends ElectionPage implements HasTable
                 notification: fn (Notification $notification) => $notification
                     ->title(title: 'Ballot Links Sent')
                     ->body(body: 'Ballot links have been sent to selected electors who have not yet voted.')
+            );
+    }
+
+    public function getNotifyVotingInstructionsBulkAction()
+    {
+        return BulkAction::make(name: 'notifyVotingInstructionsBulk')
+            ->authorize(abilities: fn (self $livewire): bool => static::can(action: 'notifyVotingInstructionsBulk', election: $livewire->getElection()))
+            ->requiresConfirmation()
+            ->action(action: function (BulkAction $action, Collection $collection) {
+                $collection->each(
+                    callback: function (Elector $elector) {
+                        if (!$elector->ballot?->isVoted()) {
+                            $elector->notifyVotingInstructions();
+                        }
+                    }
+                );
+
+                $action->success();
+            })
+            ->icon(icon: 'heroicon-m-bell-alert')
+            ->label(label: 'Notify Voting Instructions')
+            ->successNotification(
+                notification: fn (Notification $notification) => $notification
+                    ->title(title: 'Voting Instructions Sent')
+                    ->body(body: 'Voting instructions have been sent to selected electors who have not yet voted.')
             );
     }
 

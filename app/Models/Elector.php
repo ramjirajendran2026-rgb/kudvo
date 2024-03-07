@@ -8,6 +8,7 @@ use App\Filament\Nomination\NominationPanel;
 use App\Models\Concerns\HasShortCode;
 use App\Notifications\Election\BallotLinkNotification;
 use App\Notifications\Election\Data\BallotLinkNotificationData;
+use App\Notifications\Election\VotingInstructionNotification;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
@@ -200,6 +201,19 @@ class Elector extends Model implements
                 'ip_address' => $request->ip(),
                 'user_agent' => $request->userAgent(),
             ]);
+    }
+
+    public function notifyVotingInstructions(?Election $election = null, bool $now = false): void
+    {
+        $notification = new VotingInstructionNotification(
+            election: $election ?? $this->event,
+        );
+
+        if ($now) {
+            $this->notifyNow(instance: $notification);
+        } else {
+            $this->notify(instance: $notification);
+        }
     }
 
     public function sendBallotLink(?Election $election = null, bool $now = false): void
