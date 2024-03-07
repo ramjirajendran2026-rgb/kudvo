@@ -117,7 +117,11 @@ class Index extends Page
                             name: "ballot-{$livewire->getElection()->code}.pdf",
                         )
                     )
-                    ->visible(condition: fn (self $livewire): bool => !Kudvo::isBoothDevice() && filled($livewire->sessionVotes)),
+                    ->visible(
+                        condition: fn (self $livewire): bool => !Kudvo::isBoothDevice() &&
+                            filled($livewire->sessionVotes) &&
+                            $livewire->getElection()->preference->voted_ballot_download
+                    ),
 
                 Action::make(name: 'editMyVotes')
                     ->color(color: 'info')
