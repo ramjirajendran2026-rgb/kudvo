@@ -65,7 +65,8 @@ class Position extends Model implements Sortable
     public function rankedCandidates(): HasMany
     {
         return $this->hasMany(related: Candidate::class)
-            ->oldest(column: 'rank');
+            ->oldest(column: 'rank')
+            ->oldest(column: 'sort');
     }
 
     public function candidateGroups(): HasManyThrough
