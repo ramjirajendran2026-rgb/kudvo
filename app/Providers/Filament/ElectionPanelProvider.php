@@ -90,7 +90,7 @@ class ElectionPanelProvider extends PanelProvider
 
                         Login::doLogin(elector: $elector, panel: Filament::getCurrentPanel(), request: $request);
 
-                        return app(abstract: LoginResponse::class);
+                        return redirect(to: Index::getUrl());
                     })
                     ->middleware(middleware: 'signed')
                     ->name(name: 'eul');
