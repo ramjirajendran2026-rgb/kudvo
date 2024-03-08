@@ -82,7 +82,7 @@
             </tr>
             </thead>
             <tbody>
-            @forelse($position->rankedCandidates as $candidate)
+            @forelse($position->candidates as $candidate)
                 <tr>
                     <td style="height: 16mm; width: 16mm;">
                         <img
