@@ -35,6 +35,8 @@ class Preview extends Page implements HasElection
 
     public bool $flashVotes = false;
 
+    protected static bool $shouldRegisterNavigation = false;
+
     public static function getWithoutRouteMiddleware(Panel $panel): string|array
     {
         return [

@@ -24,6 +24,7 @@ abstract class BasePage extends Page implements HasElector, HasElection
     use InteractsWithElector;
     use InteractsWithElection;
 
+    protected static bool $shouldRegisterNavigation = false;
     public bool $mock;
 
     public function mount(Request $request): void

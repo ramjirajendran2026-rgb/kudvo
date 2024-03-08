@@ -22,6 +22,8 @@ class Monitor extends Page
 
     protected static string | array $routeMiddleware = 'signed';
 
+    protected static bool $shouldRegisterNavigation = false;
+
     public function mount(Request $request, Agent $agent): void
     {
         abort_if(boolean: $agent->isRobot(), code: Response::HTTP_NOT_ACCEPTABLE);
