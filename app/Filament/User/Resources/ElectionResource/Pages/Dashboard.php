@@ -5,6 +5,7 @@ namespace App\Filament\User\Resources\ElectionResource\Pages;
 use App\Enums\ElectionDashboardState;
 use App\Filament\Base\Pages\Concerns\HasStateSection;
 use App\Filament\User\Resources\ElectionResource;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Illuminate\Support\HtmlString;
@@ -132,6 +133,8 @@ class Dashboard extends ElectionPage
                     ->after(callback: fn (self $livewire) => $livewire->resolveState())
                     ->modalHeading(heading: fn (self $livewire) => $livewire->getRecordTitle()),
 
+                $this->getDownloadPhysicalBallotAction(),
+
                 ElectionResource::getCancelAction(),
 
             ])->dropdownPlacement(placement: 'bottom-end'),
@@ -168,6 +171,35 @@ class Dashboard extends ElectionPage
             ->authorize(abilities: fn (self $livewire): bool => Result::canAccessPage(election: $livewire->getElection()))
             ->label(label: 'View Result')
             ->url(url: Result::getUrl(parameters: [$this->getElection()]));
+    }
+
+    protected function getDownloadPhysicalBallotAction()
+    {
+        return Action::make(name: 'download_physical_ballot')
+            ->action(action: function (self $livewire) {
+                $election = $livewire->getElection();
+
+                config(['app.name' => 'SecuredVoting']); // TODO: Remove this line after the issue is fixed
+
+                $pdf = Pdf::loadView(
+                    'pdf.election.physical-ballot',
+                    [
+                        'election' => $election,
+                    ],
+                    [],
+                    'UTF-8'
+                );
+
+                return response()
+                    ->streamDownload(
+                        callback: function () use ($pdf) {
+                            echo $pdf->output();
+                        },
+                        name: "physical-ballot-{$this->getElection()->code}.pdf",
+                    );
+            })
+//            ->authorize(abilities: 'downloadPhysicalBallot')
+            ->label(label: 'Download Physical Ballot');
     }
 
     protected function hasPendingPreferenceSetup(): bool
