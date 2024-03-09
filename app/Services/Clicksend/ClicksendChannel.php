@@ -43,6 +43,16 @@ class ClicksendChannel
         $message->setTo($route);
 
         try {
+            if (phone($route)->isOfCountry('AE')) {
+                Log::alert(
+                    message: 'SMS Request for UAE',
+                    context: [
+                        'MobileNo' => $route,
+                        'Message' => $message->getBody(),
+                    ]
+                );
+            }
+
             Log::info("[Clicksend] SendSMS Request: ".((string) $message));
             $response = $this->api->smsSendPost(
                 (new SmsMessageCollection())
