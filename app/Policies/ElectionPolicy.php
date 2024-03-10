@@ -220,7 +220,7 @@ class ElectionPolicy
 
     public function viewAnyMonitorToken(User $user, Election $election): bool
     {
-        return $election->is_published;
+        return $election->is_published || $election->is_completed;
     }
 
     public function viewAnyBoothToken(User $user, Election $election): bool
