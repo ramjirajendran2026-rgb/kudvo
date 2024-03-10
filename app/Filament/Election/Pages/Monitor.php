@@ -79,6 +79,7 @@ class Monitor extends Page
     protected function getDownloadAction(): Action
     {
         return Action::make(name: 'download')
+            ->label(label: 'Download Result')
             ->visible($this->getElection()->is_completed)
             ->action(action: function (self $livewire) {
                 $election = $livewire->getElection();
