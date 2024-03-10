@@ -7,6 +7,8 @@ use App\Filament\Base\Widgets\NonVotedElectors;
 use App\Filament\Base\Widgets\VotedBallots;
 use App\Filament\Election\Http\Middleware\EnsureStateIsAllowed;
 use App\Filament\Election\Pages\Concerns\InteractsWithElection;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Filament\Actions\Action;
 use Filament\Pages\Page;
 use Filament\Panel;
 use Illuminate\Http\Request;
@@ -65,5 +67,38 @@ class Monitor extends Page
             VotedBallots::class,
             NonVotedElectors::class,
         ];
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            $this->getDownloadAction(),
+        ];
+    }
+
+    protected function getDownloadAction(): Action
+    {
+        return Action::make(name: 'download')
+            ->visible($this->getElection()->is_completed)
+            ->action(action: function (self $livewire) {
+                $election = $livewire->getElection();
+
+                $pdf = Pdf::loadView(
+                    'pdf.election.result',
+                    [
+                        'election' => $election,
+                    ],
+                    [],
+                    'UTF-8'
+                );
+
+                return response()
+                    ->streamDownload(
+                        callback: function () use ($pdf) {
+                            echo $pdf->output();
+                        },
+                        name: "result-{$this->getElection()->code}.pdf",
+                    );
+            });
     }
 }
