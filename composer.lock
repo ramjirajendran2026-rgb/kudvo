@@ -4,8 +4,151 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "db809b6f3a36e93d10b9c31b4ed327f5",
+    "content-hash": "43428812b9c94bb61eb56ff4db71a937",
     "packages": [
+        {
+            "name": "akhan619/laravel-ses-event-manager",
+            "version": "v1.0.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/akhan619/laravel-ses-event-manager.git",
+                "reference": "c7aee752f6e5abe7b87eef2910806a0143c6e89e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/akhan619/laravel-ses-event-manager/zipball/c7aee752f6e5abe7b87eef2910806a0143c6e89e",
+                "reference": "c7aee752f6e5abe7b87eef2910806a0143c6e89e",
+                "shasum": ""
+            },
+            "require": {
+                "aws/aws-php-sns-message-validator": "^1.6",
+                "aws/aws-sdk-php": "^3.218",
+                "illuminate/support": "^9.0|^10.0",
+                "nyholm/psr7": "^1.0",
+                "php": "^8.0",
+                "symfony/psr-http-message-bridge": "^2.0"
+            },
+            "require-dev": {
+                "mockery/mockery": "^1.5",
+                "orchestra/testbench": "^7.0",
+                "phpunit/phpunit": "^9.0",
+                "sempro/phpunit-pretty-print": "^1.4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Akhan619\\LaravelSesEventManager\\LaravelSesEventManagerServiceProvider"
+                    ],
+                    "aliases": {
+                        "SesMailer": "Akhan619\\LaravelSesEventManager\\Facades\\SesMailer"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Akhan619\\LaravelSesEventManager\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Aman Khan",
+                    "email": "amankhan.mailbox@gmail.com"
+                }
+            ],
+            "description": "A Laravel package to manage incoming SES email events with http/s webhooks.",
+            "homepage": "https://github.com/akhan619/laravel-ses-event-manager",
+            "keywords": [
+                "bounce",
+                "click",
+                "delivery",
+                "email",
+                "events",
+                "http",
+                "https",
+                "laravel",
+                "open",
+                "send",
+                "ses",
+                "webhooks"
+            ],
+            "support": {
+                "issues": "https://github.com/akhan619/laravel-ses-event-manager/issues",
+                "source": "https://github.com/akhan619/laravel-ses-event-manager/tree/v1.0.4"
+            },
+            "time": "2023-10-12T16:36:18+00:00"
+        },
+        {
+            "name": "akhan619/laravel-ses-tracking",
+            "version": "v1.0.8",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/akhan619/laravel-ses-tracking.git",
+                "reference": "63ff098f737bba5b96a1f89bf23cfb95eea094b6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/akhan619/laravel-ses-tracking/zipball/63ff098f737bba5b96a1f89bf23cfb95eea094b6",
+                "reference": "63ff098f737bba5b96a1f89bf23cfb95eea094b6",
+                "shasum": ""
+            },
+            "require": {
+                "aws/aws-sdk-php": "^3.218",
+                "illuminate/support": "^9.0|^10.0",
+                "php": "^8.0.2"
+            },
+            "require-dev": {
+                "mockery/mockery": "^1.5",
+                "orchestra/testbench": "^7.0",
+                "phpunit/phpunit": "~9.0",
+                "sempro/phpunit-pretty-print": "^1.4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Akhan619\\LaravelSesTracking\\LaravelSesTrackingServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Akhan619\\LaravelSesTracking\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Aman Khan",
+                    "email": "amankhan.mailbox@gmail.com"
+                }
+            ],
+            "description": "A Laravel artisan based package to create the AWS (SES + SNS) infrastructure to receive email event notifications with Http/Https endpoint.",
+            "homepage": "https://github.com/akhan619/laravel-ses-tracking",
+            "keywords": [
+                "SNS",
+                "cli",
+                "email",
+                "http",
+                "https",
+                "laravel",
+                "ses",
+                "tracking",
+                "webhook"
+            ],
+            "support": {
+                "issues": "https://github.com/akhan619/laravel-ses-tracking/issues",
+                "source": "https://github.com/akhan619/laravel-ses-tracking/tree/v1.0.8"
+            },
+            "time": "2023-03-30T16:40:53+00:00"
+        },
         {
             "name": "amphp/amp",
             "version": "v3.0.0",
@@ -983,6 +1126,65 @@
                 "source": "https://github.com/awslabs/aws-crt-php/tree/v1.2.4"
             },
             "time": "2023-11-08T00:42:13+00:00"
+        },
+        {
+            "name": "aws/aws-php-sns-message-validator",
+            "version": "1.9.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/aws/aws-php-sns-message-validator.git",
+                "reference": "de457eaf8fbfa05f2f611d546d7357c6fdec86f8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/aws/aws-php-sns-message-validator/zipball/de457eaf8fbfa05f2f611d546d7357c6fdec86f8",
+                "reference": "de457eaf8fbfa05f2f611d546d7357c6fdec86f8",
+                "shasum": ""
+            },
+            "require": {
+                "ext-openssl": "*",
+                "php": ">=7.2.5",
+                "psr/http-message": "^1.0 || ^2.0"
+            },
+            "require-dev": {
+                "guzzlehttp/psr7": "^1.9.1 || ^2.4.5",
+                "phpunit/phpunit": "^5.6.3 || ^8.5 || ^9.5",
+                "squizlabs/php_codesniffer": "^2.3",
+                "yoast/phpunit-polyfills": "^1.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Aws\\Sns\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Amazon Web Services",
+                    "homepage": "http://aws.amazon.com"
+                }
+            ],
+            "description": "Amazon SNS message validation for PHP",
+            "homepage": "http://aws.amazon.com/sdkforphp",
+            "keywords": [
+                "SNS",
+                "amazon",
+                "aws",
+                "cloud",
+                "message",
+                "sdk",
+                "webhooks"
+            ],
+            "support": {
+                "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
+                "issues": "https://github.com/aws/aws-sns-message-validator/issues",
+                "source": "https://github.com/aws/aws-php-sns-message-validator/tree/1.9.0"
+            },
+            "time": "2023-12-18T17:03:51+00:00"
         },
         {
             "name": "aws/aws-sdk-php",
@@ -6150,6 +6352,84 @@
             "time": "2023-02-08T01:06:31+00:00"
         },
         {
+            "name": "nyholm/psr7",
+            "version": "1.8.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Nyholm/psr7.git",
+                "reference": "aa5fc277a4f5508013d571341ade0c3886d4d00e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Nyholm/psr7/zipball/aa5fc277a4f5508013d571341ade0c3886d4d00e",
+                "reference": "aa5fc277a4f5508013d571341ade0c3886d4d00e",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2",
+                "psr/http-factory": "^1.0",
+                "psr/http-message": "^1.1 || ^2.0"
+            },
+            "provide": {
+                "php-http/message-factory-implementation": "1.0",
+                "psr/http-factory-implementation": "1.0",
+                "psr/http-message-implementation": "1.0"
+            },
+            "require-dev": {
+                "http-interop/http-factory-tests": "^0.9",
+                "php-http/message-factory": "^1.0",
+                "php-http/psr7-integration-tests": "^1.0",
+                "phpunit/phpunit": "^7.5 || ^8.5 || ^9.4",
+                "symfony/error-handler": "^4.4"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.8-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Nyholm\\Psr7\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Tobias Nyholm",
+                    "email": "tobias.nyholm@gmail.com"
+                },
+                {
+                    "name": "Martijn van der Ven",
+                    "email": "martijn@vanderven.se"
+                }
+            ],
+            "description": "A fast PHP7 implementation of PSR-7",
+            "homepage": "https://tnyholm.se",
+            "keywords": [
+                "psr-17",
+                "psr-7"
+            ],
+            "support": {
+                "issues": "https://github.com/Nyholm/psr7/issues",
+                "source": "https://github.com/Nyholm/psr7/tree/1.8.1"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/Zegnat",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/nyholm",
+                    "type": "github"
+                }
+            ],
+            "time": "2023-11-13T09:31:12+00:00"
+        },
+        {
             "name": "omar-haris/filament-timezone-field",
             "version": "v1.0.1",
             "source": {
@@ -10341,6 +10621,95 @@
                 }
             ],
             "time": "2024-02-20T12:31:00+00:00"
+        },
+        {
+            "name": "symfony/psr-http-message-bridge",
+            "version": "v2.3.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/psr-http-message-bridge.git",
+                "reference": "581ca6067eb62640de5ff08ee1ba6850a0ee472e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/psr-http-message-bridge/zipball/581ca6067eb62640de5ff08ee1ba6850a0ee472e",
+                "reference": "581ca6067eb62640de5ff08ee1ba6850a0ee472e",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2.5",
+                "psr/http-message": "^1.0 || ^2.0",
+                "symfony/deprecation-contracts": "^2.5 || ^3.0",
+                "symfony/http-foundation": "^5.4 || ^6.0"
+            },
+            "require-dev": {
+                "nyholm/psr7": "^1.1",
+                "psr/log": "^1.1 || ^2 || ^3",
+                "symfony/browser-kit": "^5.4 || ^6.0",
+                "symfony/config": "^5.4 || ^6.0",
+                "symfony/event-dispatcher": "^5.4 || ^6.0",
+                "symfony/framework-bundle": "^5.4 || ^6.0",
+                "symfony/http-kernel": "^5.4 || ^6.0",
+                "symfony/phpunit-bridge": "^6.2"
+            },
+            "suggest": {
+                "nyholm/psr7": "For a super lightweight PSR-7/17 implementation"
+            },
+            "type": "symfony-bridge",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "2.3-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Bridge\\PsrHttpMessage\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "http://symfony.com/contributors"
+                }
+            ],
+            "description": "PSR HTTP message bridge",
+            "homepage": "http://symfony.com",
+            "keywords": [
+                "http",
+                "http-message",
+                "psr-17",
+                "psr-7"
+            ],
+            "support": {
+                "issues": "https://github.com/symfony/psr-http-message-bridge/issues",
+                "source": "https://github.com/symfony/psr-http-message-bridge/tree/v2.3.1"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2023-07-26T11:53:26+00:00"
         },
         {
             "name": "symfony/routing",

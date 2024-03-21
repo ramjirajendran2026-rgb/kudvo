@@ -10,6 +10,8 @@
     "require": {
         "php": "^8.2",
         "ext-mbstring": "*",
+        "akhan619/laravel-ses-event-manager": "^1.0",
+        "akhan619/laravel-ses-tracking": "^1.0",
         "aws/aws-sdk-php": "^3.295",
         "barryvdh/laravel-dompdf": "^2.0",
         "clicksend/clicksend-php": "^5.0",
