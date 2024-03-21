@@ -93,6 +93,7 @@ class ElectionPanelProvider extends PanelProvider
                         return app(abstract: LoginResponse::class);
                     })
                     ->middleware(middleware: 'signed')
+                    ->withoutMiddleware(middleware: EnsureStateIsAllowed::class)
                     ->name(name: 'eul');
             })
             ->colors(colors: [
