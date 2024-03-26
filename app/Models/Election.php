@@ -5,9 +5,10 @@ namespace App\Models;
 use App\Data\Election\PreferenceData;
 use App\Data\Election\ResultMetaData;
 use App\Data\Election\VoteSecretData;
-use App\Data\WebAppManifestData;
+use App\Enums\CandidateSort;
 use App\Enums\ElectionStatus;
 use App\Models\Concerns\HasShortCode;
+use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
@@ -533,5 +534,113 @@ class Election extends Model
                         );
                 }
             );
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function calculateElectorFee(ElectionPrice $price): int
+    {
+        $fee = 0;
+
+        $fee_breakup = $price->elector_fee_breakup;
+
+        if ($this->preference->ballot_link_common) {
+            $fee += $fee_breakup->ballot_link_common;
+        }
+
+        if ($this->preference->ballot_link_unique) {
+            $fee += $fee_breakup->ballot_link_unique;
+        }
+
+        if ($this->preference->ballot_link_mail) {
+            $fee += $fee_breakup->ballot_link_mail;
+        }
+
+        if ($this->preference->ballot_link_sms) {
+            $fee += $fee_breakup->ballot_link_sms;
+        }
+
+        if ($this->preference->mfa_mail) {
+            $fee += $fee_breakup->mfa_mail;
+        }
+
+        if ($this->preference->mfa_sms) {
+            $fee += $fee_breakup->mfa_sms;
+        }
+
+        if ($this->preference->mfa_sms_auto_fill_only) {
+            $fee += $fee_breakup->mfa_sms_auto_fill_only;
+        }
+
+        if ($this->preference->voted_confirmation_sms) {
+            $fee += $fee_breakup->voted_confirmation_sms;
+        }
+
+        if ($this->preference->voted_ballot_download) {
+            $fee += $fee_breakup->voted_ballot_download;
+        }
+
+        if ($this->preference->voted_ballot_mail) {
+            $fee += $fee_breakup->voted_ballot_mail;
+        }
+
+        if ($this->preference->dnt_votes) {
+            $fee += $fee_breakup->dnt_votes;
+        }
+
+        if ($this->preference->voted_ballot_update) {
+            $fee += $fee_breakup->voted_ballot_update;
+        }
+
+        if ($this->preference->prevent_duplicate_device) {
+            $fee += $fee_breakup->prevent_duplicate_device;
+        }
+
+        if ($this->preference->ip_restriction_threshold) {
+            $fee += $fee_breakup->ip_restriction;
+        }
+
+        if ($this->preference->elector_duplicate_email) {
+            $fee += $fee_breakup->elector_duplicate_email;
+        }
+
+        if ($this->preference->elector_duplicate_phone) {
+            $fee += $fee_breakup->elector_duplicate_phone;
+        }
+
+        if ($this->preference->elector_update_after_publish) {
+            $fee += $fee_breakup->elector_update_after_publish;
+        }
+
+        if ($this->preference->candidate_sort == CandidateSort::RANDOM) {
+            $fee += $fee_breakup->candidate_sort_random;
+        }
+
+        if ($this->preference->candidate_photo) {
+            $fee += $fee_breakup->candidate_photo;
+        }
+
+        if ($this->preference->candidate_symbol) {
+            $fee += $fee_breakup->candidate_symbol;
+        }
+
+        if ($this->preference->candidate_bio) {
+            $fee += $fee_breakup->candidate_bio;
+        }
+
+        if ($this->preference->candidate_attachment) {
+            $fee += $fee_breakup->candidate_attachment;
+        }
+
+        if ($this->preference->candidate_group) {
+            $fee += $fee_breakup->candidate_group;
+        }
+
+        if ($this->preference->booth_voting) {
+            $fee += $fee_breakup->booth_voting;
+        }
+
+        return $fee;
     }
 }
