@@ -36,6 +36,8 @@ class NominationResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
+    protected static bool $shouldRegisterNavigation = false;
+
     public static function form(Form $form): Form
     {
         return $form
