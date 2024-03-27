@@ -2,9 +2,10 @@
 
 namespace App\Forms\Components;
 
-use OmarHaris\FilamentTimezoneField\Forms\Components\Timezone;
+use Filament\Forms\Components\Select;
+use Nnjeim\World\Models\Timezone;
 
-class TimezonePicker extends Timezone
+class TimezonePicker extends Select
 {
     public static function make(string $name = 'timezone'): static
     {
@@ -14,6 +15,15 @@ class TimezonePicker extends Timezone
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->options(
+            options: Timezone::all()
+                ->sortBy(callback: fn ($timezone) => now($timezone->name)->format('O'))
+                ->mapWithKeys(callback: fn ($timezone) => [$timezone->name => now($timezone->name)->format('(P) ').$timezone->name])
+                ->toArray()
+        );
+
+        $this->optionsLimit(limit: 5000);
 
         $this->searchable();
     }

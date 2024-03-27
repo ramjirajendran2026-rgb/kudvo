@@ -4,6 +4,7 @@ namespace App\Forms\Components;
 
 use Countries;
 use Filament\Forms\Components\Select;
+use Nnjeim\World\Models\Country;
 
 class CountryPicker extends Select
 {
@@ -16,7 +17,7 @@ class CountryPicker extends Select
     {
         parent::setUp();
 
-        $this->options(options: Countries::lookup());
+        $this->options(options: Country::all()->pluck('name', 'iso2')->toArray());
 
         $this->optionsLimit(limit: 5000);
 
