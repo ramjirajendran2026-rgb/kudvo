@@ -5,6 +5,7 @@ namespace App\Filament\User\Resources\ElectionResource\Pages;
 use App\Enums\ElectionDashboardState;
 use App\Filament\Base\Pages\Concerns\HasStateSection;
 use App\Filament\User\Resources\ElectionResource;
+use App\Models\ElectionPrice;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
@@ -42,6 +43,7 @@ class Dashboard extends ElectionPage
             $election->is_expired => ElectionDashboardState::Expired,
             $election->is_open => ElectionDashboardState::Open,
             $election->is_upcoming => ElectionDashboardState::Upcoming,
+            $election->isCheckoutRequired() => ElectionDashboardState::PendingCheckout,
             static::can(action: 'setTiming', election: $election) => ElectionDashboardState::PendingTiming,
             static::can(action: 'publish', election: $election) => ElectionDashboardState::ReadyToPublish,
             BallotSetup::canAccessPage(election: $election) => ElectionDashboardState::PendingBallotSetup,
@@ -103,6 +105,7 @@ class Dashboard extends ElectionPage
                 ElectionResource::getSetTimingAction()
                     ->after(callback: fn (self $livewire) => $livewire->dispatch(event: 'refresh')),
             ],
+            ElectionDashboardState::PendingCheckout => [$this->getProceedToPayAction()],
             ElectionDashboardState::ReadyToPublish => [
                 ElectionResource::getPublishAction()
                     ->after(callback: fn (self $livewire) => $livewire->dispatch(event: 'refresh')),
@@ -124,6 +127,18 @@ class Dashboard extends ElectionPage
     protected function getHeaderActions(): array
     {
         return [
+            Action::make(name: 'payNow')
+                ->action(action: function (self $livewire) {
+                    $election = $livewire->getElection();
+
+                    return $election->checkout(price: ElectionPrice::firstWhere('currency', 'USD'), user: auth()->user());
+                })
+                ->visible(condition: fn (self $livewire) => $livewire->getElection()->isCheckoutRequired()),
+
+            Action::make(name: 'download_invoice')
+                ->url(url: fn (self $livewire) => $livewire->getElection()->stripe_invoice_data['invoice_pdf'])
+                ->visible(condition: fn (self $livewire) => filled($livewire->getElection()->stripe_invoice_data)),
+
             $this->getPreviewBallotAction(),
 
             ActionGroup::make(actions: [
@@ -173,6 +188,18 @@ class Dashboard extends ElectionPage
             ->url(url: Result::getUrl(parameters: [$this->getElection()]));
     }
 
+    protected function getProceedToPayAction(): Action
+    {
+        return Action::make(name: 'proceed_to_pay')
+            ->action(action: function (self $livewire) {
+                $election = $livewire->getElection();
+
+                return $election->checkout(price: ElectionPrice::firstWhere('currency', 'USD'), user: auth()->user());
+            })
+            ->visible(condition: fn (self $livewire) => $livewire->getElection()->isCheckoutRequired())
+            ->label(label: 'Proceed to Pay');
+    }
+
     protected function getDownloadPhysicalBallotAction()
     {
         return Action::make(name: 'download_physical_ballot')
@@ -198,7 +225,8 @@ class Dashboard extends ElectionPage
                         name: "physical-ballot-{$this->getElection()->code}.pdf",
                     );
             })
-//            ->authorize(abilities: 'downloadPhysicalBallot')
+            ->authorize(abilities: 'downloadPhysicalBallot')
+            ->hidden()
             ->label(label: 'Download Physical Ballot');
     }
 

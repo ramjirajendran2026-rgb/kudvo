@@ -3,12 +3,14 @@
 use App\Filament\Election\Pages\Auth\Login;
 use App\Filament\Election\Pages\Ballot\Index as BallotPage;
 use App\Filament\Election\Pages\Index as ElectionPanel;
+use App\Http\Controllers\CheckoutController;
 use App\Models\Election;
 use App\Models\Elector;
 use App\Services\Clicksend\Http\Controllers\WebhookController as ClicksendWebhookController;
 use Filament\Facades\Filament;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Laravel\Cashier\Cashier;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,3 +36,14 @@ Route::get(
 )->name(name: 'short_link.ballot');
 
 Route::post(uri: 'clicksend/webhook', action: ClicksendWebhookController::class);
+
+Route::get(uri: 'checkout/success', action: [CheckoutController::class, 'success'])
+    ->name(name: 'checkout.success');
+
+Route::get(uri: 'checkout/cancel', action: function () {
+    $sessionId = request()->query('session_id');
+
+    $session = Cashier::stripe()->checkout->sessions->retrieve(id: $sessionId);
+
+    dd($session);
+})->name(name: 'checkout.cancel');

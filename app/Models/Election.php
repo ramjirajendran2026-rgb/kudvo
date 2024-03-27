@@ -7,6 +7,7 @@ use App\Data\Election\ResultMetaData;
 use App\Data\Election\VoteSecretData;
 use App\Enums\CandidateSort;
 use App\Enums\ElectionStatus;
+use App\Enums\InvoiceStatus;
 use App\Models\Concerns\HasShortCode;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
@@ -19,6 +20,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Laravel\Cashier\Checkout;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class Election extends Model
@@ -38,6 +40,10 @@ class Election extends Model
         'closed_at',
         'completed_at',
         'cancelled_at',
+        'paid_at',
+        'invoice_status',
+        'stripe_invoice_id',
+        'stripe_invoice_data',
         'organisation_id',
     ];
 
@@ -51,6 +57,9 @@ class Election extends Model
         'closed_at' => 'datetime',
         'completed_at' => 'datetime',
         'cancelled_at' => 'datetime',
+        'paid_at' => 'datetime',
+        'invoice_status' => InvoiceStatus::class,
+        'stripe_invoice_data' => 'array',
         'organisation_id' => 'int',
     ];
 
@@ -201,6 +210,13 @@ class Election extends Model
         );
     }
 
+    protected function isPaid(): Attribute
+    {
+        return Attribute::make(
+            get: fn($value, array $attributes) => filled($this->paid_at),
+        );
+    }
+
     public function organisation(): BelongsTo
     {
         return $this->belongsTo(related: Organisation::class);
@@ -341,6 +357,11 @@ class Election extends Model
     public function isBoothVotingEnabled(): bool
     {
         return $this->preference?->booth_voting ?? false;
+    }
+
+    public function isCheckoutRequired(): bool
+    {
+        return blank($this->paid_at);
     }
 
     public function getElectorGroups(): array
@@ -536,9 +557,6 @@ class Election extends Model
             );
     }
 
-    /**
-     * @throws Exception
-     */
     public function calculateElectorFee(ElectionPrice $price): int
     {
         $fee = 0;
@@ -642,5 +660,54 @@ class Election extends Model
         }
 
         return $fee;
+    }
+
+    public function checkout(ElectionPrice $price, User $user): Checkout
+    {
+        $electorFee = $this->calculateElectorFee(price: $price);
+        $electorsCount = $this->electors()->count();
+
+        return $user
+            ->checkout(
+                items: [
+                    [
+                        'quantity' => 1,
+                        'price_data' => [
+                            'currency' => $price->currency,
+                            'unit_amount' => $price->base_fee,
+                            'product_data' => [
+                                'name' => 'Base fee',
+                            ],
+                        ],
+                    ],
+                    [
+                        'quantity' => $electorsCount,
+                        'price_data' => [
+                            'currency' => $price->currency,
+                            'unit_amount' => $electorFee,
+                            'product_data' => [
+                                'name' => 'Elector fee',
+                            ],
+                        ],
+                    ],
+                ],
+                sessionOptions: [
+                    'success_url' => route(name: 'checkout.success').'?session_id={CHECKOUT_SESSION_ID}',
+                    'cancel_url' => route(name: 'checkout.cancel').'?session_id={CHECKOUT_SESSION_ID}',
+                    'invoice_creation' => [
+                        'enabled' => true,
+                        'invoice_data' => [
+                            'metadata' => [
+                                'related_type' => 'election',
+                                'related_id' => $this->getKey(),
+                            ],
+                        ],
+                    ],
+                    'metadata' => [
+                        'related_type' => 'election',
+                        'related_id' => $this->getKey(),
+                    ],
+                ],
+            );
     }
 }

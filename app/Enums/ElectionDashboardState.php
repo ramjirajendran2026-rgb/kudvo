@@ -16,6 +16,8 @@ enum ElectionDashboardState: string
 
     case PendingTiming = 'pending_timing';
 
+    case PendingCheckout = 'pending_checkout';
+
     case ReadyToPublish = 'draft';
 
     case Upcoming = 'upcoming';
@@ -37,6 +39,7 @@ enum ElectionDashboardState: string
             self::PendingElectorsList => 'Add Electors',
             self::PendingBallotSetup => 'Add Positions and Candidates',
             self::PendingTiming => 'Set Timing',
+            self::PendingCheckout => 'Payment',
             self::ReadyToPublish => 'Ready to Publish',
             self::Upcoming => 'Yet to Start',
             self::Open => 'Open for Voting',
@@ -54,6 +57,7 @@ enum ElectionDashboardState: string
             self::PendingElectorsList => 'heroicon-o-user-plus',
             self::PendingBallotSetup => 'heroicon-o-document-text',
             self::PendingTiming, self::Upcoming, self::Expired => 'heroicon-o-clock',
+            self::PendingCheckout => 'heroicon-o-credit-card',
             self::ReadyToPublish => 'heroicon-o-check-circle',
             self::Open => 'heroicon-o-archive-box',
             self::Closed => 'heroicon-o-archive-box-x-mark',
@@ -80,6 +84,7 @@ enum ElectionDashboardState: string
                 )
             ),
             self::PendingTiming => 'Set election start and end date and time',
+            self::PendingCheckout => 'Complete payment to publish this election',
             self::Closed => 'Voting is closed for this election on '.
                 $election->closed_at->timezone($election->timezone)->format(format: 'M d, Y h:i A (T)'),
             self::Cancelled => 'This election is cancelled on '.
