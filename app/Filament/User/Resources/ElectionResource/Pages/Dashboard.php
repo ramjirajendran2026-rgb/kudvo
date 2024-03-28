@@ -43,12 +43,13 @@ class Dashboard extends ElectionPage
             $election->is_expired => ElectionDashboardState::Expired,
             $election->is_open => ElectionDashboardState::Open,
             $election->is_upcoming => ElectionDashboardState::Upcoming,
-            Preference::canAccessPage(election: $election) => ElectionDashboardState::PendingPreference,
-            Electors::canAccessPage(election: $election) => ElectionDashboardState::PendingElectorsList,
-            BallotSetup::canAccessPage(election: $election) => ElectionDashboardState::PendingBallotSetup,
-            static::can(action: 'setTiming', election: $election) => ElectionDashboardState::PendingTiming,
+            static::can(action: 'publish', election: $election) &&
             $election->isCheckoutRequired() => ElectionDashboardState::PendingCheckout,
             static::can(action: 'publish', election: $election) => ElectionDashboardState::ReadyToPublish,
+            static::can(action: 'setTiming', election: $election) => ElectionDashboardState::PendingTiming,
+            BallotSetup::canAccessPage(election: $election) => ElectionDashboardState::PendingBallotSetup,
+            Electors::canAccessPage(election: $election) => ElectionDashboardState::PendingElectorsList,
+            Preference::canAccessPage(election: $election) => ElectionDashboardState::PendingPreference,
         };
 
         $this->cacheStateActions();
