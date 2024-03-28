@@ -668,6 +668,8 @@ class Election extends Model
         $electorsCount = $this->electors()->count();
 
         return $user
+            ->allowPromotionCodes()
+            ->collectTaxIds()
             ->checkout(
                 items: [
                     [
