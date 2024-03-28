@@ -108,6 +108,9 @@ class Preference extends ElectionPage
                                 ->description(description: 'Restrict electors voting from same IP address')
                                 ->schema(components: [
                                     Toggle::make(name: 'ip_restriction')
+                                        ->afterStateUpdated(callback: function (bool $state, Set $set): void {
+                                            $set(path: 'ip_restriction_threshold', state: $state ? 1 : null);
+                                        })
                                         ->dehydrated()
                                         ->formatStateUsing(callback: static fn (Get $get): bool => $get(path: 'ip_restriction_threshold') ?? false)
                                         ->label(label: 'Enable')
@@ -274,9 +277,11 @@ class Preference extends ElectionPage
                                         ->label(label: 'Candidate symbol'),
 
                                     Toggle::make(name: 'candidate_bio')
+                                        ->hidden()
                                         ->label(label: 'Candidate bio text'),
 
                                     Toggle::make(name: 'candidate_attachment')
+                                        ->hidden()
                                         ->label(label: 'Candidate attachments'),
 
                                     Toggle::make(name: 'candidate_group')
@@ -302,6 +307,7 @@ class Preference extends ElectionPage
                                         })
                                         ->formatStateUsing(callback: static fn (Election $record): bool => filled($record->preference?->web_app_manifest))
                                         ->helperText(text: 'This will allow you to add the election to the home screen of your booth devices.')
+                                        ->hidden()
                                         ->hint(hint: 'Experimental')
                                         ->hintIcon(
                                             icon: 'heroicon-o-information-circle',

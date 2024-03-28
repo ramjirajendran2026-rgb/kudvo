@@ -40,10 +40,5 @@ Route::post(uri: 'clicksend/webhook', action: ClicksendWebhookController::class)
 Route::get(uri: 'checkout/success', action: [CheckoutController::class, 'success'])
     ->name(name: 'checkout.success');
 
-Route::get(uri: 'checkout/cancel', action: function () {
-    $sessionId = request()->query('session_id');
-
-    $session = Cashier::stripe()->checkout->sessions->retrieve(id: $sessionId);
-
-    dd($session);
-})->name(name: 'checkout.cancel');
+Route::get(uri: 'checkout/cancel', action: [CheckoutController::class, 'cancel'])
+    ->name(name: 'checkout.cancel');

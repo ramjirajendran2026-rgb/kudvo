@@ -68,6 +68,7 @@ class ElectionPolicy
     public function publish(User $user, Election $election): bool
     {
         return $election->is_draft &&
+            $election->is_paid &&
             $election->isTimingConfigured() &&
             filled($election->preference) &&
             ($election->electors_count ?? $election->loadCount(relations: ['electors'])->electors_count) > 0 &&

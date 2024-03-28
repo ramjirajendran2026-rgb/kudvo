@@ -82,7 +82,8 @@ class ElectorResource extends Resource
                             )
                     ),
 
-                ElectorForm::groupsComponent(),
+                ElectorForm::groupsComponent()
+                    ->hidden(),
             ]);
     }
 
@@ -90,6 +91,9 @@ class ElectorResource extends Resource
     {
         return $table
             ->columns(components: [
+                TextColumn::make(name: '#')
+                    ->rowIndex(),
+
                 TextColumn::make(name: 'membership_number')
                     ->badge()
                     ->label(label: 'Membership number')
@@ -111,6 +115,7 @@ class ElectorResource extends Resource
 
                 TextColumn::make(name: 'groups')
                     ->badge()
+                    ->hidden()
                     ->separator()
                     ->wrap(),
             ])

@@ -694,6 +694,13 @@ class Election extends Model
                 sessionOptions: [
                     'success_url' => route(name: 'checkout.success').'?session_id={CHECKOUT_SESSION_ID}',
                     'cancel_url' => route(name: 'checkout.cancel').'?session_id={CHECKOUT_SESSION_ID}',
+                    'automatic_tax' => [
+                        'enabled' => true,
+                    ],
+                    'billing_address_collection' => 'required',
+                    'customer_update' => [
+                        'address' => 'auto',
+                    ],
                     'invoice_creation' => [
                         'enabled' => true,
                         'invoice_data' => [

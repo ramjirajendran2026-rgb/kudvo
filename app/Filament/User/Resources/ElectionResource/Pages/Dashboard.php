@@ -44,8 +44,8 @@ class Dashboard extends ElectionPage
             $election->is_open => ElectionDashboardState::Open,
             $election->is_upcoming => ElectionDashboardState::Upcoming,
             $election->isCheckoutRequired() => ElectionDashboardState::PendingCheckout,
-            static::can(action: 'setTiming', election: $election) => ElectionDashboardState::PendingTiming,
             static::can(action: 'publish', election: $election) => ElectionDashboardState::ReadyToPublish,
+            static::can(action: 'setTiming', election: $election) => ElectionDashboardState::PendingTiming,
             BallotSetup::canAccessPage(election: $election) => ElectionDashboardState::PendingBallotSetup,
             Electors::canAccessPage(election: $election) => ElectionDashboardState::PendingElectorsList,
             Preference::canAccessPage(election: $election) => ElectionDashboardState::PendingPreference,
@@ -127,18 +127,6 @@ class Dashboard extends ElectionPage
     protected function getHeaderActions(): array
     {
         return [
-            Action::make(name: 'payNow')
-                ->action(action: function (self $livewire) {
-                    $election = $livewire->getElection();
-
-                    return $election->checkout(price: ElectionPrice::firstWhere('currency', 'USD'), user: auth()->user());
-                })
-                ->visible(condition: fn (self $livewire) => $livewire->getElection()->isCheckoutRequired()),
-
-            Action::make(name: 'download_invoice')
-                ->url(url: fn (self $livewire) => $livewire->getElection()->stripe_invoice_data['invoice_pdf'])
-                ->visible(condition: fn (self $livewire) => filled($livewire->getElection()->stripe_invoice_data)),
-
             $this->getPreviewBallotAction(),
 
             ActionGroup::make(actions: [
@@ -151,6 +139,10 @@ class Dashboard extends ElectionPage
                 $this->getDownloadPhysicalBallotAction(),
 
                 ElectionResource::getCancelAction(),
+
+                Action::make(name: 'download_invoice')
+                    ->url(url: fn (self $livewire) => $livewire->getElection()->stripe_invoice_data['invoice_pdf'])
+                    ->visible(condition: fn (self $livewire) => filled($livewire->getElection()->stripe_invoice_data)),
 
             ])->dropdownPlacement(placement: 'bottom-end'),
         ];

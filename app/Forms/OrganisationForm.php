@@ -22,6 +22,12 @@ readonly class OrganisationForm
         return SpatieMediaLibraryFileUpload::make(name: 'logo')
             ->collection(collection: Organisation::MEDIA_COLLECTION_LOGO)
             ->image()
+            ->imageEditor()
+            ->imageEditorAspectRatios([
+                '16:9',
+                '4:3',
+                '1:1',
+            ])
             ->imageResizeMode(mode: 'cover')
             ->imageCropAspectRatio(ratio: '1:1')
             ->imageResizeTargetWidth(width: '512')
