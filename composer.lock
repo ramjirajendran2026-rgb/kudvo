@@ -4,84 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7029e428b0b72594f29b2b6f437dd309",
+    "content-hash": "2de8e4e299a756762e5b16e8d319352a",
     "packages": [
-        {
-            "name": "akhan619/laravel-ses-event-manager",
-            "version": "v1.0.4",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/akhan619/laravel-ses-event-manager.git",
-                "reference": "c7aee752f6e5abe7b87eef2910806a0143c6e89e"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/akhan619/laravel-ses-event-manager/zipball/c7aee752f6e5abe7b87eef2910806a0143c6e89e",
-                "reference": "c7aee752f6e5abe7b87eef2910806a0143c6e89e",
-                "shasum": ""
-            },
-            "require": {
-                "aws/aws-php-sns-message-validator": "^1.6",
-                "aws/aws-sdk-php": "^3.218",
-                "illuminate/support": "^9.0|^10.0",
-                "nyholm/psr7": "^1.0",
-                "php": "^8.0",
-                "symfony/psr-http-message-bridge": "^2.0"
-            },
-            "require-dev": {
-                "mockery/mockery": "^1.5",
-                "orchestra/testbench": "^7.0",
-                "phpunit/phpunit": "^9.0",
-                "sempro/phpunit-pretty-print": "^1.4"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Akhan619\\LaravelSesEventManager\\LaravelSesEventManagerServiceProvider"
-                    ],
-                    "aliases": {
-                        "SesMailer": "Akhan619\\LaravelSesEventManager\\Facades\\SesMailer"
-                    }
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Akhan619\\LaravelSesEventManager\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Aman Khan",
-                    "email": "amankhan.mailbox@gmail.com"
-                }
-            ],
-            "description": "A Laravel package to manage incoming SES email events with http/s webhooks.",
-            "homepage": "https://github.com/akhan619/laravel-ses-event-manager",
-            "keywords": [
-                "bounce",
-                "click",
-                "delivery",
-                "email",
-                "events",
-                "http",
-                "https",
-                "laravel",
-                "open",
-                "send",
-                "ses",
-                "webhooks"
-            ],
-            "support": {
-                "issues": "https://github.com/akhan619/laravel-ses-event-manager/issues",
-                "source": "https://github.com/akhan619/laravel-ses-event-manager/tree/v1.0.4"
-            },
-            "time": "2023-10-12T16:36:18+00:00"
-        },
         {
             "name": "akhan619/laravel-ses-tracking",
             "version": "v1.0.8",
@@ -12043,43 +11967,38 @@
         },
         {
             "name": "symfony/psr-http-message-bridge",
-            "version": "v2.3.1",
+            "version": "v7.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/psr-http-message-bridge.git",
-                "reference": "581ca6067eb62640de5ff08ee1ba6850a0ee472e"
+                "reference": "d9fadaf9541d7c01c307e48905d7ce1dbee6bf38"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/psr-http-message-bridge/zipball/581ca6067eb62640de5ff08ee1ba6850a0ee472e",
-                "reference": "581ca6067eb62640de5ff08ee1ba6850a0ee472e",
+                "url": "https://api.github.com/repos/symfony/psr-http-message-bridge/zipball/d9fadaf9541d7c01c307e48905d7ce1dbee6bf38",
+                "reference": "d9fadaf9541d7c01c307e48905d7ce1dbee6bf38",
                 "shasum": ""
             },
             "require": {
-                "php": ">=7.2.5",
-                "psr/http-message": "^1.0 || ^2.0",
-                "symfony/deprecation-contracts": "^2.5 || ^3.0",
-                "symfony/http-foundation": "^5.4 || ^6.0"
+                "php": ">=8.2",
+                "psr/http-message": "^1.0|^2.0",
+                "symfony/http-foundation": "^6.4|^7.0"
+            },
+            "conflict": {
+                "php-http/discovery": "<1.15",
+                "symfony/http-kernel": "<6.4"
             },
             "require-dev": {
                 "nyholm/psr7": "^1.1",
-                "psr/log": "^1.1 || ^2 || ^3",
-                "symfony/browser-kit": "^5.4 || ^6.0",
-                "symfony/config": "^5.4 || ^6.0",
-                "symfony/event-dispatcher": "^5.4 || ^6.0",
-                "symfony/framework-bundle": "^5.4 || ^6.0",
-                "symfony/http-kernel": "^5.4 || ^6.0",
-                "symfony/phpunit-bridge": "^6.2"
-            },
-            "suggest": {
-                "nyholm/psr7": "For a super lightweight PSR-7/17 implementation"
+                "php-http/discovery": "^1.15",
+                "psr/log": "^1.1.4|^2|^3",
+                "symfony/browser-kit": "^6.4|^7.0",
+                "symfony/config": "^6.4|^7.0",
+                "symfony/event-dispatcher": "^6.4|^7.0",
+                "symfony/framework-bundle": "^6.4|^7.0",
+                "symfony/http-kernel": "^6.4|^7.0"
             },
             "type": "symfony-bridge",
-            "extra": {
-                "branch-alias": {
-                    "dev-main": "2.3-dev"
-                }
-            },
             "autoload": {
                 "psr-4": {
                     "Symfony\\Bridge\\PsrHttpMessage\\": ""
@@ -12099,11 +12018,11 @@
                 },
                 {
                     "name": "Symfony Community",
-                    "homepage": "http://symfony.com/contributors"
+                    "homepage": "https://symfony.com/contributors"
                 }
             ],
             "description": "PSR HTTP message bridge",
-            "homepage": "http://symfony.com",
+            "homepage": "https://symfony.com",
             "keywords": [
                 "http",
                 "http-message",
@@ -12111,8 +12030,7 @@
                 "psr-7"
             ],
             "support": {
-                "issues": "https://github.com/symfony/psr-http-message-bridge/issues",
-                "source": "https://github.com/symfony/psr-http-message-bridge/tree/v2.3.1"
+                "source": "https://github.com/symfony/psr-http-message-bridge/tree/v7.0.3"
             },
             "funding": [
                 {
@@ -12128,7 +12046,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-07-26T11:53:26+00:00"
+            "time": "2024-01-23T15:02:46+00:00"
         },
         {
             "name": "symfony/routing",
@@ -16146,7 +16064,8 @@
     "prefer-lowest": false,
     "platform": {
         "php": "^8.2",
-        "ext-mbstring": "*"
+        "ext-mbstring": "*",
+        "ext-simplexml": "*"
     },
     "platform-dev": [],
     "plugin-api-version": "2.6.0"

@@ -2,18 +2,18 @@
 
 namespace App\Notifications\Election;
 
+use App\Enums\MailMessagePurpose;
 use App\Models\Ballot;
 use App\Models\Election;
 use App\Models\Elector;
+use App\Notifications\Contracts\HasMailMessagePurpose;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Dompdf\Dompdf;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use Illuminate\Support\Facades\Crypt;
 
-class VotedBallotCopyNotification extends Notification
+class VotedBallotCopyNotification extends Notification implements HasMailMessagePurpose
 {
-
     protected Election $election;
 
     protected Elector $elector;
@@ -27,12 +27,12 @@ class VotedBallotCopyNotification extends Notification
         $this->election = $this->elector->event;
     }
 
-    public function via($notifiable): array
+    public function via(object $notifiable): array
     {
         return $this->via;
     }
 
-    public function toMail($notifiable): MailMessage
+    public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
             ->subject(subject: 'Voted Ballot Copy - '.$this->election->name)
@@ -44,9 +44,14 @@ class VotedBallotCopyNotification extends Notification
             );
     }
 
-    public function toArray($notifiable): array
+    public function toArray(object $notifiable): array
     {
         return [];
+    }
+
+    public function getMailMessagePurpose(object $notifiable): MailMessagePurpose
+    {
+        return MailMessagePurpose::VotedBallotCopy;
     }
 
     protected function generateBallotCopyPdf(): Dompdf|\Barryvdh\DomPDF\PDF
@@ -66,6 +71,6 @@ class VotedBallotCopyNotification extends Notification
             ->setOption([
                 'isRemoteEnabled' => true,
             ])
-            ->setPaper(size: 'a4');
+            ->setPaper(paper: 'a4');
     }
 }

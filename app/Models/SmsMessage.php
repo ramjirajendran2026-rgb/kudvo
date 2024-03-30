@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\SmsMessageProvider;
 use App\Enums\SmsMessagePurpose;
 use App\Enums\SmsMessageStatus;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
@@ -34,5 +35,20 @@ class SmsMessage extends Model
     public function smsable(): MorphTo
     {
         return $this->morphTo();
+    }
+
+    public function scopeBallotLink(Builder $query): Builder
+    {
+        return $query->where('purpose', SmsMessagePurpose::BallotLink);
+    }
+
+    public function scopeBallotMfaCode(Builder $query): Builder
+    {
+        return $query->where('purpose', SmsMessagePurpose::BallotMfaCode);
+    }
+
+    public function scopeVotedConfirmation(Builder $query): Builder
+    {
+        return $query->where('purpose', SmsMessagePurpose::VotedConfirmation);
     }
 }

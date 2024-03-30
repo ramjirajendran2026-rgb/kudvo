@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
+use App\Enums\MailMessagePurpose;
 use App\Facades\Kudvo;
 use App\Filament\Election\ElectionPanel;
 use App\Filament\Nomination\NominationPanel;
 use App\Models\Concerns\HasShortCode;
 use App\Notifications\Election\BallotLinkNotification;
-use App\Notifications\Election\Data\BallotLinkNotificationData;
 use App\Notifications\Election\VotingInstructionNotification;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
@@ -29,7 +29,6 @@ use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Http\Request;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Notifications\Notification;
-use Illuminate\Support\Facades\URL;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
@@ -141,6 +140,66 @@ class Elector extends Model implements
             ->latestOfMany();
     }
 
+    public function emails(): MorphMany
+    {
+        return $this
+            ->morphMany(
+                related: Email::class,
+                name: 'notifiable',
+            );
+    }
+
+    public function ballotLinkEmails(): MorphMany
+    {
+        return $this->emails()
+            ->scopes(scopes: ['ballotLink']);
+    }
+
+    public function mfaCodeEmails(): MorphMany
+    {
+        return $this->emails()
+            ->scopes(scopes: ['ballotMfaCode']);
+    }
+
+    public function votedConfirmationEmails(): MorphMany
+    {
+        return $this->emails()
+            ->scopes(scopes: ['votedConfirmation']);
+    }
+
+    public function votedBallotCopyEmails(): MorphMany
+    {
+        return $this->emails()
+            ->scopes(scopes: ['votedBallotCopy']);
+    }
+
+    public function smsMessages(): MorphMany
+    {
+        return $this
+            ->morphMany(
+                related: SmsMessage::class,
+                name: 'smsable',
+            );
+    }
+
+    public function ballotLinkSmsMessages(): MorphMany
+    {
+        return $this->smsMessages()
+            ->scopes(scopes: ['ballotLink']);
+    }
+
+    public function mfaCodeSmsMessages(): MorphMany
+    {
+        return $this->smsMessages()
+            ->scopes(scopes: ['ballotMfaCode']);
+    }
+
+    public function votedConfirmationSmsMessages(): MorphMany
+    {
+        return $this->smsMessages()
+            ->scopes(scopes: ['votedConfirmation']);
+    }
+
     protected static function booted(): void
     {
         static::saving(callback: function (Elector $elector) {
@@ -222,17 +281,8 @@ class Elector extends Model implements
         $election ??= $this->event;
 
         $notification = new BallotLinkNotification(
-            data: new BallotLinkNotificationData(
-                electionName: $election->name,
-                ballotLink: $election->preference->ballot_link_unique ?
-                    URL::signedRoute(name: 'filament.election.eul', parameters: ['election' => $election, 'elector' => $this]) :
-                    route(name: 'filament.election.pages.index', parameters: ['election' => $election]),
-                ballotLinkShort: $election->preference->ballot_link_unique
-                    ? route(name: 'short_link.ballot', parameters: ['elector' => $this->short_code])
-                    : route(name: 'short_link.election', parameters: ['election' => $election->short_code]),
-                electorName: $this->display_name,
-            ),
-            via: $election->ballot_link_via,
+            elector: $this,
+            election: $election,
         );
 
         if ($now) {

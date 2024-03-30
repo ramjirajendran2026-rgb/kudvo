@@ -81,7 +81,7 @@ class VotedConfirmationNotification extends Notification implements HasSmsMessag
         );
     }
 
-    public function getSmsMessagePurpose(): SmsMessagePurpose
+    public function getSmsMessagePurpose(object $notifiable): SmsMessagePurpose
     {
         return SmsMessagePurpose::VotedConfirmation;
     }

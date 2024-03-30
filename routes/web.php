@@ -3,6 +3,7 @@
 use App\Filament\Election\Pages\Auth\Login;
 use App\Filament\Election\Pages\Ballot\Index as BallotPage;
 use App\Filament\Election\Pages\Index as ElectionPanel;
+use App\Http\Controllers\AwsSnsController;
 use App\Http\Controllers\CheckoutController;
 use App\Models\Election;
 use App\Models\Elector;
@@ -10,6 +11,7 @@ use App\Services\Clicksend\Http\Controllers\WebhookController as ClicksendWebhoo
 use Filament\Facades\Filament;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 use Laravel\Cashier\Cashier;
 
 /*
@@ -42,3 +44,11 @@ Route::get(uri: 'checkout/success', action: [CheckoutController::class, 'success
 
 Route::get(uri: 'checkout/cancel', action: [CheckoutController::class, 'cancel'])
     ->name(name: 'checkout.cancel');
+
+foreach (AwsSnsController::$routes as $routeKey => $route) {
+    $routeName = 'ses.notification.'.$routeKey;
+
+    $controllerActionName = Str::camel($routeKey);
+
+    Route::post('ses/notification/'.$route, [AwsSnsController::class, $controllerActionName])->name($routeName);
+}

@@ -2,18 +2,24 @@
 
 namespace App\Notifications\Election;
 
+use App\Enums\MailMessagePurpose;
 use App\Enums\SmsMessagePurpose;
 use App\Models\Election;
+use App\Models\Elector;
 use App\Models\OneTimePassword;
 use App\Notifications\Concerns\HasSmsChannel;
+use App\Notifications\Contracts\HasMailMessagePurpose;
 use App\Notifications\Contracts\HasSmsMessagePurpose;
 use App\Settings\SmsTemplates;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
-class MfaCodeNotification extends Notification implements HasSmsMessagePurpose
+class MfaCodeNotification extends Notification implements
+    HasMailMessagePurpose,
+    HasSmsMessagePurpose
 {
     use HasSmsChannel;
 
@@ -22,11 +28,9 @@ class MfaCodeNotification extends Notification implements HasSmsMessagePurpose
     public const VAR_APP_DOMAIN = '{#APP_DOMAIN#}';
 
     public function __construct(
-        public Election $election,
-        public OneTimePassword $oneTimePassword
-    )
-    {
-    }
+        protected Election $election,
+        protected OneTimePassword $oneTimePassword
+    ) { }
 
     public function via(object $notifiable): array
     {
@@ -40,12 +44,12 @@ class MfaCodeNotification extends Notification implements HasSmsMessagePurpose
 
     public function toMail(object $notifiable): MailMessage
     {
-        $nomination = $this->election;
-        $oneTimePassword = $this->oneTimePassword;
+        $election = $this->getElection();
+        $oneTimePassword = $this->getOneTimePassword();
 
         return (new MailMessage)
-            ->subject(subject: "MFA Code for $nomination->name")
-            ->line(line: "**$oneTimePassword->code** is your MFA code for $nomination->name");
+            ->subject(subject: "MFA Code for $election->name")
+            ->line(line: "**$oneTimePassword->code** is your MFA code for $election->name");
     }
 
     public function toSms(object $notifiable): string
@@ -56,6 +60,16 @@ class MfaCodeNotification extends Notification implements HasSmsMessagePurpose
     public function toArray(object $notifiable): array
     {
         return [];
+    }
+
+    public function getMailMessagePurpose(object $notifiable): MailMessagePurpose
+    {
+        return MailMessagePurpose::BallotMfaCode;
+    }
+
+    public function getSmsMessagePurpose(object $notifiable): SmsMessagePurpose
+    {
+        return SmsMessagePurpose::BallotMfaCode;
     }
 
     protected function formatTemplate(string $template): string
@@ -72,8 +86,13 @@ class MfaCodeNotification extends Notification implements HasSmsMessagePurpose
         );
     }
 
-    public function getSmsMessagePurpose(): SmsMessagePurpose
+    public function getElection(): Election
     {
-        return SmsMessagePurpose::BallotMfaCode;
+        return $this->election;
+    }
+
+    public function getOneTimePassword(): OneTimePassword
+    {
+        return $this->oneTimePassword;
     }
 }

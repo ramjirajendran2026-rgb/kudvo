@@ -34,7 +34,7 @@ class LogClicksendSentSms
                 ],
                 [
                     'purpose' => $event->notification instanceof HasSmsMessagePurpose
-                        ? $event->notification->getSmsMessagePurpose()
+                        ? $event->notification->getSmsMessagePurpose(notifiable: $event->notifiable)
                         : null,
                     'phone' => $message->to,
                     'status' => app(GetSmsStatusForProviderStatus::class)->execute($message->status),

@@ -37,7 +37,7 @@ class LogTwentyFourSevenSmsSentMessage
                 ],
                 [
                     'purpose' => $event->notification instanceof HasSmsMessagePurpose
-                        ? $event->notification->getSmsMessagePurpose()
+                        ? $event->notification->getSmsMessagePurpose(notifiable: $event->notifiable)
                         : null,
                     'phone' => '+'.$message[2],
                     'status' => SmsMessageStatus::SENT,
