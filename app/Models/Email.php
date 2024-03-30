@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use App\Enums\EmailStatus;
 use App\Enums\MailMessagePurpose;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -54,6 +56,23 @@ class Email extends Model
         'purpose' => MailMessagePurpose::class,
         'notifiable_id' => 'int',
     ];
+
+    protected function status(): Attribute
+    {
+        return Attribute::make(
+            get: fn($value, array $attributes) => match (true) {
+                $this->isComplained() => EmailStatus::Complaint,
+                $this->isDelivered() => EmailStatus::Delivered,
+                $this->isBounced() => EmailStatus::Bounced,
+                $this->isRejected() => EmailStatus::Rejected,
+                $this->isRenderingFailed() => EmailStatus::RenderingFailed,
+                $this->isDeliveryDelayed() => EmailStatus::DeliveryDelayed,
+                $this->isSent() => EmailStatus::Sent,
+                $this->isPending() => EmailStatus::Pending,
+                default => EmailStatus::Unknown,
+            },
+        );
+    }
 
     public function notifiable(): MorphTo
     {
@@ -128,5 +147,45 @@ class Email extends Model
     public function scopeVotedBallotCopy(Builder $query): Builder
     {
         return $query->where('purpose', MailMessagePurpose::VotedBallotCopy);
+    }
+
+    public function isPending(): bool
+    {
+        return blank($this->sent_at);
+    }
+
+    public function isSent(): bool
+    {
+        return filled($this->sent_at);
+    }
+
+    public function isDelivered(): bool
+    {
+        return filled($this->delivered_at);
+    }
+
+    public function isBounced(): bool
+    {
+        return filled($this->bounced_at);
+    }
+
+    public function isRejected(): bool
+    {
+        return filled($this->rejected_at);
+    }
+
+    public function isComplained(): bool
+    {
+        return filled($this->complained_at);
+    }
+
+    public function isDeliveryDelayed(): bool
+    {
+        return filled($this->delivery_delayed_at);
+    }
+
+    public function isRenderingFailed(): bool
+    {
+        return filled($this->rendering_failed_at);
     }
 }

@@ -134,6 +134,9 @@ class ElectionResource extends Resource
             'result' => Pages\Result::route(path: '/{record}/result'),
             'monitor_tokens' => Pages\MonitorTokens::route(path: '/{record}/monitor-tokens'),
             'booth_tokens' => Pages\BoothTokens::route(path: '/{record}/booth-tokens'),
+
+            'logs.elector_emails' => Pages\Logs\ElectorEmails::route(path: '/{record}/logs/elector-emails'),
+            'logs.elector_sms_messages' => Pages\Logs\ElectorSmsMessages::route(path: '/{record}/logs/elector-sms-messages'),
         ];
     }
 
@@ -147,6 +150,8 @@ class ElectionResource extends Resource
             Pages\Result::class,
             Pages\MonitorTokens::class,
             Pages\BoothTokens::class,
+            Pages\Logs\ElectorEmails::class,
+            Pages\Logs\ElectorSmsMessages::class,
         ]);
     }
 
