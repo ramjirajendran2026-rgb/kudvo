@@ -74,7 +74,6 @@ class ElectorBallots extends ElectionPage implements HasTable
                 Tables\Columns\TextColumn::make('ballot.voted_at')
                     ->dateTime(timezone: $this->getElection()->timezone)
                     ->label(label: 'Voted at')
-                    ->sortable()
                     ->wrap(),
 
                 Tables\Columns\TextColumn::make(name: 'ballot.ip_address')
