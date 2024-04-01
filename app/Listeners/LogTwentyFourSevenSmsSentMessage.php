@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Enums\SmsMessageStatus;
+use App\Models\OneTimePassword;
 use App\Models\SmsMessage;
 use App\Notifications\Contracts\HasSmsMessagePurpose;
 use App\Services\TwentyFourSevenSms\SmsMessageSent;
@@ -46,12 +47,17 @@ class LogTwentyFourSevenSmsSentMessage
                         'response' => $message,
                     ],
 
-                    ...$event->notifiable instanceof Model ?
-                        [
+                    ...match (true) {
+                        $event->notifiable instanceof OneTimePassword => [
+                            'smsable_type' => $event->notifiable->relatable_type,
+                            'smsable_id' => $event->notifiable->relatable_id,
+                        ],
+                        $event->notifiable instanceof Model => [
                             'smsable_type' => $event->notifiable->getMorphClass(),
                             'smsable_id' => $event->notifiable->getKey(),
-                        ] :
-                        [],
+                        ],
+                        default => [],
+                    },
                 ]
             );
         }
