@@ -2,9 +2,11 @@
 
 namespace App\Filament\User\Resources\ElectionResource\Pages\Logs;
 
+use App\Enums\MailMessagePurpose;
 use App\Enums\SmsMessagePurpose;
 use App\Filament\Exports\ElectorSmsMessageExporter;
 use App\Filament\User\Resources\ElectionResource\Pages\ElectionPage;
+use App\Models\Election;
 use App\Models\Elector;
 use App\Models\SmsMessage;
 use Filament\Resources\Components\Tab;
@@ -39,6 +41,21 @@ class ElectorSmsMessages extends ElectionPage implements HasTable
         parent::mount($record);
 
         $this->loadDefaultActiveTab();
+    }
+
+    public static function canAccessPage(Election $election): bool
+    {
+        return parent::canAccessPage($election)
+            && (
+                self::hasBallotLink($election)
+                || self::hasMfa($election)
+                || self::hasVotedConfirmation($election)
+            );
+    }
+
+    public static function canAccess(array $parameters = []): bool
+    {
+        return parent::canAccess($parameters) && static::canAccessPage($parameters['record']);
     }
 
     public static function getNavigationLabel(): string
@@ -111,20 +128,43 @@ class ElectorSmsMessages extends ElectionPage implements HasTable
 
     public function getTabs(): array
     {
-        return [
-            SmsMessagePurpose::BallotLink->value => Tab::make(label: SmsMessagePurpose::BallotLink->getLabel())
-                ->modifyQueryUsing(callback: fn (Builder $query) => SmsMessagePurpose::BallotLink->getTabQuery($query)),
+        $tabs = [];
 
-            SmsMessagePurpose::BallotMfaCode->value => Tab::make(label: SmsMessagePurpose::BallotMfaCode->getLabel())
-                ->modifyQueryUsing(callback: fn (Builder $query) => SmsMessagePurpose::BallotMfaCode->getTabQuery($query)),
+        if ($this->hasBallotLink($this->getElection())) {
+            $tabs[SmsMessagePurpose::BallotLink->value] = Tab::make(label: SmsMessagePurpose::BallotLink->getLabel())
+                ->modifyQueryUsing(callback: fn (Builder $query) => SmsMessagePurpose::BallotLink->getTabQuery($query));
+        }
 
-            SmsMessagePurpose::VotedConfirmation->value => Tab::make(label: SmsMessagePurpose::VotedConfirmation->getLabel())
-                ->modifyQueryUsing(callback: fn (Builder $query) => SmsMessagePurpose::VotedConfirmation->getTabQuery($query)),
-        ];
+        if ($this->hasMfa($this->getElection())) {
+            $tabs[SmsMessagePurpose::BallotMfaCode->value] = Tab::make(label: SmsMessagePurpose::BallotMfaCode->getLabel())
+                ->modifyQueryUsing(callback: fn (Builder $query) => SmsMessagePurpose::BallotMfaCode->getTabQuery($query));
+        }
+
+        if ($this->hasVotedConfirmation($this->getElection())) {
+            $tabs[SmsMessagePurpose::VotedConfirmation->value] = Tab::make(label: SmsMessagePurpose::VotedConfirmation->getLabel())
+                ->modifyQueryUsing(callback: fn (Builder $query) => SmsMessagePurpose::VotedConfirmation->getTabQuery($query));
+        }
+
+        return $tabs;
     }
 
     protected function getExportFileName(): string
     {
         return Str::kebab($this->activeTab.'-sms-logs-').$this->getElection()->code;
+    }
+
+    public static function hasBallotLink(Election $election): bool
+    {
+        return $election->preference->ballot_link_sms;
+    }
+
+    public static function hasMfa(Election $election): bool
+    {
+        return $election->preference->mfa_sms;
+    }
+
+    public static function hasVotedConfirmation(Election $election): bool
+    {
+        return $election->preference->voted_confirmation_sms;
     }
 }

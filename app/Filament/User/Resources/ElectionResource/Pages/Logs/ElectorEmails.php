@@ -5,6 +5,7 @@ namespace App\Filament\User\Resources\ElectionResource\Pages\Logs;
 use App\Enums\MailMessagePurpose;
 use App\Filament\Exports\ElectorEmailExporter;
 use App\Filament\User\Resources\ElectionResource\Pages\ElectionPage;
+use App\Models\Election;
 use App\Models\Elector;
 use App\Models\Email;
 use Filament\Resources\Components\Tab;
@@ -37,6 +38,22 @@ class ElectorEmails extends ElectionPage implements HasTable
         parent::mount($record);
 
         $this->loadDefaultActiveTab();
+    }
+
+    public static function canAccessPage(Election $election): bool
+    {
+        return parent::canAccessPage($election)
+            && (
+                self::hasBallotLink($election)
+                || self::hasMfa($election)
+                || self::hasVotedConfirmation($election)
+                || self::hasVotedBallot($election)
+            );
+    }
+
+    public static function canAccess(array $parameters = []): bool
+    {
+        return parent::canAccess($parameters) && static::canAccessPage($parameters['record']);
     }
 
     public static function getNavigationLabel(): string
@@ -109,23 +126,53 @@ class ElectorEmails extends ElectionPage implements HasTable
 
     public function getTabs(): array
     {
-        return [
-            MailMessagePurpose::BallotLink->value => Tab::make(label: MailMessagePurpose::BallotLink->getLabel())
-                ->modifyQueryUsing(callback: fn (Builder $query) => MailMessagePurpose::BallotLink->getTabQuery($query)),
+        $tabs = [];
 
-            MailMessagePurpose::BallotMfaCode->value => Tab::make(label: MailMessagePurpose::BallotMfaCode->getLabel())
-                ->modifyQueryUsing(callback: fn (Builder $query) => MailMessagePurpose::BallotMfaCode->getTabQuery($query)),
+        if ($this->hasBallotLink($this->getElection())) {
+            $tabs[MailMessagePurpose::BallotLink->value] = Tab::make(label: MailMessagePurpose::BallotLink->getLabel())
+                ->modifyQueryUsing(callback: fn (Builder $query) => MailMessagePurpose::BallotLink->getTabQuery($query));
+        }
 
-            MailMessagePurpose::VotedConfirmation->value => Tab::make(label: MailMessagePurpose::VotedConfirmation->getLabel())
-                ->modifyQueryUsing(callback: fn (Builder $query) => MailMessagePurpose::VotedConfirmation->getTabQuery($query)),
+        if ($this->hasMfa($this->getElection())) {
+            $tabs[MailMessagePurpose::BallotMfaCode->value] = Tab::make(label: MailMessagePurpose::BallotMfaCode->getLabel())
+                ->modifyQueryUsing(callback: fn (Builder $query) => MailMessagePurpose::BallotMfaCode->getTabQuery($query));
+        }
 
-            MailMessagePurpose::VotedBallotCopy->value => Tab::make(label: MailMessagePurpose::VotedBallotCopy->getLabel())
-                ->modifyQueryUsing(callback: fn (Builder $query) => MailMessagePurpose::VotedBallotCopy->getTabQuery($query)),
-        ];
+        if ($this->hasVotedConfirmation($this->getElection())) {
+            $tabs[MailMessagePurpose::VotedConfirmation->value] = Tab::make(label: MailMessagePurpose::VotedConfirmation->getLabel())
+                ->modifyQueryUsing(callback: fn (Builder $query) => MailMessagePurpose::VotedConfirmation->getTabQuery($query));
+        }
+
+        if ($this->hasVotedBallot($this->getElection())) {
+            $tabs[MailMessagePurpose::VotedBallotCopy->value] = Tab::make(label: MailMessagePurpose::VotedBallotCopy->getLabel())
+                ->modifyQueryUsing(callback: fn (Builder $query) => MailMessagePurpose::VotedBallotCopy->getTabQuery($query));
+        }
+
+        return $tabs;
     }
 
     protected function getExportFileName(): string
     {
         return Str::kebab($this->activeTab.'-email-logs-').$this->getElection()->code;
+    }
+
+    public static function hasBallotLink(Election $election): bool
+    {
+        return $election->preference->ballot_link_mail;
+    }
+
+    public static function hasMfa(Election $election): bool
+    {
+        return $election->preference->mfa_mail;
+    }
+
+    public static function hasVotedConfirmation(Election $election): bool
+    {
+        return $election->preference->voted_confirmation_mail;
+    }
+
+    public static function hasVotedBallot(Election $election): bool
+    {
+        return $election->preference->voted_ballot_mail;
     }
 }
