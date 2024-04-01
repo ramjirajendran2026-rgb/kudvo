@@ -2,13 +2,10 @@
 
 namespace App\Filament\User\Resources\ElectionResource\Pages\Logs;
 
-use App\Enums\MailMessagePurpose;
 use App\Enums\SmsMessagePurpose;
-use App\Filament\Exports\ElectorEmailExporter;
 use App\Filament\Exports\ElectorSmsMessageExporter;
 use App\Filament\User\Resources\ElectionResource\Pages\ElectionPage;
 use App\Models\Elector;
-use App\Models\Email;
 use App\Models\SmsMessage;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Concerns\HasTabs;
@@ -20,7 +17,6 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Str;
 
 class ElectorSmsMessages extends ElectionPage implements HasTable
@@ -28,7 +24,7 @@ class ElectorSmsMessages extends ElectionPage implements HasTable
     use HasTabs;
     use InteractsWithTable;
 
-    protected static string $view = 'filament.user.resources.election-resource.pages.logs.elector-sms-messages';
+    protected static string $view = 'filament-panels::resources.pages.list-records';
 
     protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-bottom-center-text';
 

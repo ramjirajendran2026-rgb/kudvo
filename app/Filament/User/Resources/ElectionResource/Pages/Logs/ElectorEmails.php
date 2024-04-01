@@ -23,7 +23,7 @@ class ElectorEmails extends ElectionPage implements HasTable
     use HasTabs;
     use Tables\Concerns\InteractsWithTable;
 
-    protected static string $view = 'filament.user.resources.election-resource.pages.logs.elector-emails';
+    protected static string $view = 'filament-panels::resources.pages.list-records';
 
     protected static ?string $navigationIcon = 'heroicon-o-envelope-open';
 
