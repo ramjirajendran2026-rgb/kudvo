@@ -3,17 +3,20 @@
 namespace App\Filament\User\Resources\ElectionResource\Pages\Logs;
 
 use App\Enums\MailMessagePurpose;
+use App\Filament\Exports\ElectorEmailExporter;
 use App\Filament\User\Resources\ElectionResource\Pages\ElectionPage;
 use App\Models\Elector;
 use App\Models\Email;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Concerns\HasTabs;
+use Filament\Support\Enums\Alignment;
 use Filament\Tables;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Support\Str;
 
 class ElectorEmails extends ElectionPage implements HasTable
 {
@@ -53,26 +56,22 @@ class ElectorEmails extends ElectionPage implements HasTable
                     ->rowIndex(),
 
                 Tables\Columns\TextColumn::make('notifiable.display_name')
-                    ->description(description: fn (Email $email) => $email->notifiable->membership_number)
+                    ->description(description: fn (Email $email) => $email->notifiable?->membership_number)
                     ->label('Elector')
                     ->searchable(
                         query: fn (Builder $query, string $search) => $query
-                            ->where('notifiable_type', Elector::class)
-                            ->whereExists(function (QueryBuilder $query) use ($search) {
-                                $query
-                                    ->select('id')
-                                    ->from('electors')
-                                    ->whereColumn('electors.id', 'emails.notifiable_id')
-                                    ->where(
-                                        fn (QueryBuilder $query) => $query
-                                            ->where('membership_number', "$search")
-                                            ->orWhere('full_name', 'like', "%$search%")
-                                    );
-                            })
+                            ->whereHasMorph(
+                                relation: 'notifiable',
+                                types: [Elector::class],
+                                callback: fn (Builder $query) => $query
+                                    ->where('membership_number', "$search")
+                                    ->orWhere('full_name', 'like', "%$search%")
+                            )
                     )
                     ->wrap(),
 
                 Tables\Columns\TextColumn::make('to_address')
+                    ->label(label: 'Email Address')
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('status')
@@ -82,6 +81,20 @@ class ElectorEmails extends ElectionPage implements HasTable
                     ->dateTime(timezone: $this->getElection()->timezone)
                     ->sortable()
                     ->wrap(),
+            ])
+            ->headerActions(actions: [
+                Tables\Actions\ExportAction::make()
+                    ->columnMapping(condition: false)
+                    ->exporter(exporter: ElectorEmailExporter::class)
+                    ->fileName(name: fn (self $livewire): string => $livewire->getExportFileName())
+                    ->icon(icon: 'heroicon-s-arrow-down-tray')
+                    ->label(label: 'Export All')
+                    ->modalFooterActionsAlignment(alignment: Alignment::Center)
+                    ->modalSubmitActionLabel(label: 'Confirm')
+                    ->modalHeading(heading: 'Export Email Logs')
+                    ->options(options: [
+                        'timezone' => $this->getElection()->timezone,
+                    ]),
             ]);
     }
 
@@ -110,5 +123,10 @@ class ElectorEmails extends ElectionPage implements HasTable
             MailMessagePurpose::VotedBallotCopy->value => Tab::make(label: MailMessagePurpose::VotedBallotCopy->getLabel())
                 ->modifyQueryUsing(callback: fn (Builder $query) => MailMessagePurpose::VotedBallotCopy->getTabQuery($query)),
         ];
+    }
+
+    protected function getExportFileName(): string
+    {
+        return Str::kebab($this->activeTab.'-email-logs-').$this->getElection()->code;
     }
 }

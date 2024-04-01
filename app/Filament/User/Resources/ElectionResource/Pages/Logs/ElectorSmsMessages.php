@@ -4,12 +4,16 @@ namespace App\Filament\User\Resources\ElectionResource\Pages\Logs;
 
 use App\Enums\MailMessagePurpose;
 use App\Enums\SmsMessagePurpose;
+use App\Filament\Exports\ElectorEmailExporter;
+use App\Filament\Exports\ElectorSmsMessageExporter;
 use App\Filament\User\Resources\ElectionResource\Pages\ElectionPage;
 use App\Models\Elector;
 use App\Models\Email;
 use App\Models\SmsMessage;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Concerns\HasTabs;
+use Filament\Support\Enums\Alignment;
+use Filament\Tables\Actions\ExportAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
@@ -17,6 +21,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Support\Str;
 
 class ElectorSmsMessages extends ElectionPage implements HasTable
 {
@@ -60,18 +65,13 @@ class ElectorSmsMessages extends ElectionPage implements HasTable
                     ->label('Elector')
                     ->searchable(
                         query: fn (Builder $query, string $search) => $query
-                            ->where('smsable_type', Elector::class)
-                            ->whereExists(function (QueryBuilder $query) use ($search) {
-                                $query
-                                    ->select('id')
-                                    ->from('electors')
-                                    ->whereColumn('electors.id', 'sms_messages.smsable_id')
-                                    ->where(
-                                        fn (QueryBuilder $query) => $query
-                                            ->where('membership_number', "$search")
-                                            ->orWhere('full_name', 'like', "%$search%")
-                                    );
-                            })
+                            ->whereHasMorph(
+                                relation: 'smsable',
+                                types: [Elector::class],
+                                callback: fn (Builder $query) => $query
+                                    ->where('membership_number', "$search")
+                                    ->orWhere('full_name', 'like', "%$search%")
+                            )
                     )
                     ->wrap(),
 
@@ -83,8 +83,23 @@ class ElectorSmsMessages extends ElectionPage implements HasTable
 
                 TextColumn::make('created_at')
                     ->dateTime(timezone: $this->getElection()->timezone)
+                    ->label(label: 'Sent at')
                     ->sortable()
                     ->wrap(),
+            ])
+            ->headerActions(actions: [
+                ExportAction::make()
+                    ->columnMapping(condition: false)
+                    ->exporter(exporter: ElectorSmsMessageExporter::class)
+                    ->fileName(name: fn (self $livewire): string => $livewire->getExportFileName())
+                    ->icon(icon: 'heroicon-s-arrow-down-tray')
+                    ->label(label: 'Export All')
+                    ->modalFooterActionsAlignment(alignment: Alignment::Center)
+                    ->modalSubmitActionLabel(label: 'Confirm')
+                    ->modalHeading(heading: 'Export SMS Logs')
+                    ->options(options: [
+                        'timezone' => $this->getElection()->timezone,
+                    ]),
             ]);
     }
 
@@ -110,5 +125,10 @@ class ElectorSmsMessages extends ElectionPage implements HasTable
             SmsMessagePurpose::VotedConfirmation->value => Tab::make(label: SmsMessagePurpose::VotedConfirmation->getLabel())
                 ->modifyQueryUsing(callback: fn (Builder $query) => SmsMessagePurpose::VotedConfirmation->getTabQuery($query)),
         ];
+    }
+
+    protected function getExportFileName(): string
+    {
+        return Str::kebab($this->activeTab.'-sms-logs-').$this->getElection()->code;
     }
 }
