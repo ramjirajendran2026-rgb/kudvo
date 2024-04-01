@@ -30,7 +30,7 @@ class ElectorSmsMessages extends ElectionPage implements HasTable
 
     protected static ?string $activeNavigationIcon = 'heroicon-s-chat-bubble-bottom-center-text';
 
-    protected static ?string $navigationGroup = 'Logs';
+    protected static ?string $navigationGroup = 'Elector Reports';
 
     public ?string $activeTab = null;
 
@@ -43,7 +43,7 @@ class ElectorSmsMessages extends ElectionPage implements HasTable
 
     public static function getNavigationLabel(): string
     {
-        return 'Elector SMS Messages';
+        return 'SMS Logs';
     }
 
     public function table(Table $table): Table

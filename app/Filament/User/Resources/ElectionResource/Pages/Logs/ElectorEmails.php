@@ -15,7 +15,6 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Str;
 
 class ElectorEmails extends ElectionPage implements HasTable
@@ -29,7 +28,7 @@ class ElectorEmails extends ElectionPage implements HasTable
 
     protected static ?string $activeNavigationIcon = 'heroicon-s-envelope-open';
 
-    protected static ?string $navigationGroup = 'Logs';
+    protected static ?string $navigationGroup = 'Elector Reports';
 
     public ?string $activeTab = null;
 
@@ -42,7 +41,7 @@ class ElectorEmails extends ElectionPage implements HasTable
 
     public static function getNavigationLabel(): string
     {
-        return 'Elector Emails';
+        return 'Email Logs';
     }
 
     public function table(Table $table): Table
