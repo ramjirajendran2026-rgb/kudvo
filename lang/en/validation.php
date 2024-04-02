@@ -1,5 +1,6 @@
 <?php
 
 return [
-    'phone' => 'The :attribute field must be a valid phone number.',
+    'phone' => 'Invalid phone number',
+    'email' => 'Invalid email address',
 ];
