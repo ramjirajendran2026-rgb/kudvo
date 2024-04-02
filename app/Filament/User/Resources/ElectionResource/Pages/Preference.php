@@ -151,7 +151,7 @@ class Preference extends ElectionPage
 
                             Section::make(heading: 'MFA Code Delivery')
                                 ->columnSpan(span: 1)
-                                ->description(description: 'Electors will receive MFA code through these medium. This will be used to verify the elector\'s identity before submitting their votes.')
+                                ->description(description: 'Electors will receive MFA (Multi-Factor Authentication) code through these medium. This will be used to verify the elector\'s identity before submitting their votes.')
                                 ->schema(components: [
                                     Toggle::make(name: 'mfa_mail')
                                         ->label(label: 'Email')
