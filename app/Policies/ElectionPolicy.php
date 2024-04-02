@@ -125,12 +125,12 @@ class ElectionPolicy
 
     public function savePreference(User $user, Election $election): bool
     {
-        return $election->is_draft;
+        return $election->is_draft && ! $election->is_paid;
     }
 
     public function createElector(User $user, Election $election): bool
     {
-        return $election->is_draft ||
+        return ($election->is_draft && ! $election->is_paid) ||
             (
                 $election->is_published &&
                 $election->preference->elector_update_after_publish
@@ -139,7 +139,7 @@ class ElectionPolicy
 
     public function importElector(User $user, Election $election): bool
     {
-        return $election->is_draft;
+        return $election->is_draft && ! $election->is_paid;
     }
 
     public function viewAnyElector(User $user, Election $election): bool
@@ -149,12 +149,12 @@ class ElectionPolicy
 
     public function updateAnyElector(User $user, Election $election): bool
     {
-        return $election->is_draft || $election->is_published;
+        return ($election->is_draft && ! $election->is_paid) || $election->is_published;
     }
 
     public function deleteAnyElector(User $user, Election $election): bool
     {
-        return $election->is_draft;
+        return $election->is_draft && ! $election->is_paid;
     }
 
     public function viewBallotSetup(User $user, Election $election): bool
@@ -164,12 +164,12 @@ class ElectionPolicy
 
     public function createPosition(User $user, Election $election): bool
     {
-        return $election->is_draft;
+        return $election->is_draft && ! $election->is_paid;
     }
 
     public function reorderPosition(User $user, Election $election): bool
     {
-        return $election->is_draft &&
+        return $election->is_draft && ! $election->is_paid &&
             ($election->positions_count ?? $election->loadCount(relations: ['positions'])->positions_count) > 1;
     }
 
@@ -180,27 +180,27 @@ class ElectionPolicy
 
     public function updateAnyPosition(User $user, Election $election): bool
     {
-        return $election->is_draft;
+        return $election->is_draft && ! $election->is_paid;
     }
 
     public function deleteAnyPosition(User $user, Election $election): bool
     {
-        return $election->is_draft;
+        return $election->is_draft && ! $election->is_paid;
     }
 
     public function createCandidate(User $user, Election $election): bool
     {
-        return $election->is_draft;
+        return $election->is_draft && ! $election->is_paid;
     }
 
     public function importCandidate(User $user, Election $election): bool
     {
-        return $election->is_draft;
+        return $election->is_draft && ! $election->is_paid;
     }
 
     public function reorderCandidate(User $user, Election $election): bool
     {
-        return $election->is_draft;
+        return $election->is_draft && ! $election->is_paid;
     }
 
     public function viewAnyCandidate(User $user, Election $election): bool
@@ -210,12 +210,12 @@ class ElectionPolicy
 
     public function updateAnyCandidate(User $user, Election $election): bool
     {
-        return $election->is_draft;
+        return $election->is_draft && ! $election->is_paid;
     }
 
     public function deleteAnyCandidate(User $user, Election $election): bool
     {
-        return $election->is_draft;
+        return $election->is_draft && ! $election->is_paid;
     }
 
     public function viewAnyMonitorToken(User $user, Election $election): bool
