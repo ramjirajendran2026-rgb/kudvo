@@ -74,12 +74,11 @@ class Notice extends Page implements HasElection
         return $form
             ->schema(components: [
                 Section::make(heading: 'MFA Verification')
+                    ->extraAttributes(attributes: ['class' => 'text-center'])
                     ->schema(components: [
                         Placeholder::make(name: 'description')
                             ->content(content: $this->getNoticeText())
-                            ->extraAttributes(attributes: [
-                                'class' => 'text-center'
-                            ])
+                            ->extraAttributes(attributes: ['class' => 'text-start'])
                             ->hiddenLabel(),
 
                         Checkbox::make(name: 'consent')
