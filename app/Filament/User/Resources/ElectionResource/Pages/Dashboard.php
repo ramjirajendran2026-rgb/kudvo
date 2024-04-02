@@ -3,12 +3,14 @@
 namespace App\Filament\User\Resources\ElectionResource\Pages;
 
 use App\Enums\ElectionDashboardState;
+use App\Enums\ElectionSetupStep;
 use App\Filament\Base\Pages\Concerns\HasStateSection;
 use App\Filament\User\Resources\ElectionResource;
 use App\Models\ElectionPrice;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Notifications\Notification;
 use Illuminate\Support\HtmlString;
 use Livewire\Attributes\On;
 
@@ -29,6 +31,22 @@ class Dashboard extends ElectionPage
         parent::mount($record);
 
         $this->resolveState();
+
+        $currentStep = $this->getPendingStep();
+
+        if ($currentStep === ElectionSetupStep::Preference) {
+            $this->redirect(Preference::getUrl(parameters: [$this->getElection()]));
+            return;
+        }
+
+        if ($currentStep === ElectionSetupStep::Electors) {
+            $this->redirect(Electors::getUrl(parameters: [$this->getElection()]));
+            return;
+        }
+
+        if ($currentStep === ElectionSetupStep::Ballot) {
+            $this->redirect(BallotSetup::getUrl(parameters: [$this->getElection()]));
+        }
     }
 
     #[On('refresh')]
@@ -55,6 +73,18 @@ class Dashboard extends ElectionPage
         $this->cacheStateActions();
 
         unset($this->cachedSubNavigation);
+    }
+
+    public function getCurrentStep(): ?ElectionSetupStep
+    {
+        $pendingStep = $this->getPendingStep();
+
+        return match ($pendingStep) {
+            ElectionSetupStep::Timing,
+            ElectionSetupStep::Payment,
+            ElectionSetupStep::Publish => $pendingStep,
+            default => null,
+        };
     }
 
     public function getStateHeading(): ?string

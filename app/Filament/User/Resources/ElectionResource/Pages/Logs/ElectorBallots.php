@@ -4,6 +4,7 @@ namespace App\Filament\User\Resources\ElectionResource\Pages\Logs;
 
 use App\Filament\Exports\ElectorBallotExporter;
 use App\Filament\User\Resources\ElectionResource\Pages\ElectionPage;
+use App\Models\Election;
 use App\Models\Elector;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Concerns\HasTabs;
@@ -117,5 +118,10 @@ class ElectorBallots extends ElectionPage implements HasTable
     protected function getExportFileName(): string
     {
         return Str::kebab('elector-ballot-logs-').$this->getElection()->code;
+    }
+
+    public static function canAccessPage(Election $election): bool
+    {
+        return !$election->is_draft && !$election->is_cancelled;
     }
 }

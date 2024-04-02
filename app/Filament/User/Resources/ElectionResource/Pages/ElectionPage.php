@@ -3,6 +3,7 @@
 namespace App\Filament\User\Resources\ElectionResource\Pages;
 
 use App\Data\Election\VoteSecretData;
+use App\Enums\ElectionSetupStep;
 use App\Filament\Base\Contracts\HasElection;
 use App\Filament\Base\Contracts\HasElectorGroups;
 use App\Filament\User\Resources\ElectionResource;
@@ -70,6 +71,16 @@ abstract class ElectionPage extends Page implements HasElectorGroups, HasElectio
         return $this->election;
     }
 
+    public function getPendingStep(): ?ElectionSetupStep
+    {
+        return $this->getElection()->getPendingStep();
+    }
+
+    public function getCurrentStep(): ?ElectionSetupStep
+    {
+        return null;
+    }
+
     public function getElectorGroups(): array
     {
         return $this->electorGroups;
@@ -117,7 +128,7 @@ HTML
 
     public function getSubNavigation(): array
     {
-        return ElectionResource::getRecordSubNavigation($this);
+        return filled($this->getPendingStep()) ? [] : ElectionResource::getRecordSubNavigation($this);
     }
 
     public function getWidgetData(): array
@@ -223,5 +234,10 @@ HTML
     public static function canAccessPage(Election $election): bool
     {
         return ElectionResource::canView(record: $election);
+    }
+
+    public static function canAccess(array $parameters = []): bool
+    {
+        return parent::canAccess($parameters) && static::canAccessPage($parameters['record']);
     }
 }

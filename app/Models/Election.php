@@ -6,6 +6,7 @@ use App\Data\Election\PreferenceData;
 use App\Data\Election\ResultMetaData;
 use App\Data\Election\VoteSecretData;
 use App\Enums\CandidateSort;
+use App\Enums\ElectionSetupStep;
 use App\Enums\ElectionStatus;
 use App\Enums\InvoiceStatus;
 use App\Models\Concerns\HasShortCode;
@@ -19,6 +20,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Laravel\Cashier\Checkout;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -362,6 +364,26 @@ class Election extends Model
     public function isCheckoutRequired(): bool
     {
         return blank($this->paid_at);
+    }
+
+    public function getPendingStep(): ?ElectionSetupStep
+    {
+        return match (true) {
+            ! $this->is_draft => null,
+            blank($this->preference) => ElectionSetupStep::Preference,
+            $this->electors()->count() === 0 => ElectionSetupStep::Electors,
+            empty($positionsCount = $this->positions()->count()) ||
+            $this->positions()
+                ->whereHas(
+                    relation: 'candidates',
+                    count: DB::raw(value: 'positions.quota')
+                )
+                ->count() < $positionsCount => ElectionSetupStep::Ballot,
+            ! $this->isTimingConfigured() => ElectionSetupStep::Timing,
+            $this->isCheckoutRequired() => ElectionSetupStep::Payment,
+            ! $this->isPublished() => ElectionSetupStep::Publish,
+            default => null,
+        };
     }
 
     public function getElectorGroups(): array

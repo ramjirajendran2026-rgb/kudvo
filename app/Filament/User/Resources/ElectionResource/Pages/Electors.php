@@ -2,6 +2,7 @@
 
 namespace App\Filament\User\Resources\ElectionResource\Pages;
 
+use App\Enums\ElectionSetupStep;
 use App\Filament\Base\Contracts\HasElection;
 use App\Filament\User\Resources\ElectionResource;
 use App\Filament\User\Resources\ElectorResource;
@@ -40,6 +41,11 @@ class Electors extends ElectionPage implements HasTable
     public function getOwnerRecord(): Election
     {
         return $this->getElection();
+    }
+
+    public function getCurrentStep(): ?ElectionSetupStep
+    {
+        return ElectionSetupStep::Electors;
     }
 
     public function form(Form $form): Form

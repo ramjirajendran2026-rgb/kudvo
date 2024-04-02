@@ -4,6 +4,7 @@ namespace App\Filament\User\Resources\ElectionResource\Pages;
 
 use App\Data\Election\PreferenceData;
 use App\Enums\CandidateSort;
+use App\Enums\ElectionSetupStep;
 use App\Models\Election;
 use Closure;
 use Filament\Actions\Action;
@@ -53,6 +54,11 @@ class Preference extends ElectionPage
         $election->preference ??= new PreferenceData();
 
         $this->form->fill($election->attributesToArray());
+    }
+
+    public function getCurrentStep(): ?ElectionSetupStep
+    {
+        return ElectionSetupStep::Preference;
     }
 
     public function form(Form $form): Form

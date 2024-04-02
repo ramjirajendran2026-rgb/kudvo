@@ -2,6 +2,7 @@
 
 namespace App\Filament\User\Resources\ElectionResource\Pages;
 
+use App\Enums\ElectionSetupStep;
 use App\Filament\Base\Contracts\HasElection;
 use App\Filament\Imports\CandidateImporter;
 use App\Filament\User\Resources\CandidateResource;
@@ -124,6 +125,11 @@ class BallotSetup extends ElectionPage
     {
         return parent::makeInfolist()
             ->record($this->getElection());
+    }
+
+    public function getCurrentStep(): ?ElectionSetupStep
+    {
+        return ElectionSetupStep::Ballot;
     }
 
     protected function generateEmptyStatePlaceholder(string $heading, ?string $description = null, ?string $icon = null, array $actions = []): HtmlString
