@@ -1,2 +1,6 @@
 @import '/vendor/filament/filament/resources/css/theme.css';
 @import '../../forms/theme.css';
+
+.filepond--file .filepond--file-action-button {
+    background-color: rgba(0, 0, 0, 0.5);
+}
