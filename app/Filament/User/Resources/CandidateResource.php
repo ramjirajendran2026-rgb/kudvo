@@ -37,7 +37,6 @@ class CandidateResource extends Resource
                 CandidateForm::photoComponent()
                     ->grow(condition: false)
                     ->hiddenLabel()
-                    ->maxWidth(width: 200)
                     ->visible(condition: fn (HasElection $livewire): bool => $livewire->getElection()->preference->candidate_photo),
 
                 Group::make()
@@ -89,7 +88,8 @@ class CandidateResource extends Resource
                     ->grow(condition: false)
                     ->hiddenLabel()
                     ->visible(condition: fn (HasElection $livewire): bool => $livewire->getElection()->preference->candidate_symbol),
-            ]),
+            ])
+                ->from(breakpoint: 'md'),
         ];
     }
 }

@@ -172,7 +172,11 @@ readonly class CandidateForm
             ->avatar()
             ->circleCropper()
             ->collection(collection: Candidate::MEDIA_COLLECTION_PHOTO)
+            ->extraAttributes(attributes: ['class' => 'candidate-photo'])
             ->imageEditor()
+            ->maxSize(size: 300)
+            ->panelAspectRatio(ratio: '1:1')
+            ->panelLayout(layout: 'compact')
             ->placeholder(placeholder: 'Drag & Drop your photo or <span class="filepond--label-action">Browse</span>');
     }
 
@@ -189,9 +193,12 @@ readonly class CandidateForm
     {
         return SpatieMediaLibraryFileUpload::make(name: 'symbol')
             ->avatar()
-            ->circleCropper()
             ->collection(collection: Candidate::MEDIA_COLLECTION_SYMBOL)
+            ->extraAttributes(attributes: ['class' => 'candidate-symbol'])
             ->imageEditor()
+            ->maxSize(size: 300)
+            ->panelAspectRatio(ratio: '1:1')
+            ->panelLayout(layout: 'compact')
             ->placeholder(placeholder: 'Drag & Drop your symbol or <span class="filepond--label-action">Browse</span>');
     }
 
