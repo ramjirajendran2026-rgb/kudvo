@@ -20,18 +20,13 @@ readonly class OrganisationForm
     public static function logoComponent(): SpatieMediaLibraryFileUpload
     {
         return SpatieMediaLibraryFileUpload::make(name: 'logo')
+            ->avatar()
             ->collection(collection: Organisation::MEDIA_COLLECTION_LOGO)
-            ->image()
+            ->extraAttributes(attributes: ['class' => 'org-logo'])
             ->imageEditor()
-            ->imageEditorAspectRatios([
-                '16:9',
-                '4:3',
-                '1:1',
-            ])
-            ->imageResizeMode(mode: 'cover')
-            ->imageCropAspectRatio(ratio: '1:1')
-            ->imageResizeTargetWidth(width: '512')
-            ->imageResizeTargetHeight(height: '512');
+            ->maxSize(size: 500)
+            ->panelAspectRatio(ratio: '1:1')
+            ->panelLayout(layout: 'compact');
     }
 
     public static function nameComponent(): TextInput
