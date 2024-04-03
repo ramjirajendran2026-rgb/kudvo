@@ -175,7 +175,8 @@ HTML,
                         },
                         name: "result-{$this->getElection()->code}.pdf",
                     );
-            });
+            })
+            ->icon(icon: 'heroicon-s-arrow-down-tray');
     }
 
     public static function shouldRegisterNavigation(array $parameters = []): bool
