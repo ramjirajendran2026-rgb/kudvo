@@ -20,9 +20,10 @@
             const difference = this.target - Math.floor(this.now);
             const days = Math.floor(difference / 24 / 3600 / 1000);
             return difference > 0
-                ? (days > 0 ? days+':' : '') + new Date(difference)
-                .toISOString()
-                .substring(11, 19)
+                ? (days > 0 ? '<span class=\'text-primary-500\'>'+days+'</span>d:' : '')
+                + '<span class=\'text-primary-500\'>' + new Date(difference).toISOString().substring(11, 13) + '</span>h:'
+                + '<span class=\'text-primary-500\'>' + new Date(difference).toISOString().substring(14, 16) + '</span>m:'
+                + '<span class=\'text-primary-500\'>' + new Date(difference).toISOString().substring(17, 19) + '</span>s'
                 : this.targetLabel;
         },
         init() {
@@ -52,5 +53,5 @@
     }}
 >
     <span x-text="label" class="text-gray-500 dark:text-gray-400"></span>
-    <span x-text="remaining" class="text-xl sm:text-3xl font-semibold font-mono"></span>
+    <span x-html="remaining" class="text-xl sm:text-3xl font-semibold font-mono"></span>
 </div>
