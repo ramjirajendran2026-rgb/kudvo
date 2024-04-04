@@ -29,6 +29,7 @@
         "laravel/reverb": "@beta",
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.8",
+        "league/flysystem-aws-s3-v3": "^3.0",
         "nnjeim/world": "^1.1",
         "nyholm/psr7": "^1.8",
         "omar-haris/filament-timezone-field": "^1.0",
