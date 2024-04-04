@@ -23,6 +23,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\HtmlString;
 use Livewire\Attributes\On;
 
 class Index extends BasePage
@@ -74,9 +75,11 @@ class Index extends BasePage
             ->operation(operation: $this->preview ? 'preview' : 'create')
             ->statePath(path: 'data')
             ->schema(components: [
-                Actions::make(actions: [
-                    $this->getBackAction(),
-                ]),
+                Placeholder::make(name: 'confirmation')
+                    ->content(content: new HtmlString('<h2 class="text-lg md:text-2xl font-semibold">Review your selection</h2>'))
+                    ->extraAttributes(attributes: ['class' => 'text-center'])
+                    ->hidden(condition: fn (self $livewire): bool => ! $this->preview)
+                    ->hiddenLabel(),
 
                 ...$this->getElection()->positions
                     ->map(
@@ -105,7 +108,8 @@ class Index extends BasePage
                         ->hidden(condition: fn (self $livewire): bool => $livewire->flashVotes || ! $livewire->preview)
                         ->size(size: ActionSize::ExtraLarge),
                 ])
-                ->alignment(alignment: fn (self $livewire): Alignment => $livewire->preview ? Alignment::Between : Alignment::End),
+                ->alignment(alignment: fn (self $livewire): Alignment => $livewire->preview ? Alignment::Between : Alignment::End)
+                ->extraAttributes(attributes: ['class' => 'px-2 md:px-0']),
             ]);
     }
 
@@ -136,12 +140,6 @@ class Index extends BasePage
 
         if (! $this->preview) {
             $this->preview = true;
-
-            Notification::make()
-                ->title(title: 'Confirmation')
-                ->body(body: 'Please review your selection and confirm')
-                ->info()
-                ->send();
 
             $this->dispatch(event: 'scroll-to-top');
             return;
