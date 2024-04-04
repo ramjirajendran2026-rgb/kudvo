@@ -5,7 +5,10 @@ namespace App\Filament\User\Resources\ElectionResource\Pages;
 use App\Enums\ElectionStatus;
 use App\Filament\User\Resources\ElectionResource;
 use Filament\Actions;
+use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ManageRecords;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Arr;
 
 class ManageElections extends ManageRecords
 {
@@ -15,6 +18,26 @@ class ManageElections extends ManageRecords
 
     public function getTabs(): array
     {
-        return ElectionStatus::getTabs();
+        return [
+            'all' => Tab::make(label: 'All')
+                ->badge(
+                    badge: $this->getTableQuery()->count()
+                ),
+
+            ...Arr::mapWithKeys(
+                array: ElectionStatus::cases(),
+                callback: fn(ElectionStatus $case) => [
+                    $case->value => Tab::make(label: $case->getLabel())
+                        ->badge(
+                            badge: $this->getTableQuery()->scopes(scopes: Arr::wrap(value: $case->getScopes()))->count()
+                        )
+                        ->badgeColor(color: $case->getColor())
+                        ->icon(icon: $case->getIcon())
+                        ->modifyQueryUsing(
+                            callback: fn (Builder $query): Builder => $query->scopes(scopes: Arr::wrap(value: $case->getScopes()))
+                        )
+                ]
+            )
+        ];
     }
 }
