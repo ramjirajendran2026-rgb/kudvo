@@ -4829,16 +4829,16 @@
         },
         {
             "name": "laravel/reverb",
-            "version": "v1.0.0-beta4",
+            "version": "v1.0.0-beta5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/reverb.git",
-                "reference": "7237ff17a249128218c614a6e0f9cf0a8aca91a9"
+                "reference": "d1b72f46a0af42ca5e84d5c1d0f97b8013c6dac3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/reverb/zipball/7237ff17a249128218c614a6e0f9cf0a8aca91a9",
-                "reference": "7237ff17a249128218c614a6e0f9cf0a8aca91a9",
+                "url": "https://api.github.com/repos/laravel/reverb/zipball/d1b72f46a0af42ca5e84d5c1d0f97b8013c6dac3",
+                "reference": "d1b72f46a0af42ca5e84d5c1d0f97b8013c6dac3",
                 "shasum": ""
             },
             "require": {
@@ -4854,6 +4854,7 @@
                 "ratchet/rfc6455": "^0.3.1",
                 "react/promise-timer": "^1.10",
                 "react/socket": "^1.14",
+                "symfony/console": "^6.0|^7.0",
                 "symfony/http-foundation": "^6.3|^7.0"
             },
             "require-dev": {
@@ -4904,9 +4905,9 @@
             ],
             "support": {
                 "issues": "https://github.com/laravel/reverb/issues",
-                "source": "https://github.com/laravel/reverb/tree/v1.0.0-beta4"
+                "source": "https://github.com/laravel/reverb/tree/v1.0.0-beta5"
             },
-            "time": "2024-03-18T17:36:49+00:00"
+            "time": "2024-03-27T17:03:33+00:00"
         },
         {
             "name": "laravel/sanctum",
