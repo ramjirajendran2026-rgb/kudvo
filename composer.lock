@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8b82b119bfbb2b5e3203ec1d97c0cf5f",
+    "content-hash": "0eb8566411fdd899f118ad230ba959ee",
     "packages": [
         {
             "name": "akhan619/laravel-ses-tracking",
