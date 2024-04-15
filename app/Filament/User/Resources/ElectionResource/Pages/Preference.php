@@ -210,6 +210,7 @@ class Preference extends ElectionPage
 
                             Section::make(heading: 'Security preference')
                                 ->columns()
+                                ->description(description: 'These are security preferences that you can enable for your election.')
                                 ->schema(components: [
                                     Group::make()
                                         ->columns()
@@ -294,7 +295,17 @@ class Preference extends ElectionPage
                                         ->label(label: 'Candidate group'),
                                 ]),
 
+                            Section::make(heading: 'Advanced preferences')
+                                ->collapsed()
+                                ->description(description: 'These are advanced preferences that you can enable for your election.')
+                                ->schema(components: [
+                                    Toggle::make(name: 'segmented_ballot')
+                                        ->helperText(text: 'This will allow you to segment the ballot based on the elector details.')
+                                        ->label(label: 'Segmented ballot'),
+                                ]),
+
                             Section::make(heading: 'Booth voting')
+                                ->collapsed()
                                 ->description(description: 'This will allow electors to cast votes from a specific location. This is useful for conducting elections in a physical location.')
                                 ->schema(components: [
                                     Toggle::make(name: 'booth_voting')
