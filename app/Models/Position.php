@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -49,6 +50,12 @@ class Position extends Model implements Sortable
     public function event(): MorphTo
     {
         return $this->morphTo();
+    }
+
+    public function segments(): BelongsToMany
+    {
+        return $this->belongsToMany(related: Segment::class)
+            ->withTimestamps();
     }
 
     public function nominees(): HasMany

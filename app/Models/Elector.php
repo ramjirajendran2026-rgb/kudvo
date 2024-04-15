@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -84,6 +85,12 @@ class Elector extends Model implements
     public function event(): MorphTo
     {
         return $this->morphTo();
+    }
+
+    public function segments(): BelongsToMany
+    {
+        return $this->belongsToMany(related: Segment::class)
+            ->withTimestamps();
     }
 
     public function oneTimePasswords(): MorphMany
