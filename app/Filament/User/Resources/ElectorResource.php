@@ -10,8 +10,11 @@ use App\Models\Elector;
 use Filament\Actions\ImportAction;
 use Filament\Actions\Imports\Models\Import;
 use Filament\Facades\Filament;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Notifications\Actions\Action as NotificationAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
@@ -98,6 +101,9 @@ class ElectorResource extends Resource
 
                 ElectorForm::groupsComponent()
                     ->hidden(),
+
+                ElectorForm::segmentsComponent()
+                    ->visible(condition: fn ($livewire) => $livewire instanceof HasElection && $livewire->getElection()->preference?->segmented_ballot),
             ]);
     }
 
@@ -127,10 +133,9 @@ class ElectorResource extends Resource
                     ->wrap()
                     ->searchable(),
 
-                TextColumn::make(name: 'groups')
+                TextColumn::make(name: 'segments.name')
                     ->badge()
-                    ->hidden()
-                    ->separator()
+                    ->visible(condition: fn ($livewire) => $livewire instanceof HasElection && $livewire->getElection()->preference?->segmented_ballot)
                     ->wrap(),
             ])
             ->headerActions(actions: [

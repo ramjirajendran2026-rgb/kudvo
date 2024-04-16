@@ -6,8 +6,13 @@ use App\Filament\Base\Contracts\HasElection;
 use App\Filament\Base\Contracts\HasNomination;
 use App\Models\Election;
 use App\Models\Nomination;
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\MaxWidth;
 use Illuminate\Validation\Rules\Unique;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
@@ -80,5 +85,35 @@ readonly class ElectorForm
             ->datalist(options: ['Mr.', 'Ms.', 'Mrs.', 'Dr.', 'Prof.'])
             ->label(label: 'Salutation')
             ->maxLength(length: 20);
+    }
+
+    public static function segmentsComponent()
+    {
+        return Select::make(name: 'segments')
+            ->relationship(name: 'segments', titleAttribute: 'name')
+            ->createOptionAction(
+                callback: fn (Action $action) => $action
+                    ->modalCancelAction(action: false)
+                    ->modalFooterActionsAlignment(alignment: Alignment::Center)
+                    ->modalHeading(heading: 'Create Segment')
+                    ->modalWidth(width: MaxWidth::Large)
+            )
+            ->createOptionUsing(callback: function (array $data, HasElection $livewire) {
+                return $livewire->getElection()->segments()->createOrFirst($data)->getKey();
+            })
+            ->editOptionAction(
+                callback: fn (Action $action) => $action
+                    ->modalCancelAction(action: false)
+                    ->modalFooterActionsAlignment(alignment: Alignment::Center)
+                    ->modalWidth(width: MaxWidth::Large)
+            )
+            ->manageOptionForm(schema: fn (Form $form) => $form->schema([
+                TextInput::make(name: 'name')
+                    ->label(label: 'Segment name')
+                    ->maxLength(length: 150)
+                    ->required(),
+            ]))
+            ->multiple()
+            ->preload();
     }
 }

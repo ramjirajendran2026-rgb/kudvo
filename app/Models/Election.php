@@ -224,6 +224,11 @@ class Election extends Model
         return $this->belongsTo(related: Organisation::class);
     }
 
+    public function segments(): HasMany
+    {
+        return $this->hasMany(related: Segment::class);
+    }
+
     public function electors(): MorphMany
     {
         return $this->morphMany(
