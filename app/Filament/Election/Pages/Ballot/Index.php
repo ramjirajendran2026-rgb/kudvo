@@ -19,6 +19,8 @@ use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\Alignment;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cookie;
@@ -69,6 +71,10 @@ class Index extends BasePage
 
     public function form(Form $form): Form
     {
+        $electorSegmentIds = $this->getElection()->preference->segmented_ballot ?
+            $this->getElector()->segments()->pluck('id') :
+            [];
+
         return $form
             ->disabled(condition: fn (self $livewire): bool => $this->preview)
             ->model(model: $this->getElection())
@@ -82,6 +88,15 @@ class Index extends BasePage
                     ->hiddenLabel(),
 
                 ...$this->getElection()->positions
+                    ->when(
+                        value: $this->getElection()->preference->segmented_ballot,
+                        callback: fn(Collection $query) => $query
+                            ->where(
+                                fn (Position $position) => $position->segments()
+                                    ->whereIn('id', $electorSegmentIds)
+                                    ->exists(),
+                            )
+                    )
                     ->map(
                         callback: fn (Position $position) => VotePicker::makeFor(position: $position)
                             ->candidateGroup(condition: $this->getElection()->preference->candidate_group)
