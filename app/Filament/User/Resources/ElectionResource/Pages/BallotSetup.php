@@ -25,6 +25,7 @@ use Filament\Infolists\Components\Split;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Support\Enums\ActionSize;
+use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Support\Facades\Blade;
@@ -56,8 +57,11 @@ class BallotSetup extends ElectionPage
                         Section::make(heading: fn (Position $state): ?string => $state->name)
                             ->compact()
                             ->description(
-                                description: fn (Position $state): ?string => Str::plural(value: $state->quota.' Post', count: $state->quota).
-                                    ($state->abstain ? Str::plural(value: " • Minimum $state->threshold selection", count: $state->threshold) : '')
+                                description: fn (Position $state): ?string => collect(value: [
+                                    Str::plural(value: $state->quota.' Post', count: $state->quota),
+                                    ...($state->abstain ? [Str::plural(value: " • Minimum $state->threshold selection", count: $state->threshold)] : []),
+                                    ...($this->getElection()->preference?->segmented_ballot ? $state->segments()->pluck(column: 'name') : [])
+                                ])->implode(value: ' • ')
                             )
                             ->headerActions(actions: [
                                 $this->getCreateCandidateAction(),
@@ -190,8 +194,13 @@ HTML,
                     election: $livewire->getElection()
                 )
             )
-            ->form(form: fn (Form $form): Form => $form->schema(components: PositionResource::getFormComponents()))
+            ->createAnother(condition: false)
+            ->form(
+                form: fn (Form $form): Form => $form->schema(components: PositionResource::getFormComponents())
+                    ->inlineLabel()
+            )
             ->model(model: Position::class)
+            ->modalFooterActionsAlignment(alignment: Alignment::End)
             ->modalWidth(width: MaxWidth::Large)
             ->mutateFormDataUsing(callback: function (array $data): array {
                 $data['threshold'] = $data['abstain'] ? $data['threshold'] : $data['quota'];
@@ -244,9 +253,14 @@ HTML,
                 $action->success();
             })
             ->fillForm(data: fn (Position $record): array => $record->attributesToArray())
-            ->form(form: fn (Form $form): Form => PositionResource::form(form: $form))
+            ->form(
+                form: fn (Form $form, Position $record): Form => PositionResource::form(form: $form)
+                    ->inlineLabel()
+                    ->model(model: $record)
+            )
             ->icon(icon: 'heroicon-m-pencil-square')
             ->iconButton()
+            ->modalFooterActionsAlignment(alignment: Alignment::End)
             ->modalHeading(heading: fn (Position $record): string => "Edit $record->name")
             ->modalSubmitActionLabel(label: 'Save changes')
             ->modalWidth(width: MaxWidth::ExtraLarge)

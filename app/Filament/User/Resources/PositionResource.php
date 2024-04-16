@@ -2,7 +2,9 @@
 
 namespace App\Filament\User\Resources;
 
+use App\Filament\Base\Contracts\HasElection;
 use App\Filament\Base\Contracts\HasElectorGroups;
+use App\Forms\ElectorForm;
 use App\Forms\PositionForm;
 use App\Models\Position;
 use Filament\Forms\Form;
@@ -44,6 +46,9 @@ class PositionResource extends Resource
             PositionForm::thresholdComponent()
                 ->inlineLabel(),
 
+            PositionForm::segmentsComponent()
+                ->visible(condition: fn ($livewire) => $livewire instanceof HasElection && $livewire->getElection()->preference?->segmented_ballot),
+
             PositionForm::groupsComponent()
                 ->options(
                     options: fn (HasElectorGroups $livewire): array => Arr::mapWithKeys(
@@ -76,13 +81,9 @@ class PositionResource extends Resource
                     ->label(label: 'Min selection')
                     ->numeric(),
 
-                TextColumn::make(name: 'elector_groups')
-                    ->alignCenter()
+                TextColumn::make(name: 'segments.name')
                     ->badge()
-                    ->label(label: 'Eligible groups')
-                    ->visible(
-                        condition: fn (HasElectorGroups $livewire): bool => filled(value: $livewire->getElectorGroups())
-                    )
+                    ->visible(condition: fn ($livewire) => $livewire instanceof HasElection && $livewire->getElection()->preference?->segmented_ballot)
                     ->wrap(),
             ])
             ->defaultSort(column: 'sort')
