@@ -63,9 +63,13 @@ class BallotSetup extends ElectionPage
                                     ...($this->getElection()->preference?->segmented_ballot ? $state->segments()->pluck(column: 'name') : [])
                                 ])->implode(value: ' • ')
                             )
+                            ->footerActions(actions: [
+                                $this->getCreateCandidateAction()
+                                    ->size(size: ActionSize::Large)
+                                    ->extraAttributes(attributes: ['class' => '!ring-0']),
+                            ])
+                            ->footerActionsAlignment(alignment: Alignment::Center)
                             ->headerActions(actions: [
-                                $this->getCreateCandidateAction(),
-
                                 $this->getReorderCandidateAction(),
 
                                 $this->getEditPositionAction(),
@@ -141,14 +145,12 @@ class BallotSetup extends ElectionPage
         return new HtmlString(
             html: Blade::render(
                 string: <<<'HTML'
-<x-filament::section>
-    <x-filament.state
-        :heading="$heading"
-        :description="$description"
-        :icon="$icon"
-        :actions="$actions"
-    />
-</x-filament::section>
+<x-filament.state
+    :heading="$heading"
+    :description="$description"
+    :icon="$icon"
+    :actions="$actions"
+/>
 HTML,
                 data: [
                     'heading' => $heading,

@@ -5,22 +5,22 @@
     "src": "resources/css/app.css"
   },
   "resources/css/filament/election/theme.css": {
-    "file": "assets/theme-NKiwQzVR.css",
+    "file": "assets/theme-Yq_95qM0.css",
     "isEntry": true,
     "src": "resources/css/filament/election/theme.css"
   },
   "resources/css/filament/nomination/theme.css": {
-    "file": "assets/theme-427ybPXp.css",
+    "file": "assets/theme-jMiBQ8gv.css",
     "isEntry": true,
     "src": "resources/css/filament/nomination/theme.css"
   },
   "resources/css/filament/user/theme.css": {
-    "file": "assets/theme-oTzenPgA.css",
+    "file": "assets/theme-Ld4SJ8KF.css",
     "isEntry": true,
     "src": "resources/css/filament/user/theme.css"
   },
   "resources/js/app.js": {
-    "file": "assets/app-NZxQSiV1.js",
+    "file": "assets/app-p4n4M-rx.js",
     "isEntry": true,
     "src": "resources/js/app.js"
   }
