@@ -5,8 +5,11 @@ namespace App\Filament\User\Resources\ElectionResource\Pages;
 use App\Enums\ElectionStatus;
 use App\Filament\User\Resources\ElectionResource;
 use Filament\Actions;
+use Filament\Facades\Filament;
 use Filament\Resources\Components\Tab;
+use Filament\Resources\Concerns\HasTabs;
 use Filament\Resources\Pages\ManageRecords;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 
@@ -39,5 +42,14 @@ class ManageElections extends ManageRecords
                 ]
             )
         ];
+    }
+
+    protected function getTableQuery(): ?Builder
+    {
+        return parent::getTableQuery()
+            ->where(
+                column: fn(Builder $query) => $query->whereBelongsTo(related: Filament::auth()->user(), relationshipName: 'owner')
+                    ->orWhereHas(relation: 'collaborators', callback: fn (Builder $query) => $query->whereKey(Filament::auth()->id()))
+            );
     }
 }

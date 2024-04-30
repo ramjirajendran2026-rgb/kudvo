@@ -2,6 +2,7 @@
 
 namespace App\Filament\User\Resources\ElectionResource\Pages;
 
+use App\Enums\ElectionCollaboratorPermission;
 use App\Enums\ElectionSetupStep;
 use App\Filament\Base\Contracts\HasElection;
 use App\Filament\User\Resources\ElectionResource;
@@ -9,6 +10,7 @@ use App\Filament\User\Resources\ElectorResource;
 use App\Models\Election;
 use App\Models\Elector;
 use Filament\Actions\Action;
+use Filament\Facades\Filament;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Concerns\InteractsWithRelationshipTable;
@@ -48,6 +50,18 @@ class Electors extends ElectionPage implements HasTable
         return ElectionSetupStep::Electors;
     }
 
+    public function hasReadAccess(): bool
+    {
+        return $this->isOwner()
+            || $this->getElection()->getCollaboratorPermissions(Filament::auth()->user())->electors !== ElectionCollaboratorPermission::NoAccess;
+    }
+
+    public function hasFullAccess(): bool
+    {
+        return $this->isOwner()
+            || $this->getElection()->getCollaboratorPermissions(Filament::auth()->user())->electors === ElectionCollaboratorPermission::FullAccess;
+    }
+
     public function form(Form $form): Form
     {
         return ElectorResource::form(form: $form);
@@ -65,7 +79,8 @@ class Electors extends ElectionPage implements HasTable
             ])
             ->groupedBulkActions(actions: [
                 ElectorResource::getBulkDeleteAction()
-                    ->authorize(abilities: fn (self $livewire): bool => static::can(action: 'deleteAnyElector', election: $livewire->getElection())),
+                    ->authorize(abilities: fn (self $livewire): bool => static::can(action: 'deleteAnyElector', election: $livewire->getElection()))
+                    ->visible(condition: $this->hasFullAccess()),
 
                 $this->getNotifyVotingInstructionsBulkAction(),
 
@@ -99,6 +114,9 @@ class Electors extends ElectionPage implements HasTable
     {
         return [
             $this->getNextPageAction(),
+            \Filament\Actions\ActionGroup::make(actions: [
+                $this->getCollaboratorsPageAction(),
+            ])->dropdownPlacement(placement: 'bottom-end'),
         ];
     }
 
@@ -182,7 +200,8 @@ class Electors extends ElectionPage implements HasTable
                 notification: fn (Notification $notification) => $notification
                     ->title(title: 'Ballot Links Sent')
                     ->body(body: 'Ballot links have been sent to selected electors who have not yet voted.')
-            );
+            )
+            ->visible(condition: $this->hasFullAccess());
     }
 
     public function getNotifyVotingInstructionsBulkAction()
@@ -207,7 +226,8 @@ class Electors extends ElectionPage implements HasTable
                 notification: fn (Notification $notification) => $notification
                     ->title(title: 'Voting Instructions Sent')
                     ->body(body: 'Voting instructions have been sent to selected electors who have not yet voted.')
-            );
+            )
+            ->visible(condition: $this->hasFullAccess());
     }
 
     public function getGenerateShortCodesAction(): TableAction
@@ -235,7 +255,8 @@ class Electors extends ElectionPage implements HasTable
             ->visible(
                 condition: $this->getElection()->is_published &&
                 $this->getElection()->electors()->whereNull('short_code')->count()
-            );
+            )
+            ->visible(condition: $this->hasFullAccess());
     }
 
     public static function canAccessPage(Election $election): bool
@@ -256,21 +277,21 @@ class Electors extends ElectionPage implements HasTable
 
     protected function canCreate(): bool
     {
-        return static::can(action: 'createElector', election: $this->getElection());
+        return $this->hasFullAccess() && static::can(action: 'createElector', election: $this->getElection());
     }
 
     protected function canImport(): bool
     {
-        return static::can(action: 'importElector', election: $this->getElection());
+        return $this->hasFullAccess() && static::can(action: 'importElector', election: $this->getElection());
     }
 
     protected function canEdit(): bool
     {
-        return static::can(action: 'updateAnyElector', election: $this->getElection());
+        return $this->hasFullAccess() && static::can(action: 'updateAnyElector', election: $this->getElection());
     }
 
     protected function canDelete(): bool
     {
-        return static::can(action: 'deleteAnyElector', election: $this->getElection());
+        return $this->hasFullAccess() && static::can(action: 'deleteAnyElector', election: $this->getElection());
     }
 }

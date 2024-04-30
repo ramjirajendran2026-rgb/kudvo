@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use Filament\Facades\Filament;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
 use Filament\Models\Contracts\HasTenants;
 use Filament\Panel;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -54,6 +56,15 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasMedia,
             ->withPivot(columns: ['role']);
     }
 
+    public function elections(): BelongsToMany
+    {
+        return $this->belongsToMany(related: Election::class)
+            ->as(accessor: 'collaboration')
+            ->using(class: ElectionUser::class)
+            ->withPivot(columns: ['designation', 'permissions'])
+            ->withTimestamps();
+    }
+
     protected static function booted(): void
     {
         static::updating(callback: function (User $user) {
@@ -74,12 +85,28 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasMedia,
 
     public function canAccessTenant(Model $tenant): bool
     {
-        return $this->organisations()->whereKey(id: $tenant->getKey())->exists();
+        return match (true) {
+            $tenant instanceof Organisation => $this->organisations()->whereKey(id: $tenant->getKey())->exists()
+                || $tenant->elections()->whereUser(user: $this)->exists(),
+            default => false,
+        };
     }
 
     public function getTenants(Panel $panel): array|Collection
     {
-        return $this->organisations;
+        return $this->organisations
+            ->merge(
+                items: Organisation::query()
+                    ->whereHas(
+                        relation: 'elections',
+                        callback: fn (Builder $query) => $query->whereBelongsTo(related: Filament::auth()->user(), relationshipName: 'owner')
+                            ->orWhereHas(
+                                relation: 'collaborators',
+                                callback: fn ($query) => $query->whereKey(Filament::auth()->id())
+                            )
+                    )
+                    ->get()
+            );
     }
 
     public function getFilamentAvatarUrl(): ?string

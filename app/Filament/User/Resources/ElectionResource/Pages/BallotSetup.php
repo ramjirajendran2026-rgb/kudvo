@@ -2,6 +2,7 @@
 
 namespace App\Filament\User\Resources\ElectionResource\Pages;
 
+use App\Enums\ElectionCollaboratorPermission;
 use App\Enums\ElectionSetupStep;
 use App\Filament\Base\Contracts\HasElection;
 use App\Filament\Imports\CandidateImporter;
@@ -14,6 +15,7 @@ use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ImportAction;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -140,6 +142,18 @@ class BallotSetup extends ElectionPage
         return ElectionSetupStep::Ballot;
     }
 
+    public function hasReadAccess(): bool
+    {
+        return $this->getElection()->isOwner(Filament::auth()->user())
+            || $this->getElection()->getCollaboratorPermissions(Filament::auth()->user())->ballot_setup !== ElectionCollaboratorPermission::NoAccess;
+    }
+
+    public function hasFullAccess(): bool
+    {
+        return $this->isOwner()
+            || $this->getElection()->getCollaboratorPermissions(Filament::auth()->user())->ballot_setup === ElectionCollaboratorPermission::FullAccess;
+    }
+
     protected function generateEmptyStatePlaceholder(string $heading, ?string $description = null, ?string $icon = null, array $actions = []): HtmlString
     {
         return new HtmlString(
@@ -210,7 +224,8 @@ HTML,
                 return $data;
             })
             ->record(record: null)
-            ->relationship(relationship: fn(HasElection $livewire) => $livewire->getElection()->positions());
+            ->relationship(relationship: fn(HasElection $livewire) => $livewire->getElection()->positions())
+            ->visible(condition: $this->hasFullAccess());
     }
 
     protected function getReorderPositionAction(): EditAction
@@ -235,7 +250,8 @@ HTML,
             ->icon(icon: 'heroicon-m-arrows-up-down')
             ->iconButton()
             ->modalHeading(heading: 'Reorder Positions')
-            ->modalWidth(width: MaxWidth::ExtraLarge);
+            ->modalWidth(width: MaxWidth::ExtraLarge)
+            ->visible(condition: $this->hasFullAccess());
     }
 
     protected function getEditPositionAction(): InfolistAction
@@ -271,7 +287,8 @@ HTML,
 
                 return $data;
             })
-            ->successNotificationTitle(title: 'Saved');
+            ->successNotificationTitle(title: 'Saved')
+            ->visible(condition: $this->hasFullAccess());
     }
 
     protected function getDeletePositionAction(): InfolistAction
@@ -293,7 +310,8 @@ HTML,
             ->icon(icon: 'heroicon-m-trash')
             ->iconButton()
             ->modalHeading(heading: fn (Position $record): string => "Delete $record->name")
-            ->successNotificationTitle(title: 'Deleted');
+            ->successNotificationTitle(title: 'Deleted')
+            ->visible(condition: $this->hasFullAccess());
     }
 
     protected function getReorderCandidateAction(): InfolistAction
@@ -335,7 +353,8 @@ HTML,
             ->modalHeading(heading: fn (Position $record): string => "Reorder $record->name Candidates")
             ->modalSubmitActionLabel(label: 'Save changes')
             ->modalWidth(width: MaxWidth::ExtraLarge)
-            ->successNotificationTitle(title: 'Saved');
+            ->successNotificationTitle(title: 'Saved')
+            ->visible(condition: $this->hasFullAccess());
     }
 
     protected function getImportCandidateAction(): ImportAction
@@ -348,7 +367,8 @@ HTML,
             ->modalWidth(width: MaxWidth::ExtraLarge)
             ->options(options: [
                 'election_id' => $this->getElection()->getKey(),
-            ]);
+            ])
+            ->visible(condition: $this->hasFullAccess());
     }
 
     protected function getCreateCandidateAction(): InfolistAction
@@ -391,7 +411,8 @@ HTML,
             ->modalSubmitActionLabel(label: __('filament-actions::create.single.modal.actions.create.label'))
             ->outlined()
             ->size(size: ActionSize::Small)
-            ->successNotificationTitle(title: 'Created');
+            ->successNotificationTitle(title: 'Created')
+            ->visible(condition: $this->hasFullAccess());
     }
 
     protected function getEditCandidateAction(): InfolistAction
@@ -419,7 +440,8 @@ HTML,
             ->iconButton()
             ->modalHeading(heading: fn (Candidate $record): string => "Edit $record->full_name")
             ->modalSubmitActionLabel(label: 'Save changes')
-            ->successNotificationTitle(title: 'Saved');
+            ->successNotificationTitle(title: 'Saved')
+            ->visible(condition: $this->hasFullAccess());
     }
 
     protected function getDeleteCandidateAction(): InfolistAction
@@ -441,7 +463,8 @@ HTML,
             ->icon(icon: 'heroicon-m-trash')
             ->iconButton()
             ->modalHeading(heading: fn (Candidate $record): string => "Delete $record->full_name")
-            ->successNotificationTitle(title: 'Deleted');
+            ->successNotificationTitle(title: 'Deleted')
+            ->visible(condition: $this->hasFullAccess());
     }
 
     public static function canAccessPage(Election $election): bool

@@ -2,6 +2,7 @@
 
 namespace App\Filament\User\Resources\ElectionResource\Pages;
 
+use App\Enums\ElectionCollaboratorPermission;
 use App\Enums\ElectionDashboardState;
 use App\Enums\ElectionSetupStep;
 use App\Filament\Base\Pages\Concerns\HasStateSection;
@@ -10,6 +11,7 @@ use App\Models\ElectionPrice;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Illuminate\Support\HtmlString;
 use Livewire\Attributes\On;
@@ -134,9 +136,16 @@ class Dashboard extends ElectionPage
             ElectionDashboardState::PendingBallotSetup => [$this->getBallotPageAction()],
             ElectionDashboardState::PendingTiming => [
                 ElectionResource::getSetTimingAction()
-                    ->after(callback: fn (self $livewire) => $livewire->dispatch(event: 'refresh')),
+                    ->after(callback: fn (self $livewire) => $livewire->dispatch(event: 'refresh'))
+                    ->visible(
+                        condition: fn (self $livewire) => (
+                            $this->isOwner() || $this->getElection()->getCollaboratorPermissions(Filament::auth()->user())->timing === ElectionCollaboratorPermission::FullAccess
+                        ) && $livewire->canSetTiming()
+                    ),
             ],
-            ElectionDashboardState::PendingCheckout => [$this->getProceedToPayAction()],
+            ElectionDashboardState::PendingCheckout => [
+                $this->getProceedToPayAction()
+            ],
             ElectionDashboardState::ReadyToPublish => [
                 ElectionResource::getPublishAction()
                     ->after(callback: fn (self $livewire) => $livewire->dispatch(event: 'refresh')),
@@ -219,7 +228,12 @@ class Dashboard extends ElectionPage
 
                 return $election->checkout(price: ElectionPrice::firstWhere('currency', 'USD'), user: auth()->user());
             })
-            ->visible(condition: fn (self $livewire) => $livewire->getElection()->isCheckoutRequired())
+            ->visible(
+                condition: fn (self $livewire) => (
+                    $this->isOwner() ||
+                    $this->getElection()->getCollaboratorPermissions(Filament::auth()->user())->payment === ElectionCollaboratorPermission::FullAccess
+                ) && $livewire->getElection()->isCheckoutRequired()
+    )
             ->label(label: 'Proceed to Pay');
     }
 

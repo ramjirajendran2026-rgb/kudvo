@@ -69,18 +69,18 @@ class ElectionResource extends Resource
             ElectionForm::timezoneComponent(),
 
             ElectionForm::startsAtComponent()
-                ->timezone(fn (Get $get): ?string => $get(path: 'timezone')),
+                ->timezone(fn(Get $get): ?string => $get(path: 'timezone')),
 
             ElectionForm::endsAtComponent()
-                ->timezone(fn (Get $get): ?string => $get(path: 'timezone')),
+                ->timezone(fn(Get $get): ?string => $get(path: 'timezone')),
 
             ElectionForm::boothStartsAtComponent()
-                ->timezone(fn (Get $get): ?string => $get(path: 'timezone'))
-                ->visible(condition: fn (?Election $record): bool => $record?->isBoothVotingEnabled()),
+                ->timezone(fn(Get $get): ?string => $get(path: 'timezone'))
+                ->visible(condition: fn(?Election $record): bool => $record?->isBoothVotingEnabled()),
 
             ElectionForm::boothEndsAtComponent()
-                ->timezone(fn (Get $get): ?string => $get(path: 'timezone'))
-                ->visible(condition: fn (?Election $record): bool => $record?->isBoothVotingEnabled()),
+                ->timezone(fn(Get $get): ?string => $get(path: 'timezone'))
+                ->visible(condition: fn(?Election $record): bool => $record?->isBoothVotingEnabled()),
         ];
     }
 
@@ -119,8 +119,8 @@ class ElectionResource extends Resource
                 static::getCreateTableAction(),
             ])
             ->heading(heading: Str::title(value: static::getPluralModelLabel()))
-            ->recordUrl(url: fn (Election $election) => static::getUrl(name: 'dashboard', parameters: [$election]))
-            ->relationship(relationship: fn (): Relation => Filament::getTenant()?->elections());
+            ->recordUrl(url: fn(Election $election) => static::getUrl(name: 'dashboard', parameters: [$election]))
+            ->relationship(relationship: fn(): Relation => Filament::getTenant()?->elections());
     }
 
     public static function getPages(): array
@@ -138,6 +138,8 @@ class ElectionResource extends Resource
             'logs.elector_ballots' => Pages\Logs\ElectorBallots::route(path: '/{record}/logs/elector-ballots'),
             'logs.elector_emails' => Pages\Logs\ElectorEmails::route(path: '/{record}/logs/elector-emails'),
             'logs.elector_sms_messages' => Pages\Logs\ElectorSmsMessages::route(path: '/{record}/logs/elector-sms-messages'),
+
+            'collaborators' => Pages\Collaborators::route(path: '/{record}/collaborators'),
         ];
     }
 
@@ -154,6 +156,7 @@ class ElectionResource extends Resource
             Pages\Logs\ElectorBallots::class,
             Pages\Logs\ElectorEmails::class,
             Pages\Logs\ElectorSmsMessages::class,
+            Pages\Collaborators::class,
         ]);
     }
 
@@ -171,7 +174,10 @@ class ElectionResource extends Resource
             ->createAnother(condition: false)
             ->modalFooterActionsAlignment(alignment: Alignment::End)
             ->modalWidth(width: MaxWidth::ExtraLarge)
-            ->successRedirectUrl(url: fn (Election $election) => static::getUrl(name: 'dashboard', parameters: [$election]));
+            ->mutateFormDataUsing(callback: function (array $data): array {
+                return array_merge($data, ['owner_id' => Filament::auth()->id()]);
+            })
+            ->successRedirectUrl(url: fn(Election $election) => static::getUrl(name: 'dashboard', parameters: [$election]));
     }
 
     public static function getEditAction(): EditAction
@@ -196,7 +202,7 @@ class ElectionResource extends Resource
             ->label(label: 'Set Timing')
             ->modalCancelAction(action: false)
             ->modalFooterActionsAlignment(alignment: Alignment::Center)
-            ->modalHeading(heading: fn (HasElection $livewire): ?string => $livewire->getElection()->name)
+            ->modalHeading(heading: fn(HasElection $livewire): ?string => $livewire->getElection()->name)
             ->modalWidth(width: MaxWidth::Medium)
             ->mutateRecordDataUsing(callback: function (array $data, HasElection $livewire): array {
                 $data['timezone'] ??= Filament::getTenant()?->timezone;
@@ -210,7 +216,7 @@ class ElectionResource extends Resource
 
                 return $data;
             })
-            ->record(record: fn (HasElection $livewire): Election => $livewire->getElection());
+            ->record(record: fn(HasElection $livewire): Election => $livewire->getElection());
     }
 
     public static function getEditTimingAction(): EditAction
@@ -253,9 +259,9 @@ class ElectionResource extends Resource
                     $livewire->getElection()->electors()
                         ->chunkById(
                             count: 300,
-                            callback: fn (Collection $collection) => $collection
+                            callback: fn(Collection $collection) => $collection
                                 ->each(
-                                    callback: fn (Elector $elector) => $elector
+                                    callback: fn(Elector $elector) => $elector
                                         ->sendBallotLink(election: $livewire->getElection())
                                 )
                         );
@@ -264,7 +270,7 @@ class ElectionResource extends Resource
                 $action->success();
             })
             ->authorize(
-                abilities: fn (HasElection $livewire): bool => static::can(
+                abilities: fn(HasElection $livewire): bool => static::can(
                     action: 'publish',
                     record: $livewire->getElection()
                 )
@@ -289,7 +295,7 @@ class ElectionResource extends Resource
                 $livewire->redirect(url: static::getUrl(name: 'dashboard', parameters: [$livewire->getElection()]));
             })
             ->authorize(
-                abilities: fn (HasElection $livewire): bool => static::can(
+                abilities: fn(HasElection $livewire): bool => static::can(
                     action: 'close',
                     record: $livewire->getElection()
                 )
@@ -297,7 +303,7 @@ class ElectionResource extends Resource
             ->requiresConfirmation()
             ->color(color: ElectionStatus::CLOSED->getColor())
             ->icon(icon: ElectionStatus::CLOSED->getIcon())
-            ->label(label: fn (HasElection $livewire): string => $livewire->getElection()->is_open ? 'Pre-close' : 'Close')
+            ->label(label: fn(HasElection $livewire): string => $livewire->getElection()->is_open ? 'Pre-close' : 'Close')
             ->modalIcon(icon: ElectionStatus::CLOSED->getIcon())
             ->successNotificationTitle(title: 'Closed');
     }
@@ -312,7 +318,7 @@ class ElectionResource extends Resource
                 $action->success();
             })
             ->authorize(
-                abilities: fn (HasElection $livewire): bool => static::can(
+                abilities: fn(HasElection $livewire): bool => static::can(
                     action: 'generateResult',
                     record: $livewire->getElection()
                 )

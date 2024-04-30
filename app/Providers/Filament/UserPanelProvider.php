@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\User\Http\Controllers\ElectionUserInvitationController;
 use App\Filament\User\Pages\Auth\EditProfile;
 use App\Filament\User\Pages\Auth\Register;
 use App\Filament\User\Pages\Organisation\EditOrganisationProfile;
@@ -20,6 +21,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Route;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class UserPanelProvider extends PanelProvider
@@ -58,8 +60,14 @@ class UserPanelProvider extends PanelProvider
             ->tenant(model: Organisation::class)
             ->tenantRegistration(page: RegisterOrganisation::class)
             ->tenantProfile(page: EditOrganisationProfile::class)
+            ->authenticatedRoutes(routes: function () {
+                Route::get(
+                    uri: 'election-collaborators/{invitation}',
+                    action: [ElectionUserInvitationController::class, 'accept']
+                )->name(name: 'election-collaborators.accept');
+            })
             ->colors(colors: [
-                'primary' => Color::hex(color: '#00adb5'),
+                'primary' => Color::Cyan,
             ])
             ->font(family: 'Poppins')
             ->viteTheme(theme: 'resources/css/filament/user/theme.css')

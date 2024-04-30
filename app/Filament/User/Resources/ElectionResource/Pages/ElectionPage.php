@@ -11,6 +11,7 @@ use App\Forms\Components\VotePicker;
 use App\Models\Election;
 use App\Models\Position;
 use Filament\Actions\Action;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Form;
@@ -53,7 +54,7 @@ abstract class ElectionPage extends Page implements HasElectorGroups, HasElectio
     {
     }
 
-    protected function resolveElection(int | string $key): Election
+    protected function resolveElection(int|string $key): Election
     {
         /** @var Election $nomination */
         $nomination = app(ElectionResource::getModel())
@@ -88,12 +89,12 @@ abstract class ElectionPage extends Page implements HasElectorGroups, HasElectio
 
     public function getTitle(): string|Htmlable
     {
-        return static::getNavigationLabel().' - '.$this->getRecordTitle();
+        return static::getNavigationLabel() . ' - ' . $this->getRecordTitle();
     }
 
-    public function getRecordTitle(): string | Htmlable
+    public function getRecordTitle(): string|Htmlable
     {
-        if (! ElectionResource::hasRecordTitle()) {
+        if (!ElectionResource::hasRecordTitle()) {
             return ElectionResource::getTitleCaseModelLabel();
         }
 
@@ -107,7 +108,7 @@ abstract class ElectionPage extends Page implements HasElectorGroups, HasElectio
 
     public function getSubheading(): string|Htmlable|null
     {
-        if (! $this->getElection()->isTimingConfigured()) {
+        if (!$this->getElection()->isTimingConfigured()) {
             return null;
         }
 
@@ -128,7 +129,7 @@ HTML
 
     public function getSubNavigation(): array
     {
-        return filled($this->getPendingStep()) ? [] : ElectionResource::getRecordSubNavigation($this);
+        return filled($this->getCurrentStep()) && filled($this->getPendingStep()) ? [] : ElectionResource::getRecordSubNavigation($this);
     }
 
     public function getWidgetData(): array
@@ -139,7 +140,7 @@ HTML
         ];
     }
 
-    protected function getMountedActionFormModel(): Model | string | null
+    protected function getMountedActionFormModel(): Model|string|null
     {
         return $this->getElection();
     }
@@ -148,7 +149,7 @@ HTML
     {
         static::authorizeResourceAccess();
 
-        if (! static::canAccessPage(election: $this->election)) {
+        if (!static::canAccessPage(election: $this->election)) {
             Notification::make()
                 ->title(title: 'Not allowed')
                 ->body(body: 'Complete previous steps before accessing this page')
@@ -183,7 +184,7 @@ HTML
                 }
 
                 $data['preview'] = true;
-                $data['votes'] = Arr::mapWithKeys($data['votes'], fn ($item, $key) => [$key => Arr::map($item, fn (VoteSecretData $subItem) => $subItem->key)]);
+                $data['votes'] = Arr::mapWithKeys($data['votes'], fn($item, $key) => [$key => Arr::map($item, fn(VoteSecretData $subItem) => $subItem->key)]);
 
                 $form->fill(state: $data);
 
@@ -192,22 +193,23 @@ HTML
             })
             ->color(color: 'success')
             ->form(
-                form: fn (HasElection $livewire): array => [
+                form: fn(HasElection $livewire): array => [
                     Hidden::make(name: 'preview')
                         ->default(state: false),
 
                     Group::make()
                         ->statePath(path: 'votes')
-                        ->schema(components: $livewire->getElection()->positions
-                            ->map(
-                                callback: fn (Position $position) => VotePicker::makeFor(position: $position)
-                                    ->candidateGroup(condition: $this->getElection()->preference->candidate_group)
-                                    ->disabled(condition: fn (Get $get): bool => $get(path: '../preview'))
-                                    ->photo(condition: $this->getElection()->preference->candidate_photo)
-                                    ->preview(condition: fn (Get $get): bool => $get(path: '../preview'))
-                                    ->symbol(condition: $this->getElection()->preference->candidate_symbol),
-                            )
-                            ->toArray()
+                        ->schema(
+                            components: $livewire->getElection()->positions
+                                ->map(
+                                    callback: fn(Position $position) => VotePicker::makeFor(position: $position)
+                                        ->candidateGroup(condition: $this->getElection()->preference->candidate_group)
+                                        ->disabled(condition: fn(Get $get): bool => $get(path: '../preview'))
+                                        ->photo(condition: $this->getElection()->preference->candidate_photo)
+                                        ->preview(condition: fn(Get $get): bool => $get(path: '../preview'))
+                                        ->symbol(condition: $this->getElection()->preference->candidate_symbol),
+                                )
+                                ->toArray(),
                         )
                 ]
             )
@@ -217,8 +219,18 @@ HTML
             ->modalDescription(description: $this->getSubheading())
             ->modalFooterActionsAlignment(alignment: Alignment::Center)
             ->modalHeading(heading: $this->getHeading())
-            ->modalSubmitActionLabel(label: fn (array $data): string => ($data['preview'] ?? false) ? 'Confirm' : 'Continue')
+            ->modalSubmitActionLabel(label: fn(array $data): string => ($data['preview'] ?? false) ? 'Confirm' : 'Continue')
             ->slideOver();
+    }
+
+    public function getCollaboratorsPageAction()
+    {
+        return Action::make(name: 'collaborators')
+            ->icon(icon: 'heroicon-m-users')
+            ->label(label: 'Collaborators')
+            ->url(url: Collaborators::getUrl(parameters: [$this->getElection()]))
+            ->hidden(condition: blank($this->getPendingStep()))
+            ->visible(condition: Collaborators::canAccessPage(election: $this->getElection()));
     }
 
     public static function can(string $action, Election $election): bool
@@ -228,7 +240,7 @@ HTML
 
     public static function cannot(string $action, Election $election): bool
     {
-        return ! static::can(action: $action, election: $election);
+        return !static::can(action: $action, election: $election);
     }
 
     public static function canAccessPage(Election $election): bool
@@ -239,5 +251,20 @@ HTML
     public static function canAccess(array $parameters = []): bool
     {
         return parent::canAccess($parameters) && static::canAccessPage($parameters['record']);
+    }
+
+    public function isOwner(): bool
+    {
+        return $this->getElection()->isOwner(Filament::auth()->user());
+    }
+
+    public function hasReadAccess(): bool
+    {
+        return $this->isOwner();
+    }
+
+    public function hasFullAccess(): bool
+    {
+        return $this->isOwner();
     }
 }

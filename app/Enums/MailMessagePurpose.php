@@ -7,6 +7,7 @@ use Filament\Support\Contracts\HasLabel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use UnitEnum;
 
 enum MailMessagePurpose: string implements HasLabel
 {
@@ -18,15 +19,21 @@ enum MailMessagePurpose: string implements HasLabel
 
     case VotedBallotCopy = 'voted_ballot_copy';
 
+    case ElectionCollaboratorInvitation = 'election_collaborator_invitation';
+
     public function getLabel(): ?string
     {
         return Str::headline($this->value);
     }
 
-    public static function getTabs(): array
+    /**
+     * @param array<UnitEnum>|null $cases
+     * @return array
+     */
+    public static function getTabs(?array $cases = null): array
     {
         return Arr::mapWithKeys(
-            array: self::cases(),
+            array: $cases ?? self::cases(),
             callback: fn (self $case) => [
                 $case->value => Tab::make(label: $case->getLabel())
                     ->modifyQueryUsing(callback: fn (Builder $query) => $case->getTabQuery($query)),

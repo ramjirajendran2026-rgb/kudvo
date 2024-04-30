@@ -2,20 +2,23 @@
 
 namespace App\Models;
 
+use App\Data\Election\CollaboratorPermissionsData;
 use App\Data\Election\PreferenceData;
 use App\Data\Election\ResultMetaData;
 use App\Data\Election\VoteSecretData;
 use App\Enums\CandidateSort;
+use App\Enums\ElectionCollaboratorPermission;
 use App\Enums\ElectionSetupStep;
 use App\Enums\ElectionStatus;
 use App\Enums\InvoiceStatus;
 use App\Models\Concerns\HasShortCode;
-use Exception;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -46,6 +49,7 @@ class Election extends Model
         'invoice_status',
         'stripe_invoice_id',
         'stripe_invoice_data',
+        'owner_id',
         'organisation_id',
     ];
 
@@ -62,6 +66,7 @@ class Election extends Model
         'paid_at' => 'datetime',
         'invoice_status' => InvoiceStatus::class,
         'stripe_invoice_data' => 'array',
+        'owner_id' => 'int',
         'organisation_id' => 'int',
     ];
 
@@ -224,6 +229,25 @@ class Election extends Model
         return $this->belongsTo(related: Organisation::class);
     }
 
+    public function owner(): BelongsTo
+    {
+        return $this->belongsTo(related: User::class);
+    }
+
+    public function collaborationInvitations(): HasMany
+    {
+        return $this->hasMany(related: ElectionUserInvitation::class);
+    }
+
+    public function collaborators(): BelongsToMany
+    {
+        return $this->belongsToMany(related: User::class)
+            ->as(accessor: 'collaboration')
+            ->using(class: ElectionUser::class)
+            ->withPivot(columns: ['designation', 'permissions'])
+            ->withTimestamps();
+    }
+
     public function segments(): HasMany
     {
         return $this->hasMany(related: Segment::class);
@@ -299,12 +323,33 @@ class Election extends Model
             ->whereNull(columns: 'cancelled_at');
     }
 
+    public function scopeWhereUser(Builder $query, User $user): Builder
+    {
+        return $query->where(
+            column: fn(Builder $query) => $query->where('owner_id', $user->getKey())
+                ->orWhereHas(
+                    relation: 'collaborators',
+                    callback: fn (Builder $query) => $query->whereKey($user->getKey())
+                )
+        );
+    }
+
     protected static function booted(): void
     {
         static::creating(callback: function (Election $election) {
             if (blank($election->code)) {
                 $election->code = static::generateCode();
             }
+        });
+
+        static::created(callback: function (Election $election) {
+            $election->collaborators()->attach(
+                $election->owner,
+                [
+                    'designation' => 'Admin',
+                    'permissions' => CollaboratorPermissionsData::empty(),
+                ]
+            );
         });
 
         static::deleting(callback: function (Election $election) {
@@ -369,6 +414,18 @@ class Election extends Model
     public function isCheckoutRequired(): bool
     {
         return blank($this->paid_at);
+    }
+
+    public function isOwner(User | Authenticatable $user): bool
+    {
+        return $this->owner_id === $user->getKey();
+    }
+
+    public function getCollaboratorPermissions(User $user): CollaboratorPermissionsData
+    {
+        return $this->collaborators()
+            ->wherePivot('user_id', $user->getKey())
+            ->first()?->collaboration->permissions ?? CollaboratorPermissionsData::from();
     }
 
     public function getPendingStep(): ?ElectionSetupStep

@@ -4,10 +4,13 @@ namespace App\Filament\User\Resources\ElectionResource\Pages;
 
 use App\Data\Election\PreferenceData;
 use App\Enums\CandidateSort;
+use App\Enums\ElectionCollaboratorPermission;
 use App\Enums\ElectionSetupStep;
 use App\Models\Election;
 use Closure;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\BaseFileUpload;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Field;
@@ -56,15 +59,36 @@ class Preference extends ElectionPage
         $this->form->fill($election->attributesToArray());
     }
 
+    public function hasReadAccess(): bool
+    {
+        return $this->isOwner()
+            || $this->getElection()->getCollaboratorPermissions(Filament::auth()->user())->preference !== ElectionCollaboratorPermission::NoAccess;
+    }
+
+    public function hasFullAccess(): bool
+    {
+        return $this->isOwner()
+            || $this->getElection()->getCollaboratorPermissions(Filament::auth()->user())->preference === ElectionCollaboratorPermission::FullAccess;
+    }
+
     public function getCurrentStep(): ?ElectionSetupStep
     {
         return ElectionSetupStep::Preference;
     }
 
+    protected function getHeaderActions(): array
+    {
+        return [
+            ActionGroup::make(actions: [
+                $this->getCollaboratorsPageAction(),
+            ])->dropdownPlacement(placement: 'bottom-end'),
+        ];
+    }
+
     public function form(Form $form): Form
     {
         return $form
-            ->disabled(condition: !$this->canSave())
+            ->disabled(condition: !$this->canSave() || !$this->hasFullAccess())
             ->schema(components: [
                 Group::make()
                     ->mutateDehydratedStateUsing(callback: fn (array $state): array => array_merge(
@@ -446,7 +470,7 @@ class Preference extends ElectionPage
             ->keyBindings(bindings: ['mod+s'])
             ->label(label: 'Save Preference')
             ->submit(form: 'save')
-            ->visible(condition: $this->canSave());
+            ->visible(condition: $this->canSave() && $this->hasFullAccess());
     }
 
     public static function canAccessPage(Election $election): bool
