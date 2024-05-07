@@ -40,6 +40,7 @@
         "spatie/laravel-data": "^3.11",
         "spatie/laravel-medialibrary": "^11.0.0",
         "spatie/laravel-settings": "^3.2",
+        "squirephp/currencies-en": "^3.5",
         "symfony/psr-http-message-bridge": "^7.0",
         "ysfkaya/filament-phone-input": "^2.2"
     },
