@@ -1,5 +1,6 @@
 @php
-    use function Filament\Support\prepare_inherited_attributes;$id = $getId();
+    use function Filament\Support\prepare_inherited_attributes;
+    $id = $getId();
     $isConcealed = $isConcealed();
     $isDisabled = $isDisabled();
     $isNumeric = $isNumeric();
@@ -16,11 +17,9 @@
     $isAutofocused = $isAutofocused();
 @endphp
 
-<x-dynamic-component
-    :component="$getFieldWrapperView()"
-    :field="$field"
->
-    <div x-data="{
+<x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
+    <div
+        x-data="{
     	    state: $wire.$entangle('{{ $getStatePath() }}'),
     	    length: @js($length),
     	    autoFocus: @js($isAutofocused),
@@ -114,11 +113,10 @@
                 this.$refs[previous] && this.$refs[previous].select();
                 e.preventDefault();
             },
-        }">
+        }"
+    >
         <div class="flex justify-between gap-4 md:gap-6">
-
-            @foreach(range(1, $length) as $column)
-
+            @foreach (range(1, $length) as $column)
                 <x-filament::input.wrapper
                     :disabled="$isDisabled"
                     :inline-prefix="$isPrefixInline"
@@ -142,7 +140,7 @@
                         type="{{ $isNumeric ? 'number' : 'text' }}"
                         required
                         {!! $isDisabled ? 'disabled' : 'wire:loading.attr="disabled"' !!}
-                        class="fi-input fi-otp-input block w-full border-none py-1.5 text-base text-gray-950 transition duration-75 placeholder:text-gray-400 focus:ring-0 disabled:text-gray-500 disabled:[-webkit-text-fill-color:theme(colors.gray.500)] disabled:placeholder:[-webkit-text-fill-color:theme(colors.gray.400)] dark:text-white dark:placeholder:text-gray-500 dark:disabled:text-gray-400 dark:disabled:[-webkit-text-fill-color:theme(colors.gray.400)] dark:disabled:placeholder:[-webkit-text-fill-color:theme(colors.gray.500)] sm:text-sm sm:leading-6 bg-white/0 ps-3 pe-3 text-center"
+                        class="fi-input fi-otp-input block w-full border-none bg-white/0 py-1.5 pe-3 ps-3 text-center text-base text-gray-950 transition duration-75 placeholder:text-gray-400 focus:ring-0 disabled:text-gray-500 disabled:[-webkit-text-fill-color:theme(colors.gray.500)] disabled:placeholder:[-webkit-text-fill-color:theme(colors.gray.400)] sm:text-sm sm:leading-6 dark:text-white dark:placeholder:text-gray-500 dark:disabled:text-gray-400 dark:disabled:[-webkit-text-fill-color:theme(colors.gray.400)] dark:disabled:placeholder:[-webkit-text-fill-color:theme(colors.gray.500)]"
                         x-ref="{{ $column }}"
                         x-bind:readonly="readOnly || (autoFillOnly && ! ios)"
                         x-on:keydown="handleKeydown($event, {{ $column }})"
@@ -150,27 +148,25 @@
                         x-on:paste="handlePaste($event)"
                         x-on:keydown.backspace="handleBackspace($event)"
                     />
-
                 </x-filament::input.wrapper>
             @endforeach
-
         </div>
     </div>
 </x-dynamic-component>
 
 <style>
-    input.fi-otp-input[type=number] {
+    input.fi-otp-input[type='number'] {
         -webkit-appearance: textfield;
         -moz-appearance: textfield;
         appearance: textfield;
         overflow: visible;
     }
 
-    input.fi-otp-input[type=number]::-webkit-inner-spin-button,
-    input.fi-otp-input[type=number]::-webkit-outer-spin-button {
+    input.fi-otp-input[type='number']::-webkit-inner-spin-button,
+    input.fi-otp-input[type='number']::-webkit-outer-spin-button {
         -webkit-appearance: none;
         -moz-appearance: none;
         appearance: none;
-        margin: 0
+        margin: 0;
     }
 </style>

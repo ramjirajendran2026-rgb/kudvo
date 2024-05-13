@@ -7,14 +7,14 @@
 @endphp
 
 @capture($labelSuffix)
-<x-filament::badge
-    x-data="{}"
-    size="sm"
-    color="warning"
-    :x-tooltip="filled($addOnTooltip) ? '{ content: ' . \Illuminate\Support\Js::from($addOnTooltip) . ', theme: $store.theme }' : null"
->
-    {{ __('app.add_on') }}
-</x-filament::badge>
+    <x-filament::badge
+        x-data="{}"
+        size="sm"
+        color="warning"
+        :x-tooltip="filled($addOnTooltip) ? '{ content: ' . \Illuminate\Support\Js::from($addOnTooltip) . ', theme: $store.theme }' : null"
+    >
+        {{ __('app.add_on') }}
+    </x-filament::badge>
 @endcapture
 
 <x-dynamic-component
@@ -24,13 +24,13 @@
     :inline-label-vertical-alignment="\Filament\Support\Enums\VerticalAlignment::Center"
 >
     @capture($content)
-    <button
-        x-data="{
+        <button
+            x-data="{
                 state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')") }},
             }"
-        x-bind:aria-checked="state?.toString()"
-        x-on:click="state = ! state"
-        x-bind:class="
+            x-bind:aria-checked="state?.toString()"
+            x-on:click="state = ! state"
+            x-bind:class="
                 state
                     ? '{{
                         \Illuminate\Support\Arr::toCssClasses([
@@ -51,7 +51,7 @@
                         ])
                     }}'
             "
-        x-bind:style="
+            x-bind:style="
                 state
                     ? '{{
                         \Filament\Support\get_color_css_variables(
@@ -68,23 +68,26 @@
                         )
                     }}'
             "
-        {{
-            $attributes
-                ->merge([
-                    'aria-checked' => 'false',
-                    'autofocus' => $isAutofocused(),
-                    'disabled' => $isDisabled(),
-                    'id' => $getId(),
-                    'role' => 'switch',
-                    'type' => 'button',
-                    'wire:loading.attr' => 'disabled',
-                    'wire:target' => $statePath,
-                ], escape: false)
-                ->merge($getExtraAttributes(), escape: false)
-                ->merge($getExtraAlpineAttributes(), escape: false)
-                ->class(['fi-fo-toggle relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent outline-none transition-colors duration-200 ease-in-out disabled:pointer-events-none disabled:opacity-70'])
-        }}
-    >
+            {{
+                $attributes
+                    ->merge(
+                        [
+                            'aria-checked' => 'false',
+                            'autofocus' => $isAutofocused(),
+                            'disabled' => $isDisabled(),
+                            'id' => $getId(),
+                            'role' => 'switch',
+                            'type' => 'button',
+                            'wire:loading.attr' => 'disabled',
+                            'wire:target' => $statePath,
+                        ],
+                        escape: false,
+                    )
+                    ->merge($getExtraAttributes(), escape: false)
+                    ->merge($getExtraAlpineAttributes(), escape: false)
+                    ->class(['fi-fo-toggle relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent outline-none transition-colors duration-200 ease-in-out disabled:pointer-events-none disabled:opacity-70'])
+            }}
+        >
             <span
                 class="pointer-events-none relative inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
                 x-bind:class="{
@@ -137,7 +140,7 @@
                     @endif
                 </span>
             </span>
-    </button>
+        </button>
     @endcapture
 
     @if ($isInline())

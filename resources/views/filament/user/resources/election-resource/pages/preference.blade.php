@@ -1,42 +1,38 @@
 <x-filament-panels::page>
-    @if(filled($pendingStep = $this->getPendingStep()))
-        <x-filament.election.setup-steps
-            :pending-step="$pendingStep"
-            :current-step="$this->getCurrentStep()"
-        />
+    @if (filled($pendingStep = $this->getPendingStep()))
+        <x-filament.election.setup-steps :pending-step="$pendingStep" :current-step="$this->getCurrentStep()" />
     @endif
 
-    @if($this->hasReadAccess())
-        @if($this->shouldShowPricingTable())
+    @if ($this->hasReadAccess())
+        @if ($this->shouldShowPricingTable())
             <div class="grid grid-cols-3 gap-6">
-                @foreach($this->getPlans() as $plan)
-                    <div class="border rounded-xl p-6">
+                @foreach ($this->getPlans() as $plan)
+                    <div class="rounded-xl border p-6">
                         <h3 class="text-lg font-semibold">
                             {{ $plan->name }}
                         </h3>
-                        <p class="text-sm mt-6">
+                        <p class="mt-6 text-sm">
                             {{ $plan->description }}
                         </p>
                         <p class="mt-6">
                             <span class="text-4xl font-bold">{{ money($plan->elector_fee, $plan->currency) }}</span>
-                            <span class="text-sm"> /elector</span>
+                            <span class="text-sm">/elector</span>
                         </p>
                         <div class="mt-6 flex justify-center">
                             {{ ($this->choosePlanAction)(['plan_id' => $plan->id]) }}
                         </div>
                         <ul role="list" class="mt-6 space-y-2">
-                            @foreach($plan->selfFeatures() as $feature)
+                            @foreach ($plan->selfFeatures() as $feature)
                                 <li class="flex items-start space-x-2">
-                                    <x-heroicon-o-check-circle class="w-5 h-5 text-primary-500"/>
+                                    <x-heroicon-o-check-circle class="text-primary-500 h-5 w-5" />
                                     <span class="flex-1">{{ $feature->feature->getLabel() }}</span>
                                 </li>
-
                             @endforeach
                         </ul>
                         <ul role="list" class="mt-6">
-                            @foreach($plan->addOnFeatures() as $feature)
+                            @foreach ($plan->addOnFeatures() as $feature)
                                 <li class="flex items-center space-x-2">
-                                    <x-heroicon-o-check-circle class="w-5 h-5 text-primary-500"/>
+                                    <x-heroicon-o-check-circle class="text-primary-500 h-5 w-5" />
                                     <span>{{ $feature->feature->getLabel() }}</span>
                                 </li>
                             @endforeach
@@ -45,14 +41,10 @@
                 @endforeach
             </div>
         @else
-            <x-filament-panels::form
-                wire:submit="save"
-            >
+            <x-filament-panels::form wire:submit="save">
                 {{ $this->form }}
 
-                <x-filament-panels::form.actions
-                    :actions="$this->getCachedFormActions()"
-                />
+                <x-filament-panels::form.actions :actions="$this->getCachedFormActions()" />
             </x-filament-panels::form>
         @endif
     @else

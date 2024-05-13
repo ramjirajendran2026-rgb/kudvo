@@ -23,11 +23,11 @@
 }
 
 .candidate-repeatable-entry {
-    &>ul>.grid {
-        @apply divide-y gap-0;
+    & > ul > .grid {
+        @apply gap-0 divide-y;
     }
 
     & .fi-in-repeatable-item {
-        @apply rounded-none shadow-none ring-0 border-gray-200 dark:border-white/10 bg-inherit dark:bg-inherit;
+        @apply rounded-none border-gray-200 bg-inherit shadow-none ring-0 dark:border-white/10 dark:bg-inherit;
     }
 }

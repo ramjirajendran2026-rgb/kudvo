@@ -5,20 +5,22 @@
     background-color: rgba(0, 0, 0, 0.5);
 }
 
-.candidate-photo, .candidate-symbol, .org-logo {
+.candidate-photo,
+.candidate-symbol,
+.org-logo {
     .filepond--file {
         @apply block;
 
-        [data-align*=bottom] {
+        [data-align*='bottom'] {
             @apply bottom-2;
         }
 
         .filepond--file-info {
-            @apply !transform-none mr-0;
+            @apply mr-0 !transform-none;
         }
 
         .filepond--file-status {
-            @apply !transform-none mr-0 items-start mt-1;
+            @apply mr-0 mt-1 !transform-none items-start;
 
             .filepond--file-status-sub {
                 @apply text-wrap text-start;

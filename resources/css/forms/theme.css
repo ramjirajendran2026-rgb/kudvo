@@ -8,7 +8,7 @@
             @apply text-xl;
         }
 
-        @apply sticky z-10 top-0 text-center bg-inherit rounded-t-xl border-b border-gray-200 dark:border-white/10;
+        @apply sticky top-0 z-10 rounded-t-xl border-b border-gray-200 bg-inherit text-center dark:border-white/10;
     }
 
     &.fi-invalid {
@@ -28,6 +28,6 @@
     }
 
     & .fi-checkbox-input {
-        @apply w-4 h-4 md:w-8 md:h-8 transform rotate-45 checked:bg-none ring-info-600 dark:ring-info-500 hover:ring-primary-600 dark:hover:ring-primary-500 disabled:checked:text-primary-400 dark:disabled:checked:bg-primary-600;
+        @apply ring-info-600 dark:ring-info-500 hover:ring-primary-600 dark:hover:ring-primary-500 disabled:checked:text-primary-400 dark:disabled:checked:bg-primary-600 h-4 w-4 rotate-45 transform checked:bg-none md:h-8 md:w-8;
     }
 }

@@ -48,10 +48,10 @@
     x-init="init()"
     {{
         $attributes->class([
-            'flex flex-col items-center justify-center w-full'
+            'flex w-full flex-col items-center justify-center',
         ])
     }}
 >
     <span x-text="label" class="text-gray-500 dark:text-gray-400"></span>
-    <span x-html="remaining" class="text-xl sm:text-3xl font-semibold font-mono"></span>
+    <span x-html="remaining" class="font-mono text-xl font-semibold sm:text-3xl"></span>
 </div>

@@ -1,5 +1,5 @@
 <x-filament-panels::page>
-    @if($this->hasReadAccess())
+    @if ($this->hasReadAccess())
         <div class="flex flex-col gap-y-6">
             {{ $this->table }}
         </div>

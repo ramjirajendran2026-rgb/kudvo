@@ -1,28 +1,21 @@
 <x-filament-panels::page>
-    @foreach($this->nominees as $nominee)
-        <x-filament::section
-            :compact="true"
-            :heading="$nominee->position->name"
-        >
+    @foreach ($this->nominees as $nominee)
+        <x-filament::section :compact="true" :heading="$nominee->position->name">
             <ol
                 @class([
                     'grid divide-y divide-gray-200 dark:divide-white/5',
-                    'rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10'
+                    'rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10',
                 ])
             >
-                @foreach($nominee->nominators as $nominator)
-                    <li
-                        class="relative flex"
-                    >
-                        <button
-                            class="flex h-full w-full items-center gap-x-4 px-6 py-4"
-                        >
+                @foreach ($nominee->nominators as $nominator)
+                    <li class="relative flex">
+                        <button class="flex h-full w-full items-center gap-x-4 px-6 py-4">
                             <div
                                 @class([
                                     'flex h-10 w-10 shrink-0 items-center justify-center rounded-full',
                                     'bg-primary-600 dark:bg-primary-500' => $nominator->isAccepted(),
                                     'bg-danger-600 dark:bg-danger-500' => $nominator->isDeclined(),
-                                    'border-2 border-warning-600 dark:border-warning-500' => $nominator->isPending(),
+                                    'border-warning-600 dark:border-warning-500 border-2' => $nominator->isPending(),
                                 ])
                             >
                                 <x-filament::icon

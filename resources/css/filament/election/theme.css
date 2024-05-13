@@ -15,10 +15,10 @@
 }
 
 .fi-topbar {
-    @apply mx-auto w-full lg:px-8 max-w-5xl relative;
+    @apply relative mx-auto w-full max-w-5xl lg:px-8;
 
     nav {
-        @apply lg:rounded-b-xl h-auto min-h-16 py-4 md:px-4;
+        @apply h-auto min-h-16 py-4 md:px-4 lg:rounded-b-xl;
 
         > div {
             @apply flex;
@@ -27,28 +27,29 @@
 }
 
 .fi-logo {
-    @apply flex items-center justify-center gap-x-4 h-auto;
+    @apply flex h-auto items-center justify-center gap-x-4;
 
     & img {
-        @apply h-8 md:h-12 w-auto;
+        @apply h-8 w-auto md:h-12;
     }
 }
 
 .fi-header {
     > div:first-child:last-child {
-        @apply sm:flex-grow text-center;
+        @apply text-center sm:flex-grow;
     }
 }
 
-.fi-header-heading, .fi-header-subheading {
+.fi-header-heading,
+.fi-header-subheading {
     @apply max-w-full;
 }
 
 .fi-footer {
-    @apply mx-auto w-full lg:px-8 max-w-5xl;
+    @apply mx-auto w-full max-w-5xl lg:px-8;
 
     > div {
-        @apply flex items-center justify-center gap-x-4 h-auto min-h-16 px-4 py-4
+        @apply flex h-auto min-h-16 items-center justify-center gap-x-4 px-4 py-4
         text-sm font-medium leading-6 text-gray-950 dark:text-white;
     }
 }

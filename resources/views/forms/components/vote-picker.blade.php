@@ -1,5 +1,5 @@
 @php
-    $gridDirection = $getGridDirection() ?? 'column';
+    $gridDirection = $getGridDirection() ?? "column";
     $isBulkToggleable = $isBulkToggleable();
     $isDisabled = $isDisabled();
     $isSearchable = $isSearchable();
@@ -30,22 +30,27 @@
         visibleCheckboxListOptions: [],
 
         checkIfAllCheckboxesAreChecked: function (event) {
-            this.checkedOptionsCount = this.checkboxListOptions.filter((checkboxLabel) =>
+            this.checkedOptionsCount = this.checkboxListOptions.filter(
+                (checkboxLabel) =>
                     checkboxLabel.querySelector('input[type=checkbox]:checked'),
-                ).length
+            ).length
 
             if (this.checkedOptionsCount > this.maxItems && event !== undefined) {
-                event.target.checked = false;
+                event.target.checked = false
 
-                event.target.dispatchEvent(new Event('change'));
+                event.target.dispatchEvent(new Event('change'))
 
                 new FilamentNotification()
                     .title('Maximum Selection Reached')
-                    .body('You can only select a maximum of ' + this.maxItems + ' candidates for this position. Please deselect a candidate before selecting another one.')
+                    .body(
+                        'You can only select a maximum of ' +
+                            this.maxItems +
+                            ' candidates for this position. Please deselect a candidate before selecting another one.',
+                    )
                     .danger()
-                    .send();
+                    .send()
 
-                return;
+                return
             }
 
             this.areAllCheckboxesChecked =
@@ -71,27 +76,28 @@
         updateVisibleCheckboxListOptions: function () {
             this.visibleCheckboxListOptions = this.checkboxListOptions
                 .filter((checkboxListItem) => {
-                    return this.group === 'all' ||
+                    return (
+                        this.group === 'all' ||
                         this.group === checkboxListItem.dataset.candidateGroup ||
-                        (this.group === 'independent' && ! checkboxListItem.dataset.candidateGroup)
+                        (this.group === 'independent' &&
+                            ! checkboxListItem.dataset.candidateGroup)
+                    )
                 })
-                .filter(
-                    (checkboxListItem) => {
-                        if (
-                            checkboxListItem
-                                .querySelector('.fi-fo-checkbox-list-option-label')
-                                ?.innerText.toLowerCase()
-                                .includes(this.search.toLowerCase())
-                        ) {
-                            return true
-                        }
-
-                        return checkboxListItem
-                            .querySelector('.fi-fo-checkbox-list-option-description')
+                .filter((checkboxListItem) => {
+                    if (
+                        checkboxListItem
+                            .querySelector('.fi-fo-checkbox-list-option-label')
                             ?.innerText.toLowerCase()
                             .includes(this.search.toLowerCase())
-                    },
-                )
+                    ) {
+                        return true
+                    }
+
+                    return checkboxListItem
+                        .querySelector('.fi-fo-checkbox-list-option-description')
+                        ?.innerText.toLowerCase()
+                        .includes(this.search.toLowerCase())
+                })
         },
 
         candidateGroupSelected: function (group) {
@@ -109,8 +115,8 @@
             this.updateVisibleCheckboxListOptions()
             this.checkIfAllCheckboxesAreChecked()
 
-            $dispatch('candidate-group-selected', {group: group})
-        }
+            $dispatch('candidate-group-selected', { group: group })
+        },
     }"
     x-init="
         updateVisibleCheckboxListOptions()
@@ -148,23 +154,26 @@
         :heading="$getHeading()"
         :description="$getSectionDescription()"
         @class([
-            'fi-vote-picker',
-            'fi-invalid [&_.fi-fo-field-wrp-error-message]:hidden' => $errors->has($statePath)
+            "fi-vote-picker",
+            "fi-invalid [&_.fi-fo-field-wrp-error-message]:hidden" => $errors->has(
+                $statePath,
+            ),
         ])
     >
         <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
             <div>
                 @if ($hasCandidateGroup())
-                    <div class="flex flex-wrap justify-center gap-4 mb-4"
-                         @candidate-group-selected.window="candidateGroupSelected($event.detail.group)"
-                        >
+                    <div
+                        class="mb-4 flex flex-wrap justify-center gap-4"
+                        @candidate-group-selected.window="candidateGroupSelected($event.detail.group)"
+                    >
                         @foreach ($getCandidateGroups() as $key => $group)
                             <button
                                 type="button"
                                 @click="selectCandidateGroup('{{ $key }}')"
                                 @class([
-                                    'fi-badge flex items-center justify-center gap-x-1 rounded-md text-xs font-medium ring-1 ring-inset',
-                                    'px-2 min-w-[theme(spacing.6)] py-1',
+                                    "fi-badge flex items-center justify-center gap-x-1 rounded-md text-xs font-medium ring-1 ring-inset",
+                                    "min-w-[theme(spacing.6)] px-2 py-1",
                                 ])
                                 :class="{
                                 'bg-success-50 text-success-600 ring-success-600/10 dark:bg-success-400/10 dark:text-success-400 dark:ring-success-400/30': group === '{{ $key }}',
@@ -190,12 +199,12 @@
                                 :placeholder="$getSearchPrompt()"
                                 type="search"
                                 :attributes="
-                            \Filament\Support\prepare_inherited_attributes(
-                                new \Illuminate\View\ComponentAttributeBag([
-                                    'x-model.debounce.' . $getSearchDebounce() => 'search',
-                                ])
-                            )
-                        "
+                                    \Filament\Support\prepare_inherited_attributes(
+                                        new \Illuminate\View\ComponentAttributeBag([
+                                            'x-model.debounce.' . $getSearchDebounce() => 'search',
+                                        ])
+                                    )
+                                "
                             />
                         </x-filament::input.wrapper>
                     @endif
@@ -206,21 +215,25 @@
                             class="mb-2"
                             wire:key="{{ $this->getId() }}.{{ $getStatePath() }}.{{ $field::class }}.actions"
                         >
-                    <span
-                        x-show="! areAllCheckboxesChecked && checkedOptionsCount < maxItems && visibleCheckboxListOptions.length <= maxItems - checkedOptionsCount"
-                        x-on:click="toggleAllCheckboxes()"
-                        wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.actions.select_all"
-                    >
-                        {{ $getAction('selectAll') }}
-                    </span>
+                            <span
+                                x-show="
+                                    ! areAllCheckboxesChecked &&
+                                        checkedOptionsCount < maxItems &&
+                                        visibleCheckboxListOptions.length <= maxItems - checkedOptionsCount
+                                "
+                                x-on:click="toggleAllCheckboxes()"
+                                wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.actions.select_all"
+                            >
+                                {{ $getAction("selectAll") }}
+                            </span>
 
                             <span
                                 x-show="areAllCheckboxesChecked && visibleCheckboxListOptions.length > 0"
                                 x-on:click="toggleAllCheckboxes()"
                                 wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.actions.deselect_all"
                             >
-                        {{ $getAction('deselectAll') }}
-                    </span>
+                                {{ $getAction("deselectAll") }}
+                            </span>
                         </div>
                     @endif
                 @endif
@@ -235,78 +248,86 @@
                     :direction="$gridDirection"
                     :x-show="! $isPreview && $isSearchable ? 'visibleCheckboxListOptions.length' : null"
                     :attributes="
-                \Filament\Support\prepare_inherited_attributes($attributes)
-                    ->merge($getExtraAttributes(), escape: false)
-                    ->class([
-                        'fi-fo-checkbox-list gap-0',
-                        '-my-4' => $gridDirection === 'column',
-                    ])
-            "
+                        \Filament\Support\prepare_inherited_attributes($attributes)
+                            ->merge($getExtraAttributes(), escape: false)
+                            ->class([
+                                'fi-fo-checkbox-list gap-0',
+                                '-my-4' => $gridDirection === 'column',
+                            ])
+                    "
                 >
                     @foreach ($options as $value => $label)
                         <div
                             wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.options.{{ $value }}"
-                            @if(! $isPreview)
+                            @if (! $isPreview)
                                 x-show="
                                     (group === 'all' ||
-                                    group === '{{ $getCandidateGroupId($value) }}' ||
-                                    (group === 'independent' && ! '{{ $getCandidateGroupId($value) }}')) &&
-                                    (
-                                        @js(!$isSearchable) ||
-                                        $el.querySelector('.fi-fo-checkbox-list-option-label')
-                                            ?.innerText.toLowerCase()
-                                            .includes(search.toLowerCase()) ||
-                                        $el.querySelector('.fi-fo-checkbox-list-option-description')
-                                            ?.innerText.toLowerCase()
-                                            .includes(search.toLowerCase())
-                                    )
+                                        group === '{{ $getCandidateGroupId($value) }}' ||
+                                        (group === 'independent' && ! '{{ $getCandidateGroupId($value) }}')) &&
+                                        (@js(! $isSearchable) ||
+                                            $el
+                                                .querySelector('.fi-fo-checkbox-list-option-label')
+                                                ?.innerText.toLowerCase()
+                                                .includes(search.toLowerCase()) ||
+                                            $el
+                                                .querySelector('.fi-fo-checkbox-list-option-description')
+                                                ?.innerText.toLowerCase()
+                                                .includes(search.toLowerCase()))
                                 "
                             @endif
                             @class([
-                                'break-inside-avoid py-2 border-gray-200 dark:border-white/10' => $gridDirection === 'column',
+                                "break-inside-avoid border-gray-200 py-2 dark:border-white/10" =>
+                                    $gridDirection === "column",
                             ])
                         >
                             <label
                                 data-candidate-group="{{ $getCandidateGroupId($value) }}"
                                 @class([
-                                    'fi-fo-checkbox-list-option-label flex items-center gap-x-3 py-2 rounded-xl',
-                                    'cursor-pointer md:hover:bg-gray-100 md:hover:px-4 dark:md:hover:bg-white/5' => ! $isDisabled,
+                                    "fi-fo-checkbox-list-option-label flex items-center gap-x-3 rounded-xl py-2",
+                                    "cursor-pointer md:hover:bg-gray-100 md:hover:px-4 dark:md:hover:bg-white/5" => ! $isDisabled,
                                 ])
                             >
                                 <div class="relative">
                                     <x-filament::input.checkbox
                                         :valid="! $errors->has($statePath)"
                                         :attributes="
-                                \Filament\Support\prepare_inherited_attributes($getExtraInputAttributeBag())
-                                    ->merge([
-                                        'disabled' => $isDisabled || $isOptionDisabled($value, $label),
-                                        'value' => $value,
-                                        'wire:loading.attr' => 'disabled',
-                                        $applyStateBindingModifiers('wire:model') => $statePath,
-                                        'x-on:change' => 'checkIfAllCheckboxesAreChecked($event)',
-                                    ], escape: false)
-                                    ->class(['mt-1 w-8 h-8 peer'])
-                            "
+                                            \Filament\Support\prepare_inherited_attributes($getExtraInputAttributeBag())
+                                                ->merge([
+                                                    'disabled' => $isDisabled || $isOptionDisabled($value, $label),
+                                                    'value' => $value,
+                                                    'wire:loading.attr' => 'disabled',
+                                                    $applyStateBindingModifiers('wire:model') => $statePath,
+                                                    'x-on:change' => 'checkIfAllCheckboxesAreChecked($event)',
+                                                ], escape: false)
+                                                ->class(['mt-1 w-8 h-8 peer'])
+                                        "
                                     />
-                                    <svg class="w-4 h-4 md:w-8 md:h-8 absolute top-2 md:top-1 inset-0 hidden peer-checked:block" viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'>
-                                        <path d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/>
+                                    <svg
+                                        class="absolute inset-0 top-2 hidden h-4 w-4 peer-checked:block md:top-1 md:h-8 md:w-8"
+                                        viewBox="0 0 16 16"
+                                        fill="white"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                        <path
+                                            d="M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z"
+                                        />
                                     </svg>
                                 </div>
 
-                                @if($hasPhoto())
+                                @if ($hasPhoto())
                                     <img
                                         src="{{ $getPhotoUrl($value) }}"
                                         alt="{{ $label }}'s photo"
-                                        class="max-w-none object-cover object-center rounded-full w-10 h-10 md:w-20 md:h-20"
+                                        class="h-10 w-10 max-w-none rounded-full object-cover object-center md:h-20 md:w-20"
                                     />
                                 @endif
 
                                 <div class="grid flex-1 text-sm leading-6">
-                            <span
-                                class="fi-fo-checkbox-list-option-label font-medium text-lg text-gray-950 dark:text-white"
-                            >
-                                {{ $label }}
-                            </span>
+                                    <span
+                                        class="fi-fo-checkbox-list-option-label text-lg font-medium text-gray-950 dark:text-white"
+                                    >
+                                        {{ $label }}
+                                    </span>
 
                                     @if ($hasDescription($value))
                                         <p
@@ -317,11 +338,11 @@
                                     @endif
                                 </div>
 
-                                @if($hasSymbol())
+                                @if ($hasSymbol())
                                     <img
                                         src="{{ $getSymbolUrl($value) }}"
                                         alt="{{ $label }}'s symbol"
-                                        class="max-w-none object-cover object-center rounded-xl w-10 h-10 md:w-20 md:h-20"
+                                        class="h-10 w-10 max-w-none rounded-xl object-cover object-center md:h-20 md:w-20"
                                     />
                                 @endif
                             </label>
@@ -329,24 +350,24 @@
                     @endforeach
                 </x-filament::grid>
 
-                @if(blank($options))
+                @if (blank($options))
                     <div
                         wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.empty"
-                        class="text-center text-base font-semibold leading-6 text-gray-950 dark:text-white px-6 py-12"
+                        class="px-6 py-12 text-center text-base font-semibold leading-6 text-gray-950 dark:text-white"
                     >
                         {{ $getPlaceholder() }}
                     </div>
                 @endif
 
-                    @if(! $isPreview)
-                        <div
-                            x-cloak
-                            x-show="! visibleCheckboxListOptions.length"
-                            class="text-center text-base font-semibold leading-6 text-gray-950 dark:text-white px-6 py-12"
-                        >
-                            {{ $getNoSearchResultsMessage() }}
-                        </div>
-                    @endif
+                @if (! $isPreview)
+                    <div
+                        x-cloak
+                        x-show="! visibleCheckboxListOptions.length"
+                        class="px-6 py-12 text-center text-base font-semibold leading-6 text-gray-950 dark:text-white"
+                    >
+                        {{ $getNoSearchResultsMessage() }}
+                    </div>
+                @endif
             </div>
         </x-dynamic-component>
     </x-filament::section>
