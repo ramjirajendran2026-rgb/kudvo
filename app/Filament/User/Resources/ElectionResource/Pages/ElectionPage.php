@@ -167,6 +167,14 @@ HTML
             ->recordTitle($this->getRecordTitle());
     }
 
+    protected function getHeaderActions(): array
+    {
+        return [
+            ElectionResource::getEditAction()
+                ->iconButton(),
+        ];
+    }
+
     protected function getPreviewBallotAction()
     {
         return Action::make(name: 'previewBallot')

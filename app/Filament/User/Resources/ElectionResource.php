@@ -128,6 +128,7 @@ class ElectionResource extends Resource
         return [
             'index' => Pages\ManageElections::route(path: '/'),
             'dashboard' => Pages\Dashboard::route(path: '/{record}'),
+            'plan' => Pages\Plan::route(path: '/{record}/plan'),
             'preference' => Pages\Preference::route(path: '/{record}/preference'),
             'electors' => Pages\Electors::route(path: '/{record}/electors'),
             'ballot.setup' => Pages\BallotSetup::route(path: '/{record}/ballot/setup'),

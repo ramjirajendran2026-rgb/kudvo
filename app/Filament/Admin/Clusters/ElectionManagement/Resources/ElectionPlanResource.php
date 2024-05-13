@@ -63,6 +63,8 @@ class ElectionPlanResource extends Resource
                         ->numeric()
                         ->step(interval: 0)
                         ->required(),
+
+                    Forms\Components\Textarea::make(name: 'description'),
                 ]),
 
             Forms\Components\Wizard\Step::make(label: 'Features')
@@ -87,7 +89,7 @@ class ElectionPlanResource extends Resource
                                     ->required()
                                     ->searchable(),
 
-                                Forms\Components\Toggle::make(name: 'add_on')
+                                Forms\Components\Toggle::make(name: 'is_add_on')
                                     ->columnSpanFull()
                                     ->grow(condition: false)
                                     ->live(),
@@ -98,7 +100,7 @@ class ElectionPlanResource extends Resource
                                 ->minValue(value: 0)
                                 ->numeric()
                                 ->step(interval: 0)
-                                ->visible(condition: fn(Forms\Get $get): bool => $get('add_on') ?? false)
+                                ->visible(condition: fn(Forms\Get $get): bool => $get('is_add_on') ?? false)
                                 ->required(),
 
                             Forms\Components\TextInput::make(name: 'elector_fee')
@@ -106,7 +108,7 @@ class ElectionPlanResource extends Resource
                                 ->minValue(value: 0)
                                 ->numeric()
                                 ->step(interval: 0)
-                                ->visible(condition: fn(Forms\Get $get): bool => $get('add_on') ?? false)
+                                ->visible(condition: fn(Forms\Get $get): bool => $get('is_add_on') ?? false)
                                 ->required(),
                         ]),
                 ]),
@@ -122,6 +124,17 @@ class ElectionPlanResource extends Resource
                 Tables\Columns\TextColumn::make(name: 'currency')
                     ->badge()
                     ->formatStateUsing(callback: fn(string $state): string => Str::upper(value: $state)),
+            ])
+            ->actions(actions: [
+                Tables\Actions\ReplicateAction::make()
+                    ->form(form: [
+                        Forms\Components\TextInput::make(name: 'name')
+                            ->maxLength(length: 50)
+                            ->required(),
+
+                        CurrencyPicker::make()
+                            ->required(),
+                    ]),
             ])
             ->filters(filters: [
                 Tables\Filters\SelectFilter::make(name: 'currency')

@@ -7,15 +7,54 @@
     @endif
 
     @if($this->hasReadAccess())
-        <x-filament-panels::form
-            wire:submit="save"
-        >
-            {{ $this->form }}
+        @if($this->shouldShowPricingTable())
+            <div class="grid grid-cols-3 gap-6">
+                @foreach($this->getPlans() as $plan)
+                    <div class="border rounded-xl p-6">
+                        <h3 class="text-lg font-semibold">
+                            {{ $plan->name }}
+                        </h3>
+                        <p class="text-sm mt-6">
+                            {{ $plan->description }}
+                        </p>
+                        <p class="mt-6">
+                            <span class="text-4xl font-bold">{{ money($plan->elector_fee, $plan->currency) }}</span>
+                            <span class="text-sm"> /elector</span>
+                        </p>
+                        <div class="mt-6 flex justify-center">
+                            {{ ($this->choosePlanAction)(['plan_id' => $plan->id]) }}
+                        </div>
+                        <ul role="list" class="mt-6 space-y-2">
+                            @foreach($plan->selfFeatures() as $feature)
+                                <li class="flex items-start space-x-2">
+                                    <x-heroicon-o-check-circle class="w-5 h-5 text-primary-500"/>
+                                    <span class="flex-1">{{ $feature->feature->getLabel() }}</span>
+                                </li>
 
-            <x-filament-panels::form.actions
-                :actions="$this->getCachedFormActions()"
-            />
-        </x-filament-panels::form>
+                            @endforeach
+                        </ul>
+                        <ul role="list" class="mt-6">
+                            @foreach($plan->addOnFeatures() as $feature)
+                                <li class="flex items-center space-x-2">
+                                    <x-heroicon-o-check-circle class="w-5 h-5 text-primary-500"/>
+                                    <span>{{ $feature->feature->getLabel() }}</span>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endforeach
+            </div>
+        @else
+            <x-filament-panels::form
+                wire:submit="save"
+            >
+                {{ $this->form }}
+
+                <x-filament-panels::form.actions
+                    :actions="$this->getCachedFormActions()"
+                />
+            </x-filament-panels::form>
+        @endif
     @else
         <x-filament::section>
             <x-filament.state

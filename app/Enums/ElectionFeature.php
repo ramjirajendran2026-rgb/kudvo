@@ -3,7 +3,6 @@
 namespace App\Enums;
 
 use Filament\Support\Contracts\HasLabel;
-use Illuminate\Support\Str;
 
 enum ElectionFeature: string implements HasLabel
 {
@@ -67,6 +66,39 @@ enum ElectionFeature: string implements HasLabel
             self::CandidateTeam => 'Candidate team',
             self::SegmentedVoting => 'Segmented voting',
             self::BoothVoting => 'Booth voting',
+        };
+    }
+
+    public function getPreferenceKey(): ?string
+    {
+        return match ($this) {
+            self::BallotAccessCommonLink => 'ballot_link_common',
+            self::BallotAccessUniqueLink => 'ballot_link_unique',
+            self::BallotLinkEmail => 'ballot_link_mail',
+            self::BallotLinkSms => 'ballot_link_sms',
+            self::BallotLinkWhatsapp => 'ballot_link_whatsapp',
+            self::VerificationCodeEmail => 'mfa_mail',
+            self::VerificationCodeSms => 'mfa_sms',
+            self::VerificationCodeWhatsapp => 'mfa_whatsapp',
+            self::BallotAcknowledgementEmail => 'voted_confirmation_mail',
+            self::BallotAcknowledgementSms => 'voted_confirmation_sms',
+            self::BallotAcknowledgementWhatsapp => 'voted_confirmation_whatsapp',
+            self::BallotCopyDownload => 'voted_ballot_download',
+            self::BallotCopyEmail => 'voted_ballot_mail',
+            self::BallotCopyWhatsapp => 'voted_ballot_whatsapp',
+            self::IpRestriction => 'ip_restriction_threshold',
+            self::DeviceRestriction => 'prevent_duplicate_device',
+            self::EditableVotes => 'voted_ballot_update',
+            self::TrackableVotes => 'dnt_votes',
+            self::ElectorEmailUnique => 'elector_duplicate_email',
+            self::ElectorPhoneUnique => 'elector_duplicate_phone',
+            self::ElectorCorrections => 'elector_update_after_publish',
+            self::CandidatePhoto => 'candidate_photo',
+            self::CandidateSymbol => 'candidate_symbol',
+            self::CandidateTeam => 'candidate_group',
+            self::SegmentedVoting => 'segmented_ballot',
+            self::BoothVoting => 'booth_voting',
+            default => null,
         };
     }
 }

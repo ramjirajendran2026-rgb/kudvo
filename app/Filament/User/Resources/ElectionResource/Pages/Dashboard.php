@@ -226,7 +226,7 @@ class Dashboard extends ElectionPage
             ->action(action: function (self $livewire) {
                 $election = $livewire->getElection();
 
-                return $election->checkout(price: ElectionPrice::firstWhere('currency', 'USD'), user: auth()->user());
+                return $election->checkout(user: auth()->user());
             })
             ->visible(
                 condition: fn (self $livewire) => (

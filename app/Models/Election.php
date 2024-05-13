@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Data\Election\CollaboratorPermissionsData;
+use App\Data\Election\PlanFeatureData;
 use App\Data\Election\PreferenceData;
 use App\Data\Election\ResultMetaData;
 use App\Data\Election\VoteSecretData;
@@ -50,6 +51,7 @@ class Election extends Model
         'stripe_invoice_id',
         'stripe_invoice_data',
         'owner_id',
+        'plan_id',
         'organisation_id',
     ];
 
@@ -67,6 +69,7 @@ class Election extends Model
         'invoice_status' => InvoiceStatus::class,
         'stripe_invoice_data' => 'array',
         'owner_id' => 'int',
+        'plan_id' => 'int',
         'organisation_id' => 'int',
     ];
 
@@ -232,6 +235,11 @@ class Election extends Model
     public function owner(): BelongsTo
     {
         return $this->belongsTo(related: User::class);
+    }
+
+    public function plan(): BelongsTo
+    {
+        return $this->belongsTo(related: ElectionPlan::class);
     }
 
     public function collaborationInvitations(): HasMany
@@ -746,37 +754,73 @@ class Election extends Model
         return $fee;
     }
 
-    public function checkout(ElectionPrice $price, User $user): Checkout
+    public function checkout(User $user): Checkout
     {
-        $electorFee = $this->calculateElectorFee(price: $price);
         $electorsCount = $this->electors()->count();
+
+        $plan = $this->plan;
+
+        $items = collect(value: [
+            [
+                'quantity' => 1,
+                'price_data' => [
+                    'currency' => $plan->currency,
+                    'unit_amount' => $plan->base_fee,
+                    'product_data' => [
+                        'name' => "$plan->name - Base fee",
+                    ],
+                ],
+            ],
+            [
+                'quantity' => $electorsCount,
+                'price_data' => [
+                    'currency' => $plan->currency,
+                    'unit_amount' => $plan->elector_fee,
+                    'product_data' => [
+                        'name' => "$plan->name - Elector fee",
+                    ],
+                ],
+            ],
+        ]);
+
+        $preference = $this->preference->all();
+        $addOnFeatureFee = $plan->addOnFeatures()
+            ->filter(fn (PlanFeatureData $feature) => $preference[$feature->feature->getPreferenceKey()] ?? false)
+            ->sum(fn (PlanFeatureData $feature) => $feature->feature_fee);
+        $addOnElectorFee = $plan->addOnFeatures()
+            ->filter(fn (PlanFeatureData $feature) => $preference[$feature->feature->getPreferenceKey()] ?? false)
+            ->sum(fn (PlanFeatureData $feature) => $feature->elector_fee);
+
+        if ($addOnFeatureFee > 0) {
+            $items->push([
+                'quantity' => 1,
+                'price_data' => [
+                    'currency' => $plan->currency,
+                    'unit_amount' => $addOnFeatureFee,
+                    'product_data' => [
+                        'name' => "Add-ons - Feature fee",
+                    ],
+                ],
+            ]);
+        }
+        if ($addOnElectorFee > 0) {
+            $items->push([
+                'quantity' => $electorsCount,
+                'price_data' => [
+                    'currency' => $plan->currency,
+                    'unit_amount' => $addOnElectorFee,
+                    'product_data' => [
+                        'name' => "Add-ons - Elector fee",
+                    ],
+                ],
+            ]);
+        }
 
         return $user
             ->allowPromotionCodes()
             ->collectTaxIds()
             ->checkout(
-                items: [
-                    [
-                        'quantity' => 1,
-                        'price_data' => [
-                            'currency' => $price->currency,
-                            'unit_amount' => $price->base_fee,
-                            'product_data' => [
-                                'name' => 'Base fee',
-                            ],
-                        ],
-                    ],
-                    [
-                        'quantity' => $electorsCount,
-                        'price_data' => [
-                            'currency' => $price->currency,
-                            'unit_amount' => $electorFee,
-                            'product_data' => [
-                                'name' => 'Elector fee',
-                            ],
-                        ],
-                    ],
-                ],
+                items: $items->toArray(),
                 sessionOptions: [
                     'success_url' => route(name: 'checkout.success').'?session_id={CHECKOUT_SESSION_ID}',
                     'cancel_url' => route(name: 'checkout.cancel').'?session_id={CHECKOUT_SESSION_ID}',

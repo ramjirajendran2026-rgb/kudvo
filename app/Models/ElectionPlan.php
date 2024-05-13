@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use App\Data\Election\PlanFeatureData;
+use App\Enums\ElectionFeature;
 use App\Enums\ElectionPlanFeatureType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Collection;
 use Spatie\LaravelData\DataCollection;
 
 class ElectionPlan extends Model
@@ -14,6 +16,7 @@ class ElectionPlan extends Model
 
     protected $fillable = [
         'name',
+        'description',
         'currency',
         'base_fee',
         'elector_fee',
@@ -26,20 +29,54 @@ class ElectionPlan extends Model
         'features' => DataCollection::class . ':' . PlanFeatureData::class,
     ];
 
-    public function selfFeatures()
+    public function hasFeature(ElectionFeature $feature): bool
     {
-        return $this->features->filter(fn (PlanFeatureData $feature) => $feature->type === ElectionPlanFeatureType::Self);
+        return $this->features
+            ->toCollection()
+            ->contains(fn (PlanFeatureData $planFeature) => $planFeature->feature === $feature);
     }
 
-    public function baseFeatures()
+    public function hasAnyFeature(array $features): bool
     {
-        return $this->features->filter(fn (PlanFeatureData $feature) => $feature->type === ElectionPlanFeatureType::Self);
+        return $this->features
+            ->toCollection()
+            ->contains(fn (PlanFeatureData $planFeature) => in_array($planFeature->feature, $features));
     }
 
-
-
-    public function addOnFeatures()
+    public function selfFeatures(): Collection
     {
-        return $this->features->filter(fn (PlanFeatureData $feature) => $feature->type === ElectionPlanFeatureType::AddOn);
+        return $this->features->toCollection()->where('is_add_on', false);
+    }
+
+    public function addOnFeatures(): Collection
+    {
+        return $this->features->toCollection()->where('is_add_on', true);
+    }
+
+    public function hasAddOnFeature(ElectionFeature $feature): bool
+    {
+        return $this
+                ->addOnFeatures()
+                ->contains(fn (PlanFeatureData $planFeature) => $planFeature->feature === $feature);
+    }
+
+    public function getFeatureFee(ElectionFeature $feature): int
+    {
+        return $this
+                ->features
+                ->toCollection()
+                ->where('feature', $feature)
+                ->first()
+                ?->feature_fee ?? 0;
+    }
+
+    public function getElectorFee(ElectionFeature $feature): int
+    {
+        return $this
+                ->features
+                ->toCollection()
+                ->where('feature', $feature)
+                ->first()
+                ?->elector_fee ?? 0;
     }
 }

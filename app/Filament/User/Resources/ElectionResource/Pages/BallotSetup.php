@@ -51,8 +51,9 @@ class BallotSetup extends ElectionPage
                     ->extraAttributes(attributes: ['class' => 'position-repeatable-entry'])
                     ->hiddenLabel()
                     ->placeholder(placeholder: fn () => $this->generateEmptyStatePlaceholder(
-                        heading: 'No positions',
-                        icon: 'heroicon-o-x-mark',
+                        heading: 'Set up your ballot',
+                        description: 'Add positions and candidates to your ballot',
+                        icon: 'heroicon-o-archive-box',
                         actions: [$this->getCreatePositionAction]
                     ))
                     ->schema(components: [

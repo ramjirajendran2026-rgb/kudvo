@@ -10,8 +10,8 @@ class PlanFeatureData extends Data
     public function __construct(
         public ElectionFeature $feature,
         public bool $is_add_on = false,
-        public int $featureFee = 0,
-        public int $electorFee = 0,
+        public ?int $feature_fee = 0,
+        public ?int $elector_fee = 0,
     )
     {
     }

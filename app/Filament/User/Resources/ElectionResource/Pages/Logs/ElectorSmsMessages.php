@@ -2,8 +2,8 @@
 
 namespace App\Filament\User\Resources\ElectionResource\Pages\Logs;
 
-use App\Enums\MailMessagePurpose;
 use App\Enums\SmsMessagePurpose;
+use App\Enums\SmsMessageStatus;
 use App\Filament\Exports\ElectorSmsMessageExporter;
 use App\Filament\User\Resources\ElectionResource\Pages\ElectionPage;
 use App\Models\Election;
@@ -16,6 +16,7 @@ use Filament\Tables\Actions\ExportAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -99,6 +100,11 @@ class ElectorSmsMessages extends ElectionPage implements HasTable
                     ->label(label: 'Sent at')
                     ->sortable()
                     ->wrap(),
+            ])
+            ->filters(filters: [
+                SelectFilter::make('status')
+                    ->options(options: SmsMessageStatus::class)
+                    ->label(label: 'Status'),
             ])
             ->headerActions(actions: [
                 ExportAction::make()
