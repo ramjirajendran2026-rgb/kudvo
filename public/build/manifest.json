@@ -5,17 +5,17 @@
     "src": "resources/css/app.css"
   },
   "resources/css/filament/election/theme.css": {
-    "file": "assets/theme-Yq_95qM0.css",
+    "file": "assets/theme-ZVJ5QZWX.css",
     "isEntry": true,
     "src": "resources/css/filament/election/theme.css"
   },
   "resources/css/filament/nomination/theme.css": {
-    "file": "assets/theme-jMiBQ8gv.css",
+    "file": "assets/theme-MLWyJIZT.css",
     "isEntry": true,
     "src": "resources/css/filament/nomination/theme.css"
   },
   "resources/css/filament/user/theme.css": {
-    "file": "assets/theme-2L23ek4J.css",
+    "file": "assets/theme-zd4PW9J6.css",
     "isEntry": true,
     "src": "resources/css/filament/user/theme.css"
   },
