@@ -22,7 +22,7 @@ class ManageElections extends ManageRecords
     public function getTabs(): array
     {
         return [
-            'all' => Tab::make(label: 'All')
+            'all' => Tab::make(label: __('app.all'))
                 ->badge(
                     badge: $this->getTableQuery()->count()
                 ),

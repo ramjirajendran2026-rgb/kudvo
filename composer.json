@@ -15,6 +15,7 @@
         "aws/aws-php-sns-message-validator": "^1.9",
         "aws/aws-sdk-php": "^3.295",
         "barryvdh/laravel-dompdf": "^2.0",
+        "bezhansalleh/filament-language-switch": "^3.1",
         "clicksend/clicksend-php": "^5.0",
         "filament/filament": "^3.2",
         "filament/spatie-laravel-media-library-plugin": "^3.2",

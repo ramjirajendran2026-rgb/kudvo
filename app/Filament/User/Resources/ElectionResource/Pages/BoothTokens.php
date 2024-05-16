@@ -38,6 +38,11 @@ class BoothTokens extends ElectionPage implements HasTable
         return $this->getElection();
     }
 
+    public static function getNavigationLabel(): string
+    {
+        return __('filament.user.election-resource.pages.booth_tokens.navigation_label');
+    }
+
     public function table(Table $table): Table
     {
         return $table

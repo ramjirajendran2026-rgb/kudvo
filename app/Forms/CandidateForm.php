@@ -20,6 +20,7 @@ readonly class CandidateForm
     {
         return SpatieMediaLibraryFileUpload::make(name: 'attachments')
             ->collection(collection: Candidate::MEDIA_COLLECTION_ATTACHMENTS)
+            ->label(label: __('filament.user.candidate-resource.form.attachments.label'))
             ->maxFiles(count: 5)
             ->maxSize(size: 1024 * 2)
             ->multiple()
@@ -30,6 +31,7 @@ readonly class CandidateForm
     {
         return SpatieMediaLibraryFileUpload::make(name: 'bio')
             ->collection(collection: Candidate::MEDIA_COLLECTION_BIO)
+            ->label(label: __('filament.user.candidate-resource.form.bio.label'))
             ->maxSize(size: 1024 * 2);
     }
 
@@ -42,7 +44,8 @@ readonly class CandidateForm
                 modifyRuleUsing: fn (Exists $rule, HasElection $livewire) => $rule
                     ->where(column: 'event_type', value: Election::class)
                     ->where(column: 'event_id', value: $livewire->getElection()->getKey())
-            );
+            )
+            ->label(label: __('filament.user.candidate-resource.form.elector_id.label'));
     }
 
     public static function candidateGroupIdComponent(): Select
@@ -50,7 +53,7 @@ readonly class CandidateForm
         return Select::make(name: 'candidate_group_id')
             ->createOptionForm(schema: [
                 TextInput::make(name: 'name')
-                    ->label(label: 'Group name')
+                    ->label(label: __('filament.user.candidate-resource.form.candidate_group_id.form.name.label'))
                     ->maxLength(length: 100)
                     ->required()
                     ->unique(
@@ -60,7 +63,7 @@ readonly class CandidateForm
                     ),
 
                 TextInput::make(name: 'short_name')
-                    ->label(label: 'Short name')
+                    ->label(label: __('filament.user.candidate-resource.form.candidate_group_id.form.short_name.label'))
                     ->maxLength(length: 10)
                     ->required()
                     ->unique(
@@ -74,7 +77,7 @@ readonly class CandidateForm
             ])
             ->editOptionForm(schema: [
                 TextInput::make(name: 'name')
-                    ->label(label: 'Group name')
+                    ->label(label: __('filament.user.candidate-resource.form.candidate_group_id.form.name.label'))
                     ->maxLength(length: 100)
                     ->required()
                     ->unique(
@@ -84,7 +87,7 @@ readonly class CandidateForm
                     ),
 
                 TextInput::make(name: 'short_name')
-                    ->label(label: 'Short name')
+                    ->label(label: __('filament.user.candidate-resource.form.candidate_group_id.form.short_name.label'))
                     ->maxLength(length: 10)
                     ->required()
                     ->unique(
@@ -93,7 +96,8 @@ readonly class CandidateForm
                             ->where(column: 'election_id', value: $livewire->getElection()->getKey())
                     ),
             ])
-            ->placeholder(placeholder: 'Choose a group')
+            ->label(label: __('filament.user.candidate-resource.form.candidate_group_id.label'))
+            ->placeholder(placeholder: __('filament.user.candidate-resource.form.candidate_group_id.placeholder'))
             ->preload()
             ->relationship(
                 name: 'candidateGroup',
@@ -108,25 +112,27 @@ readonly class CandidateForm
     {
         return TextInput::make(name: 'email')
             ->email()
-            ->label(label: 'Email address')
+            ->label(label: __('filament.user.candidate-resource.form.email.label'))
             ->maxLength(length: 100)
-            ->placeholder(placeholder: 'Email address')
+            ->placeholder(placeholder: __('filament.user.candidate-resource.form.email.placeholder'))
             ->rule(rule: 'email:rfc,dns');
     }
 
     public static function firstNameComponent(): TextInput
     {
         return TextInput::make(name: 'first_name')
-            ->label(label: 'First name')
+            ->label(label: __('filament.user.candidate-resource.form.first_name.label'))
             ->maxLength(length: 100)
+            ->placeholder(placeholder: __('filament.user.candidate-resource.form.first_name.placeholder'))
             ->requiredWithout(statePaths: ['last_name']);
     }
 
     public static function lastNameComponent(): TextInput
     {
         return TextInput::make(name: 'last_name')
-            ->label(label: 'Last name')
-            ->maxLength(length: 100);
+            ->label(label: __('filament.user.candidate-resource.form.last_name.label'))
+            ->maxLength(length: 100)
+            ->placeholder(placeholder: __('filament.user.candidate-resource.form.last_name.placeholder'));
     }
 
     public static function membershipNumberComponent(): TextInput
@@ -151,18 +157,18 @@ readonly class CandidateForm
                     ->where(column: 'event_type', value: Election::class)
                     ->where(column: 'event_id', value: $livewire->getElection()->getKey())
             )
-            ->label(label: 'Membership number')
+            ->label(label: __('filament.user.candidate-resource.form.membership_number.label'))
             ->maxLength(length: 50)
-            ->placeholder(placeholder: 'Membership number')
+            ->placeholder(placeholder: __('filament.user.candidate-resource.form.membership_number.placeholder'))
             ->validationMessages(messages: [
-                'exists' => 'This :attribute is not found in electors data',
+                'exists' => __('filament.user.candidate-resource.form.membership_number.validation.exists'),
             ]);
     }
 
     public static function phoneComponent(): PhoneInput
     {
         return PhoneInput::make(name: 'phone')
-            ->label(label: 'Phone number')
+            ->label(label: __('filament.user.candidate-resource.form.phone.label'))
             ->validateFor();
     }
 
@@ -174,18 +180,20 @@ readonly class CandidateForm
             ->collection(collection: Candidate::MEDIA_COLLECTION_PHOTO)
             ->extraAttributes(attributes: ['class' => 'candidate-photo'])
             ->imageEditor()
+            ->label(label: __('filament.user.candidate-resource.form.photo.label'))
             ->maxSize(size: 300)
             ->panelAspectRatio(ratio: '1:1')
             ->panelLayout(layout: 'compact')
-            ->placeholder(placeholder: 'Drag & Drop your photo or <span class="filepond--label-action">Browse</span>');
+            ->placeholder(placeholder: __('filament.user.candidate-resource.form.photo.placeholder'));
     }
 
     public static function positionIdComponent(): Select
     {
         return Select::make(name: 'position_id')
             ->hiddenLabel()
+            ->label(label: __('filament.user.candidate-resource.form.position_id.label'))
             ->native(condition: false)
-            ->placeholder(placeholder: 'Choose a position')
+            ->placeholder(placeholder: __('filament.user.candidate-resource.form.position_id.placeholder'))
             ->required();
     }
 
@@ -196,17 +204,19 @@ readonly class CandidateForm
             ->collection(collection: Candidate::MEDIA_COLLECTION_SYMBOL)
             ->extraAttributes(attributes: ['class' => 'candidate-symbol'])
             ->imageEditor()
+            ->label(label: __('filament.user.candidate-resource.form.symbol.label'))
             ->maxSize(size: 300)
             ->panelAspectRatio(ratio: '1:1')
             ->panelLayout(layout: 'compact')
-            ->placeholder(placeholder: 'Drag & Drop your symbol or <span class="filepond--label-action">Browse</span>');
+            ->placeholder(placeholder: __('filament.user.candidate-resource.form.symbol.placeholder'));
     }
 
     public static function titleComponent(): TextInput
     {
         return TextInput::make(name: 'title')
             ->datalist(options: ['Mr.', 'Ms.', 'Mrs.', 'Dr.', 'Prof.'])
-            ->label(label: 'Salutation')
-            ->maxLength(length: 20);
+            ->label(label: __('filament.user.candidate-resource.form.title.label'))
+            ->maxLength(length: 20)
+            ->placeholder(placeholder: __('filament.user.candidate-resource.form.title.placeholder'));
     }
 }

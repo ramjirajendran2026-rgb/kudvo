@@ -37,8 +37,6 @@ class Collaborators extends ElectionPage implements HasTable
 
     protected static ?string $activeNavigationIcon = 'heroicon-s-users';
 
-    protected static ?string $navigationGroup = 'Others';
-
     public static function getRelationshipName(): string
     {
         return 'collaborators';
@@ -47,6 +45,16 @@ class Collaborators extends ElectionPage implements HasTable
     public function getOwnerRecord(): Election
     {
         return $this->getElection();
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('filament.user.election-resource.pages.collaborators.navigation_label');
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('filament.user.election-resource.pages.collaborators.navigation_group');
     }
 
     public static function canAccessPage(Election $election): bool
@@ -59,14 +67,14 @@ class Collaborators extends ElectionPage implements HasTable
         return $table
             ->columns(components: [
                 TextColumn::make(name: 'name')
-                    ->label(label: 'Name'),
+                    ->label(label: __('filament.user.election-resource.pages.collaborators.table.name.label')),
 
                 TextColumn::make(name: 'email')
-                    ->label(label: 'Email address'),
+                    ->label(label: __('filament.user.election-resource.pages.collaborators.table.email.label')),
 
                 TextColumn::make(name: 'collaboration.designation')
                     ->description(description: fn(User $user): ?string => $this->getOwnerRecord()->owner?->is(model: $user) ? 'Admin' : null)
-                    ->label(label: 'Designation'),
+                    ->label(label: __('filament.user.election-resource.pages.collaborators.designation.label')),
             ])
             ->actions(actions: [
                 EditAction::make()
@@ -75,56 +83,14 @@ class Collaborators extends ElectionPage implements HasTable
                             ->inlineLabel()
                             ->schema(components: [
                                 TextInput::make(name: 'designation')
-                                    ->label(label: 'Designation'),
+                                    ->label(label: __('filament.user.election-resource.pages.collaborators.form.designation.label')),
 
-                                Fieldset::make(label: 'Permissions')
+                                Fieldset::make(label: __('filament.user.election-resource.pages.collaborators.form.permissions.label'))
                                     ->columns(columns: null)
                                     ->formatStateUsing(callback: fn($state): array => CollaboratorPermissionsData::from($state ?? [])->toArray())
                                     ->hidden(condition: fn(self $livewire, User $user): bool => $livewire->getOwnerRecord()->owner?->is(model: $user))
                                     ->statePath(path: 'permissions')
-                                    ->schema(components: [
-                                        Radio::make(name: 'preference')
-                                            ->columns(columns: 3)
-                                            ->label(label: 'Preference')
-                                            ->options(options: ElectionCollaboratorPermission::class)
-                                            ->required(),
-
-                                        Radio::make(name: 'electors')
-                                            ->columns(columns: 3)
-                                            ->label(label: 'Electors')
-                                            ->options(options: ElectionCollaboratorPermission::class)
-                                            ->required(),
-
-                                        Radio::make(name: 'ballot_setup')
-                                            ->columns(columns: 3)
-                                            ->label(label: 'Ballot setup')
-                                            ->options(options: ElectionCollaboratorPermission::class)
-                                            ->required(),
-
-                                        Radio::make(name: 'timing')
-                                            ->columns(columns: 3)
-                                            ->label(label: 'Timing')
-                                            ->options(options: ElectionCollaboratorPermission::class)
-                                            ->required(),
-
-                                        Radio::make(name: 'payment')
-                                            ->columns(columns: 3)
-                                            ->label(label: 'Payment')
-                                            ->options(options: ElectionCollaboratorPermission::class)
-                                            ->required(),
-
-                                        Radio::make(name: 'monitor_tokens')
-                                            ->columns(columns: 3)
-                                            ->label(label: 'Monitor tokens')
-                                            ->options(options: ElectionCollaboratorPermission::class)
-                                            ->required(),
-
-                                        Radio::make(name: 'elector_logs')
-                                            ->columns(columns: 3)
-                                            ->label(label: 'Elector logs')
-                                            ->options(options: ElectionCollaboratorPermission::class)
-                                            ->required(),
-                                    ]),
+                                    ->schema(components: $this->getPermissionsSchema()),
                             ])
                     )
                     ->iconButton()
@@ -134,7 +100,7 @@ class Collaborators extends ElectionPage implements HasTable
                 ActionGroup::make(actions: [
                     DetachAction::make()
                         ->hidden(condition: fn(self $livewire, User $user): bool => $livewire->getOwnerRecord()->owner?->is(model: $user))
-                        ->label(label: 'Remove'),
+                        ->label(label: __('filament.user.election-resource.pages.collaborators.table.actions.detach.label')),
 
                     Action::make(name: 'setAsAdmin')
                         ->requiresConfirmation()
@@ -144,8 +110,9 @@ class Collaborators extends ElectionPage implements HasTable
 
                             $action->success();
                         })
-                        ->successNotificationTitle(title: 'Admin changed successfully')
-                        ->hidden(condition: fn(self $livewire, User $user): bool => $livewire->getOwnerRecord()->owner?->is(model: $user)),
+                        ->successNotificationTitle(title: __('filament.user.election-resource.pages.collaborators.table.actions.set_as_admin.success_notification.title'))
+                        ->hidden(condition: fn(self $livewire, User $user): bool => $livewire->getOwnerRecord()->owner?->is(model: $user))
+                        ->label(label: __('filament.user.election-resource.pages.collaborators.table.actions.set_as_admin.label')),
                 ]),
             ])
             ->headerActions(actions: [
@@ -175,7 +142,7 @@ class Collaborators extends ElectionPage implements HasTable
                             ->schema(components: [
                                 TextInput::make(name: 'email')
                                     ->email()
-                                    ->label(label: 'Email address')
+                                    ->label(label: __('filament.user.election-resource.pages.collaborators.form.email.label'))
                                     ->notIn(
                                         values: fn(): array => $this->getOwnerRecord()
                                             ->collaborators()
@@ -183,75 +150,80 @@ class Collaborators extends ElectionPage implements HasTable
                                             ->toArray()
                                     )
                                     ->validationMessages(messages: [
-                                        'not_in' => 'The email address is already a collaborator.',
+                                        'not_in' => __('filament.user.election-resource.pages.collaborators.form.email.validation.not_in'),
                                     ])
                                     ->required(),
 
                                 TextInput::make(name: 'designation')
-                                    ->label('Designation')
+                                    ->label(__('filament.user.election-resource.pages.collaborators.form.designation.label'))
                                     ->maxLength(length: 100)
-                                    ->placeholder(placeholder: 'e.g. Returning Officer / Election Officer')
+                                    ->placeholder(placeholder: __('filament.user.election-resource.pages.collaborators.form.designation.placeholder'))
                                     ->required(),
 
-                                Fieldset::make(label: 'Permissions')
+                                Fieldset::make(label: __('filament.user.election-resource.pages.collaborators.form.permissions.label'))
                                     ->columns(columns: null)
                                     ->default(state: CollaboratorPermissionsData::empty())
                                     ->hidden(condition: fn(self $livewire, User $user): bool => $livewire->getOwnerRecord()->owner?->is(model: $user))
                                     ->statePath(path: 'permissions')
-                                    ->schema(components: [
-                                        Radio::make(name: 'preference')
-                                            ->columns(columns: 3)
-                                            ->label(label: 'Preference')
-                                            ->options(options: ElectionCollaboratorPermission::class)
-                                            ->required(),
-
-                                        Radio::make(name: 'electors')
-                                            ->columns(columns: 3)
-                                            ->label(label: 'Electors')
-                                            ->options(options: ElectionCollaboratorPermission::class)
-                                            ->required(),
-
-                                        Radio::make(name: 'ballot_setup')
-                                            ->columns(columns: 3)
-                                            ->label(label: 'Ballot setup')
-                                            ->options(options: ElectionCollaboratorPermission::class)
-                                            ->required(),
-
-                                        Radio::make(name: 'timing')
-                                            ->columns(columns: 3)
-                                            ->label(label: 'Timing')
-                                            ->options(options: ElectionCollaboratorPermission::class)
-                                            ->required(),
-
-                                        Radio::make(name: 'payment')
-                                            ->columns(columns: 3)
-                                            ->label(label: 'Payment')
-                                            ->options(options: ElectionCollaboratorPermission::class)
-                                            ->required(),
-
-                                        Radio::make(name: 'monitor_tokens')
-                                            ->columns(columns: 3)
-                                            ->label(label: 'Monitor tokens')
-                                            ->options(options: ElectionCollaboratorPermission::class)
-                                            ->required(),
-
-                                        Radio::make(name: 'elector_logs')
-                                            ->columns(columns: 3)
-                                            ->label(label: 'Elector logs')
-                                            ->options(options: ElectionCollaboratorPermission::class)
-                                            ->required(),
-                                    ]),
+                                    ->schema(components: $this->getPermissionsSchema()),
                             ])
                     )
                     ->icon(icon: 'heroicon-o-user-plus')
-                    ->label(label: 'Invite collaborator')
+                    ->label(label: __('filament.user.election-resource.pages.collaborators.table.actions.invite_collaborator.label'))
                     ->modalCancelAction(action: false)
                     ->modalFooterActionsAlignment(alignment: Alignment::Center)
-                    ->modalSubmitActionLabel(label: 'Invite')
+                    ->modalSubmitActionLabel(label: __('filament.user.election-resource.pages.collaborators.table.actions.invite_collaborator.modal_actions.submit.label'))
                     ->modalWidth(width: MaxWidth::TwoExtraLarge)
-                    ->successNotificationTitle(title: 'Invitation sent successfully'),
+                    ->successNotificationTitle(title: __('filament.user.election-resource.pages.collaborators.table.actions.invite_collaborator.success_notification.title')),
             ])
-            ->heading(heading: 'Collaborators')
+            ->heading(heading: __('filament.user.election-resource.pages.collaborators.table.heading'))
             ->recordTitle(title: fn(User $user): string => $user->name.' ('.$user->email.')');
+    }
+
+    public function getPermissionsSchema(): array
+    {
+        return [
+            Radio::make(name: 'preference')
+                ->columns(columns: 3)
+                ->label(label: __('filament.user.election-resource.pages.collaborators.form.permissions.preference.label'))
+                ->options(options: ElectionCollaboratorPermission::class)
+                ->required(),
+
+            Radio::make(name: 'electors')
+                ->columns(columns: 3)
+                ->label(label: __('filament.user.election-resource.pages.collaborators.form.permissions.electors.label'))
+                ->options(options: ElectionCollaboratorPermission::class)
+                ->required(),
+
+            Radio::make(name: 'ballot_setup')
+                ->columns(columns: 3)
+                ->label(label: __('filament.user.election-resource.pages.collaborators.form.permissions.ballot_setup.label'))
+                ->options(options: ElectionCollaboratorPermission::class)
+                ->required(),
+
+            Radio::make(name: 'timing')
+                ->columns(columns: 3)
+                ->label(label: __('filament.user.election-resource.pages.collaborators.form.permissions.timing.label'))
+                ->options(options: ElectionCollaboratorPermission::class)
+                ->required(),
+
+            Radio::make(name: 'payment')
+                ->columns(columns: 3)
+                ->label(label: __('filament.user.election-resource.pages.collaborators.form.permissions.payment.label'))
+                ->options(options: ElectionCollaboratorPermission::class)
+                ->required(),
+
+            Radio::make(name: 'monitor_tokens')
+                ->columns(columns: 3)
+                ->label(label: __('filament.user.election-resource.pages.collaborators.form.permissions.monitor_tokens.label'))
+                ->options(options: ElectionCollaboratorPermission::class)
+                ->required(),
+
+            Radio::make(name: 'elector_logs')
+                ->columns(columns: 3)
+                ->label(label: __('filament.user.election-resource.pages.collaborators.form.permissions.elector_logs.label'))
+                ->options(options: ElectionCollaboratorPermission::class)
+                ->required(),
+        ];
     }
 }

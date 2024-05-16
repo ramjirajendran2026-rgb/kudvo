@@ -38,7 +38,7 @@ enum ElectionStatus: string
     public static function getTabs(): array
     {
         return [
-            'all' => Tab::make(label: 'All'),
+            'all' => Tab::make(label: __(key: 'app.all')),
 
             ...Arr::mapWithKeys(
                 array: self::cases(),
@@ -53,7 +53,7 @@ enum ElectionStatus: string
             $this->value => Tab::make(label: $this->getLabel())
                 ->icon(icon: $this->getIcon())
                 ->modifyQueryUsing(
-                    callback: fn (Builder $query): Builder => $query->scopes(scopes: Arr::wrap(value: $this->getScopes()))
+                    callback: fn(Builder $query): Builder => $query->scopes(scopes: Arr::wrap(value: $this->getScopes()))
                 )
         ];
     }
@@ -71,7 +71,7 @@ enum ElectionStatus: string
 
     public function getLabel(): ?string
     {
-        return Str::title(value: $this->value);
+        return __(key: 'app.enums.election_status.' . $this->value . '.label');
     }
 
     public function getIcon(): ?string

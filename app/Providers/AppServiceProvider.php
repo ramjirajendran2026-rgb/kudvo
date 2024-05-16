@@ -6,6 +6,7 @@ use App\KudvoManager;
 use App\Services\Clicksend\ClicksendChannel;
 use App\Services\TwentyFourSevenSms\TwentyFourSevenSmsChannel;
 use App\Settings\ServiceConfig;
+use BezhanSalleh\FilamentLanguageSwitch\LanguageSwitch;
 use ClickSend\Api\SMSApi;
 use ClickSend\Configuration;
 use Filament\Actions\Action;
@@ -100,6 +101,14 @@ class AppServiceProvider extends ServiceProvider
                         ->setPassword($serviceConfig->clicksend->api_key)
                 );
             });
+
+        $availableLocales = config(key: 'app.available_locales');
+        if (count($availableLocales) > 1) {
+            LanguageSwitch::configureUsing(function (LanguageSwitch $switch) {
+                $switch
+                    ->locales(config(key: 'app.available_locales'));
+            });
+        }
 
         Filament::serving(callback: function (): void {
             Table::$defaultDateTimeDisplayFormat = 'M j, Y h:i:s A';

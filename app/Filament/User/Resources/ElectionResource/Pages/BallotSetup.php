@@ -42,6 +42,11 @@ class BallotSetup extends ElectionPage
 
     protected static ?string $activeNavigationIcon = 'heroicon-s-list-bullet';
 
+    public static function getNavigationLabel(): string
+    {
+        return __('filament.user.election-resource.pages.ballot_setup.navigation_label');
+    }
+
     public function infolist(Infolist $infolist): Infolist
     {
         return $infolist
@@ -51,8 +56,8 @@ class BallotSetup extends ElectionPage
                     ->extraAttributes(attributes: ['class' => 'position-repeatable-entry'])
                     ->hiddenLabel()
                     ->placeholder(placeholder: fn () => $this->generateEmptyStatePlaceholder(
-                        heading: 'Set up your ballot',
-                        description: 'Add positions and candidates to your ballot',
+                        heading: __('filament.user.election-resource.pages.ballot_setup.infolist.positions.empty_state.heading'),
+                        description: __('filament.user.election-resource.pages.ballot_setup.infolist.positions.empty_state.description'),
                         icon: 'heroicon-o-archive-box',
                         actions: [$this->getCreatePositionAction]
                     ))
@@ -84,8 +89,8 @@ class BallotSetup extends ElectionPage
                                     ->extraAttributes(attributes: ['class' => 'candidate-repeatable-entry'])
                                     ->hiddenLabel()
                                     ->placeholder(placeholder: $this->generateEmptyStatePlaceholder(
-                                        heading: 'No candidates',
-                                        description: 'Create new candidate',
+                                        heading: __('filament.user.election-resource.pages.ballot_setup.infolist.positions.candidates.empty_state.heading'),
+                                        description: __('filament.user.election-resource.pages.ballot_setup.infolist.positions.candidates.empty_state.description'),
                                         icon: 'heroicon-o-x-mark',
                                     ))
                                     ->schema(components: [
@@ -197,7 +202,7 @@ HTML,
         return Action::make(name: 'nextPage')
             ->authorize(abilities: 'preview')
             ->icon(icon: 'heroicon-s-chevron-double-right')
-            ->label(label: 'Next')
+            ->label(label: __('filament.user.election-resource.pages.ballot_setup.actions.next.label'))
             ->outlined()
             ->url(url: Dashboard::getUrl(parameters: [$this->getElection()]));
     }
@@ -216,6 +221,8 @@ HTML,
                 form: fn (Form $form): Form => $form->schema(components: PositionResource::getFormComponents())
                     ->inlineLabel()
             )
+            ->modelLabel(label: __('filament.user.position-resource.label'))
+            ->pluralModelLabel(label: __('filament.user.position-resource.plural_label'))
             ->model(model: Position::class)
             ->modalFooterActionsAlignment(alignment: Alignment::End)
             ->modalWidth(width: MaxWidth::Large)
@@ -288,7 +295,7 @@ HTML,
 
                 return $data;
             })
-            ->successNotificationTitle(title: 'Saved')
+            ->successNotificationTitle(title: __('filament.user.election-resource.pages.ballot_setup.actions.edit_position.success_notification.title'))
             ->visible(condition: $this->hasFullAccess());
     }
 
@@ -311,7 +318,7 @@ HTML,
             ->icon(icon: 'heroicon-m-trash')
             ->iconButton()
             ->modalHeading(heading: fn (Position $record): string => "Delete $record->name")
-            ->successNotificationTitle(title: 'Deleted')
+            ->successNotificationTitle(title: __('filament.user.election-resource.pages.ballot_setup.actions.delete_position.success_notification.title'))
             ->visible(condition: $this->hasFullAccess());
     }
 
@@ -351,10 +358,10 @@ HTML,
             )
             ->icon(icon: 'heroicon-m-arrows-up-down')
             ->iconButton()
-            ->modalHeading(heading: fn (Position $record): string => "Reorder $record->name Candidates")
-            ->modalSubmitActionLabel(label: 'Save changes')
+            ->modalHeading(heading: fn (Position $record): string => __('filament.user.election-resource.pages.ballot_setup.actions.reorder_candidate.modal_heading', ['label' => $record->name]))
+            ->modalSubmitActionLabel(label: __('filament.user.election-resource.pages.ballot_setup.actions.reorder_candidate.modal_actions.submit.label'))
             ->modalWidth(width: MaxWidth::ExtraLarge)
-            ->successNotificationTitle(title: 'Saved')
+            ->successNotificationTitle(title: __('filament.user.election-resource.pages.ballot_setup.actions.reorder_candidate.success_notification.title'))
             ->visible(condition: $this->hasFullAccess());
     }
 
@@ -364,7 +371,7 @@ HTML,
             ->authorize(abilities: 'importCandidate')
             ->icon(icon: 'heroicon-m-arrow-up-tray')
             ->importer(importer: CandidateImporter::class)
-            ->label(label: 'Import')
+            ->label(label: __('filament.user.election-resource.pages.ballot_setup.actions.import_candidate.label'))
             ->modalWidth(width: MaxWidth::ExtraLarge)
             ->options(options: [
                 'election_id' => $this->getElection()->getKey(),
@@ -408,11 +415,11 @@ HTML,
             ])
             ->form(form: fn (Form $form, Position $record) => CandidateResource::form(form: $form, position: $record))
             ->icon(icon: 'heroicon-m-plus')
-            ->label(label: 'New candidate')
+            ->label(label: __('filament.user.election-resource.pages.ballot_setup.actions.create_candidate.label'))
             ->modalSubmitActionLabel(label: __('filament-actions::create.single.modal.actions.create.label'))
             ->outlined()
             ->size(size: ActionSize::Small)
-            ->successNotificationTitle(title: 'Created')
+            ->successNotificationTitle(title: __('filament.user.election-resource.pages.ballot_setup.actions.create_candidate.success_notification.title'))
             ->visible(condition: $this->hasFullAccess());
     }
 
@@ -439,9 +446,9 @@ HTML,
             )
             ->icon(icon: 'heroicon-m-pencil-square')
             ->iconButton()
-            ->modalHeading(heading: fn (Candidate $record): string => "Edit $record->full_name")
-            ->modalSubmitActionLabel(label: 'Save changes')
-            ->successNotificationTitle(title: 'Saved')
+            ->modalHeading(heading: fn (Candidate $record): string => __('filament.user.election-resource.pages.ballot_setup.actions.edit_candidate.modal_heading', ['label' => $record->full_name]))
+            ->modalSubmitActionLabel(label: __('filament.user.election-resource.pages.ballot_setup.actions.edit_candidate.modal_actions.submit.label'))
+            ->successNotificationTitle(title: __('filament.user.election-resource.pages.ballot_setup.actions.edit_candidate.success_notification.title'))
             ->visible(condition: $this->hasFullAccess());
     }
 
@@ -463,8 +470,8 @@ HTML,
             ->color(color: 'danger')
             ->icon(icon: 'heroicon-m-trash')
             ->iconButton()
-            ->modalHeading(heading: fn (Candidate $record): string => "Delete $record->full_name")
-            ->successNotificationTitle(title: 'Deleted')
+            ->modalHeading(heading: fn (Candidate $record): string => __('filament.user.election-resource.pages.ballot_setup.actions.delete_candidate.modal_heading', ['label' => $record->full_name]))
+            ->successNotificationTitle(title: __('filament.user.election-resource.pages.ballot_setup.actions.delete_candidate.success_notification.title'))
             ->visible(condition: $this->hasFullAccess());
     }
 

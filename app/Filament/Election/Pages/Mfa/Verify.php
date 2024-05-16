@@ -98,10 +98,11 @@ class Verify extends Page implements HasElection
                 'class' => 'max-w-lg mx-auto',
             ])
             ->schema(components: [
-                Section::make(heading: 'MFA Verification')
+                Section::make(heading: __('filament.election.pages.mfa.verify.form.heading'))
                     ->headerActions(actions: [
                         Actions\Action::make(name: 'resend')
                             ->action(action: 'resend')
+                            ->label(label: __('filament.election.pages.mfa.verify.form.actions.resend.label'))
                             ->link(),
                     ])
                     ->schema(components: [
@@ -140,8 +141,14 @@ class Verify extends Page implements HasElection
             $this->rateLimit(maxAttempts: 3);
         } catch (TooManyRequestsException $exception) {
             Notification::make()
-                ->title(title: 'Too many attempts')
-                ->body(body: 'Please try again in '.$exception->secondsUntilAvailable.' seconds.')
+                ->title(__('filament-panels::pages/auth/login.notifications.throttled.title', [
+                    'seconds' => $exception->secondsUntilAvailable,
+                    'minutes' => ceil($exception->secondsUntilAvailable / 60),
+                ]))
+                ->body(array_key_exists('body', __('filament-panels::pages/auth/login.notifications.throttled') ?: []) ? __('filament-panels::pages/auth/login.notifications.throttled.body', [
+                    'seconds' => $exception->secondsUntilAvailable,
+                    'minutes' => ceil($exception->secondsUntilAvailable / 60),
+                ]) : null)
                 ->danger()
                 ->send();
 
@@ -166,8 +173,14 @@ class Verify extends Page implements HasElection
             $this->rateLimit(maxAttempts: 1);
         } catch (TooManyRequestsException $exception) {
             Notification::make()
-                ->title(title: 'Too many requests')
-                ->body(body: 'Please try again in '.$exception->secondsUntilAvailable.' seconds.')
+                ->title(__('filament-panels::pages/auth/login.notifications.throttled.title', [
+                    'seconds' => $exception->secondsUntilAvailable,
+                    'minutes' => ceil($exception->secondsUntilAvailable / 60),
+                ]))
+                ->body(array_key_exists('body', __('filament-panels::pages/auth/login.notifications.throttled') ?: []) ? __('filament-panels::pages/auth/login.notifications.throttled.body', [
+                    'seconds' => $exception->secondsUntilAvailable,
+                    'minutes' => ceil($exception->secondsUntilAvailable / 60),
+                ]) : null)
                 ->danger()
                 ->send();
 
@@ -183,7 +196,7 @@ class Verify extends Page implements HasElection
         $this->data['code'] = '';
 
         Notification::make()
-            ->title(title: 'OTP resent')
+            ->title(title: __('filament.election.pages.mfa.verify.form.actions.resend.success_notification.title'))
             ->success()
             ->send();
     }
@@ -200,7 +213,7 @@ class Verify extends Page implements HasElection
             ...$this->getElection()->preference->mfa_mail ? ['email address'] : [],
         ];
 
-        return '6 digit OTP code has been sent to your '.Arr::implodeWithAnd($via).'.';
+        return __('filament.election.pages.mfa.verify.form.notice.content', ['via' => Arr::implodeWithAnd($via)]);
     }
 
     /**

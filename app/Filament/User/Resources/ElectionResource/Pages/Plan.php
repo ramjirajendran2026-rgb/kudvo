@@ -11,6 +11,11 @@ class Plan extends ElectionPage
 {
     protected static string $view = 'filament.user.resources.election-resource.pages.plan';
 
+    public static function getNavigationLabel(): string
+    {
+        return __('filament.user.election-resource.pages.plan.navigation_label');
+    }
+
     public function getSubNavigation(): array
     {
         return [];
@@ -42,7 +47,7 @@ class Plan extends ElectionPage
             ->extraAttributes(attributes: [
                 'class' => 'w-full',
             ])
-            ->label(label: 'Select')
+            ->label(label: __('filament.user.election-resource.pages.plan.actions.choose_plan.label'))
             ->successRedirectUrl(url: Dashboard::getUrl(parameters: [$this->getElection()]));
     }
 }

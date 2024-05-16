@@ -52,21 +52,18 @@ class CandidateResource extends Resource
                             ),
 
                         Cluster::make(schema: [
-                            CandidateForm::titleComponent()
-                                ->placeholder(placeholder: 'Title'),
+                            CandidateForm::titleComponent(),
 
                             CandidateForm::firstNameComponent()
-                                ->columnSpan(2)
-                                ->placeholder(placeholder: 'First name'),
+                                ->columnSpan(2),
 
                             CandidateForm::lastNameComponent()
-                                ->columnSpan(2)
-                                ->placeholder(placeholder: 'Last name'),
+                                ->columnSpan(2),
                         ])
                             ->columns(columns: 5)
                             ->columnSpanFull()
                             ->hiddenLabel()
-                            ->label(label: 'Full name'),
+                            ->label(label: __('filament.user.candidate-resource.form.full_name.label')),
 
                         CandidateForm::candidateGroupIdComponent()
                             ->columnSpanFull()

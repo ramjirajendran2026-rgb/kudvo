@@ -62,6 +62,11 @@ class Electors extends ElectionPage implements HasTable
             || $this->getElection()->getCollaboratorPermissions(Filament::auth()->user())->electors === ElectionCollaboratorPermission::FullAccess;
     }
 
+    public static function getNavigationLabel(): string
+    {
+        return __('filament.user.election-resource.pages.electors.navigation_label');
+    }
+
     public function form(Form $form): Form
     {
         return ElectorResource::form(form: $form);
@@ -125,7 +130,7 @@ class Electors extends ElectionPage implements HasTable
         return Action::make(name: 'nextPage')
             ->authorize(abilities: fn (self $livewire) => BallotSetup::canAccessPage(election: $livewire->getElection()))
             ->icon(icon: 'heroicon-s-chevron-double-right')
-            ->label(label: 'Next')
+            ->label(label: __('filament.user.election-resource.pages.electors.actions.next.label'))
             ->outlined()
             ->url(url: BallotSetup::getUrl(parameters: [$this->getElection()]));
     }
@@ -171,10 +176,11 @@ class Electors extends ElectionPage implements HasTable
             })
             ->icon(icon: 'heroicon-m-bell-alert')
             ->iconButton()
+            ->label(label: __('filament.user.election-resource.pages.electors.actions.send_ballot_link.label'))
             ->successNotification(
                 notification: fn (Notification $notification) => $notification
-                    ->title(title: 'Ballot Link Sent')
-                    ->body(body: 'The ballot link has been sent to the elector.')
+                    ->title(title: __('filament.user.election-resource.pages.electors.actions.send_ballot_link.success_notification.title'))
+                    ->body(body: __('filament.user.election-resource.pages.electors.actions.send_ballot_link.success_notification.body'))
             );
     }
 
@@ -195,11 +201,11 @@ class Electors extends ElectionPage implements HasTable
                 $action->success();
             })
             ->icon(icon: 'heroicon-m-bell-alert')
-            ->label(label: 'Send Ballot Links')
+            ->label(label: __('filament.user.election-resource.pages.electors.bulk_actions.send_ballot_link.label'))
             ->successNotification(
                 notification: fn (Notification $notification) => $notification
-                    ->title(title: 'Ballot Links Sent')
-                    ->body(body: 'Ballot links have been sent to selected electors who have not yet voted.')
+                    ->title(title: __('filament.user.election-resource.pages.electors.bulk_actions.send_ballot_link.success_notification.title'))
+                    ->body(body: __('filament.user.election-resource.pages.electors.bulk_actions.send_ballot_link.success_notification.body'))
             )
             ->visible(condition: $this->hasFullAccess());
     }
@@ -245,6 +251,7 @@ class Electors extends ElectionPage implements HasTable
 
                 $action->success();
             })
+            ->hidden()
             ->icon(icon: 'heroicon-m-key')
             ->label(label: 'Generate Short Codes')
             ->successNotification(
@@ -254,9 +261,9 @@ class Electors extends ElectionPage implements HasTable
             )
             ->visible(
                 condition: $this->getElection()->is_published &&
-                $this->getElection()->electors()->whereNull('short_code')->count()
-            )
-            ->visible(condition: $this->hasFullAccess());
+                $this->getElection()->electors()->whereNull('short_code')->count() &&
+                $this->hasFullAccess()
+            );
     }
 
     public static function canAccessPage(Election $election): bool

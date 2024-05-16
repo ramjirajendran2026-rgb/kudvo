@@ -18,16 +18,16 @@ readonly class PositionForm
     public static function groupsComponent(): Select
     {
         return Select::make(name: 'elector_groups')
-            ->label(label:'Eligible groups')
+            ->label(label:__('filament.user.position-resource.form.elector_groups.label'))
             ->multiple();
     }
 
     public static function nameComponent(): TextInput
     {
         return TextInput::make(name: 'name')
-            ->label(label: 'Position name')
+            ->label(label: __('filament.user.position-resource.form.name.label'))
             ->maxLength(length: 100)
-            ->placeholder(placeholder: 'President / Secretary / EC Members etc.,')
+            ->placeholder(placeholder: __('filament.user.position-resource.form.name.placeholder'))
             ->required();
     }
 
@@ -35,7 +35,7 @@ readonly class PositionForm
     {
         return Quantity::make(name: 'quota')
             ->default(state: 1)
-            ->label(label: 'Available posts')
+            ->label(label: __('filament.user.position-resource.form.quota.label'))
             ->maxValue(value: 500)
             ->minValue(value: 1)
             ->numeric()
@@ -45,14 +45,14 @@ readonly class PositionForm
     public static function abstainComponent(): Toggle
     {
         return Toggle::make(name: 'abstain')
-            ->label(label: 'Enable abstain');
+            ->label(label: __('filament.user.position-resource.form.abstain.label'));
     }
 
     public static function thresholdComponent(): TextInput
     {
         return Quantity::make(name: 'threshold')
             ->default(state: 0)
-            ->label(label: 'Min selection')
+            ->label(label: __('filament.user.position-resource.form.threshold.label'))
             ->minValue(value: 0)
             ->numeric()
             ->required()
@@ -68,7 +68,7 @@ readonly class PositionForm
                 callback: fn (Action $action) => $action
                     ->modalCancelAction(action: false)
                     ->modalFooterActionsAlignment(alignment: Alignment::Center)
-                    ->modalHeading(heading: 'Create Segment')
+                    ->modalHeading(heading: __('filament.user.position-resource.form.segments.actions.create.heading'))
                     ->modalWidth(width: MaxWidth::Large)
             )
             ->createOptionUsing(callback: function (array $data, HasElection $livewire) {
@@ -80,9 +80,10 @@ readonly class PositionForm
                     ->modalFooterActionsAlignment(alignment: Alignment::Center)
                     ->modalWidth(width: MaxWidth::Large)
             )
+            ->label(label: __('filament.user.position-resource.form.segments.label'))
             ->manageOptionForm(schema: fn (Form $form) => $form->schema([
                 TextInput::make(name: 'name')
-                    ->label(label: 'Segment name')
+                    ->label(label: __('filament.user.position-resource.form.segments.form.name.label'))
                     ->maxLength(length: 150)
                     ->required(),
             ]))

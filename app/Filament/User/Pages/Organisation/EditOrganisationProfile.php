@@ -14,7 +14,7 @@ class EditOrganisationProfile extends EditTenantProfile
 {
     public static function getLabel(): string
     {
-        return 'Organisation Profile';
+        return __('filament.user.pages.organisation.edit.label');
     }
 
     public function form(Form $form): Form
@@ -32,11 +32,8 @@ class EditOrganisationProfile extends EditTenantProfile
                         OrganisationForm::timezoneComponent(),
                     ]),
 
-                Section::make()
-                    ->columnSpan(span: 1)
-                    ->schema(components: [
-                        OrganisationForm::logoComponent(),
-                    ]),
+                OrganisationForm::logoComponent()
+                    ->hiddenLabel(),
             ]);
     }
 

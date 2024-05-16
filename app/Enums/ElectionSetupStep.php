@@ -22,27 +22,12 @@ enum ElectionSetupStep: string implements HasLabel, HasDescription, HasIcon
 
     public function getLabel(): ?string
     {
-        return match ($this) {
-            self::Preference => 'Preference',
-            self::Electors => 'Add Electors',
-            self::Ballot => 'Setup Ballot',
-            self::Timing => 'Set Timing',
-            self::Payment => 'Payment',
-            self::Publish => 'Publish',
-        };
+        return __(key: 'app.enums.election_setup_step.' . $this->value . '.label');
     }
 
     public function getDescription(): ?string
     {
         return null;
-        return match ($this) {
-            self::Preference => 'Set preferences',
-            self::Electors => 'Add electors',
-            self::Ballot => 'Design ballot',
-            self::Timing => 'Set timing',
-            self::Payment => 'Complete the payment',
-            self::Publish => 'Publish the election',
-        };
     }
 
     public function getIndex(): int
@@ -59,9 +44,7 @@ enum ElectionSetupStep: string implements HasLabel, HasDescription, HasIcon
 
     public function getIcon(): ?string
     {
-        return match ($this) {
-            default => null,
-        };
+        return null;
     }
 
     public function getUrl(array $parameters = []): ?string

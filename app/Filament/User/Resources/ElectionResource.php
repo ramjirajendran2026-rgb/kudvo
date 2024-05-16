@@ -5,7 +5,6 @@ namespace App\Filament\User\Resources;
 use App\Enums\ElectionStatus;
 use App\Filament\Base\Contracts\HasElection;
 use App\Filament\User\Resources\ElectionResource\Pages;
-use App\Filament\User\Resources\ElectionResource\RelationManagers;
 use App\Filament\User\Resources\ElectionResource\Widgets\ElectionStatsOverview;
 use App\Filament\User\Resources\ElectionResource\Widgets\VotedBallots;
 use App\Forms\ElectionForm;
@@ -40,6 +39,16 @@ class ElectionResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-archive-box';
 
     protected static ?string $activeNavigationIcon = 'heroicon-s-archive-box';
+
+    public static function getModelLabel(): string
+    {
+        return __(key: 'filament.user.election-resource.model_label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __(key: 'filament.user.election-resource.plural_model_label');
+    }
 
     public static function form(Form $form): Form
     {
@@ -93,16 +102,18 @@ class ElectionResource extends Resource
                     ->copyable()
                     ->icon(icon: 'heroicon-m-clipboard-document')
                     ->iconPosition(iconPosition: IconPosition::After)
-                    ->label(label: 'Code')
+                    ->label(label: __('filament.user.election-resource.table.code.label'))
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make(name: 'name')
+                    ->label(label: __('filament.user.election-resource.table.name.label'))
                     ->searchable()
                     ->wrap(),
 
                 Tables\Columns\TextColumn::make(name: 'status')
                     ->alignCenter()
-                    ->badge(),
+                    ->badge()
+                    ->label(label: __('filament.user.election-resource.table.status.label')),
             ])
             ->actions(actions: [
                 Tables\Actions\ActionGroup::make(actions: [
@@ -187,7 +198,7 @@ class ElectionResource extends Resource
             ->authorize(abilities: 'update')
             ->form(form: static::editFormSchema())
             ->icon(icon: 'heroicon-m-pencil-square')
-            ->label(label: 'Edit title')
+            ->label(label: __('filament.user.election-resource.actions.edit.label'))
             ->modalCancelAction(action: false)
             ->modalFooterActionsAlignment(alignment: Alignment::Center)
             ->modalWidth(width: MaxWidth::ExtraLarge);
@@ -200,7 +211,7 @@ class ElectionResource extends Resource
             ->form(form: static::timingFormSchema())
             ->groupedIcon(icon: 'heroicon-m-clock')
             ->icon(icon: 'heroicon-m-clock')
-            ->label(label: 'Set Timing')
+            ->label(label: __('filament.user.election-resource.actions.set_timing.label'))
             ->modalCancelAction(action: false)
             ->modalFooterActionsAlignment(alignment: Alignment::Center)
             ->modalHeading(heading: fn(HasElection $livewire): ?string => $livewire->getElection()->name)
@@ -224,7 +235,7 @@ class ElectionResource extends Resource
     {
         return static::getSetTimingAction()
             ->authorize(abilities: 'updateTiming')
-            ->label(label: 'Edit Timing')
+            ->label(label: __('filament.user.election-resource.actions.edit_timing.label'))
             ->name(name: 'editTiming');
     }
 
@@ -242,11 +253,11 @@ class ElectionResource extends Resource
             ->requiresConfirmation()
             ->color(color: ElectionStatus::CANCELLED->getColor())
             ->icon(icon: ElectionStatus::CANCELLED->getIcon())
-            ->label(label: 'Cancel')
-            ->modalCancelActionLabel(label: 'No')
+            ->label(label: __('filament.user.election-resource.actions.cancel.label'))
+            ->modalCancelActionLabel(label: __('filament.user.election-resource.actions.cancel.modal_actions.cancel.label'))
             ->modalIcon(icon: ElectionStatus::CANCELLED->getIcon())
-            ->modalSubmitActionLabel(label: 'Yes')
-            ->successNotificationTitle(title: 'Cancelled');
+            ->modalSubmitActionLabel(label: __('filament.user.election-resource.actions.cancel.modal_actions.submit.label'))
+            ->successNotificationTitle(title: __('filament.user.election-resource.actions.cancel.success_notification.title'));
     }
 
     public static function getPublishAction(): Action
@@ -279,10 +290,11 @@ class ElectionResource extends Resource
             ->color(color: ElectionStatus::PUBLISHED->getColor())
             ->form(form: [
                 Toggle::make(name: 'notify_electors')
-                    ->label(label: 'Send ballot link all electors'),
+                    ->label(label: __('filament.user.election-resource.actions.publish.form.notify_electors.label')),
             ])
+            ->label(label: __('filament.user.election-resource.actions.publish.label'))
             ->modalIcon(icon: ElectionStatus::PUBLISHED->getIcon())
-            ->successNotificationTitle(title: 'Published');
+            ->successNotificationTitle(title: __('filament.user.election-resource.actions.publish.success_notification.title'));
     }
 
     public static function getCloseAction(): Action
@@ -304,9 +316,13 @@ class ElectionResource extends Resource
             ->requiresConfirmation()
             ->color(color: ElectionStatus::CLOSED->getColor())
             ->icon(icon: ElectionStatus::CLOSED->getIcon())
-            ->label(label: fn(HasElection $livewire): string => $livewire->getElection()->is_open ? 'Pre-close' : 'Close')
+            ->label(
+                label: fn(HasElection $livewire): string => $livewire->getElection()->is_open
+                    ? __('filament.user.election-resource.actions.close.pre_close.label')
+                    : __('filament.user.election-resource.actions.close.label')
+            )
             ->modalIcon(icon: ElectionStatus::CLOSED->getIcon())
-            ->successNotificationTitle(title: 'Closed');
+            ->successNotificationTitle(title: __('filament.user.election-resource.actions.close.success_notification.title'));
     }
 
     public static function getGenerateResultAction(): Action
@@ -326,8 +342,8 @@ class ElectionResource extends Resource
             )
             ->color(color: 'success')
             ->icon(icon: 'heroicon-o-chart-pie')
-            ->label(label: 'Generate Result')
-            ->successNotificationTitle(title: 'Result generated');
+            ->label(label: __('filament.user.election-resource.actions.generate_result.label'))
+            ->successNotificationTitle(title: __('filament.user.election-resource.actions.generate_result.success_notification.title'));
     }
 
     public static function getReplicateAction(): ReplicateTableAction
@@ -355,11 +371,11 @@ class ElectionResource extends Resource
 
                 Toggle::make(name: 'replicate_electors')
                     ->default(state: true)
-                    ->label(label: 'Include electors'),
+                    ->label(label: __('filament.user.election-resource.actions.replicate.form.replicate_electors.label')),
 
                 Toggle::make(name: 'replicate_ballot_setup')
                     ->default(state: true)
-                    ->label(label: 'Include ballot setup'),
+                    ->label(label: __('filament.user.election-resource.actions.replicate.form.replicate_ballot_setup.label')),
             ]);
     }
 }

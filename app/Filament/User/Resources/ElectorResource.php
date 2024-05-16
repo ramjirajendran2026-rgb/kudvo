@@ -10,11 +10,8 @@ use App\Models\Elector;
 use Filament\Actions\ImportAction;
 use Filament\Actions\Imports\Models\Import;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
 use Filament\Notifications\Actions\Action as NotificationAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
@@ -49,6 +46,16 @@ class ElectorResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'membership_number';
 
+    public static function getModelLabel(): string
+    {
+        return __('filament.user.elector-resource.model_label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('filament.user.elector-resource.plural_model_label');
+    }
+
     public static function form(Form $form): Form
     {
         $formLivewire = $form->getLivewire();
@@ -59,18 +66,18 @@ class ElectorResource extends Resource
 
                 Cluster::make(schema: [
                     ElectorForm::titleComponent()
-                        ->placeholder(placeholder: 'Title'),
+                        ->placeholder(placeholder: __('filament.user.elector-resource.form.title.placeholder')),
 
                     ElectorForm::firstNameComponent()
                         ->columnSpan(2)
-                        ->placeholder(placeholder: 'First name'),
+                        ->placeholder(placeholder: __('filament.user.elector-resource.form.first_name.placeholder')),
 
                     ElectorForm::lastNameComponent()
                         ->columnSpan(2)
-                        ->placeholder(placeholder: 'Last name'),
+                        ->placeholder(placeholder: __('filament.user.elector-resource.form.last_name.placeholder')),
                 ])
                     ->columns(columns: 5)
-                    ->label(label: 'Full name'),
+                    ->label(label: __('filament.user.elector-resource.form.full_name.label')),
 
                 ElectorForm::emailComponent()
                     ->when(
@@ -110,31 +117,34 @@ class ElectorResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->modelLabel(label: static::getModelLabel())
+            ->pluralModelLabel(label: static::getPluralModelLabel())
             ->columns(components: [
                 TextColumn::make(name: '#')
                     ->rowIndex(),
 
                 TextColumn::make(name: 'membership_number')
                     ->badge()
-                    ->label(label: 'Membership number')
+                    ->label(label: __('filament.user.elector-resource.table.membership_number.label'))
                     ->searchable(),
 
                 TextColumn::make(name: 'full_name')
-                    ->label(label: 'Full name')
+                    ->label(label: __('filament.user.elector-resource.table.full_name.label'))
                     ->searchable()
                     ->wrap(),
 
                 TextColumn::make(name: 'phone')
-                    ->label(label: 'Phone number')
+                    ->label(label: __('filament.user.elector-resource.table.phone.label'))
                     ->searchable(),
 
                 TextColumn::make(name: 'email')
-                    ->label(label: 'Email address')
+                    ->label(label: __('filament.user.elector-resource.table.email.label'))
                     ->wrap()
                     ->searchable(),
 
                 TextColumn::make(name: 'segments.name')
                     ->badge()
+                    ->label(label: __('filament.user.elector-resource.table.segments.label'))
                     ->visible(condition: fn ($livewire) => $livewire instanceof HasElection && $livewire->getElection()->preference?->segmented_ballot)
                     ->wrap(),
             ])

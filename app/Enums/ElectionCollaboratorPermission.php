@@ -13,9 +13,9 @@ enum ElectionCollaboratorPermission: string implements HasLabel
     public function getLabel(): ?string
     {
         return match ($this) {
-            self::FullAccess => 'Full Access',
-            self::ReadOnly => 'Read Only',
-            self::NoAccess => 'No Access',
+            self::FullAccess => __('app.enums.election_collaborator_permission.full_access.label'),
+            self::ReadOnly => __('app.enums.election_collaborator_permission.read_only.label'),
+            self::NoAccess => __('app.enums.election_collaborator_permission.no_access.label'),
         };
     }
 }

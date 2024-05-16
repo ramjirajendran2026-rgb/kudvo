@@ -83,7 +83,9 @@ return [
     |
     */
 
-    'locale' => 'en',
+    'locale' => env(key: 'APP_LOCALE', default: 'en'),
+
+    'available_locales' => explode(separator: ',', string: env(key: 'APP_AVAILABLE_LOCALES', default: env(key: 'APP_LOCALE', default: 'en'))),
 
     /*
     |--------------------------------------------------------------------------

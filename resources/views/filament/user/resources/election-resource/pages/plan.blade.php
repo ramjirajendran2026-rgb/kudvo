@@ -2,8 +2,12 @@
     <x-filament::section>
         <div class="space-y-6 px-6 py-12 lg:px-8">
             <div class="mx-auto max-w-2xl sm:text-center">
-                <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Choose a Plan</h2>
-                <p class="mt-4 text-lg leading-8 text-gray-600">Choose a plan that best suits your needs.</p>
+                <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+                    {{ __('filament.user.election-resource.pages.plan.heading') }}
+                </h2>
+                <p class="mt-4 text-lg leading-8 text-gray-600">
+                    {{ __('filament.user.election-resource.pages.plan.description') }}
+                </p>
             </div>
             @foreach ($this->getPlans() as $plan)
                 <div
@@ -25,7 +29,7 @@
                                 class="sticky top-16 mt-10 flex cursor-pointer items-center gap-x-4 bg-white"
                             >
                                 <h4 class="flex-none text-sm font-semibold leading-6 text-indigo-600">
-                                    What’s included
+                                    {{ __('filament.user.election-resource.pages.plan.whats_included') }}
                                 </h4>
                                 <div class="h-px flex-auto bg-gray-100"></div>
                                 <span x-show="{{ \Illuminate\Support\Js::from($plan->selfFeatures()->count() > 6) }}">
@@ -109,7 +113,7 @@
                                     class="sticky top-16 mt-10 flex cursor-pointer items-center gap-x-4 bg-white"
                                 >
                                     <h4 class="flex-none text-sm font-semibold leading-6 text-indigo-600">
-                                        Add-on features
+                                        {{ __('filament.user.election-resource.pages.plan.add_on_features') }}
                                     </h4>
                                     <div class="h-px flex-auto bg-gray-100"></div>
                                     <span
@@ -203,7 +207,7 @@
                                         {{ money($plan->elector_fee, $plan->currency) }}
                                     </span>
                                     <span class="text-sm font-semibold leading-6 tracking-wide text-gray-600">
-                                        /elector
+                                        {{ __('filament.user.election-resource.pages.plan.per_elector') }}
                                     </span>
                                 </p>
                                 @if ($plan->base_fee)
@@ -216,7 +220,7 @@
                                     {{ ($this->choosePlanAction)(['plan_id' => $plan->getKey()]) }}
                                 </div>
                                 <p class="mt-6 text-xs leading-5 text-gray-600">
-                                    Invoices and receipts available for easy company reimbursement
+                                    {{ __('filament.user.election-resource.pages.plan.notes') }}
                                 </p>
                             </div>
                         </div>

@@ -35,18 +35,18 @@ enum ElectionDashboardState: string
     public function getLabel(Election $election): string
     {
         return match ($this) {
-            self::PendingPreference => 'Configure Preference',
-            self::PendingElectorsList => 'Add Electors',
-            self::PendingBallotSetup => 'Add Positions and Candidates',
-            self::PendingTiming => 'Set Timing',
-            self::PendingCheckout => 'Payment',
-            self::ReadyToPublish => 'Ready to Publish',
-            self::Upcoming => 'Yet to Start',
-            self::Open => 'Open for Voting',
-            self::Expired => 'Voting time ended',
-            self::Closed => 'Voting Closed',
-            self::Completed => 'Completed',
-            self::Cancelled => 'Cancelled',
+            self::PendingPreference => __('app.enums.election_dashboard_state.pending_preference.label'),
+            self::PendingElectorsList => __('app.enums.election_dashboard_state.pending_electors_list.label'),
+            self::PendingBallotSetup => __('app.enums.election_dashboard_state.pending_ballot.label'),
+            self::PendingTiming => __('app.enums.election_dashboard_state.pending_timing.label'),
+            self::PendingCheckout => __('app.enums.election_dashboard_state.pending_checkout.label'),
+            self::ReadyToPublish => __('app.enums.election_dashboard_state.draft.label'),
+            self::Upcoming => __('app.enums.election_dashboard_state.upcoming.label'),
+            self::Open => __('app.enums.election_dashboard_state.open.label'),
+            self::Expired => __('app.enums.election_dashboard_state.expired.label'),
+            self::Closed => __('app.enums.election_dashboard_state.closed.label'),
+            self::Completed => __('app.enums.election_dashboard_state.completed.label'),
+            self::Cancelled => __('app.enums.election_dashboard_state.cancelled.label'),
         };
     }
 
@@ -83,12 +83,10 @@ enum ElectionDashboardState: string
                     ' reload="true" />'
                 )
             ),
-            self::PendingTiming => 'Set election start and end date and time',
-            self::PendingCheckout => 'Complete payment to publish this election',
-            self::Closed => 'Voting is closed for this election on '.
-                $election->closed_at->timezone($election->timezone)->format(format: 'M d, Y h:i A (T)'),
-            self::Cancelled => 'This election is cancelled on '.
-                $election->cancelled_at->timezone($election->timezone)->format(format: 'M d, Y h:i A (T)'),
+            self::PendingTiming => __('app.enums.election_dashboard_state.pending_timing.description'),
+            self::PendingCheckout => __('app.enums.election_dashboard_state.pending_checkout.description'),
+            self::Closed => __('app.enums.election_dashboard_state.closed.description', ['datetime' => $election->closed_at->timezone($election->timezone)->format(format: 'M d, Y h:i A (T)')]),
+            self::Cancelled => __('app.enums.election_dashboard_state.cancelled.description', ['datetime' => $election->cancelled_at->timezone($election->timezone)->format(format: 'M d, Y h:i A (T)')]),
             default => null,
         };
     }

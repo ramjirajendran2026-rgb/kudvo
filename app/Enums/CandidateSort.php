@@ -14,6 +14,6 @@ enum CandidateSort: string implements HasLabel
 
     public function getLabel(): ?string
     {
-        return Str::title(value: $this->value);
+        return __('app.enums.candidate_sort.' . $this->value . '.label');
     }
 }

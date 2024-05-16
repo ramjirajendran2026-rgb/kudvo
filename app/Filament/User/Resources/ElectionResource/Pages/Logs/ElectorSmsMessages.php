@@ -33,8 +33,6 @@ class ElectorSmsMessages extends ElectionPage implements HasTable
 
     protected static ?string $activeNavigationIcon = 'heroicon-s-chat-bubble-bottom-center-text';
 
-    protected static ?string $navigationGroup = 'Elector Reports';
-
     public ?string $activeTab = null;
 
     public function mount(int|string $record): void
@@ -61,7 +59,12 @@ class ElectorSmsMessages extends ElectionPage implements HasTable
 
     public static function getNavigationLabel(): string
     {
-        return 'SMS Logs';
+        return __('filament.user.election-resource.pages.logs.elector_sms_messages.navigation_label');
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('filament.user.election-resource.pages.logs.elector_sms_messages.navigation_group');
     }
 
     public function table(Table $table): Table

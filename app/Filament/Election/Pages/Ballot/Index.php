@@ -110,7 +110,7 @@ class Index extends BasePage
                     $this->getBackAction(),
 
                     Actions\Action::make(name: 'continue')
-                        ->label(label: 'Continue')
+                        ->label(label: __('filament.election.pages.ballot.index.form.actions.continue.label'))
                         ->action(action: 'submit')
                         ->hidden(condition: fn (self $livewire): bool => $livewire->flashVotes || $livewire->preview)
                         ->size(size: ActionSize::ExtraLarge)
@@ -119,7 +119,7 @@ class Index extends BasePage
                     Actions\Action::make(name: 'confirm')
                         ->requiresConfirmation()
                         ->action(action: 'submit')
-                        ->label(label: 'Confirm')
+                        ->label(label: __('filament.election.pages.ballot.index.form.actions.confirm.label'))
                         ->hidden(condition: fn (self $livewire): bool => $livewire->flashVotes || ! $livewire->preview)
                         ->size(size: ActionSize::ExtraLarge),
                 ])
@@ -130,7 +130,7 @@ class Index extends BasePage
 
     protected function getBackAction()
     {
-        return Actions\Action::make(name: 'Back')
+        return Actions\Action::make(name: 'back')
             ->action(action: function (self $livewire) {
                 $livewire->preview = false;
 
@@ -139,6 +139,7 @@ class Index extends BasePage
             ->color(color: 'gray')
             ->hidden(condition: fn (self $livewire): bool => $livewire->flashVotes)
             ->icon(icon: 'heroicon-s-chevron-left')
+            ->label(label:__('filament.election.pages.ballot.index.form.actions.back.label'))
             ->size(size: ActionSize::ExtraLarge)
             ->visible(condition: fn (self $livewire): bool => $livewire->preview);
     }
@@ -212,8 +213,8 @@ class Index extends BasePage
             $this->dispatch(event: 'flash-session-timeout');
 
             Notification::make()
-                ->title(title: 'Submitted')
-                ->body(body: 'Your votes are submitted successfully. This page will be automatically expire in 30 seconds.')
+                ->title(title: __('filament.election.pages.ballot.index.form.actions.submit.booth_success_notification.title'))
+                ->body(body: __('filament.election.pages.ballot.index.form.actions.submit.booth_success_notification.body'))
                 ->success()
                 ->seconds(seconds: 30)
                 ->send();

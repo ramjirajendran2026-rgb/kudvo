@@ -22,7 +22,7 @@ readonly class ElectorForm
     {
         return TextInput::make(name: 'email')
             ->email()
-            ->label(label: 'Email address')
+            ->label(label: __('filament.user.elector-resource.form.email.label'))
             ->maxLength(length: 100)
             ->rule(rule: 'email:rfc,dns');
     }
@@ -30,28 +30,28 @@ readonly class ElectorForm
     public static function firstNameComponent(): TextInput
     {
         return TextInput::make(name: 'first_name')
-            ->label(label: 'First name')
+            ->label(label: __('filament.user.elector-resource.form.first_name.label'))
             ->maxLength(length: 100);
     }
 
     public static function groupsComponent(): TagsInput
     {
         return TagsInput::make(name: 'groups')
-            ->label(label:'Groups')
+            ->label(label:__('filament.user.elector-resource.form.groups.label'))
             ->separator();
     }
 
     public static function lastNameComponent(): TextInput
     {
         return TextInput::make(name: 'last_name')
-            ->label(label: 'Last name')
+            ->label(label: __('filament.user.elector-resource.form.last_name.label'))
             ->maxLength(length: 100);
     }
 
     public static function membershipNumberComponent(): TextInput
     {
         return TextInput::make(name: 'membership_number')
-            ->label(label: 'Membership number')
+            ->label(label: __('filament.user.elector-resource.form.membership_number.label'))
             ->maxLength(length: 50)
             ->required()
             ->unique(
@@ -75,7 +75,7 @@ readonly class ElectorForm
     public static function phoneComponent(): PhoneInput
     {
         return PhoneInput::make(name: 'phone')
-            ->label(label: 'Phone number')
+            ->label(label: __('filament.user.elector-resource.form.phone.label'))
             ->validateFor();
     }
 
@@ -83,7 +83,7 @@ readonly class ElectorForm
     {
         return TextInput::make(name: 'title')
             ->datalist(options: ['Mr.', 'Ms.', 'Mrs.', 'Dr.', 'Prof.'])
-            ->label(label: 'Salutation')
+            ->label(label: __('filament.user.elector-resource.form.title.label'))
             ->maxLength(length: 20);
     }
 
@@ -95,7 +95,7 @@ readonly class ElectorForm
                 callback: fn (Action $action) => $action
                     ->modalCancelAction(action: false)
                     ->modalFooterActionsAlignment(alignment: Alignment::Center)
-                    ->modalHeading(heading: 'Create Segment')
+                    ->modalHeading(heading: __('filament.user.elector-resource.form.segments.create_action.heading'))
                     ->modalWidth(width: MaxWidth::Large)
             )
             ->createOptionUsing(callback: function (array $data, HasElection $livewire) {
@@ -107,6 +107,8 @@ readonly class ElectorForm
                     ->modalFooterActionsAlignment(alignment: Alignment::Center)
                     ->modalWidth(width: MaxWidth::Large)
             )
+            ->helperText(text: __('filament.user.elector-resource.form.segments.helper_text'))
+            ->label(label: __('filament.user.elector-resource.form.segments.label'))
             ->manageOptionForm(schema: fn (Form $form) => $form->schema([
                 TextInput::make(name: 'name')
                     ->label(label: 'Segment name')
@@ -114,6 +116,7 @@ readonly class ElectorForm
                     ->required(),
             ]))
             ->multiple()
+            ->placeholder(placeholder: __('filament.user.elector-resource.form.segments.placeholder'))
             ->preload();
     }
 }

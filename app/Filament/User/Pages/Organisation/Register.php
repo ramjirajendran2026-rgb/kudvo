@@ -15,7 +15,7 @@ class Register extends RegisterTenant
 {
     public static function getLabel(): string
     {
-        return 'Organisation Setup';
+        return __('filament.user.pages.organisation.register.label');
     }
 
     public function form(Form $form): Form
@@ -33,7 +33,7 @@ class Register extends RegisterTenant
     public function getRegisterFormAction(): Action
     {
         return parent::getRegisterFormAction()
-            ->label(label: 'Finish Setup');
+            ->label(label: __('filament.user.pages.organisation.register.form.actions.register.label'));
     }
 
     protected function handleRegistration(array $data): Model

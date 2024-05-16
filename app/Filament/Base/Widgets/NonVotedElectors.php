@@ -19,7 +19,7 @@ class NonVotedElectors extends BaseWidget
     public function table(Table $table): Table
     {
         return $table
-            ->description(description: fn (): string => "Updated at ".now(tz: $this->election->timezone)->format(format: Table::$defaultDateTimeDisplayFormat))
+            ->description(description: fn (): string => __('filament.base.widgets.non_voted_electors.description', ['timestamp' => now(tz: $this->election->timezone)->format(format: Table::$defaultDateTimeDisplayFormat)]))
             ->poll(interval: fn () => (Kudvo::isBoothDevice() && $this->election->is_booth_open) || $this->election->is_open ? '10s' : null)
             ->query(
                 Elector::whereMorphedTo(relation: 'event', model: $this->election)
@@ -30,10 +30,12 @@ class NonVotedElectors extends BaseWidget
             )
             ->columns([
                 Tables\Columns\TextColumn::make(name: 'membership_number')
+                    ->label(label: __('filament.base.widgets.non_voted_electors.table.membership_number.label'))
                     ->searchable()
                     ->wrapHeader(),
 
                 Tables\Columns\TextColumn::make(name: 'display_name')
+                    ->label(label: __('filament.base.widgets.non_voted_electors.table.display_name.label'))
                     ->searchable(condition: 'full_name')
                     ->wrap()
                     ->wrapHeader(),

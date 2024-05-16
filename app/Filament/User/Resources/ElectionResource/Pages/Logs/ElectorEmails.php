@@ -31,8 +31,6 @@ class ElectorEmails extends ElectionPage implements HasTable
 
     protected static ?string $activeNavigationIcon = 'heroicon-s-envelope-open';
 
-    protected static ?string $navigationGroup = 'Elector Reports';
-
     public ?string $activeTab = null;
 
     public function mount(int|string $record): void
@@ -60,7 +58,12 @@ class ElectorEmails extends ElectionPage implements HasTable
 
     public static function getNavigationLabel(): string
     {
-        return 'Email Logs';
+        return __('filament.user.election-resource.pages.logs.elector_emails.navigation_label');
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('filament.user.election-resource.pages.logs.elector_emails.navigation_group');
     }
 
     public function table(Table $table): Table

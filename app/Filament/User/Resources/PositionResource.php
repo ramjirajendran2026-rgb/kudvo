@@ -68,21 +68,22 @@ class PositionResource extends Resource
         return $table
             ->columns(components: [
                 TextColumn::make(name: 'name')
-                    ->label(label: 'Position name')
+                    ->label(label: __('filament.user.position-resource.table.name.label'))
                     ->wrap(),
 
                 TextColumn::make(name: 'quota')
                     ->alignCenter()
-                    ->label(label: 'Available posts')
+                    ->label(label: __('filament.user.position-resource.table.quota.label'))
                     ->numeric(),
 
                 TextColumn::make(name: 'threshold')
                     ->alignCenter()
-                    ->label(label: 'Min selection')
+                    ->label(label: __('filament.user.position-resource.table.threshold.label'))
                     ->numeric(),
 
                 TextColumn::make(name: 'segments.name')
                     ->badge()
+                    ->label(label: __('filament.user.position-resource.table.segments.label'))
                     ->visible(condition: fn ($livewire) => $livewire instanceof HasElection && $livewire->getElection()->preference?->segmented_ballot)
                     ->wrap(),
             ])

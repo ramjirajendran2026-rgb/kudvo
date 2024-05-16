@@ -109,18 +109,23 @@ class VotePicker extends CheckboxList
 
         $position = $this->position;
 
+        $txtSelected = __('filament.forms.components.vote_picker.general.selected');
         $this->description(
             description: new HtmlString(
                 html: $this->getDescriptionHint().
                 " • ".
-                '<span class="text-info-500" x-text="checkedOptionsCount+\' selected\'"></span>'
+                '<span class="text-info-500" x-text="checkedOptionsCount+\' '.$txtSelected.'\'"></span>'
             )
         );
         $this->hiddenLabel();
         $this->validationAttribute(label: $position->name);
 
         $this->heading(heading: $position->name);
-        $this->placeholder(placeholder: fn (self $component): string => $component->isPreview() ? 'None selected' : 'No candidates');
+        $this->placeholder(
+            placeholder: fn (self $component): string => $component->isPreview() ?
+                __('filament.forms.components.vote_picker.placeholder.none_selected') :
+                __('filament.forms.components.vote_picker.placeholder.no_candidates')
+        );
 
         $this->options(
             options: fn (string $operation, array $state, self $component) => $position

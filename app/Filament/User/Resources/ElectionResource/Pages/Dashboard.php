@@ -7,12 +7,10 @@ use App\Enums\ElectionDashboardState;
 use App\Enums\ElectionSetupStep;
 use App\Filament\Base\Pages\Concerns\HasStateSection;
 use App\Filament\User\Resources\ElectionResource;
-use App\Models\ElectionPrice;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Facades\Filament;
-use Filament\Notifications\Notification;
 use Illuminate\Support\HtmlString;
 use Livewire\Attributes\On;
 
@@ -49,6 +47,11 @@ class Dashboard extends ElectionPage
         if ($currentStep === ElectionSetupStep::Ballot) {
             $this->redirect(BallotSetup::getUrl(parameters: [$this->getElection()]));
         }
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('filament.user.election-resource.pages.dashboard.navigation_label');
     }
 
     #[On('refresh')]

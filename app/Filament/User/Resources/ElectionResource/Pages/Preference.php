@@ -96,6 +96,11 @@ class Preference extends ElectionPage
         return ElectionPlan::where('currency', 'inr')->oldest(column: 'sort')->get();
     }
 
+    public static function getNavigationLabel(): string
+    {
+        return __('filament.user.election-resource.pages.preference.navigation_label');
+    }
+
     protected function getHeaderActions(): array
     {
         return [
@@ -134,9 +139,9 @@ class Preference extends ElectionPage
                     ->statePath(path: 'preference')
                     ->schema(
                         components: [
-                            Section::make(heading:'Ballot Access')
+                            Section::make(heading:__('filament.user.election-resource.pages.preference.form.ballot_access_section.heading'))
                                 ->columnSpan(span: 1)
-                                ->description(description: 'Electors will be able to access their eligible ballot by these options')
+                                ->description(description: __('filament.user.election-resource.pages.preference.form.ballot_access_section.description'))
                                 ->hidden(
                                     condition: !$plan->hasAnyFeature(features: [
                                         ElectionFeature::BallotAccessCommonLink,
@@ -149,14 +154,16 @@ class Preference extends ElectionPage
                                             condition: $plan->hasAddOnFeature(feature: ElectionFeature::BallotAccessCommonLink),
                                             featureFee: $plan->getFeatureFee(feature: ElectionFeature::BallotAccessCommonLink),
                                             electorFee: $plan->getElectorFee(feature: ElectionFeature::BallotAccessCommonLink),
-                                            feeCurrency: $plan->currency
+                                            feeCurrency: $plan->currency,
+                                            hideAddOnPrice: !$this->canSave(),
                                         )
                                         ->hidden(condition: !$plan->hasFeature(feature: ElectionFeature::BallotAccessCommonLink))
+                                        ->label(label: __('filament.user.election-resource.pages.preference.form.ballot_link_common.label'))
                                         ->rule(
                                             rule: fn (Field $component) => 'accepted_if:'.$component->getContainer()->getStatePath().'.ballot_link_unique,false'
                                         )
                                         ->validationMessages(messages: [
-                                            'accepted_if' => 'This must be enabled when unique link is disabled'
+                                            'accepted_if' => __('filament.user.election-resource.pages.preference.form.ballot_link_common.validation.accepted_if')
                                         ]),
 
                                     FeatureToggle::make(name: 'ballot_link_unique')
@@ -164,10 +171,11 @@ class Preference extends ElectionPage
                                             condition: $plan->hasAddOnFeature(feature: ElectionFeature::BallotAccessUniqueLink),
                                             featureFee: $plan->getFeatureFee(feature: ElectionFeature::BallotAccessUniqueLink),
                                             electorFee: $plan->getElectorFee(feature: ElectionFeature::BallotAccessUniqueLink),
-                                            feeCurrency: $plan->currency
+                                            feeCurrency: $plan->currency,
+                                            hideAddOnPrice: !$this->canSave(),
                                         )
                                         ->hidden(condition: !$plan->hasFeature(feature: ElectionFeature::BallotAccessUniqueLink))
-                                        ->label(label: 'Unique link')
+                                        ->label(label: __('filament.user.election-resource.pages.preference.form.ballot_link_unique.label'))
                                         ->rule(
                                             rule: fn (Get $get) => function (string $attribute, bool $value, Closure $fail) use ($get): void{
                                                 if (
@@ -175,15 +183,15 @@ class Preference extends ElectionPage
                                                     !$get(path: 'ballot_link_mail') &&
                                                     !$get(path: 'ballot_link_sms')
                                                 ) {
-                                                    $fail('When this is enabled, at least one delivery method must be enabled');
+                                                    $fail(__('filament.user.election-resource.pages.preference.form.ballot_link_unique.validation.custom_rule'));
                                                 }
                                             }
                                         ),
                                 ]),
 
-                            Section::make(heading: 'IP Restriction')
+                            Section::make(heading: __('filament.user.election-resource.pages.preference.form.ip_restriction_section.heading'))
                                 ->columnSpan(span: 1)
-                                ->description(description: 'Restrict electors voting from same IP address')
+                                ->description(description: __('filament.user.election-resource.pages.preference.form.ip_restriction_section.description'))
                                 ->hidden(
                                     condition: !$plan->hasAnyFeature(features: [
                                         ElectionFeature::IpRestriction,
@@ -195,7 +203,8 @@ class Preference extends ElectionPage
                                             condition: $plan->hasAddOnFeature(feature: ElectionFeature::IpRestriction),
                                             featureFee: $plan->getFeatureFee(feature: ElectionFeature::IpRestriction),
                                             electorFee: $plan->getElectorFee(feature: ElectionFeature::IpRestriction),
-                                            feeCurrency: $plan->currency
+                                            feeCurrency: $plan->currency,
+                                            hideAddOnPrice: !$this->canSave(),
                                         )
                                         ->afterStateUpdated(callback: function (bool $state, Set $set): void {
                                             $set(path: 'ip_restriction_threshold', state: $state ? 1 : null);
@@ -203,13 +212,13 @@ class Preference extends ElectionPage
                                         ->dehydrated()
                                         ->formatStateUsing(callback: static fn (Get $get): bool => $get(path: 'ip_restriction_threshold') ?? false)
                                         ->hidden(condition: !$plan->hasFeature(feature: ElectionFeature::IpRestriction))
-                                        ->label(label: 'Enable')
+                                        ->label(label: __('filament.user.election-resource.pages.preference.form.ip_restriction.label'))
                                         ->live(),
 
                                     Quantity::make(name: 'ip_restriction_threshold')
                                         ->formatStateUsing(callback: static fn (?int $state): ?int => $state ?: 1)
                                         ->hiddenLabel()
-                                        ->heading(heading: 'Max. votes')
+                                        ->heading(heading: __('filament.user.election-resource.pages.preference.form.ip_restriction_threshold.heading'))
                                         ->maxValue(value: 10000)
                                         ->minValue(value: 1)
                                         ->numeric()
@@ -217,9 +226,9 @@ class Preference extends ElectionPage
                                         ->visible(condition: static fn (Get $get): bool => $get(path: 'ip_restriction')),
                                 ]),
 
-                            Section::make(heading:'Ballot Link Delivery')
+                            Section::make(heading:__('filament.user.election-resource.pages.preference.form.ballot_link_delivery_section.heading'))
                                 ->columnSpan(span: 1)
-                                ->description(description: 'Electors will receive their ballot link through these medium.')
+                                ->description(description: __('filament.user.election-resource.pages.preference.form.ballot_link_delivery_section.description'))
                                 ->hidden(
                                     condition: !$plan->hasAnyFeature(features: [
                                         ElectionFeature::BallotLinkEmail,
@@ -233,37 +242,40 @@ class Preference extends ElectionPage
                                             condition: $plan->hasAddOnFeature(feature: ElectionFeature::BallotLinkEmail),
                                             featureFee: $plan->getFeatureFee(feature: ElectionFeature::BallotLinkEmail),
                                             electorFee: $plan->getElectorFee(feature: ElectionFeature::BallotLinkEmail),
-                                            feeCurrency: $plan->currency
+                                            feeCurrency: $plan->currency,
+                                            hideAddOnPrice: !$this->canSave(),
                                         )
                                         ->hidden(condition: !$plan->hasFeature(feature: ElectionFeature::BallotLinkEmail))
-                                        ->label(label: 'Email'),
+                                        ->label(label: __('filament.user.election-resource.pages.preference.form.ballot_link_mail.label')),
 
                                     FeatureToggle::make(name: 'ballot_link_sms')
                                         ->addOn(
                                             condition: $plan->hasAddOnFeature(feature: ElectionFeature::BallotLinkSms),
                                             featureFee: $plan->getFeatureFee(feature: ElectionFeature::BallotLinkSms),
                                             electorFee: $plan->getElectorFee(feature: ElectionFeature::BallotLinkSms),
-                                            feeCurrency: $plan->currency
+                                            feeCurrency: $plan->currency,
+                                            hideAddOnPrice: !$this->canSave(),
                                         )
                                         ->hidden(condition: !$plan->hasFeature(feature: ElectionFeature::BallotLinkSms))
-                                        ->label(label: 'SMS'),
+                                        ->label(label: __('filament.user.election-resource.pages.preference.form.ballot_link_sms.label')),
 
                                     FeatureToggle::make(name: 'ballot_link_whatsapp')
                                         ->addOn(
                                             condition: $plan->hasAddOnFeature(feature: ElectionFeature::BallotLinkWhatsapp),
                                             featureFee: $plan->getFeatureFee(feature: ElectionFeature::BallotLinkWhatsapp),
                                             electorFee: $plan->getElectorFee(feature: ElectionFeature::BallotLinkWhatsapp),
-                                            feeCurrency: $plan->currency
+                                            feeCurrency: $plan->currency,
+                                            hideAddOnPrice: !$this->canSave(),
                                         )
                                         ->disabled()
                                         ->hidden(condition: !$plan->hasFeature(feature: ElectionFeature::BallotLinkWhatsapp))
-                                        ->hint(hint: 'Coming soon')
-                                        ->label(label: 'Whatsapp'),
+                                        ->hint(hint: __('filament.user.election-resource.pages.preference.form.ballot_link_whatsapp.hint'))
+                                        ->label(label: __('filament.user.election-resource.pages.preference.form.ballot_link_whatsapp.label')),
                                 ]),
 
-                            Section::make(heading: 'MFA Code Delivery')
+                            Section::make(heading: __('filament.user.election-resource.pages.preference.form.mfa_code_delivery_section.heading'))
                                 ->columnSpan(span: 1)
-                                ->description(description: 'Electors will receive MFA (Multi-Factor Authentication) code through these medium. This will be used to verify the elector\'s identity before submitting their votes.')
+                                ->description(description: __('filament.user.election-resource.pages.preference.form.mfa_code_delivery_section.description'))
                                 ->hidden(
                                     condition: !$plan->hasAnyFeature(features: [
                                         ElectionFeature::VerificationCodeEmail,
@@ -277,10 +289,11 @@ class Preference extends ElectionPage
                                             condition: $plan->hasAddOnFeature(feature: ElectionFeature::VerificationCodeEmail),
                                             featureFee: $plan->getFeatureFee(feature: ElectionFeature::VerificationCodeEmail),
                                             electorFee: $plan->getElectorFee(feature: ElectionFeature::VerificationCodeEmail),
-                                            feeCurrency: $plan->currency
+                                            feeCurrency: $plan->currency,
+                                            hideAddOnPrice: !$this->canSave(),
                                         )
                                         ->hidden(condition: !$plan->hasFeature(feature: ElectionFeature::VerificationCodeEmail))
-                                        ->label(label: 'Email')
+                                        ->label(label: __('filament.user.election-resource.pages.preference.form.mfa_mail.label'))
                                         ->live(),
 
                                     Split::make(schema: [
@@ -289,42 +302,43 @@ class Preference extends ElectionPage
                                                 condition: $plan->hasAddOnFeature(feature: ElectionFeature::VerificationCodeSms),
                                                 featureFee: $plan->getFeatureFee(feature: ElectionFeature::VerificationCodeSms),
                                                 electorFee: $plan->getElectorFee(feature: ElectionFeature::VerificationCodeSms),
-                                                feeCurrency: $plan->currency
+                                                feeCurrency: $plan->currency,
+                                            hideAddOnPrice: !$this->canSave(),
                                             )
                                             ->grow(condition: false)
                                             ->hidden(condition: !$plan->hasFeature(feature: ElectionFeature::VerificationCodeSms))
-                                            ->label(label: 'SMS')
+                                            ->label(label: __('filament.user.election-resource.pages.preference.form.mfa_sms.label'))
                                             ->live(),
 
                                         FeatureToggle::make(name: 'mfa_sms_auto_fill_only')
                                             ->hintIcon(icon: 'heroicon-o-information-circle')
-                                            ->hintIconTooltip(tooltip: 'Supports only on Android (Chrome) and iOS (Safari) devices. Voting from other devices will be restricted.')
-                                            ->label(label: 'Prevent manual entry')
+                                            ->hintIconTooltip(tooltip: __('filament.user.election-resource.pages.preference.form.mfa_sms_auto_fill_only.hint_icon.tooltip'))
+                                            ->label(label: __('filament.user.election-resource.pages.preference.form.mfa_sms_auto_fill_only.label'))
                                             ->visible(condition: static fn (Get $get): bool => $get(path: 'mfa_sms') && !$get(path: 'mfa_mail')),
                                     ])
                                         ->hidden(
                                             condition: !$plan->hasAnyFeature(features: [
                                                 ElectionFeature::VerificationCodeSms,
                                             ])
-                                        )
-                                        ->label(label: 'SMS'),
+                                        ),
 
                                     FeatureToggle::make(name: 'mfa_whatsapp')
                                         ->addOn(
                                             condition: $plan->hasAddOnFeature(feature: ElectionFeature::VerificationCodeWhatsapp),
                                             featureFee: $plan->getFeatureFee(feature: ElectionFeature::VerificationCodeWhatsapp),
                                             electorFee: $plan->getElectorFee(feature: ElectionFeature::VerificationCodeWhatsapp),
-                                            feeCurrency: $plan->currency
+                                            feeCurrency: $plan->currency,
+                                            hideAddOnPrice: !$this->canSave(),
                                         )
                                         ->disabled()
                                         ->hidden(condition: !$plan->hasFeature(feature: ElectionFeature::VerificationCodeWhatsapp))
-                                        ->hint(hint: 'Coming soon')
-                                        ->label(label: 'Whatsapp'),
+                                        ->hint(hint: __('filament.user.election-resource.pages.preference.form.mfa_whatsapp.hint'))
+                                        ->label(label: __('filament.user.election-resource.pages.preference.form.mfa_whatsapp.label')),
                                 ]),
 
-                            Section::make(heading: 'Ballot Acknowledgement')
+                            Section::make(heading: __('filament.user.election-resource.pages.preference.form.ballot_ack_section.heading'))
                                 ->columnSpan(span: 1)
-                                ->description(description: 'Electors will receive confirmation of their votes through these medium.')
+                                ->description(description: __('filament.user.election-resource.pages.preference.form.ballot_ack_section.description'))
                                 ->hidden(
                                     condition: !$plan->hasAnyFeature(features: [
                                         ElectionFeature::BallotAcknowledgementEmail,
@@ -338,37 +352,40 @@ class Preference extends ElectionPage
                                             condition: $plan->hasAddOnFeature(feature: ElectionFeature::BallotAcknowledgementEmail),
                                             featureFee: $plan->getFeatureFee(feature: ElectionFeature::BallotAcknowledgementEmail),
                                             electorFee: $plan->getElectorFee(feature: ElectionFeature::BallotAcknowledgementEmail),
-                                            feeCurrency: $plan->currency
+                                            feeCurrency: $plan->currency,
+                                            hideAddOnPrice: !$this->canSave(),
                                         )
                                         ->hidden(condition: !$plan->hasFeature(feature: ElectionFeature::BallotAcknowledgementEmail))
-                                        ->label(label: 'Email'),
+                                        ->label(label: __('filament.user.election-resource.pages.preference.form.voted_confirmation_mail.label')),
 
                                     FeatureToggle::make(name: 'voted_confirmation_sms')
                                         ->addOn(
                                             condition: $plan->hasAddOnFeature(feature: ElectionFeature::BallotAcknowledgementSms),
                                             featureFee: $plan->getFeatureFee(feature: ElectionFeature::BallotAcknowledgementSms),
                                             electorFee: $plan->getElectorFee(feature: ElectionFeature::BallotAcknowledgementSms),
-                                            feeCurrency: $plan->currency
+                                            feeCurrency: $plan->currency,
+                                            hideAddOnPrice: !$this->canSave(),
                                         )
                                         ->hidden(condition: !$plan->hasFeature(feature: ElectionFeature::BallotAcknowledgementSms))
-                                        ->label(label: 'SMS'),
+                                        ->label(label: __('filament.user.election-resource.pages.preference.form.voted_confirmation_sms.label')),
 
                                     FeatureToggle::make(name: 'voted_confirmation_whatsapp')
                                         ->addOn(
                                             condition: $plan->hasAddOnFeature(feature: ElectionFeature::BallotAcknowledgementWhatsapp),
                                             featureFee: $plan->getFeatureFee(feature: ElectionFeature::BallotAcknowledgementWhatsapp),
                                             electorFee: $plan->getElectorFee(feature: ElectionFeature::BallotAcknowledgementWhatsapp),
-                                            feeCurrency: $plan->currency
+                                            feeCurrency: $plan->currency,
+                                            hideAddOnPrice: !$this->canSave(),
                                         )
                                         ->disabled()
                                         ->hidden(condition: !$plan->hasFeature(feature: ElectionFeature::BallotAcknowledgementWhatsapp))
-                                        ->hint(hint: 'Coming soon')
-                                        ->label(label: 'Whatsapp'),
+                                        ->hint(hint: __('filament.user.election-resource.pages.preference.form.voted_confirmation_whatsapp.hint'))
+                                        ->label(label: __('filament.user.election-resource.pages.preference.form.voted_confirmation_whatsapp.label')),
                                 ]),
 
-                            Section::make(heading: 'Sharing of Electors\'s Ballot Copy')
+                            Section::make(heading: __('filament.user.election-resource.pages.preference.form.ballot_copy_section.heading'))
                                 ->columnSpan(span: 1)
-                                ->description(description: 'Electors will be able to share their voted ballot copy through these medium.')
+                                ->description(description: __('filament.user.election-resource.pages.preference.form.ballot_copy_section.description'))
                                 ->hidden(
                                     condition: !$plan->hasAnyFeature(features: [
                                         ElectionFeature::BallotCopyDownload,
@@ -382,37 +399,40 @@ class Preference extends ElectionPage
                                             condition: $plan->hasAddOnFeature(feature: ElectionFeature::BallotCopyDownload),
                                             featureFee: $plan->getFeatureFee(feature: ElectionFeature::BallotCopyDownload),
                                             electorFee: $plan->getElectorFee(feature: ElectionFeature::BallotCopyDownload),
-                                            feeCurrency: $plan->currency
+                                            feeCurrency: $plan->currency,
+                                            hideAddOnPrice: !$this->canSave(),
                                         )
                                         ->hidden(condition: !$plan->hasFeature(feature: ElectionFeature::BallotCopyDownload))
-                                        ->label(label: 'Direct download'),
+                                        ->label(label: __('filament.user.election-resource.pages.preference.form.voted_ballot_download.label')),
 
                                     FeatureToggle::make(name: 'voted_ballot_mail')
                                         ->addOn(
                                             condition: $plan->hasAddOnFeature(feature: ElectionFeature::BallotCopyEmail),
                                             featureFee: $plan->getFeatureFee(feature: ElectionFeature::BallotCopyEmail),
                                             electorFee: $plan->getElectorFee(feature: ElectionFeature::BallotCopyEmail),
-                                            feeCurrency: $plan->currency
+                                            feeCurrency: $plan->currency,
+                                            hideAddOnPrice: !$this->canSave(),
                                         )
                                         ->hidden(condition: !$plan->hasFeature(feature: ElectionFeature::BallotCopyEmail))
-                                        ->label(label: 'Email'),
+                                        ->label(label: __('filament.user.election-resource.pages.preference.form.voted_ballot_mail.label')),
 
                                     FeatureToggle::make(name: 'voted_ballot_whatsapp')
                                         ->addOn(
                                             condition: $plan->hasAddOnFeature(feature: ElectionFeature::BallotCopyWhatsapp),
                                             featureFee: $plan->getFeatureFee(feature: ElectionFeature::BallotCopyWhatsapp),
                                             electorFee: $plan->getElectorFee(feature: ElectionFeature::BallotCopyWhatsapp),
-                                            feeCurrency: $plan->currency
+                                            feeCurrency: $plan->currency,
+                                            hideAddOnPrice: !$this->canSave(),
                                         )
                                         ->disabled()
                                         ->hidden(condition: !$plan->hasFeature(feature: ElectionFeature::BallotCopyWhatsapp))
-                                        ->hint(hint: 'Coming soon')
-                                        ->label(label: 'Whatsapp'),
+                                        ->hint(hint: __('filament.user.election-resource.pages.preference.form.voted_ballot_whatsapp.hint'))
+                                        ->label(label: __('filament.user.election-resource.pages.preference.form.voted_ballot_whatsapp.label')),
                                 ]),
 
-                            Section::make(heading: 'Security preference')
+                            Section::make(heading: __('filament.user.election-resource.pages.preference.form.security_preference_section.heading'))
                                 ->columns()
-                                ->description(description: 'These are security preferences that you can enable for your election.')
+                                ->description(description: __('filament.user.election-resource.pages.preference.form.security_preference_section.description'))
                                 ->hidden(
                                     condition: !$plan->hasAnyFeature(features: [
                                         ElectionFeature::TrackableVotes,
@@ -430,7 +450,8 @@ class Preference extends ElectionPage
                                                     condition: $plan->hasAddOnFeature(feature: ElectionFeature::TrackableVotes),
                                                     featureFee: $plan->getFeatureFee(feature: ElectionFeature::TrackableVotes),
                                                     electorFee: $plan->getElectorFee(feature: ElectionFeature::TrackableVotes),
-                                                    feeCurrency: $plan->currency
+                                                    feeCurrency: $plan->currency,
+                                            hideAddOnPrice: !$this->canSave(),
                                                 )
                                                 ->afterStateUpdated(callback: function (bool $state, Set $set): void {
                                                     if (! $state) {
@@ -441,8 +462,8 @@ class Preference extends ElectionPage
                                                 })
                                                 ->default(state: true)
                                                 ->hidden(condition: !$plan->hasFeature(feature: ElectionFeature::TrackableVotes))
-                                                ->helperText(text: 'This will prevent the system from tracking the electors\' votes.')
-                                                ->label(label: 'Do Not Track electors\'s votes')
+                                                ->helperText(text: __('filament.user.election-resource.pages.preference.form.dnt_votes.helper_text'))
+                                                ->label(label: __('filament.user.election-resource.pages.preference.form.dnt_votes.label'))
                                                 ->live(),
 
                                             FeatureToggle::make(name: 'voted_ballot_update')
@@ -450,11 +471,12 @@ class Preference extends ElectionPage
                                                     condition: $plan->hasAddOnFeature(feature: ElectionFeature::EditableVotes),
                                                     featureFee: $plan->getFeatureFee(feature: ElectionFeature::EditableVotes),
                                                     electorFee: $plan->getElectorFee(feature: ElectionFeature::EditableVotes),
-                                                    feeCurrency: $plan->currency
+                                                    feeCurrency: $plan->currency,
+                                            hideAddOnPrice: !$this->canSave(),
                                                 )
-                                                ->helperText(text: 'This will allow electors to update their voted ballot.')
+                                                ->helperText(text: __('filament.user.election-resource.pages.preference.form.voted_ballot_update.helper_text'))
                                                 ->hidden(condition: !$plan->hasFeature(feature: ElectionFeature::EditableVotes))
-                                                ->label(label: 'Editable votes')
+                                                ->label(label: __('filament.user.election-resource.pages.preference.form.voted_ballot_update.label'))
                                                 ->disabled(condition: fn (Get $get): bool => $get(path: 'dnt_votes')),
                                         ]),
 
@@ -463,19 +485,20 @@ class Preference extends ElectionPage
                                             condition: $plan->hasAddOnFeature(feature: ElectionFeature::DeviceRestriction),
                                             featureFee: $plan->getFeatureFee(feature: ElectionFeature::DeviceRestriction),
                                             electorFee: $plan->getElectorFee(feature: ElectionFeature::DeviceRestriction),
-                                            feeCurrency: $plan->currency
+                                            feeCurrency: $plan->currency,
+                                            hideAddOnPrice: !$this->canSave(),
                                         )
-                                        ->label(label: 'Prevent duplicate device')
-                                        ->helperText(text: 'This will prevent electors from casting votes from same device.')
+                                        ->helperText(text: __('filament.user.election-resource.pages.preference.form.prevent_duplicate_device.helper_text'))
                                         ->hidden(condition: !$plan->hasFeature(feature: ElectionFeature::DeviceRestriction))
-                                        ->hint(hint: 'Experimental')
+                                        ->hint(hint: __('filament.user.election-resource.pages.preference.form.prevent_duplicate_device.hint'))
                                         ->hintIcon(
                                             icon: 'heroicon-o-information-circle',
-                                            tooltip: 'This is experimental and may not work as expected. Please use with caution.'
-                                        ),
+                                            tooltip: __('filament.user.election-resource.pages.preference.form.prevent_duplicate_device.hint_icon.tooltip')
+                                        )
+                                        ->label(label: __('filament.user.election-resource.pages.preference.form.prevent_duplicate_device.label')),
                                 ]),
 
-                            Section::make(heading: 'Elector preference')
+                            Section::make(heading: __('filament.user.election-resource.pages.preference.form.elector_preference_section.heading'))
                                 ->columns()
                                 ->hidden(
                                     condition: !$plan->hasAnyFeature(features: [
@@ -490,36 +513,39 @@ class Preference extends ElectionPage
                                             condition: $plan->hasAddOnFeature(feature: ElectionFeature::ElectorEmailUnique),
                                             featureFee: $plan->getFeatureFee(feature: ElectionFeature::ElectorEmailUnique),
                                             electorFee: $plan->getElectorFee(feature: ElectionFeature::ElectorEmailUnique),
-                                            feeCurrency: $plan->currency
+                                            feeCurrency: $plan->currency,
+                                            hideAddOnPrice: !$this->canSave(),
                                         )
-                                        ->helperText(text: 'This will allow you to add multiple electors with same email address.')
+                                        ->helperText(text: __('filament.user.election-resource.pages.preference.form.elector_duplicate_email.helper_text'))
                                         ->hidden(condition: !$plan->hasFeature(feature: ElectionFeature::ElectorEmailUnique))
-                                        ->label(label: 'Duplicate email addresses'),
+                                        ->label(label: __('filament.user.election-resource.pages.preference.form.elector_duplicate_email.label')),
 
                                     FeatureToggle::make(name: 'elector_duplicate_phone')
                                         ->addOn(
                                             condition: $plan->hasAddOnFeature(feature: ElectionFeature::ElectorPhoneUnique),
                                             featureFee: $plan->getFeatureFee(feature: ElectionFeature::ElectorPhoneUnique),
                                             electorFee: $plan->getElectorFee(feature: ElectionFeature::ElectorPhoneUnique),
-                                            feeCurrency: $plan->currency
+                                            feeCurrency: $plan->currency,
+                                            hideAddOnPrice: !$this->canSave(),
                                         )
-                                        ->helperText(text: 'This will allow you to add multiple electors with same phone number.')
+                                        ->helperText(text: __('filament.user.election-resource.pages.preference.form.elector_duplicate_phone.helper_text'))
                                         ->hidden(condition: !$plan->hasFeature(feature: ElectionFeature::ElectorPhoneUnique))
-                                        ->label(label: 'Duplicate phone numbers'),
+                                        ->label(label: __('filament.user.election-resource.pages.preference.form.elector_duplicate_phone.label')),
 
                                     FeatureToggle::make(name: 'elector_update_after_publish')
                                         ->addOn(
                                             condition: $plan->hasAddOnFeature(feature: ElectionFeature::ElectorCorrections),
                                             featureFee: $plan->getFeatureFee(feature: ElectionFeature::ElectorCorrections),
                                             electorFee: $plan->getElectorFee(feature: ElectionFeature::ElectorCorrections),
-                                            feeCurrency: $plan->currency
+                                            feeCurrency: $plan->currency,
+                                            hideAddOnPrice: !$this->canSave(),
                                         )
-                                        ->helperText(text: 'This will allow you to update the elector details after the election is published.')
+                                        ->helperText(text: __('filament.user.election-resource.pages.preference.form.elector_update_after_publish.helper_text'))
                                         ->hidden(condition: !$plan->hasFeature(feature: ElectionFeature::ElectorCorrections))
-                                        ->label(label: 'Allow elector update after publish'),
+                                        ->label(label: __('filament.user.election-resource.pages.preference.form.elector_update_after_publish.label')),
                                 ]),
 
-                            Section::make(heading: 'Candidate preference')
+                            Section::make(heading: __('filament.user.election-resource.pages.preference.form.candidate_preference_section.heading'))
                                 ->columns()
                                 ->hidden(
                                     condition: !$plan->hasAnyFeature(features: [
@@ -530,7 +556,7 @@ class Preference extends ElectionPage
                                 )
                                 ->schema(components: [
                                     Select::make(name: 'candidate_sort')
-                                        ->label(label: 'Display order')
+                                        ->label(label: __('filament.user.election-resource.pages.preference.form.candidate_sort.label'))
                                         ->columnSpanFull()
                                         ->default(state: CandidateSort::MANUAL->value)
                                         ->dehydrated(condition: fn (?string $state): bool => filled($state))
@@ -547,43 +573,46 @@ class Preference extends ElectionPage
                                             condition: $plan->hasAddOnFeature(feature: ElectionFeature::CandidatePhoto),
                                             featureFee: $plan->getFeatureFee(feature: ElectionFeature::CandidatePhoto),
                                             electorFee: $plan->getElectorFee(feature: ElectionFeature::CandidatePhoto),
-                                            feeCurrency: $plan->currency
+                                            feeCurrency: $plan->currency,
+                                            hideAddOnPrice: !$this->canSave(),
                                         )
                                         ->hidden(condition: !$plan->hasFeature(feature: ElectionFeature::CandidatePhoto))
-                                        ->label(label: 'Candidate photo'),
+                                        ->label(label: __('filament.user.election-resource.pages.preference.form.candidate_photo.label')),
 
                                     FeatureToggle::make(name: 'candidate_symbol')
                                         ->addOn(
                                             condition: $plan->hasAddOnFeature(feature: ElectionFeature::CandidateSymbol),
                                             featureFee: $plan->getFeatureFee(feature: ElectionFeature::CandidateSymbol),
                                             electorFee: $plan->getElectorFee(feature: ElectionFeature::CandidateSymbol),
-                                            feeCurrency: $plan->currency
+                                            feeCurrency: $plan->currency,
+                                            hideAddOnPrice: !$this->canSave(),
                                         )
                                         ->hidden(condition: !$plan->hasFeature(feature: ElectionFeature::CandidateSymbol))
-                                        ->label(label: 'Candidate symbol'),
+                                        ->label(label: __('filament.user.election-resource.pages.preference.form.candidate_symbol.label')),
 
                                     FeatureToggle::make(name: 'candidate_bio')
                                         ->hidden()
-                                        ->label(label: 'Candidate bio text'),
+                                        ->label(label: __('filament.user.election-resource.pages.preference.form.candidate_bio.label')),
 
                                     FeatureToggle::make(name: 'candidate_attachment')
                                         ->hidden()
-                                        ->label(label: 'Candidate attachments'),
+                                        ->label(label: __('filament.user.election-resource.pages.preference.form.candidate_attachment.label')),
 
                                     FeatureToggle::make(name: 'candidate_group')
                                         ->addOn(
                                             condition: $plan->hasAddOnFeature(feature: ElectionFeature::CandidateTeam),
                                             featureFee: $plan->getFeatureFee(feature: ElectionFeature::CandidateTeam),
                                             electorFee: $plan->getElectorFee(feature: ElectionFeature::CandidateTeam),
-                                            feeCurrency: $plan->currency
+                                            feeCurrency: $plan->currency,
+                                            hideAddOnPrice: !$this->canSave(),
                                         )
                                         ->hidden(condition: !$plan->hasFeature(feature: ElectionFeature::CandidateTeam))
-                                        ->label(label: 'Candidate group'),
+                                        ->label(label: __('filament.user.election-resource.pages.preference.form.candidate_group.label')),
                                 ]),
 
-                            Section::make(heading: 'Advanced preferences')
+                            Section::make(heading: __('filament.user.election-resource.pages.preference.form.advanced_preferences_section.heading'))
                                 ->collapsed()
-                                ->description(description: 'These are advanced preferences that you can enable for your election.')
+                                ->description(description: __('filament.user.election-resource.pages.preference.form.advanced_preferences_section.description'))
                                 ->hidden(
                                     condition: !$plan->hasAnyFeature(features: [
                                         ElectionFeature::SegmentedVoting,
@@ -595,16 +624,17 @@ class Preference extends ElectionPage
                                             condition: $plan->hasAddOnFeature(feature: ElectionFeature::SegmentedVoting),
                                             featureFee: $plan->getFeatureFee(feature: ElectionFeature::SegmentedVoting),
                                             electorFee: $plan->getElectorFee(feature: ElectionFeature::SegmentedVoting),
-                                            feeCurrency: $plan->currency
+                                            feeCurrency: $plan->currency,
+                                            hideAddOnPrice: !$this->canSave(),
                                         )
-                                        ->helperText(text: 'This will allow you to segment the ballot based on the elector details.')
+                                        ->helperText(text: __('filament.user.election-resource.pages.preference.form.segmented_ballot.helper_text'))
                                         ->hidden(condition: !$plan->hasFeature(feature: ElectionFeature::SegmentedVoting))
-                                        ->label(label: 'Segmented ballot'),
+                                        ->label(label: __('filament.user.election-resource.pages.preference.form.segmented_ballot.label')),
                                 ]),
 
-                            Section::make(heading: 'Booth voting')
+                            Section::make(heading: __('filament.user.election-resource.pages.preference.form.booth_voting_section.heading'))
                                 ->collapsed()
-                                ->description(description: 'This will allow electors to cast votes from a specific location. This is useful for conducting elections in a physical location.')
+                                ->description(description: __('filament.user.election-resource.pages.preference.form.booth_voting_section.description'))
                                 ->hidden(
                                     condition: !$plan->hasAnyFeature(features: [
                                         ElectionFeature::BoothVoting,
@@ -616,10 +646,11 @@ class Preference extends ElectionPage
                                             condition: $plan->hasAddOnFeature(feature: ElectionFeature::BoothVoting),
                                             featureFee: $plan->getFeatureFee(feature: ElectionFeature::BoothVoting),
                                             electorFee: $plan->getElectorFee(feature: ElectionFeature::BoothVoting),
-                                            feeCurrency: $plan->currency
+                                            feeCurrency: $plan->currency,
+                                            hideAddOnPrice: !$this->canSave(),
                                         )
                                         ->hidden(condition: !$plan->hasFeature(feature: ElectionFeature::BoothVoting))
-                                        ->label(label: 'Enable booth voting'),
+                                        ->label(label: __('filament.user.election-resource.pages.preference.form.booth_voting.label')),
 
                                     Toggle::make(name: 'web_app_manifest_enabled')
                                         ->afterStateUpdated(callback: function (bool $state, Set $set, Get $get, self $livewire): void {
@@ -754,7 +785,7 @@ class Preference extends ElectionPage
     {
         return Action::make(name: 'save')
             ->keyBindings(bindings: ['mod+s'])
-            ->label(label: 'Save Preference')
+            ->label(label: __('filament.user.election-resource.pages.preference.actions.save.label'))
             ->submit(form: 'save')
             ->visible(condition: $this->canSave() && $this->hasFullAccess());
     }
@@ -762,6 +793,7 @@ class Preference extends ElectionPage
     public function getChangePlanAction(): Action
     {
         return Action::make(name: 'changePlan')
+            ->label(label: __('filament.user.election-resource.pages.preference.actions.change_plan.label'))
             ->url(url: Plan::getUrl(parameters: [$this->getElection()]));
     }
 
@@ -786,7 +818,7 @@ class Preference extends ElectionPage
 
         Notification::make()
             ->success()
-            ->title(title: 'Saved')
+            ->title(title: __('filament.user.election-resource.pages.preference.actions.save.success_notification.title'))
             ->send();
 
         $this->redirect(url: Dashboard::getUrl(parameters: [$this->getElection()]));

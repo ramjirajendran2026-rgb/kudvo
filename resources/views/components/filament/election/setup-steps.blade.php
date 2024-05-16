@@ -24,8 +24,7 @@
                 <div
                     @class([
                         'flex h-10 w-10 shrink-0 items-center justify-center rounded-full',
-                        'bg-primary-600 dark:bg-primary-500' =>
-                            $pendingStep->getIndex() > $step->getIndex() && $currentStep->getIndex() > $step->getIndex(),
+                        'bg-primary-600 dark:bg-primary-500' => $pendingStep->getIndex() > $step->getIndex() && $currentStep->getIndex() > $step->getIndex(),
                         'border-2' => $pendingStep->getIndex() <= $step->getIndex() || true,
                         'border-primary-600 dark:border-primary-500' => $currentStep->getIndex() >= $step->getIndex(),
                         'border-gray-300 dark:border-gray-600' => $pendingStep->getIndex() < $step->getIndex(),

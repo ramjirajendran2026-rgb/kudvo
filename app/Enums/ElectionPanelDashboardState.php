@@ -23,12 +23,12 @@ enum ElectionPanelDashboardState: string
     public function getLabel(Election $election): string
     {
         return match ($this) {
-            self::YetToStart => 'Yet to start',
-            self::VotedNow => 'Voted successfully',
-            self::AlreadyVoted => 'Already voted',
-            self::Closed,
-            self::Completed => 'Voting closed',
-            self::Expired => 'Voting ended',
+            self::YetToStart => __('app.enums.election_panel_dashboard_state.yet_to_start.label'),
+            self::VotedNow => __('app.enums.election_panel_dashboard_state.voted_now.label'),
+            self::AlreadyVoted => __('app.enums.election_panel_dashboard_state.already_voted.label'),
+            self::Closed => __('app.enums.election_panel_dashboard_state.closed.label'),
+            self::Completed => __('app.enums.election_panel_dashboard_state.completed.label'),
+            self::Expired => __('app.enums.election_panel_dashboard_state.expired.label'),
         };
     }
 
@@ -54,11 +54,11 @@ enum ElectionPanelDashboardState: string
                     ' reload="true" />'
                 )
             ),
-            self::VotedNow => 'You vote has been submitted successfully.',
-            self::AlreadyVoted => 'You have already casted your vote for this election.',
-            self::Closed,
-            self::Completed => 'Voting for this election is closed',
-            self::Expired => 'Voting for this election is ended',
+            self::VotedNow => __('app.enums.election_panel_dashboard_state.voted_now.description'),
+            self::AlreadyVoted => __('app.enums.election_panel_dashboard_state.already_voted.description'),
+            self::Closed => __('app.enums.election_panel_dashboard_state.closed.description'),
+            self::Completed => __('app.enums.election_panel_dashboard_state.completed.description'),
+            self::Expired => __('app.enums.election_panel_dashboard_state.expired.description'),
         };
     }
 }

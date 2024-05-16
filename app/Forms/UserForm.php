@@ -13,7 +13,7 @@ readonly class UserForm
     {
         return TextInput::make(name: 'name')
             ->autofocus()
-            ->label(label: 'Your name')
+            ->label(label: __('filament.user.user-resource.form.name.label'))
             ->maxLength(length: 150)
             ->required();
     }
@@ -22,7 +22,7 @@ readonly class UserForm
     {
         return TextInput::make(name: 'email')
             ->email()
-            ->label(label: 'Email address')
+            ->label(label: __('filament.user.user-resource.form.email.label'))
             ->maxLength(length: 255)
             ->required()
             ->rule(rule: 'email:rfc,dns')
@@ -32,7 +32,7 @@ readonly class UserForm
     public static function passwordComponent(): TextInput
     {
         return TextInput::make(name: 'password')
-            ->label(label: 'Password')
+            ->label(label: __('filament.user.user-resource.form.password.label'))
             ->password()
             ->required()
             ->rule(rule: Password::default())
@@ -43,7 +43,7 @@ readonly class UserForm
     {
         return TextInput::make(name: 'passwordConfirmation')
             ->dehydrated(condition: false)
-            ->label(label: 'Confirm password')
+            ->label(label: __('filament.user.user-resource.form.password_confirmation.label'))
             ->password()
             ->required();
     }

@@ -73,6 +73,7 @@ trait InteractsWithElection
             $endsAt = $this->getElection()->booth_ends_at_local;
         }
 
+        $to = __('filament.election.pages.concerns.interacts_with_election.subheading.to');
         return new HtmlString(
             html: <<<HTML
 <div class="flex justify-center items-center gap-4">
@@ -81,7 +82,7 @@ trait InteractsWithElection
 <span>{$startsAt->format(format: 'h:i A')}</span>
 <span>{$startsAt->format(format: '(T)')}</span>
 </div>
-<span>to</span>
+<span>$to</span>
 <div class="flex flex-col md:flex-row flex-grow justify-center md:justify-start items-start md:gap-2 font-bold">
 <span>{$endsAt->format(format: 'M d, Y')}</span>
 <span>{$endsAt->format(format: 'h:i A')}</span>

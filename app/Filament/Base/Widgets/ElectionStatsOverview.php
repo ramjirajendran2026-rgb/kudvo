@@ -29,7 +29,7 @@ class ElectionStatsOverview extends BaseWidget
 
         return [
             Stat::make(
-                label: 'Total Electors',
+                label: __('filament.base.widgets.election_stats_overview.total_electors.label'),
                 value: $electorsCount,
             )
                 ->color(color: 'info')
@@ -37,7 +37,7 @@ class ElectionStatsOverview extends BaseWidget
                 ->icon(icon: 'heroicon-o-user-group'),
 
             Stat::make(
-                label: 'Voted',
+                label: __('filament.base.widgets.election_stats_overview.voted_electors.label'),
                 value: $votedElectorsCount.' ('.Number::percentage(number: ($votedElectorsCount / $electorsCount) * 100, maxPrecision: 2).')',
             )
                 ->color(color: 'success')
@@ -45,7 +45,7 @@ class ElectionStatsOverview extends BaseWidget
                 ->icon(icon: 'heroicon-o-face-smile'),
 
             Stat::make(
-                label: 'Non-Voted',
+                label: __('filament.base.widgets.election_stats_overview.non_voted_electors.label'),
                 value: $nonVotedElectorsCount,
             )
                 ->color(color: 'warning')

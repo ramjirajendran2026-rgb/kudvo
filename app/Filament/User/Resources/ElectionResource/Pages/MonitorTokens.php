@@ -38,21 +38,25 @@ class MonitorTokens extends ElectionPage implements HasTable
         return $this->getElection();
     }
 
+    public static function getNavigationLabel(): string
+    {
+        return __('filament.user.election-resource.pages.monitor_tokens.navigation_label');
+    }
+
     public function table(Table $table): Table
     {
         return $table
             ->defaultSort(column: 'id', direction: 'desc')
             ->headerActions(actions: [
-                Action::make(name: 'createNewToken')
+                Action::make(name: 'create')
                     ->requiresConfirmation()
                     ->color(color: 'info')
-                    ->action(action: function (self $livewire): void {
+                    ->label(label: __('filament.user.election-resource.pages.monitor_tokens.table.actions.create.label'))
+                    ->successNotificationTitle(title: __('filament.user.election-resource.pages.monitor_tokens.table.actions.create.success_notification.title'))
+                    ->action(action: function (self $livewire, Action $action): void {
                         $livewire->getElection()->monitorTokens()->create();
 
-                        Notification::make()
-                            ->title(title: 'Created')
-                            ->success()
-                            ->send();
+                        $action->success();
                     }),
             ])
             ->columns(components: [
@@ -61,14 +65,16 @@ class MonitorTokens extends ElectionPage implements HasTable
                     ->copyableState(state: fn (ElectionMonitorToken $token): string => $token->getLink())
                     ->icon(icon: 'heroicon-m-document-duplicate')
                     ->iconPosition(iconPosition: IconPosition::After)
+                    ->label(label: __('filament.user.election-resource.pages.monitor_tokens.table.key.label'))
                     ->size(size: TextColumn\TextColumnSize::ExtraSmall),
 
                 TextColumn::make(name: 'activated_at')
-                    ->dateTime(timezone: $this->getElection()->timezone),
+                    ->dateTime(timezone: $this->getElection()->timezone)
+                    ->label(label: __('filament.user.election-resource.pages.monitor_tokens.table.activated_at.label')),
 
                 TextColumn::make(name: 'user_agent')
                     ->formatStateUsing(callback: fn (?Agent $state): ?string => filled($state) ? $state->platform().' - '.$state->browser() : null)
-                    ->label(label: 'Device'),
+                    ->label(label: __('filament.user.election-resource.pages.monitor_tokens.table.user_agent.label')),
             ])
             ->actions(actions: [
                 DeleteAction::make()

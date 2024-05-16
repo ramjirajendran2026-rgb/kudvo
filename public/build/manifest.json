@@ -5,7 +5,7 @@
     "src": "resources/css/app.css"
   },
   "resources/css/filament/election/theme.css": {
-    "file": "assets/theme-ZVJ5QZWX.css",
+    "file": "assets/theme-KzrmJI6Q.css",
     "isEntry": true,
     "src": "resources/css/filament/election/theme.css"
   },
@@ -15,7 +15,7 @@
     "src": "resources/css/filament/nomination/theme.css"
   },
   "resources/css/filament/user/theme.css": {
-    "file": "assets/theme-zd4PW9J6.css",
+    "file": "assets/theme-15KkWRar.css",
     "isEntry": true,
     "src": "resources/css/filament/user/theme.css"
   },

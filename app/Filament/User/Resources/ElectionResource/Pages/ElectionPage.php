@@ -19,6 +19,7 @@ use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\Page;
 use Filament\Support\Enums\Alignment;
+use Filament\Support\Markdown;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
@@ -112,12 +113,7 @@ abstract class ElectionPage extends Page implements HasElectorGroups, HasElectio
             return null;
         }
 
-        return new HtmlString(
-            html: <<<HTML
-<b>{$this->getElection()->starts_at_local->format(format: 'M d, Y h:i A (T)')}</b> to
-<b>{$this->getElection()->ends_at_local->format(format: 'M d, Y h:i A (T)')}</b>
-HTML
-        );
+        return Markdown::inline(text: __('filament.user.election-resource.pages.base.subheading', ['starts' => $this->getElection()->starts_at_local->format(format: 'M d, Y h:i A (T)'), 'ends' => $this->getElection()->ends_at_local->format(format: 'M d, Y h:i A (T)')]));
     }
 
     public function getSubNavigationParameters(): array
@@ -151,8 +147,8 @@ HTML
 
         if (!static::canAccessPage(election: $this->election)) {
             Notification::make()
-                ->title(title: 'Not allowed')
-                ->body(body: 'Complete previous steps before accessing this page')
+                ->title(title: __('filament.user.election-resource.pages.base.access_denied.notification.title'))
+                ->body(body: __('filament.user.election-resource.pages.base.access_denied.notification.body'))
                 ->warning()
                 ->send();
 
@@ -222,7 +218,7 @@ HTML
                 ]
             )
             ->icon(icon: 'heroicon-m-eye')
-            ->label(label: 'Preview')
+            ->label(label: __('filament.user.election-resource.actions.preview.label'))
             ->modalCancelAction(action: false)
             ->modalDescription(description: $this->getSubheading())
             ->modalFooterActionsAlignment(alignment: Alignment::Center)
@@ -235,7 +231,7 @@ HTML
     {
         return Action::make(name: 'collaborators')
             ->icon(icon: 'heroicon-m-users')
-            ->label(label: 'Collaborators')
+            ->label(label: __('filament.user.election-resource.actions.collaborators.label'))
             ->url(url: Collaborators::getUrl(parameters: [$this->getElection()]))
             ->hidden(condition: blank($this->getPendingStep()))
             ->visible(condition: Collaborators::canAccessPage(election: $this->getElection()));

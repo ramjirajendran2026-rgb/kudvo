@@ -43,8 +43,6 @@ class Notice extends Page implements HasElection
 
     protected static bool $shouldRegisterNavigation = false;
 
-    protected ?string $subheading = 'Multi-Factor Authentication';
-
     public static string | Alignment $formActionsAlignment = Alignment::Center;
 
     public ?array $data = [];
@@ -73,7 +71,7 @@ class Notice extends Page implements HasElection
     {
         return $form
             ->schema(components: [
-                Section::make(heading: 'MFA Verification')
+                Section::make(heading: __('filament.election.pages.mfa.notice.form.heading'))
                     ->extraAttributes(attributes: ['class' => 'text-center'])
                     ->schema(components: [
                         Placeholder::make(name: 'description')
@@ -83,7 +81,7 @@ class Notice extends Page implements HasElection
 
                         Checkbox::make(name: 'consent')
                             ->accepted()
-                            ->label(label: 'I agree to receive OTP')
+                            ->label(label: __('filament.election.pages.mfa.notice.form.consent.label'))
                             ->validationAttribute(label: 'consent'),
                     ]),
             ]);
@@ -103,7 +101,7 @@ class Notice extends Page implements HasElection
     {
         return [
             Action::make(name: 'submit')
-                ->label(label: 'Send OTP')
+                ->label(label: __('filament.election.pages.mfa.notice.form.actions.submit.label'))
                 ->submit(form: 'submit'),
         ];
     }
@@ -116,8 +114,14 @@ class Notice extends Page implements HasElection
             $this->rateLimit(maxAttempts: 3);
         } catch (TooManyRequestsException $exception) {
             Notification::make()
-                ->title(title: 'Too many requests')
-                ->body(body: 'Please try again in '.$exception->secondsUntilAvailable.' seconds.')
+                ->title(__('filament-panels::pages/auth/login.notifications.throttled.title', [
+                    'seconds' => $exception->secondsUntilAvailable,
+                    'minutes' => ceil($exception->secondsUntilAvailable / 60),
+                ]))
+                ->body(array_key_exists('body', __('filament-panels::pages/auth/login.notifications.throttled') ?: []) ? __('filament-panels::pages/auth/login.notifications.throttled.body', [
+                    'seconds' => $exception->secondsUntilAvailable,
+                    'minutes' => ceil($exception->secondsUntilAvailable / 60),
+                ]) : null)
                 ->danger()
                 ->send();
 
@@ -157,7 +161,7 @@ class Notice extends Page implements HasElection
             ...$this->getElection()->preference->mfa_mail ? ['email address'] : [],
         ];
 
-        return '6 digit OTP code will be sent to your '.Arr::implodeWithAnd($via).'.';
+        return __('filament.election.pages.mfa.notice.form.notice.content', ['via' => Arr::implodeWithAnd($via)]);
     }
 
     public static function getMfaSessionKey(Elector $elector): string

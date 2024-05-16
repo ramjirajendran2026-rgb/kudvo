@@ -159,6 +159,6 @@ class Index extends Page
             ->setOption([
                 'isRemoteEnabled' => true,
             ])
-            ->setPaper(size: 'a4');
+            ->setPaper(paper: 'a4');
     }
 }

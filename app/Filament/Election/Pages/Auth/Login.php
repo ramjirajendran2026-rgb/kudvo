@@ -136,7 +136,11 @@ class Login extends BasePage
     protected function getAuthenticateFormAction(): Action
     {
         return parent::getAuthenticateFormAction()
-            ->label(label: Kudvo::getElection()->isMfaRequired() ? 'Get OTP' : 'Sign in');
+            ->label(
+                label: Kudvo::getElection()->isMfaRequired() ?
+                    __('filament.election.pages.auth.login.form.actions.authenticate.get_otp_label') :
+                    __('filament.election.pages.auth.login.form.actions.authenticate.sign_in_label')
+            );
     }
 
     public function form(Form $form): Form
@@ -153,7 +157,7 @@ class Login extends BasePage
     protected function getPhoneComponent()
     {
         return PhoneInput::make(name: 'phone')
-            ->label(label: 'Your phone number')
+            ->label(label: __('filament.election.pages.auth.login.form.phone.label'))
             ->required()
             ->validateFor();
     }
@@ -163,7 +167,7 @@ class Login extends BasePage
         return Checkbox::make(name: 'consent')
             ->accepted()
             ->default(state: true)
-            ->label(label: 'I agree to receive OTP (One Time Password)')
+            ->label(label: __('filament.election.pages.auth.login.form.consent.label'))
             ->validationAttribute(label: 'consent')
             ->visible(condition: Kudvo::getElection()->isMfaRequired());
     }

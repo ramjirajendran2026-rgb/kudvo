@@ -33,6 +33,11 @@ class Result extends ElectionPage
             static::can(action: 'viewResult', election: $election);
     }
 
+    public static function getNavigationLabel(): string
+    {
+        return __('filament.user.election-resource.pages.result.navigation_label');
+    }
+
     public function infolist(Infolist $infolist): Infolist
     {
         return $infolist
