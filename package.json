@@ -18,8 +18,9 @@
   },
   "dependencies": {
     "laravel-echo": "^1.16.0",
+    "pint": "^0.2.1",
     "prettier": "^3.2.5",
-    "prettier-plugin-blade": "^2",
+    "prettier-plugin-blade": "^2.1.13",
     "prettier-plugin-tailwindcss": "^0.5.14",
     "pusher-js": "^8.4.0-rc2"
   }
