@@ -93,6 +93,11 @@ class ElectionPlanResource extends Resource
                                     ->columnSpanFull()
                                     ->grow(condition: false)
                                     ->live(),
+
+                                Forms\Components\Toggle::make(name: 'show_in_pricing')
+                                    ->columnSpanFull()
+                                    ->grow(condition: false)
+                                    ->live(),
                             ])->columnSpanFull()->from(breakpoint: 'md'),
 
                             Forms\Components\TextInput::make(name: 'feature_fee')
@@ -100,7 +105,7 @@ class ElectionPlanResource extends Resource
                                 ->minValue(value: 0)
                                 ->numeric()
                                 ->step(interval: 0)
-                                ->visible(condition: fn(Forms\Get $get): bool => $get('is_add_on') ?? false)
+                                ->visible(condition: fn (Forms\Get $get): bool => $get('is_add_on') ?? false)
                                 ->required(),
 
                             Forms\Components\TextInput::make(name: 'elector_fee')
@@ -108,7 +113,7 @@ class ElectionPlanResource extends Resource
                                 ->minValue(value: 0)
                                 ->numeric()
                                 ->step(interval: 0)
-                                ->visible(condition: fn(Forms\Get $get): bool => $get('is_add_on') ?? false)
+                                ->visible(condition: fn (Forms\Get $get): bool => $get('is_add_on') ?? false)
                                 ->required(),
                         ]),
                 ]),
@@ -123,7 +128,7 @@ class ElectionPlanResource extends Resource
 
                 Tables\Columns\TextColumn::make(name: 'currency')
                     ->badge()
-                    ->formatStateUsing(callback: fn(string $state): string => Str::upper(value: $state)),
+                    ->formatStateUsing(callback: fn (string $state): string => Str::upper(value: $state)),
             ])
             ->actions(actions: [
                 Tables\Actions\ReplicateAction::make()

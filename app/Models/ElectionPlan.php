@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Data\Election\PlanFeatureData;
 use App\Enums\ElectionFeature;
-use App\Enums\ElectionPlanFeatureType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
@@ -26,7 +25,7 @@ class ElectionPlan extends Model
     protected $casts = [
         'base_fee' => 'int',
         'elector_fee' => 'int',
-        'features' => DataCollection::class . ':' . PlanFeatureData::class,
+        'features' => DataCollection::class.':'.PlanFeatureData::class,
     ];
 
     public function hasFeature(ElectionFeature $feature): bool
@@ -56,27 +55,27 @@ class ElectionPlan extends Model
     public function hasAddOnFeature(ElectionFeature $feature): bool
     {
         return $this
-                ->addOnFeatures()
-                ->contains(fn (PlanFeatureData $planFeature) => $planFeature->feature === $feature);
+            ->addOnFeatures()
+            ->contains(fn (PlanFeatureData $planFeature) => $planFeature->feature === $feature);
     }
 
     public function getFeatureFee(ElectionFeature $feature): int
     {
         return $this
-                ->features
-                ->toCollection()
-                ->where('feature', $feature)
-                ->first()
+            ->features
+            ->toCollection()
+            ->where('feature', $feature)
+            ->first()
                 ?->feature_fee ?? 0;
     }
 
     public function getElectorFee(ElectionFeature $feature): int
     {
         return $this
-                ->features
-                ->toCollection()
-                ->where('feature', $feature)
-                ->first()
+            ->features
+            ->toCollection()
+            ->where('feature', $feature)
+            ->first()
                 ?->elector_fee ?? 0;
     }
 }

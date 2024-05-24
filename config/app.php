@@ -85,8 +85,6 @@ return [
 
     'locale' => env(key: 'APP_LOCALE', default: 'en'),
 
-    'available_locales' => explode(separator: ',', string: env(key: 'APP_AVAILABLE_LOCALES', default: env(key: 'APP_LOCALE', default: 'en'))),
-
     /*
     |--------------------------------------------------------------------------
     | Application Fallback Locale
@@ -190,6 +188,10 @@ return [
     'aliases' => Facade::defaultAliases()->merge([
         'Countries' => PeterColes\Countries\CountriesFacade::class,
     ])->toArray(),
+
+    'default_currency' => 'INR',
+
+    'supported_currencies' => ['USD', 'INR'],
 
     'default_phone_country' => 'IN',
 

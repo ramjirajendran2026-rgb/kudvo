@@ -134,4 +134,69 @@ return [
             ],
         ],
     ],
+    'nav' => [
+        'home' => [
+            'label' => 'Home',
+        ],
+        'clientele' => [
+            'label' => 'Clientele',
+        ],
+        'products' => [
+            'label' => 'Products',
+            'items' => [
+                'election' => [
+                    'label' => 'Online Election',
+                ],
+                'resolution_voting' => [
+                    'label' => 'Resolution Voting',
+                ],
+            ],
+        ],
+        'blog' => [
+            'label' => 'Blog',
+        ],
+        'contact' => [
+            'label' => 'Contact',
+        ],
+        'privacy_policy' => [
+            'label' => 'Privacy Policy',
+        ],
+        'terms_of_service' => [
+            'label' => 'Terms of Service',
+        ],
+        'help' => [
+            'label' => 'Help',
+            'items' => [
+                'faq' => [
+                    'label' => 'FAQ',
+                ],
+                'contact' => 'Contact',
+            ],
+            'how_it_works' => 'How it Works',
+        ],
+        'sign_in' => [
+            'label' => 'Sign In',
+        ],
+        'dashboard' => [
+            'label' => 'Dashboard',
+        ],
+        'sign_up' => [
+            'label' => 'Sign Up',
+        ],
+    ],
+    'footer' => [
+        'quick_links' => [
+            'label' => 'Quick Links',
+        ],
+        'description' => 'Get in touch with us to learn how we can run next election for your organization together.',
+    ],
+    'contact' => [
+        'phone' => [
+            'label' => 'Call / Whatsapp',
+            'number' => '+1-631-731-3526',
+        ],
+        'email' => [
+            'address' => 'support@kudvo.com',
+        ],
+    ],
 ];

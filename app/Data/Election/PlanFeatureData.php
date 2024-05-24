@@ -12,7 +12,7 @@ class PlanFeatureData extends Data
         public bool $is_add_on = false,
         public ?int $feature_fee = 0,
         public ?int $elector_fee = 0,
-    )
-    {
+        public bool $show_in_pricing = false,
+    ) {
     }
 }

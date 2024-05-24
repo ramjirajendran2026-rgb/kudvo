@@ -6,6 +6,7 @@ use App\KudvoManager;
 use App\Services\Clicksend\ClicksendChannel;
 use App\Services\TwentyFourSevenSms\TwentyFourSevenSmsChannel;
 use App\Settings\ServiceConfig;
+use BezhanSalleh\FilamentLanguageSwitch\Enums\Placement;
 use BezhanSalleh\FilamentLanguageSwitch\LanguageSwitch;
 use ClickSend\Api\SMSApi;
 use ClickSend\Configuration;
@@ -37,7 +38,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->singleton(abstract: 'kudvo', concrete:  function (): KudvoManager {
+        $this->app->singleton(abstract: 'kudvo', concrete: function (): KudvoManager {
             return new KudvoManager();
         });
     }
@@ -102,11 +103,11 @@ class AppServiceProvider extends ServiceProvider
                 );
             });
 
-        $availableLocales = config(key: 'app.available_locales');
-        if (count($availableLocales) > 1) {
-            LanguageSwitch::configureUsing(function (LanguageSwitch $switch) {
+        $supportedLocales = config(key: 'laravellocalization.supportedLocales');
+        if (count($supportedLocales) > 1) {
+            LanguageSwitch::configureUsing(function (LanguageSwitch $switch) use ($supportedLocales) {
                 $switch
-                    ->locales(config(key: 'app.available_locales'));
+                    ->locales(array_keys($supportedLocales));
             });
         }
 

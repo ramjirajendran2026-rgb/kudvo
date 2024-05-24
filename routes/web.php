@@ -1,18 +1,22 @@
 <?php
 
-use App\Filament\Election\Pages\Auth\Login;
-use App\Filament\Election\Pages\Ballot\Index as BallotPage;
 use App\Filament\Election\Pages\Index as ElectionPanel;
 use App\Http\Controllers\AwsSnsController;
 use App\Http\Controllers\CheckoutController;
+use App\Livewire\Pages\Home;
+use App\Livewire\Pages\PrivacyPolicy;
+use App\Livewire\Pages\Products\Election\Home as ElectionHome;
+use App\Livewire\Pages\Products\Election\HowItWorks;
 use App\Models\Election;
 use App\Models\Elector;
 use App\Services\Clicksend\Http\Controllers\WebhookController as ClicksendWebhookController;
-use Filament\Facades\Filament;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
-use Laravel\Cashier\Cashier;
+use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
+use Mcamara\LaravelLocalization\Middleware\LaravelLocalizationRedirectFilter;
+use Mcamara\LaravelLocalization\Middleware\LaravelLocalizationViewPath;
+use Mcamara\LaravelLocalization\Middleware\LocaleSessionRedirect;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,7 +29,29 @@ use Laravel\Cashier\Cashier;
 |
 */
 
-Route::redirect(uri: '/', destination: 'https://securedvoting.com');
+Route::prefix(LaravelLocalization::setLocale())
+    ->middleware([
+        LocaleSessionRedirect::class,
+        LaravelLocalizationRedirectFilter::class,
+        LaravelLocalizationViewPath::class,
+    ])
+    ->group(function () {
+        Route::get(uri: '/', action: Home::class)
+            ->name(name: 'home');
+
+        Route::prefix('products/election')
+            ->name('products.election.')
+            ->group(function (): void {
+                Route::get(uri: '/', action: ElectionHome::class)
+                    ->name(name: 'home');
+
+                Route::get(uri: 'how-it-works', action: HowItWorks::class)
+                    ->name(name: 'how-it-works');
+            });
+    });
+
+Route::get(uri: 'privacy-policy', action: PrivacyPolicy::class)
+    ->name(name: 'privacy-policy');
 
 Route::get(
     uri: 'e/{election:short_code}',

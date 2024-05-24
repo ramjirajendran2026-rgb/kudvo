@@ -1,137 +1,202 @@
 <?php
 
 return [
-    'add_on' => 'अतिरिक्त', // Add-on
-    'all' => 'सभी', // All
+    'add_on' => 'ऐड-ऑन',
+    'all' => 'सभी',
     'enums' => [
         'election_status' => [
             'cancelled' => [
-                'label' => 'रद्द', // Cancelled
+                'label' => 'रद्द',
             ],
             'closed' => [
-                'label' => 'बंद', // Closed
+                'label' => 'बंद',
             ],
             'draft' => [
-                'label' => 'मसौदा', // Draft
+                'label' => 'ड्राफ्ट',
             ],
             'published' => [
-                'label' => 'प्रकाशित', // Published
+                'label' => 'प्रकाशित',
             ],
             'completed' => [
-                'label' => 'पूर्ण', // Completed
+                'label' => 'पूर्ण',
             ],
         ],
         'election_setup_step' => [
             'preference' => [
-                'label' => 'पसंद', // Preference
+                'label' => 'पसंद',
             ],
             'electors' => [
-                'label' => 'चुनावकर्ता जोड़ें', // Add Electors
+                'label' => 'चुनावकर्ता जोड़ें',
             ],
             'ballot' => [
-                'label' => 'मतपत्र सेटअप', // Setup Ballot
+                'label' => 'बैलेट सेटअप',
             ],
             'timing' => [
-                'label' => 'समय निर्धारित करें', // Set Timing
+                'label' => 'समय सेट करें',
             ],
             'payment' => [
-                'label' => 'भुगतान', // Payment
+                'label' => 'भुगतान',
             ],
             'publish' => [
-                'label' => 'प्रकाशित करें', // Publish
+                'label' => 'प्रकाशित करें',
             ],
         ],
         'candidate_sort' => [
             'manual' => [
-                'label' => 'मैनुअल', // Manual
+                'label' => 'मैन्युअल',
             ],
             'random' => [
-                'label' => 'रैंडम', // Random
+                'label' => 'रैंडम',
             ],
             'ascending' => [
-                'label' => 'आरोही', // Ascending
+                'label' => 'आरोही',
             ],
             'descending' => [
-                'label' => 'अवरोही', // Descending
+                'label' => 'अवरोही',
             ],
         ],
         'election_panel_dashboard_state' => [
             'yet_to_start' => [
-                'label' => 'अभी शुरू नहीं हुआ', // Yet to start
+                'label' => 'अब तक शुरू नहीं हुआ',
             ],
             'voted_now' => [
-                'label' => 'सफलतापूर्वक वोट किया गया', // Voted successfully
-                'description' => 'आपका वोट सफलतापूर्वक सबमिट किया गया है।', // Your vote has been submitted successfully.
+                'label' => 'सफलतापूर्वक वोट दिया गया',
+                'description' => 'आपका वोट सफलतापूर्वक सबमिट किया गया है।',
             ],
             'already_voted' => [
-                'label' => 'पहले से ही वोट किया गया है', // Already voted
-                'description' => 'आपने इस चुनाव के लिए पहले से ही अपना वोट डाल दिया है।', // You have already casted your vote for this election.
+                'label' => 'पहले ही वोट किया गया',
+                'description' => 'आपने पहले ही इस चुनाव के लिए अपना वोट दे दिया है।',
             ],
             'closed' => [
-                'label' => 'वोटिंग बंद हो गई है', // Voting closed
-                'description' => 'इस चुनाव के लिए वोटिंग बंद हो गई है।', // Voting for this election is closed
+                'label' => 'वोटिंग बंद',
+                'description' => 'इस चुनाव के लिए वोटिंग बंद हो गई है',
             ],
             'completed' => [
-                'label' => 'वोटिंग बंद हो गई है', // Voting closed
-                'description' => 'इस चुनाव के लिए वोटिंग बंद हो गई है।', // Voting for this election is closed
+                'label' => 'वोटिंग बंद',
+                'description' => 'इस चुनाव के लिए वोटिंग बंद हो गई है',
             ],
             'expired' => [
-                'label' => 'वोटिंग समाप्त हो गई है', // Voting ended
-                'description' => 'इस चुनाव के लिए वोटिंग समाप्त हो गई है।', // Voting for this election is ended
+                'label' => 'वोटिंग समाप्त हो गई',
+                'description' => 'इस चुनाव के लिए वोटिंग समाप्त हो गई है',
             ],
         ],
         'election_dashboard_state' => [
             'pending_preference' => [
-                'label' => 'प्राथमिकता कॉन्फ़िगर करें', // Configure Preference
+                'label' => 'पसंद विन्यास करें',
             ],
             'pending_electors_list' => [
-                'label' => 'निर्वाचक जोड़ें', // Add Electors
+                'label' => 'चुनावकर्ता जोड़ें',
             ],
             'pending_ballot' => [
-                'label' => 'पद और उम्मीदवार जोड़ें', // Add Positions and Candidates
+                'label' => 'स्थान और उम्मीदवार जोड़ें',
             ],
             'pending_timing' => [
-                'label' => 'समय निर्धारित करें', // Set Timing
-                'description' => 'चुनाव की शुरुआत और समाप्ति तिथि और समय सेट करें', // Set election start and end date and time
+                'label' => 'समय सेट करें',
+                'description' => 'चुनाव की शुरुआत और समाप्ति तिथि और समय सेट करें',
             ],
             'pending_checkout' => [
-                'label' => 'भुगतान', // Payment
-                'description' => 'इस चुनाव को प्रकाशित करने के लिए भुगतान पूरा करें', // Complete payment to publish this election
+                'label' => 'भुगतान',
+                'description' => 'इस चुनाव को प्रकाशित करने के लिए भुगतान पूरा करें',
             ],
             'draft' => [
-                'label' => 'प्रकाशित करने के लिए तैयार', // Ready to Publish
+                'label' => 'प्रकाशित करने के लिए तैयार',
             ],
             'upcoming' => [
-                'label' => 'अभी शुरू नहीं हुआ', // Yet to Start
+                'label' => 'अब तक शुरू नहीं हुआ',
             ],
             'open' => [
-                'label' => 'वोटिंग के लिए खुला है', // Open for Voting
+                'label' => 'वोटिंग के लिए खुला',
             ],
             'expired' => [
-                'label' => 'वोटिंग समय समाप्त हो गया है', // Voting time ended
+                'label' => 'वोटिंग का समय समाप्त हो गया',
             ],
             'closed' => [
-                'label' => 'वोटिंग बंद हो गई है', // Voting Closed
-                'description' => 'इस चुनाव के लिए वोटिंग :datetime को बंद कर दी गई है', // Voting is closed for this election on :datetime
+                'label' => 'वोटिंग बंद',
+                'description' => 'इस चुनाव के लिए वोटिंग बंद हो गई है:datetime',
             ],
             'completed' => [
-                'label' => 'सम्पन्न', // Completed
+                'label' => 'पूर्ण',
             ],
             'cancelled' => [
-                'label' => 'रद्द', // Cancelled
-                'description' => 'यह चुनाव :datetime पर रद्द किया गया है', // This election is cancelled on :datetime
+                'label' => 'रद्द किया गया',
+                'description' => 'यह चुनाव :datetime पर रद्द किया गया है',
             ],
         ],
         'election_collaborator_permission' => [
             'full_access' => [
-                'label' => 'पूरी पहुंच', // Full Access
+                'label' => 'पूर्ण पहुंच',
             ],
             'read_only' => [
-                'label' => 'केवल पढ़ें', // Read Only
+                'label' => 'केवल पढ़ने की अनुमति',
             ],
             'no_access' => [
-                'label' => 'कोई पहुंच नहीं', // No Access
+                'label' => 'कोई पहुँच नहीं',
             ],
+        ],
+    ],
+    'nav' => [
+        'home' => [
+            'label' => 'होम',
+        ],
+        'clientele' => [
+            'label' => 'ग्राहक',
+        ],
+        'products' => [
+            'label' => 'उत्पाद',
+            'items' => [
+                'election' => [
+                    'label' => 'ऑनलाइन चुनाव',
+                ],
+                'resolution_voting' => [
+                    'label' => 'संकल्प वोटिंग',
+                ],
+            ],
+        ],
+        'blog' => [
+            'label' => 'ब्लॉग',
+        ],
+        'contact' => [
+            'label' => 'संपर्क',
+        ],
+        'privacy_policy' => [
+            'label' => 'गोपनीयता नीति',
+        ],
+        'terms_of_service' => [
+            'label' => 'सेवा की शर्तें',
+        ],
+        'help' => [
+            'label' => 'सहायता',
+            'items' => [
+                'faq' => [
+                    'label' => 'सामान्य प्रश्न',
+                ],
+                'contact' => 'संपर्क',
+            ],
+            'how_it_works' => 'कैसे काम करता है',
+        ],
+        'sign_in' => [
+            'label' => 'साइन इन करें',
+        ],
+        'dashboard' => [
+            'label' => 'डैशबोर्ड',
+        ],
+        'sign_up' => [
+            'label' => 'साइन अप करें',
+        ],
+    ],
+    'footer' => [
+        'quick_links' => [
+            'label' => 'त्वरित लिंक्स',
+        ],
+        'description' => 'हमसे संपर्क करें और जानें कि हम आपके संगठन के लिए अगला चुनाव कैसे चला सकते हैं।',
+    ],
+    'contact' => [
+        'phone' => [
+            'label' => 'कॉल / व्हाट्सएप',
+            'number' => '+1-631-731-3526',
+        ],
+        'email' => [
+            'address' => 'support@kudvo.com',
         ],
     ],
 ];
