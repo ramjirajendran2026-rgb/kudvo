@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create(
             table: 'users',
-            callback:  function (Blueprint $table): void {
+            callback: function (Blueprint $table): void {
                 $table->id();
 
                 $table->string(column: 'name')->nullable();
@@ -25,10 +25,24 @@ return new class extends Migration
                 $table->timestamps();
             },
         );
+
+        Schema::create(
+            table: 'notifications',
+            callback: function (Blueprint $table): void {
+                $table->uuid('id')->primary();
+                $table->string('type');
+                $table->morphs('notifiable');
+                $table->text('data');
+                $table->timestamp('read_at')->nullable();
+                $table->timestamps();
+            },
+        );
     }
 
     public function down(): void
     {
+        Schema::dropIfExists(table: 'notifications');
+
         Schema::dropIfExists(table: 'users');
     }
 };

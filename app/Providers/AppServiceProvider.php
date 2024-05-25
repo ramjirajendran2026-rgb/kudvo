@@ -49,7 +49,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         if (App::isLocal()) {
-            Mail::alwaysTo(address: 'iliyas.inode@gmail.com');
+            Mail::alwaysTo(address: 'iliyas.m@inodesys.com');
         }
 
         Str::macro(name: 'isUnicode', macro: fn ($string): bool => strlen($string) != strlen(utf8_decode($string)));

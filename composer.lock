@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1b2304b1a5dd57462fe4f701a2d06a4e",
+    "content-hash": "627a5a79a40756fc6904924ed8e2d895",
     "packages": [
         {
             "name": "akaunting/laravel-money",
@@ -2460,16 +2460,16 @@
         },
         {
             "name": "doctrine/event-manager",
-            "version": "2.0.0",
+            "version": "2.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/event-manager.git",
-                "reference": "750671534e0241a7c50ea5b43f67e23eb5c96f32"
+                "reference": "b680156fa328f1dfd874fd48c7026c41570b9c6e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/event-manager/zipball/750671534e0241a7c50ea5b43f67e23eb5c96f32",
-                "reference": "750671534e0241a7c50ea5b43f67e23eb5c96f32",
+                "url": "https://api.github.com/repos/doctrine/event-manager/zipball/b680156fa328f1dfd874fd48c7026c41570b9c6e",
+                "reference": "b680156fa328f1dfd874fd48c7026c41570b9c6e",
                 "shasum": ""
             },
             "require": {
@@ -2479,10 +2479,10 @@
                 "doctrine/common": "<2.9"
             },
             "require-dev": {
-                "doctrine/coding-standard": "^10",
+                "doctrine/coding-standard": "^12",
                 "phpstan/phpstan": "^1.8.8",
-                "phpunit/phpunit": "^9.5",
-                "vimeo/psalm": "^4.28"
+                "phpunit/phpunit": "^10.5",
+                "vimeo/psalm": "^5.24"
             },
             "type": "library",
             "autoload": {
@@ -2531,7 +2531,7 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/event-manager/issues",
-                "source": "https://github.com/doctrine/event-manager/tree/2.0.0"
+                "source": "https://github.com/doctrine/event-manager/tree/2.0.1"
             },
             "funding": [
                 {
@@ -2547,7 +2547,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-10-12T20:59:15+00:00"
+            "time": "2024-05-22T20:47:39+00:00"
         },
         {
             "name": "doctrine/inflector",
@@ -3314,6 +3314,51 @@
                 "source": "https://github.com/filamentphp/filament"
             },
             "time": "2024-03-11T11:21:36+00:00"
+        },
+        {
+            "name": "filament/spatie-laravel-translatable-plugin",
+            "version": "v3.2.76",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/filamentphp/spatie-laravel-translatable-plugin.git",
+                "reference": "782a0a023b0544d67b0027cbad563f57c5b2809e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/filamentphp/spatie-laravel-translatable-plugin/zipball/782a0a023b0544d67b0027cbad563f57c5b2809e",
+                "reference": "782a0a023b0544d67b0027cbad563f57c5b2809e",
+                "shasum": ""
+            },
+            "require": {
+                "filament/support": "self.version",
+                "illuminate/support": "^10.45|^11.0",
+                "php": "^8.1",
+                "spatie/laravel-translatable": "^6.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Filament\\SpatieLaravelTranslatablePluginServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Filament\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Filament support for `spatie/laravel-translatable`.",
+            "homepage": "https://github.com/filamentphp/filament",
+            "support": {
+                "issues": "https://github.com/filamentphp/filament/issues",
+                "source": "https://github.com/filamentphp/filament"
+            },
+            "time": "2024-04-21T22:24:16+00:00"
         },
         {
             "name": "filament/support",
@@ -4672,16 +4717,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v10.48.10",
+            "version": "v10.48.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "91e2b9e218afa4e5c377510faa11957042831ba3"
+                "reference": "afdc2b03bd8d126446583da5414d659491aa4f54"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/91e2b9e218afa4e5c377510faa11957042831ba3",
-                "reference": "91e2b9e218afa4e5c377510faa11957042831ba3",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/afdc2b03bd8d126446583da5414d659491aa4f54",
+                "reference": "afdc2b03bd8d126446583da5414d659491aa4f54",
                 "shasum": ""
             },
             "require": {
@@ -4875,20 +4920,20 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2024-04-30T12:52:59+00:00"
+            "time": "2024-05-21T17:53:51+00:00"
         },
         {
             "name": "laravel/prompts",
-            "version": "v0.1.21",
+            "version": "v0.1.22",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/prompts.git",
-                "reference": "23ea808e8a145653e0ab29e30d4385e49f40a920"
+                "reference": "37f94de71758dbfbccc9d299b0e5eb76e02a40f5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/prompts/zipball/23ea808e8a145653e0ab29e30d4385e49f40a920",
-                "reference": "23ea808e8a145653e0ab29e30d4385e49f40a920",
+                "url": "https://api.github.com/repos/laravel/prompts/zipball/37f94de71758dbfbccc9d299b0e5eb76e02a40f5",
+                "reference": "37f94de71758dbfbccc9d299b0e5eb76e02a40f5",
                 "shasum": ""
             },
             "require": {
@@ -4931,9 +4976,9 @@
             "description": "Add beautiful and user-friendly forms to your command-line applications.",
             "support": {
                 "issues": "https://github.com/laravel/prompts/issues",
-                "source": "https://github.com/laravel/prompts/tree/v0.1.21"
+                "source": "https://github.com/laravel/prompts/tree/v0.1.22"
             },
-            "time": "2024-04-30T12:46:16+00:00"
+            "time": "2024-05-10T19:22:18+00:00"
         },
         {
             "name": "laravel/reverb",
@@ -5488,16 +5533,16 @@
         },
         {
             "name": "league/flysystem",
-            "version": "3.27.0",
+            "version": "3.28.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem.git",
-                "reference": "4729745b1ab737908c7d055148c9a6b3e959832f"
+                "reference": "e611adab2b1ae2e3072fa72d62c62f52c2bf1f0c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/4729745b1ab737908c7d055148c9a6b3e959832f",
-                "reference": "4729745b1ab737908c7d055148c9a6b3e959832f",
+                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/e611adab2b1ae2e3072fa72d62c62f52c2bf1f0c",
+                "reference": "e611adab2b1ae2e3072fa72d62c62f52c2bf1f0c",
                 "shasum": ""
             },
             "require": {
@@ -5521,10 +5566,13 @@
                 "composer/semver": "^3.0",
                 "ext-fileinfo": "*",
                 "ext-ftp": "*",
+                "ext-mongodb": "^1.3",
                 "ext-zip": "*",
                 "friendsofphp/php-cs-fixer": "^3.5",
                 "google/cloud-storage": "^1.23",
+                "guzzlehttp/psr7": "^2.6",
                 "microsoft/azure-storage-blob": "^1.1",
+                "mongodb/mongodb": "^1.2",
                 "phpseclib/phpseclib": "^3.0.36",
                 "phpstan/phpstan": "^1.10",
                 "phpunit/phpunit": "^9.5.11|^10.0",
@@ -5562,19 +5610,9 @@
             ],
             "support": {
                 "issues": "https://github.com/thephpleague/flysystem/issues",
-                "source": "https://github.com/thephpleague/flysystem/tree/3.27.0"
+                "source": "https://github.com/thephpleague/flysystem/tree/3.28.0"
             },
-            "funding": [
-                {
-                    "url": "https://ecologi.com/frankdejonge",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/frankdejonge",
-                    "type": "github"
-                }
-            ],
-            "time": "2024-04-07T19:17:50+00:00"
+            "time": "2024-05-22T10:09:12+00:00"
         },
         {
             "name": "league/flysystem-aws-s3-v3",
@@ -5643,16 +5681,16 @@
         },
         {
             "name": "league/flysystem-local",
-            "version": "3.25.1",
+            "version": "3.28.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem-local.git",
-                "reference": "61a6a90d6e999e4ddd9ce5adb356de0939060b92"
+                "reference": "13f22ea8be526ea58c2ddff9e158ef7c296e4f40"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem-local/zipball/61a6a90d6e999e4ddd9ce5adb356de0939060b92",
-                "reference": "61a6a90d6e999e4ddd9ce5adb356de0939060b92",
+                "url": "https://api.github.com/repos/thephpleague/flysystem-local/zipball/13f22ea8be526ea58c2ddff9e158ef7c296e4f40",
+                "reference": "13f22ea8be526ea58c2ddff9e158ef7c296e4f40",
                 "shasum": ""
             },
             "require": {
@@ -5686,19 +5724,9 @@
                 "local"
             ],
             "support": {
-                "source": "https://github.com/thephpleague/flysystem-local/tree/3.25.1"
+                "source": "https://github.com/thephpleague/flysystem-local/tree/3.28.0"
             },
-            "funding": [
-                {
-                    "url": "https://ecologi.com/frankdejonge",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/frankdejonge",
-                    "type": "github"
-                }
-            ],
-            "time": "2024-03-15T19:58:44+00:00"
+            "time": "2024-05-06T20:05:52+00:00"
         },
         {
             "name": "league/mime-type-detection",
@@ -5932,16 +5960,16 @@
         },
         {
             "name": "livewire/livewire",
-            "version": "v3.4.12",
+            "version": "v3.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/livewire/livewire.git",
-                "reference": "54dd265c17f7b5200627eb9690590e7cbbad1027"
+                "reference": "72e900825c560f0e4e620185b26c5441a8914435"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/livewire/livewire/zipball/54dd265c17f7b5200627eb9690590e7cbbad1027",
-                "reference": "54dd265c17f7b5200627eb9690590e7cbbad1027",
+                "url": "https://api.github.com/repos/livewire/livewire/zipball/72e900825c560f0e4e620185b26c5441a8914435",
+                "reference": "72e900825c560f0e4e620185b26c5441a8914435",
                 "shasum": ""
             },
             "require": {
@@ -5996,7 +6024,7 @@
             "description": "A front-end framework for Laravel.",
             "support": {
                 "issues": "https://github.com/livewire/livewire/issues",
-                "source": "https://github.com/livewire/livewire/tree/v3.4.12"
+                "source": "https://github.com/livewire/livewire/tree/v3.5.0"
             },
             "funding": [
                 {
@@ -6004,7 +6032,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-05-02T17:10:37+00:00"
+            "time": "2024-05-21T13:39:04+00:00"
         },
         {
             "name": "maennchen/zipstream-php",
@@ -6546,6 +6574,65 @@
                 "source": "https://github.com/jmespath/jmespath.php/tree/2.7.0"
             },
             "time": "2023-08-25T10:54:48+00:00"
+        },
+        {
+            "name": "mvenghaus/filament-plugin-translatable-inline",
+            "version": "3.0.8",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mvenghaus/filament-plugin-translatable-inline.git",
+                "reference": "e69afd5812aed77a28f86b25d775660057639094"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mvenghaus/filament-plugin-translatable-inline/zipball/e69afd5812aed77a28f86b25d775660057639094",
+                "reference": "e69afd5812aed77a28f86b25d775660057639094",
+                "shasum": ""
+            },
+            "require": {
+                "filament/forms": "^3.0",
+                "filament/spatie-laravel-translatable-plugin": "^3.0",
+                "php": "^8.2"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Mvenghaus\\FilamentPluginTranslatableInline\\FilamentPluginTranslatableInlineServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Mvenghaus\\FilamentPluginTranslatableInline\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Marcus Venghaus",
+                    "email": "marcus.venghaus@inklammern.de",
+                    "role": "Developer"
+                }
+            ],
+            "description": "An alternative to https://github.com/filamentphp/spatie-laravel-translatable-plugin. The difference is that all translations occur directly under each field.",
+            "homepage": "https://github.com/mvenghaus/filament-plugin-translatable-inline",
+            "keywords": [
+                "filament",
+                "inline",
+                "laravel",
+                "mvenghaus",
+                "spatie",
+                "translatable"
+            ],
+            "support": {
+                "issues": "https://github.com/mvenghaus/filament-plugin-translatable-inline",
+                "source": "https://github.com/mvenghaus/filament-plugin-translatable-inline"
+            },
+            "time": "2024-03-16T06:22:25+00:00"
         },
         {
             "name": "nesbot/carbon",
@@ -10365,6 +10452,88 @@
                 }
             ],
             "time": "2024-03-22T07:50:04+00:00"
+        },
+        {
+            "name": "spatie/laravel-translatable",
+            "version": "6.7.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spatie/laravel-translatable.git",
+                "reference": "d55384cbcf867b3cf21ff4d062403596d94acf81"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/spatie/laravel-translatable/zipball/d55384cbcf867b3cf21ff4d062403596d94acf81",
+                "reference": "d55384cbcf867b3cf21ff4d062403596d94acf81",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/database": "^9.0|^10.0|^11.0",
+                "illuminate/support": "^9.0|^10.0|^11.0",
+                "php": "^8.0",
+                "spatie/laravel-package-tools": "^1.11"
+            },
+            "require-dev": {
+                "mockery/mockery": "^1.4",
+                "orchestra/testbench": "^7.0|^8.0|^9.0",
+                "pestphp/pest": "^1.20|^2.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Spatie\\Translatable\\TranslatableServiceProvider"
+                    ]
+                },
+                "aliases": {
+                    "Translatable": "Spatie\\Translatable\\Facades\\Translatable"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Spatie\\Translatable\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Freek Van der Herten",
+                    "email": "freek@spatie.be",
+                    "homepage": "https://spatie.be",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Sebastian De Deyne",
+                    "email": "sebastian@spatie.be",
+                    "homepage": "https://spatie.be",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A trait to make an Eloquent model hold translations",
+            "homepage": "https://github.com/spatie/laravel-translatable",
+            "keywords": [
+                "eloquent",
+                "i8n",
+                "laravel-translatable",
+                "model",
+                "multilingual",
+                "spatie",
+                "translate"
+            ],
+            "support": {
+                "issues": "https://github.com/spatie/laravel-translatable/issues",
+                "source": "https://github.com/spatie/laravel-translatable/tree/6.7.1"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/spatie",
+                    "type": "github"
+                }
+            ],
+            "time": "2024-05-14T11:35:51+00:00"
         },
         {
             "name": "spatie/php-structure-discoverer",

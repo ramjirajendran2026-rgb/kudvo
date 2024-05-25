@@ -2,27 +2,24 @@
 
 namespace Database\Seeders;
 
-use App\Models\Elector;
-use App\Models\Nomination;
-use App\Models\Organisation;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Nnjeim\World\Actions\SeedAction;
 
 class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        User::factory(count: 10)->create();
+        User::factory()
+            ->create(attributes: [
+                'name' => 'Iliyas M',
+                'email' => 'iliyas.m@inodesys.com',
+                'password' => 'password',
+            ]);
 
-        Organisation::factory(count: 10)
-            ->has(
-                factory: Nomination::factory(count: rand(1, 5))
-                    ->has(
-                        factory: Elector::factory(count: rand(5, 15)),
-                        relationship: 'electors',
-                    ),
-                relationship: 'nominations',
-            )
-            ->create();
+        $this->call([
+            WorldSeeder::class,
+            ElectionPlanSeeder::class,
+        ]);
     }
 }

@@ -23,6 +23,7 @@
         "filament/notifications": "^3.2",
         "filament/spatie-laravel-media-library-plugin": "^3.2",
         "filament/spatie-laravel-settings-plugin": "^3.2",
+        "filament/spatie-laravel-translatable-plugin": "^3.2",
         "flowframe/laravel-trend": "^0.1.5",
         "guava/filament-clusters": "^1.1",
         "guzzlehttp/guzzle": "^7.2",
@@ -35,6 +36,7 @@
         "laravel/tinker": "^2.8",
         "league/flysystem-aws-s3-v3": "^3.0",
         "mcamara/laravel-localization": "^2.0",
+        "mvenghaus/filament-plugin-translatable-inline": "^3.0",
         "nnjeim/world": "^1.1",
         "nyholm/psr7": "^1.8",
         "omar-haris/filament-timezone-field": "^1.0",
@@ -46,6 +48,7 @@
         "spatie/laravel-data": "^3.11",
         "spatie/laravel-medialibrary": "^11.0.0",
         "spatie/laravel-settings": "^3.2",
+        "spatie/laravel-translatable": "^6.7",
         "squirephp/currencies-en": "^3.5",
         "symfony/psr-http-message-bridge": "^7.0",
         "ysfkaya/filament-phone-input": "^2.2"

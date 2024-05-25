@@ -13,10 +13,12 @@ use Illuminate\Support\Str;
 use Spatie\Color\Rgb;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\Translatable\HasTranslations;
 
 class Organisation extends Model implements HasAvatar, HasMedia
 {
     use HasFactory;
+    use HasTranslations;
     use InteractsWithMedia;
 
     public const MEDIA_COLLECTION_LOGO = 'logo';
@@ -28,14 +30,16 @@ class Organisation extends Model implements HasAvatar, HasMedia
         'timezone',
     ];
 
+    public array $translatable = ['name'];
+
     protected function logoUrl(): Attribute
     {
         return Attribute::make(
-            get: fn($value, array $attributes) => $this->getFirstMediaUrl(collectionName: static::MEDIA_COLLECTION_LOGO) ?:
-                'https://ui-avatars.com/api/?name=' .
-                $this->name .
-                '&color=FFFFFF&background=' .
-                str(Rgb::fromString('rgb(' . FilamentColor::getColors()['primary'][800] . ')')->toHex())
+            get: fn ($value, array $attributes) => $this->getFirstMediaUrl(collectionName: static::MEDIA_COLLECTION_LOGO) ?:
+                'https://ui-avatars.com/api/?name='.
+                $this->name.
+                '&color=FFFFFF&background='.
+                str(Rgb::fromString('rgb('.FilamentColor::getColors()['primary'][800].')')->toHex())
                     ->after('#'),
         );
     }

@@ -7,8 +7,6 @@ use App\Data\Election\PlanFeatureData;
 use App\Data\Election\PreferenceData;
 use App\Data\Election\ResultMetaData;
 use App\Data\Election\VoteSecretData;
-use App\Enums\CandidateSort;
-use App\Enums\ElectionCollaboratorPermission;
 use App\Enums\ElectionSetupStep;
 use App\Enums\ElectionStatus;
 use App\Enums\InvoiceStatus;
@@ -28,10 +26,12 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Laravel\Cashier\Checkout;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Spatie\Translatable\HasTranslations;
 
 class Election extends Model
 {
     use HasShortCode;
+    use HasTranslations;
 
     protected $fillable = [
         'name',
@@ -73,12 +73,17 @@ class Election extends Model
         'organisation_id' => 'int',
     ];
 
+    public array $translatable = [
+        'name',
+        'description',
+    ];
+
     protected function ballotLinkVia(): Attribute
     {
         return Attribute::make(
-            get: fn($value, array $attributes) => [
-                ...Arr::wrap(value: $this->preference?->ballot_link_mail ? 'mail': null),
-                ...Arr::wrap(value: $this->preference?->ballot_link_sms ? 'sms': null),
+            get: fn ($value, array $attributes) => [
+                ...Arr::wrap(value: $this->preference?->ballot_link_mail ? 'mail' : null),
+                ...Arr::wrap(value: $this->preference?->ballot_link_sms ? 'sms' : null),
             ],
         );
     }
@@ -86,9 +91,9 @@ class Election extends Model
     protected function votedConfirmationVia(): Attribute
     {
         return Attribute::make(
-            get: fn($value, array $attributes) => [
-                ...Arr::wrap(value: $this->preference?->voted_confirmation_mail ? 'mail': null),
-                ...Arr::wrap(value: $this->preference?->voted_confirmation_sms ? 'sms': null),
+            get: fn ($value, array $attributes) => [
+                ...Arr::wrap(value: $this->preference?->voted_confirmation_mail ? 'mail' : null),
+                ...Arr::wrap(value: $this->preference?->voted_confirmation_sms ? 'sms' : null),
             ],
         );
     }
@@ -96,8 +101,8 @@ class Election extends Model
     protected function votedBallotCopyShareVia(): Attribute
     {
         return Attribute::make(
-            get: fn($value, array $attributes) => [
-                ...Arr::wrap(value: $this->preference?->voted_ballot_mail ? 'mail': null),
+            get: fn ($value, array $attributes) => [
+                ...Arr::wrap(value: $this->preference?->voted_ballot_mail ? 'mail' : null),
             ],
         );
     }
@@ -105,35 +110,35 @@ class Election extends Model
     protected function startsAtLocal(): Attribute
     {
         return Attribute::make(
-            get: fn($value, array $attributes) => $this->starts_at?->tz(value: $this->timezone),
+            get: fn ($value, array $attributes) => $this->starts_at?->tz(value: $this->timezone),
         );
     }
 
     protected function endsAtLocal(): Attribute
     {
         return Attribute::make(
-            get: fn($value, array $attributes) => $this->ends_at?->tz(value: $this->timezone),
+            get: fn ($value, array $attributes) => $this->ends_at?->tz(value: $this->timezone),
         );
     }
 
     protected function boothStartsAtLocal(): Attribute
     {
         return Attribute::make(
-            get: fn($value, array $attributes) => $this->booth_starts_at?->tz(value: $this->timezone),
+            get: fn ($value, array $attributes) => $this->booth_starts_at?->tz(value: $this->timezone),
         );
     }
 
     protected function boothEndsAtLocal(): Attribute
     {
         return Attribute::make(
-            get: fn($value, array $attributes) => $this->booth_ends_at?->tz(value: $this->timezone),
+            get: fn ($value, array $attributes) => $this->booth_ends_at?->tz(value: $this->timezone),
         );
     }
 
     protected function status(): Attribute
     {
         return Attribute::make(
-            get: fn($value, array $attributes) => match (true) {
+            get: fn ($value, array $attributes) => match (true) {
                 filled(value: $this->cancelled_at) => ElectionStatus::CANCELLED,
                 filled(value: $this->completed_at) => ElectionStatus::COMPLETED,
                 filled(value: $this->closed_at) => ElectionStatus::CLOSED,
@@ -146,84 +151,84 @@ class Election extends Model
     protected function isDraft(): Attribute
     {
         return Attribute::make(
-            get: fn($value, array $attributes) => $this->status === ElectionStatus::DRAFT,
+            get: fn ($value, array $attributes) => $this->status === ElectionStatus::DRAFT,
         );
     }
 
     protected function isPublished(): Attribute
     {
         return Attribute::make(
-            get: fn($value, array $attributes) => $this->status === ElectionStatus::PUBLISHED,
+            get: fn ($value, array $attributes) => $this->status === ElectionStatus::PUBLISHED,
         );
     }
 
     protected function isUpcoming(): Attribute
     {
         return Attribute::make(
-            get: fn($value, array $attributes) => $this->is_published && $this->starts_at->isFuture(),
+            get: fn ($value, array $attributes) => $this->is_published && $this->starts_at->isFuture(),
         );
     }
 
     protected function isOpen(): Attribute
     {
         return Attribute::make(
-            get: fn($value, array $attributes) => $this->is_published && $this->starts_at->isPast() && $this->ends_at->isFuture(),
+            get: fn ($value, array $attributes) => $this->is_published && $this->starts_at->isPast() && $this->ends_at->isFuture(),
         );
     }
 
     protected function isExpired(): Attribute
     {
         return Attribute::make(
-            get: fn($value, array $attributes) => $this->is_published && $this->ends_at->isPast(),
+            get: fn ($value, array $attributes) => $this->is_published && $this->ends_at->isPast(),
         );
     }
 
     protected function isClosed(): Attribute
     {
         return Attribute::make(
-            get: fn($value, array $attributes) => $this->status === ElectionStatus::CLOSED,
+            get: fn ($value, array $attributes) => $this->status === ElectionStatus::CLOSED,
         );
     }
 
     protected function isBoothUpcoming(): Attribute
     {
         return Attribute::make(
-            get: fn($value, array $attributes) => $this->is_published && $this->booth_starts_at?->isFuture(),
+            get: fn ($value, array $attributes) => $this->is_published && $this->booth_starts_at?->isFuture(),
         );
     }
 
     protected function isBoothOpen(): Attribute
     {
         return Attribute::make(
-            get: fn($value, array $attributes) => $this->is_published && $this->booth_starts_at?->isPast() && $this->booth_ends_at?->isFuture(),
+            get: fn ($value, array $attributes) => $this->is_published && $this->booth_starts_at?->isPast() && $this->booth_ends_at?->isFuture(),
         );
     }
 
     protected function isBoothExpired(): Attribute
     {
         return Attribute::make(
-            get: fn($value, array $attributes) => $this->is_published && $this->booth_ends_at?->isPast(),
+            get: fn ($value, array $attributes) => $this->is_published && $this->booth_ends_at?->isPast(),
         );
     }
 
     protected function isCompleted(): Attribute
     {
         return Attribute::make(
-            get: fn($value, array $attributes) => $this->status === ElectionStatus::COMPLETED,
+            get: fn ($value, array $attributes) => $this->status === ElectionStatus::COMPLETED,
         );
     }
 
     protected function isCancelled(): Attribute
     {
         return Attribute::make(
-            get: fn($value, array $attributes) => $this->status === ElectionStatus::CANCELLED,
+            get: fn ($value, array $attributes) => $this->status === ElectionStatus::CANCELLED,
         );
     }
 
     protected function isPaid(): Attribute
     {
         return Attribute::make(
-            get: fn($value, array $attributes) => filled($this->paid_at),
+            get: fn ($value, array $attributes) => filled($this->paid_at),
         );
     }
 
@@ -334,7 +339,7 @@ class Election extends Model
     public function scopeWhereUser(Builder $query, User $user): Builder
     {
         return $query->where(
-            column: fn(Builder $query) => $query->where('owner_id', $user->getKey())
+            column: fn (Builder $query) => $query->where('owner_id', $user->getKey())
                 ->orWhereHas(
                     relation: 'collaborators',
                     callback: fn (Builder $query) => $query->whereKey($user->getKey())
@@ -424,7 +429,7 @@ class Election extends Model
         return blank($this->paid_at);
     }
 
-    public function isOwner(User | Authenticatable $user): bool
+    public function isOwner(User|Authenticatable $user): bool
     {
         return $this->owner_id === $user->getKey();
     }
@@ -649,111 +654,6 @@ class Election extends Model
             );
     }
 
-    public function calculateElectorFee(ElectionPrice $price): int
-    {
-        $fee = 0;
-
-        $fee_breakup = $price->elector_fee_breakup;
-
-        if ($this->preference->ballot_link_common) {
-            $fee += $fee_breakup->ballot_link_common;
-        }
-
-        if ($this->preference->ballot_link_unique) {
-            $fee += $fee_breakup->ballot_link_unique;
-        }
-
-        if ($this->preference->ballot_link_mail) {
-            $fee += $fee_breakup->ballot_link_mail;
-        }
-
-        if ($this->preference->ballot_link_sms) {
-            $fee += $fee_breakup->ballot_link_sms;
-        }
-
-        if ($this->preference->mfa_mail) {
-            $fee += $fee_breakup->mfa_mail;
-        }
-
-        if ($this->preference->mfa_sms) {
-            $fee += $fee_breakup->mfa_sms;
-        }
-
-        if ($this->preference->mfa_sms_auto_fill_only) {
-            $fee += $fee_breakup->mfa_sms_auto_fill_only;
-        }
-
-        if ($this->preference->voted_confirmation_sms) {
-            $fee += $fee_breakup->voted_confirmation_sms;
-        }
-
-        if ($this->preference->voted_ballot_download) {
-            $fee += $fee_breakup->voted_ballot_download;
-        }
-
-        if ($this->preference->voted_ballot_mail) {
-            $fee += $fee_breakup->voted_ballot_mail;
-        }
-
-        if ($this->preference->dnt_votes) {
-            $fee += $fee_breakup->dnt_votes;
-        }
-
-        if ($this->preference->voted_ballot_update) {
-            $fee += $fee_breakup->voted_ballot_update;
-        }
-
-        if ($this->preference->prevent_duplicate_device) {
-            $fee += $fee_breakup->prevent_duplicate_device;
-        }
-
-        if ($this->preference->ip_restriction_threshold) {
-            $fee += $fee_breakup->ip_restriction;
-        }
-
-        if ($this->preference->elector_duplicate_email) {
-            $fee += $fee_breakup->elector_duplicate_email;
-        }
-
-        if ($this->preference->elector_duplicate_phone) {
-            $fee += $fee_breakup->elector_duplicate_phone;
-        }
-
-        if ($this->preference->elector_update_after_publish) {
-            $fee += $fee_breakup->elector_update_after_publish;
-        }
-
-        if ($this->preference->candidate_sort == CandidateSort::RANDOM) {
-            $fee += $fee_breakup->candidate_sort_random;
-        }
-
-        if ($this->preference->candidate_photo) {
-            $fee += $fee_breakup->candidate_photo;
-        }
-
-        if ($this->preference->candidate_symbol) {
-            $fee += $fee_breakup->candidate_symbol;
-        }
-
-        if ($this->preference->candidate_bio) {
-            $fee += $fee_breakup->candidate_bio;
-        }
-
-        if ($this->preference->candidate_attachment) {
-            $fee += $fee_breakup->candidate_attachment;
-        }
-
-        if ($this->preference->candidate_group) {
-            $fee += $fee_breakup->candidate_group;
-        }
-
-        if ($this->preference->booth_voting) {
-            $fee += $fee_breakup->booth_voting;
-        }
-
-        return $fee;
-    }
-
     public function checkout(User $user): Checkout
     {
         $electorsCount = $this->electors()->count();
@@ -798,7 +698,7 @@ class Election extends Model
                     'currency' => $plan->currency,
                     'unit_amount' => $addOnFeatureFee,
                     'product_data' => [
-                        'name' => "Add-ons - Feature fee",
+                        'name' => 'Add-ons - Feature fee',
                     ],
                 ],
             ]);
@@ -810,7 +710,7 @@ class Election extends Model
                     'currency' => $plan->currency,
                     'unit_amount' => $addOnElectorFee,
                     'product_data' => [
-                        'name' => "Add-ons - Elector fee",
+                        'name' => 'Add-ons - Elector fee',
                     ],
                 ],
             ]);

@@ -6,6 +6,7 @@ use App\Enums\ElectionCollaboratorPermission;
 use App\Enums\ElectionSetupStep;
 use App\Filament\Base\Contracts\HasElection;
 use App\Filament\Imports\CandidateImporter;
+use App\Filament\Imports\ElectorImporter;
 use App\Filament\User\Resources\CandidateResource;
 use App\Filament\User\Resources\PositionResource;
 use App\Models\Candidate;
@@ -68,7 +69,7 @@ class BallotSetup extends ElectionPage
                                 description: fn (Position $state): ?string => collect(value: [
                                     Str::plural(value: $state->quota.' Post', count: $state->quota),
                                     ...($state->abstain ? [Str::plural(value: " • Minimum $state->threshold selection", count: $state->threshold)] : []),
-                                    ...($this->getElection()->preference?->segmented_ballot ? $state->segments()->pluck(column: 'name') : [])
+                                    ...($this->getElection()->preference?->segmented_ballot ? $state->segments()->pluck(column: 'name') : []),
                                 ])->implode(value: ' • ')
                             )
                             ->footerActions(actions: [
@@ -232,7 +233,7 @@ HTML,
                 return $data;
             })
             ->record(record: null)
-            ->relationship(relationship: fn(HasElection $livewire) => $livewire->getElection()->positions())
+            ->relationship(relationship: fn (HasElection $livewire) => $livewire->getElection()->positions())
             ->visible(condition: $this->hasFullAccess());
     }
 
@@ -370,7 +371,7 @@ HTML,
         return ImportAction::make(name: 'importCandidate')
             ->authorize(abilities: 'importCandidate')
             ->icon(icon: 'heroicon-m-arrow-up-tray')
-            ->importer(importer: CandidateImporter::class)
+            ->importer(importer: ElectorImporter::class)
             ->label(label: __('filament.user.election-resource.pages.ballot_setup.actions.import_candidate.label'))
             ->modalWidth(width: MaxWidth::ExtraLarge)
             ->options(options: [
@@ -411,7 +412,7 @@ HTML,
             })
             ->extraModalFooterActions(actions: fn (InfolistAction $action): array => [
                 $action->makeModalSubmitAction(name: 'createAnother', arguments: ['another' => true])
-                    ->label(__('filament-actions::create.single.modal.actions.create_another.label'))
+                    ->label(__('filament-actions::create.single.modal.actions.create_another.label')),
             ])
             ->form(form: fn (Form $form, Position $record) => CandidateResource::form(form: $form, position: $record))
             ->icon(icon: 'heroicon-m-plus')

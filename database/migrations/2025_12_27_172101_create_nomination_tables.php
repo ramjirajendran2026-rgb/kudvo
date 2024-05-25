@@ -1,0 +1,120 @@
+<?php
+
+use App\Models\Elector;
+use App\Models\Nominee;
+use App\Models\Organisation;
+use App\Models\Position;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create(
+            table: 'nominations',
+            callback: function (Blueprint $table): void {
+                $table->id();
+
+                $table->string(column: 'code')->unique();
+                $table->string(column: 'name')->index();
+                $table->longText(column: 'description')->nullable();
+
+                $table->json(column: 'preference')->nullable();
+
+                $table->boolean(column: 'self_nomination')->default(value: false);
+                $table->unsignedInteger(column: 'nominator_threshold')->default(value: 2);
+
+                $table->string(column: 'timezone')->nullable();
+                $table->timestamp(column: 'starts_at')->nullable();
+                $table->timestamp(column: 'ends_at')->nullable();
+                $table->timestamp(column: 'withdrawal_starts_at')->nullable();
+                $table->timestamp(column: 'withdrawal_ends_at')->nullable();
+
+                $table->timestamp(column: 'published_at')->nullable();
+                $table->timestamp(column: 'closed_at')->nullable();
+                $table->timestamp(column: 'scrutinised_at')->nullable();
+                $table->timestamp(column: 'cancelled_at')->nullable();
+
+                $table->foreignIdFor(model: Organisation::class)
+                    ->constrained()->cascadeOnUpdate()->cascadeOnDelete();
+
+                $table->timestamps();
+            },
+        );
+
+        Schema::create(
+            table: 'nominees',
+            callback: function (Blueprint $table): void {
+                $table->id();
+
+                $table->string(column: 'membership_number');
+                $table->string(column: 'title')->nullable();
+                $table->string(column: 'first_name')->nullable();
+                $table->string(column: 'last_name')->nullable();
+                $table->string(column: 'full_name')
+                    ->virtualAs(
+                        expression: 'CONCAT_WS(" ", NULLIF(first_name, ""), NULLIF(last_name, ""))'
+                    );
+                $table->string(column: 'email')->nullable();
+                $table->string(column: 'phone')->nullable();
+
+                $table->boolean(column: 'self_nomination');
+                $table->string(column: 'status');
+                $table->string(column: 'scrutiny_status');
+                $table->text(column: 'remarks')->nullable();
+
+                $table->timestamp(column: 'decided_at')->nullable();
+                $table->timestamp(column: 'scrutinised_at')->nullable();
+                $table->timestamp(column: 'withdrawn_at')->nullable();
+
+                $table->foreignIdFor(model: Position::class)
+                    ->constrained()->cascadeOnUpdate()->cascadeOnDelete();
+                $table->foreignIdFor(model: Elector::class)->nullable()
+                    ->constrained()->cascadeOnUpdate()->nullOnDelete();
+                $table->foreignId(column: 'scrutiniser_id')->nullable()
+                    ->constrained(table: 'users')->cascadeOnUpdate()->nullOnDelete();
+
+                $table->timestamps();
+            },
+        );
+
+        Schema::create(
+            table: 'nominators',
+            callback: function (Blueprint $table): void {
+                $table->id();
+
+                $table->string(column: 'membership_number');
+                $table->string(column: 'title')->nullable();
+                $table->string(column: 'first_name')->nullable();
+                $table->string(column: 'last_name')->nullable();
+                $table->string(column: 'full_name')
+                    ->virtualAs(
+                        expression: 'CONCAT_WS(" ", NULLIF(first_name, ""), NULLIF(last_name, ""))'
+                    );
+                $table->string(column: 'email')->nullable();
+                $table->string(column: 'phone')->nullable();
+
+                $table->string(column: 'status');
+                $table->timestamp(column: 'decided_at')->nullable();
+
+                $table->foreignIdFor(model: Nominee::class)
+                    ->constrained()->cascadeOnUpdate()->cascadeOnDelete();
+                $table->foreignIdFor(model: Elector::class)->nullable()
+                    ->constrained()->cascadeOnUpdate()->nullOnDelete();
+
+                $table->timestamps();
+            },
+        );
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists(table: 'nominators');
+
+        Schema::dropIfExists(table: 'nominees');
+
+        Schema::dropIfExists(table: 'nominations');
+    }
+};

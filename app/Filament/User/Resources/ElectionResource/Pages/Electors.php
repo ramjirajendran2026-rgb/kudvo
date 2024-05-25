@@ -5,15 +5,18 @@ namespace App\Filament\User\Resources\ElectionResource\Pages;
 use App\Enums\ElectionCollaboratorPermission;
 use App\Enums\ElectionSetupStep;
 use App\Filament\Base\Contracts\HasElection;
+use App\Filament\Imports\ElectorImporter;
 use App\Filament\User\Resources\ElectionResource;
 use App\Filament\User\Resources\ElectorResource;
 use App\Models\Election;
 use App\Models\Elector;
 use Filament\Actions\Action;
+use Filament\Actions\ImportAction;
 use Filament\Facades\Filament;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Concerns\InteractsWithRelationshipTable;
+use Filament\Support\Enums\MaxWidth;
 use Filament\Tables\Actions\Action as TableAction;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\BulkAction;
@@ -118,6 +121,16 @@ class Electors extends ElectionPage implements HasTable
     protected function getHeaderActions(): array
     {
         return [
+            ImportAction::make(name: 'importCandidate')
+                ->authorize(abilities: 'importCandidate')
+                ->icon(icon: 'heroicon-m-arrow-up-tray')
+                ->importer(importer: ElectorImporter::class)
+                ->label(label: __('filament.user.election-resource.pages.ballot_setup.actions.import_candidate.label'))
+                ->modalWidth(width: MaxWidth::ExtraLarge)
+                ->options(options: [
+                    'election_id' => $this->getElection()->getKey(),
+                ]),
+
             $this->getNextPageAction(),
             \Filament\Actions\ActionGroup::make(actions: [
                 $this->getCollaboratorsPageAction(),
@@ -161,7 +174,7 @@ class Electors extends ElectionPage implements HasTable
     protected function getDeleteAction(): TableDeleteAction
     {
         return ElectorResource::getTableDeleteAction()
-            ->visible(condition:$this->canDelete());
+            ->visible(condition: $this->canDelete());
     }
 
     protected function getSendBallotLinkAction(): TableAction
@@ -192,7 +205,7 @@ class Electors extends ElectionPage implements HasTable
             ->action(action: function (BulkAction $action, Collection $collection) {
                 $collection->each(
                     callback: function (Elector $elector) {
-                        if (!$elector->ballot?->isVoted()) {
+                        if (! $elector->ballot?->isVoted()) {
                             $elector->sendBallotLink();
                         }
                     }
@@ -218,7 +231,7 @@ class Electors extends ElectionPage implements HasTable
             ->action(action: function (BulkAction $action, Collection $collection) {
                 $collection->each(
                     callback: function (Elector $elector) {
-                        if (!$elector->ballot?->isVoted()) {
+                        if (! $elector->ballot?->isVoted()) {
                             $elector->notifyVotingInstructions();
                         }
                     }

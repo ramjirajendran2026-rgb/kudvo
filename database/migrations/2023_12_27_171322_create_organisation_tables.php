@@ -11,6 +11,20 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create(
+            table: 'organisations',
+            callback: function (Blueprint $table): void {
+                $table->id();
+
+                $table->string(column: 'code')->unique();
+                $table->json(column: 'name')->nullable();
+                $table->string(column: 'country')->nullable();
+                $table->string(column: 'timezone')->nullable();
+
+                $table->timestamps();
+            },
+        );
+
+        Schema::create(
             table: 'organisation_user',
             callback: function (Blueprint $table): void {
                 $table->string(column: 'role')->nullable();
@@ -26,5 +40,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists(table: 'organisation_user');
+
+        Schema::dropIfExists(table: 'organisations');
     }
 };

@@ -36,6 +36,10 @@ Route::prefix(LaravelLocalization::setLocale())
         LaravelLocalizationViewPath::class,
     ])
     ->group(function () {
+        Livewire::setUpdateRoute(function ($handle) {
+            return Route::post('livewire/update', $handle);
+        });
+
         Route::get(uri: '/', action: Home::class)
             ->name(name: 'home');
 

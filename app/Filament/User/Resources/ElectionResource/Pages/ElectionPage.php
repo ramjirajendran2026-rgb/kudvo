@@ -18,19 +18,19 @@ use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\Page;
+use Filament\Resources\Pages\ViewRecord\Concerns\Translatable;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Markdown;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
-use Illuminate\Support\HtmlString;
 use Livewire\Attributes\Locked;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @property Form $form
  */
-abstract class ElectionPage extends Page implements HasElectorGroups, HasElection
+abstract class ElectionPage extends Page implements HasElection, HasElectorGroups
 {
     protected static string $resource = ElectionResource::class;
 
@@ -90,12 +90,12 @@ abstract class ElectionPage extends Page implements HasElectorGroups, HasElectio
 
     public function getTitle(): string|Htmlable
     {
-        return static::getNavigationLabel() . ' - ' . $this->getRecordTitle();
+        return static::getNavigationLabel().' - '.$this->getRecordTitle();
     }
 
     public function getRecordTitle(): string|Htmlable
     {
-        if (!ElectionResource::hasRecordTitle()) {
+        if (! ElectionResource::hasRecordTitle()) {
             return ElectionResource::getTitleCaseModelLabel();
         }
 
@@ -109,7 +109,7 @@ abstract class ElectionPage extends Page implements HasElectorGroups, HasElectio
 
     public function getSubheading(): string|Htmlable|null
     {
-        if (!$this->getElection()->isTimingConfigured()) {
+        if (! $this->getElection()->isTimingConfigured()) {
             return null;
         }
 
@@ -145,7 +145,7 @@ abstract class ElectionPage extends Page implements HasElectorGroups, HasElectio
     {
         static::authorizeResourceAccess();
 
-        if (!static::canAccessPage(election: $this->election)) {
+        if (! static::canAccessPage(election: $this->election)) {
             Notification::make()
                 ->title(title: __('filament.user.election-resource.pages.base.access_denied.notification.title'))
                 ->body(body: __('filament.user.election-resource.pages.base.access_denied.notification.body'))
@@ -188,7 +188,7 @@ abstract class ElectionPage extends Page implements HasElectorGroups, HasElectio
                 }
 
                 $data['preview'] = true;
-                $data['votes'] = Arr::mapWithKeys($data['votes'], fn($item, $key) => [$key => Arr::map($item, fn(VoteSecretData $subItem) => $subItem->key)]);
+                $data['votes'] = Arr::mapWithKeys($data['votes'], fn ($item, $key) => [$key => Arr::map($item, fn (VoteSecretData $subItem) => $subItem->key)]);
 
                 $form->fill(state: $data);
 
@@ -197,7 +197,7 @@ abstract class ElectionPage extends Page implements HasElectorGroups, HasElectio
             })
             ->color(color: 'success')
             ->form(
-                form: fn(HasElection $livewire): array => [
+                form: fn (HasElection $livewire): array => [
                     Hidden::make(name: 'preview')
                         ->default(state: false),
 
@@ -206,15 +206,15 @@ abstract class ElectionPage extends Page implements HasElectorGroups, HasElectio
                         ->schema(
                             components: $livewire->getElection()->positions
                                 ->map(
-                                    callback: fn(Position $position) => VotePicker::makeFor(position: $position)
+                                    callback: fn (Position $position) => VotePicker::makeFor(position: $position)
                                         ->candidateGroup(condition: $this->getElection()->preference->candidate_group)
-                                        ->disabled(condition: fn(Get $get): bool => $get(path: '../preview'))
+                                        ->disabled(condition: fn (Get $get): bool => $get(path: '../preview'))
                                         ->photo(condition: $this->getElection()->preference->candidate_photo)
-                                        ->preview(condition: fn(Get $get): bool => $get(path: '../preview'))
+                                        ->preview(condition: fn (Get $get): bool => $get(path: '../preview'))
                                         ->symbol(condition: $this->getElection()->preference->candidate_symbol),
                                 )
                                 ->toArray(),
-                        )
+                        ),
                 ]
             )
             ->icon(icon: 'heroicon-m-eye')
@@ -223,7 +223,7 @@ abstract class ElectionPage extends Page implements HasElectorGroups, HasElectio
             ->modalDescription(description: $this->getSubheading())
             ->modalFooterActionsAlignment(alignment: Alignment::Center)
             ->modalHeading(heading: $this->getHeading())
-            ->modalSubmitActionLabel(label: fn(array $data): string => ($data['preview'] ?? false) ? 'Confirm' : 'Continue')
+            ->modalSubmitActionLabel(label: fn (array $data): string => ($data['preview'] ?? false) ? 'Confirm' : 'Continue')
             ->slideOver();
     }
 
@@ -244,7 +244,7 @@ abstract class ElectionPage extends Page implements HasElectorGroups, HasElectio
 
     public static function cannot(string $action, Election $election): bool
     {
-        return !static::can(action: $action, election: $election);
+        return ! static::can(action: $action, election: $election);
     }
 
     public static function canAccessPage(Election $election): bool

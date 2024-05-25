@@ -14,6 +14,7 @@ use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Panel;
 use Filament\PanelProvider;
+use Filament\SpatieLaravelTranslatablePlugin;
 use Filament\Support\Colors\Color;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -67,7 +68,7 @@ class UserPanelProvider extends PanelProvider
                 )->name(name: 'election-collaborators.accept');
             })
             ->colors(colors: [
-                'primary' => Color::Indigo,
+                'primary' => Color::Violet,
             ])
             ->font(family: 'Poppins')
             ->viteTheme(theme: 'resources/css/filament/user/theme.css')
@@ -75,6 +76,10 @@ class UserPanelProvider extends PanelProvider
             ->globalSearch(provider: false)
             ->topNavigation()
             ->breadcrumbs(condition: false)
-            ->spa();
+            ->spa()
+            ->plugins(plugins: [
+                SpatieLaravelTranslatablePlugin::make()
+                    ->defaultLocales(defaultLocales: array_keys(config('laravellocalization.supportedLocales'))),
+            ]);
     }
 }

@@ -81,11 +81,11 @@ class ElectorResource extends Resource
 
                 ElectorForm::emailComponent()
                     ->when(
-                        value: $formLivewire instanceof HasElection && !$formLivewire->getElection()->preference?->elector_duplicate_email,
-                        callback: fn(TextInput $component) => $component
+                        value: $formLivewire instanceof HasElection && ! $formLivewire->getElection()->preference?->elector_duplicate_email,
+                        callback: fn (TextInput $component) => $component
                             ->unique(
                                 ignoreRecord: true,
-                                modifyRuleUsing: fn(Unique $rule, HasElection $livewire) => $rule
+                                modifyRuleUsing: fn (Unique $rule, HasElection $livewire) => $rule
                                     ->where(column: 'event_type', value: Election::class)
                                     ->where(column: 'event_id', value: $livewire->getElection()->getKey())
                             )
@@ -96,11 +96,11 @@ class ElectorResource extends Resource
                     ->disableIpLookUp()
                     ->initialCountry(value: Filament::getTenant()?->country ?: config(key: 'app.default_phone_country'))
                     ->when(
-                        value: $formLivewire instanceof HasElection && !$formLivewire->getElection()->preference?->elector_duplicate_phone,
-                        callback: fn(PhoneInput $component) => $component
+                        value: $formLivewire instanceof HasElection && ! $formLivewire->getElection()->preference?->elector_duplicate_phone,
+                        callback: fn (PhoneInput $component) => $component
                             ->unique(
                                 ignoreRecord: true,
-                                modifyRuleUsing: fn(Unique $rule, HasElection $livewire) => $rule
+                                modifyRuleUsing: fn (Unique $rule, HasElection $livewire) => $rule
                                     ->where(column: 'event_type', value: Election::class)
                                     ->where(column: 'event_id', value: $livewire->getElection()->getKey())
                             )
@@ -305,7 +305,7 @@ class ElectorResource extends Resource
     {
         return TableCreateAction::make()
             ->createAnother(condition: false)
-            ->form(form: fn(Form $form): Form => static::form(form: $form))
+            ->form(form: fn (Form $form): Form => static::form(form: $form))
             ->icon(icon: 'heroicon-m-plus')
             ->model(model: static::getModel())
             ->modalCancelAction(action: false)
@@ -317,7 +317,7 @@ class ElectorResource extends Resource
     public static function getTableEditAction(): TableEditAction
     {
         return TableEditAction::make()
-            ->form(form: fn(Form $form): Form => static::form($form))
+            ->form(form: fn (Form $form): Form => static::form($form))
             ->iconButton()
             ->modalCancelAction(action: false)
             ->modalFooterActionsAlignment(alignment: Alignment::Center)

@@ -8,9 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 use Spatie\LaravelData\DataCollection;
+use Spatie\Translatable\HasTranslations;
 
 class ElectionPlan extends Model
 {
+    use HasTranslations;
     use SoftDeletes;
 
     protected $fillable = [
@@ -26,6 +28,11 @@ class ElectionPlan extends Model
         'base_fee' => 'int',
         'elector_fee' => 'int',
         'features' => DataCollection::class.':'.PlanFeatureData::class,
+    ];
+
+    public array $translatable = [
+        'name',
+        'description',
     ];
 
     public function hasFeature(ElectionFeature $feature): bool

@@ -11,6 +11,11 @@ class Plan extends ElectionPage
 {
     protected static string $view = 'filament.user.resources.election-resource.pages.plan';
 
+    public string $currency = 'USD';
+
+    public ?int $activePlanId = null;
+
+
     public static function getNavigationLabel(): string
     {
         return __('filament.user.election-resource.pages.plan.navigation_label');
@@ -21,12 +26,31 @@ class Plan extends ElectionPage
         return [];
     }
 
+    public function mount(int|string $record): void
+    {
+        parent::mount($record);
+
+        $this->currency = Country::firstWhere('iso2', $this->getElection()->organisation->country)
+            ?->currency?->code ?? config('app.default_currency');
+
+        if (! in_array($this->currency, config('app.supported_currencies'))) {
+            $this->currency = config('app.default_currency');
+        }
+
+        $this->activePlanId = $this->getElection()->plan_id;
+        if (filled($this->activePlanId)) {
+            $this->currency = ElectionPlan::findOrFail($this->activePlanId)->currency;
+        }
+    }
+
+    public function setCurrency(string $currency): void
+    {
+        $this->currency = $currency;
+    }
+
     public function getPlans(): Collection
     {
-        $currency = Country::firstWhere('iso2', $this->getElection()->organisation->country)
-            ?->currency?->code ?? 'USD';
-
-        $plans = ElectionPlan::where('currency', $currency)->oldest('sort')->get();
+        $plans = ElectionPlan::where('currency', $this->currency)->oldest('sort')->get();
         if ($plans->isEmpty()) {
             $plans = ElectionPlan::where('currency', 'USD')->oldest('sort')->get();
         }
