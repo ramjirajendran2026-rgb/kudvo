@@ -195,6 +195,8 @@ return [
 
     'default_phone_country' => 'IN',
 
+    'ballot_locales' => ['en', 'hi', 'ta'],
+
     'organisation' => [
         'code' => [
             'prefix' => 'ORG',

@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Filament\AvatarProviders\UiAvatarsProvider;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
 use Filament\Support\Facades\FilamentColor;
@@ -16,9 +15,11 @@ use Spatie\EloquentSortable\Sortable;
 use Spatie\EloquentSortable\SortableTrait;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\Translatable\HasTranslations;
 
-class Candidate extends Model implements HasMedia, HasName, HasAvatar, Sortable
+class Candidate extends Model implements HasAvatar, HasMedia, HasName, Sortable
 {
+    use HasTranslations;
     use HasUuids;
     use InteractsWithMedia;
     use SortableTrait;
@@ -54,13 +55,29 @@ class Candidate extends Model implements HasMedia, HasName, HasAvatar, Sortable
     ];
 
     protected $appends = [
+        'full_name',
         'display_name',
     ];
+
+    protected array $translatable = [
+        'title',
+        'first_name',
+        'last_name',
+    ];
+
+    protected function fullName(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value, array $attributes) => collect(value: [$this->first_name, $this->last_name])
+                ->filter(callback: fn (?string $item): bool => filled($item))
+                ->implode(value: ' '),
+        );
+    }
 
     protected function displayName(): Attribute
     {
         return Attribute::make(
-            get: fn($value, array $attributes) => collect(value: [$this->title, $this->full_name])
+            get: fn ($value, array $attributes) => collect(value: [$this->title, $this->full_name])
                 ->filter(callback: fn (?string $item): bool => filled($item))
                 ->implode(value: ' ')
         );
@@ -69,11 +86,11 @@ class Candidate extends Model implements HasMedia, HasName, HasAvatar, Sortable
     protected function photoUrl(): Attribute
     {
         return Attribute::make(
-            get: fn($value, array $attributes) => $this->getFirstMediaUrl(collectionName: static::MEDIA_COLLECTION_PHOTO) ?:
-                'https://ui-avatars.com/api/?name=' .
-                $this->full_name .
-                '&color=FFFFFF&background=' .
-                str(Rgb::fromString('rgb(' . FilamentColor::getColors()['primary'][800] . ')')->toHex())
+            get: fn ($value, array $attributes) => $this->getFirstMediaUrl(collectionName: static::MEDIA_COLLECTION_PHOTO) ?:
+                'https://ui-avatars.com/api/?name='.
+                $this->full_name.
+                '&color=FFFFFF&background='.
+                str(Rgb::fromString('rgb('.FilamentColor::getColors()['primary'][800].')')->toHex())
                     ->after('#'),
         );
     }
@@ -81,11 +98,11 @@ class Candidate extends Model implements HasMedia, HasName, HasAvatar, Sortable
     protected function symbolUrl(): Attribute
     {
         return Attribute::make(
-            get: fn($value, array $attributes) => $this->getFirstMediaUrl(collectionName: static::MEDIA_COLLECTION_SYMBOL) ?:
-                'https://ui-avatars.com/api/?name=' .
-                $this->sort .
-                '&color=FFFFFF&background=' .
-                str(Rgb::fromString('rgb(' . FilamentColor::getColors()['info'][800] . ')')->toHex())
+            get: fn ($value, array $attributes) => $this->getFirstMediaUrl(collectionName: static::MEDIA_COLLECTION_SYMBOL) ?:
+                'https://ui-avatars.com/api/?name='.
+                $this->sort.
+                '&color=FFFFFF&background='.
+                str(Rgb::fromString('rgb('.FilamentColor::getColors()['info'][800].')')->toHex())
                     ->after('#'),
         );
     }
@@ -129,5 +146,10 @@ class Candidate extends Model implements HasMedia, HasName, HasAvatar, Sortable
     public function getFilamentName(): string
     {
         return $this->full_name;
+    }
+
+    public function getFallbackLocale()
+    {
+        return $this->locales()[0] ?? config('app.locale');
     }
 }

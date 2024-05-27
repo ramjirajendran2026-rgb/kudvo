@@ -5,7 +5,6 @@ namespace App\Filament\User\Resources\ElectionResource\Pages;
 use App\Enums\ElectionCollaboratorPermission;
 use App\Enums\ElectionSetupStep;
 use App\Filament\Base\Contracts\HasElection;
-use App\Filament\Imports\CandidateImporter;
 use App\Filament\Imports\ElectorImporter;
 use App\Filament\User\Resources\CandidateResource;
 use App\Filament\User\Resources\PositionResource;
@@ -13,6 +12,7 @@ use App\Models\Candidate;
 use App\Models\Election;
 use App\Models\Position;
 use Filament\Actions\Action;
+use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ImportAction;
@@ -279,7 +279,11 @@ HTML,
 
                 $action->success();
             })
-            ->fillForm(data: fn (Position $record): array => $record->attributesToArray())
+            ->fillForm(
+                data: fn (HasActions $livewire, Position $record): array => $livewire->makeFilamentTranslatableContentDriver()
+                    ?->getRecordAttributesToArray($record)
+                    ?? $record->attributesToArray()
+            )
             ->form(
                 form: fn (Form $form, Position $record): Form => PositionResource::form(form: $form)
                     ->inlineLabel()
@@ -339,7 +343,11 @@ HTML,
 
                 $action->success();
             })
-            ->fillForm(data: fn (Position $record): array => $record->attributesToArray())
+            ->fillForm(
+                data: fn (HasActions $livewire, Position $record): array => $livewire->makeFilamentTranslatableContentDriver()
+                    ?->getRecordAttributesToArray($record)
+                    ?? $record->attributesToArray()
+            )
             ->form(
                 form: fn (Form $form, Position $record): Form => $form
                     ->model(model: $record)
@@ -440,7 +448,11 @@ HTML,
 
                 $action->success();
             })
-            ->fillForm(data: fn (Candidate $record): array => $record->attributesToArray())
+            ->fillForm(
+                data: fn (HasActions $livewire, Candidate $record): array => $livewire->makeFilamentTranslatableContentDriver()
+                    ?->getRecordAttributesToArray($record)
+                    ?? $record->attributesToArray()
+            )
             ->form(
                 form: fn (Form $form, Candidate $record): Form => CandidateResource::form(form: $form, position: $record->position)
                     ->model(model: $record)

@@ -36,6 +36,7 @@ class Election extends Model
     protected $fillable = [
         'name',
         'description',
+        'ballot_locales',
         'preference',
         'timezone',
         'starts_at',
@@ -378,6 +379,11 @@ class Election extends Model
     public function getRouteKeyName(): string
     {
         return 'code';
+    }
+
+    public function getFallbackLocale()
+    {
+        return $this->locales()[0] ?? config('app.locale');
     }
 
     public static function generateCode(): string

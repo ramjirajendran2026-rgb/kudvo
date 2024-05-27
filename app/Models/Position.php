@@ -12,9 +12,11 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Spatie\EloquentSortable\Sortable;
 use Spatie\EloquentSortable\SortableTrait;
+use Spatie\Translatable\HasTranslations;
 
 class Position extends Model implements Sortable
 {
+    use HasTranslations;
     use HasUuids;
     use SortableTrait;
 
@@ -40,10 +42,14 @@ class Position extends Model implements Sortable
         'abstain',
     ];
 
+    public array $translatable = [
+        'name',
+    ];
+
     protected function abstain(): Attribute
     {
         return Attribute::make(
-            get: fn($value, array $attributes) => filled(value: $this->threshold) && $this->threshold != $this->quota,
+            get: fn ($value, array $attributes) => filled(value: $this->threshold) && $this->threshold != $this->quota,
         );
     }
 
@@ -111,5 +117,10 @@ class Position extends Model implements Sortable
     {
         return static::query()
             ->where('event_id', $this->event_id);
+    }
+
+    public function getFallbackLocale()
+    {
+        return $this->locales()[0] ?? config('app.locale');
     }
 }

@@ -32,6 +32,8 @@ use Symfony\Component\HttpFoundation\Response;
  */
 abstract class ElectionPage extends Page implements HasElection, HasElectorGroups
 {
+    use Translatable;
+
     protected static string $resource = ElectionResource::class;
 
     protected $listeners = ['refresh' => '$refresh'];

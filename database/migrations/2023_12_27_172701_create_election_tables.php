@@ -153,7 +153,7 @@ return new class extends Migration
                 $table->id();
                 $table->uuid()->unique();
 
-                $table->string(column: 'name');
+                $table->json(column: 'name')->nullable();
                 $table->unsignedInteger(column: 'quota');
                 $table->unsignedInteger(column: 'threshold');
                 $table->json(column: 'elector_groups')->nullable();
@@ -191,13 +191,9 @@ return new class extends Migration
                 $table->uuid()->unique();
 
                 $table->string(column: 'membership_number')->nullable();
-                $table->string(column: 'title')->nullable();
-                $table->string(column: 'first_name')->nullable();
-                $table->string(column: 'last_name')->nullable();
-                $table->string(column: 'full_name')
-                    ->virtualAs(
-                        expression: 'CONCAT_WS(" ", NULLIF(first_name, ""), NULLIF(last_name, ""))'
-                    );
+                $table->json(column: 'title')->nullable();
+                $table->json(column: 'first_name')->nullable();
+                $table->json(column: 'last_name')->nullable();
                 $table->string(column: 'email')->nullable();
                 $table->string(column: 'phone')->nullable();
 

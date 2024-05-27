@@ -7,6 +7,7 @@ use App\Filament\Base\Contracts\HasElection;
 use App\Filament\User\Resources\ElectionResource\Pages;
 use App\Filament\User\Resources\ElectionResource\Widgets\ElectionStatsOverview;
 use App\Filament\User\Resources\ElectionResource\Widgets\VotedBallots;
+use App\Forms\Components\TranslatableContainer;
 use App\Forms\ElectionForm;
 use App\Models\Election;
 use App\Models\Elector;
@@ -30,7 +31,6 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;
-use Mvenghaus\FilamentPluginTranslatableInline\Forms\Components\TranslatableContainer;
 
 class ElectionResource extends Resource
 {
@@ -59,18 +59,14 @@ class ElectionResource extends Resource
         return $form
             ->columns(columns: null)
             ->schema([
-                TranslatableContainer::make(
-                    component: ElectionForm::nameComponent(),
-                ),
+                ElectionForm::nameComponent(),
             ]);
     }
 
     public static function editFormSchema(): array
     {
         return [
-            TranslatableContainer::make(
-                component: ElectionForm::nameComponent(),
-            )->onlyMainLocaleRequired(),
+            ElectionForm::nameComponent(),
         ];
     }
 
