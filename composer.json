@@ -27,6 +27,7 @@
         "flowframe/laravel-trend": "^0.1.5",
         "guava/filament-clusters": "^1.1",
         "guzzlehttp/guzzle": "^7.2",
+        "ipinfo/ipinfolaravel": "^2.6",
         "jenssegers/agent": "^2.6",
         "lara-zeus/quantity": "^1.0",
         "laravel/cashier": "^15.3",

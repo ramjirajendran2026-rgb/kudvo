@@ -24,6 +24,7 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Route;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use ipinfo\ipinfolaravel\ipinfolaravel;
 
 class UserPanelProvider extends PanelProvider
 {
@@ -48,6 +49,7 @@ class UserPanelProvider extends PanelProvider
                 VerifyCsrfToken::class,
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
+                ipinfolaravel::class,
                 DispatchServingFilamentEvent::class,
             ])
             ->authMiddleware(middleware: [

@@ -34,4 +34,9 @@ return [
         ],
     ],
 
+    'ipinfo' => [
+        'access_token' => env('IPINFO_TOKEN'),
+        'no_except' => true,
+    ],
+
 ];

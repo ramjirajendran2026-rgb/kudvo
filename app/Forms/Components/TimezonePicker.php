@@ -16,6 +16,8 @@ class TimezonePicker extends Select
     {
         parent::setUp();
 
+        $this->default(state: request()->ipinfo?->timezone);
+
         $this->options(
             options: Timezone::all()
                 ->sortBy(callback: fn ($timezone) => now($timezone->name)->format('O'))

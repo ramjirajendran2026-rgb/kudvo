@@ -2,7 +2,6 @@
 
 namespace App\Forms\Components;
 
-use Countries;
 use Filament\Forms\Components\Select;
 use Nnjeim\World\Models\Country;
 
@@ -16,6 +15,8 @@ class CountryPicker extends Select
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->default(state: request()->ipinfo?->country);
 
         $this->options(options: Country::all()->pluck('name', 'iso2')->toArray());
 
