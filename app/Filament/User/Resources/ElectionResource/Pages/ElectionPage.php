@@ -50,7 +50,8 @@ abstract class ElectionPage extends Page implements HasElection, HasElectorGroup
 
         $this->authorizeAccess();
 
-        $this->electorGroups = $this->getElection()->getElectorGroups();
+        $this->electorGroups = $this->getElection()->preference?->candidate_group
+            ? $this->getElection()->getElectorGroups() : [];
     }
 
     public function mountCanAuthorizeAccess(): void

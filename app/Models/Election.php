@@ -451,7 +451,7 @@ class Election extends Model
     {
         return match (true) {
             ! $this->is_draft => null,
-            blank($this->preference) => ElectionSetupStep::Preference,
+            blank($this->preference) || blank($this->plan_id) => ElectionSetupStep::Preference,
             $this->electors()->count() === 0 => ElectionSetupStep::Electors,
             empty($positionsCount = $this->positions()->count()) ||
             $this->positions()

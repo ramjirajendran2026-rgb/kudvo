@@ -45,6 +45,7 @@ class ElectorSmsMessages extends ElectionPage implements HasTable
     public static function canAccessPage(Election $election): bool
     {
         return parent::canAccessPage($election)
+            && filled($election->preference)
             && (
                 self::hasBallotLink($election)
                 || self::hasMfa($election)

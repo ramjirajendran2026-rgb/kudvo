@@ -31,14 +31,14 @@ class FeatureToggle extends Toggle
         $this->hideAddOnPrice(condition: $hideAddOnPrice);
         $this->hint(
             hint: function (self $component) {
-                if (!$component->isAddOn() || $component->shouldHideAddOnPrice()) {
+                if (! $component->isAddOn() || $component->shouldHideAddOnPrice()) {
                     return null;
                 }
 
                 return collect(value: [
-                    $component->getElectorFee() ? money(amount: $component->getElectorFee(), currency: $component->getFeeCurrency()) . ' / elector' : null,
+                    $component->getElectorFee() ? money(amount: $component->getElectorFee(), currency: $component->getFeeCurrency()).'/elector' : null,
                     $component->getFeatureFee() ? money(amount: $component->getFeatureFee(), currency: $component->getFeeCurrency()) : null,
-                ])->filter(callback: fn($fee): bool => filled(value: $fee))->implode(value: ' + ') ?: null;
+                ])->filter(callback: fn ($fee): bool => filled(value: $fee))->implode(value: ' + ') ?: null;
             }
         );
 

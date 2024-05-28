@@ -15,7 +15,6 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;
-use Livewire\Attributes\Url;
 
 class ElectorBallots extends ElectionPage implements HasTable
 {
@@ -125,6 +124,6 @@ class ElectorBallots extends ElectionPage implements HasTable
 
     public static function canAccessPage(Election $election): bool
     {
-        return !$election->is_draft && !$election->is_cancelled;
+        return ! $election->is_draft && ! $election->is_cancelled;
     }
 }

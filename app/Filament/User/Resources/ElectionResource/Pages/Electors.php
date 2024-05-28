@@ -5,18 +5,14 @@ namespace App\Filament\User\Resources\ElectionResource\Pages;
 use App\Enums\ElectionCollaboratorPermission;
 use App\Enums\ElectionSetupStep;
 use App\Filament\Base\Contracts\HasElection;
-use App\Filament\Imports\ElectorImporter;
 use App\Filament\User\Resources\ElectionResource;
 use App\Filament\User\Resources\ElectorResource;
 use App\Models\Election;
 use App\Models\Elector;
 use Filament\Actions\Action;
-use Filament\Actions\ImportAction;
 use Filament\Facades\Filament;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Concerns\InteractsWithRelationshipTable;
-use Filament\Support\Enums\MaxWidth;
 use Filament\Tables\Actions\Action as TableAction;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\BulkAction;
@@ -70,11 +66,6 @@ class Electors extends ElectionPage implements HasTable
         return __('filament.user.election-resource.pages.electors.navigation_label');
     }
 
-    public function form(Form $form): Form
-    {
-        return ElectorResource::form(form: $form);
-    }
-
     public function table(Table $table): Table
     {
         return ElectorResource::table(table: $table)
@@ -121,17 +112,8 @@ class Electors extends ElectionPage implements HasTable
     protected function getHeaderActions(): array
     {
         return [
-            ImportAction::make(name: 'importCandidate')
-                ->authorize(abilities: 'importCandidate')
-                ->icon(icon: 'heroicon-m-arrow-up-tray')
-                ->importer(importer: ElectorImporter::class)
-                ->label(label: __('filament.user.election-resource.pages.ballot_setup.actions.import_candidate.label'))
-                ->modalWidth(width: MaxWidth::ExtraLarge)
-                ->options(options: [
-                    'election_id' => $this->getElection()->getKey(),
-                ]),
-
             $this->getNextPageAction(),
+
             \Filament\Actions\ActionGroup::make(actions: [
                 $this->getCollaboratorsPageAction(),
             ])->dropdownPlacement(placement: 'bottom-end'),

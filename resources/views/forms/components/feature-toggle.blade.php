@@ -22,6 +22,7 @@
     :field="$field"
     :label-suffix="$isAddOn ? $labelSuffix() : null"
     :inline-label-vertical-alignment="\Filament\Support\Enums\VerticalAlignment::Center"
+    class="[&_.fi-fo-field-wrp-hint]:font-mono"
 >
     @capture($content)
         <button

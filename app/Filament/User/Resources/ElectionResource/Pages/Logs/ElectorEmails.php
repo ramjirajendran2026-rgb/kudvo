@@ -2,7 +2,6 @@
 
 namespace App\Filament\User\Resources\ElectionResource\Pages\Logs;
 
-use App\Enums\EmailStatus;
 use App\Enums\MailMessagePurpose;
 use App\Filament\Exports\ElectorEmailExporter;
 use App\Filament\User\Resources\ElectionResource\Pages\ElectionPage;
@@ -14,7 +13,6 @@ use Filament\Resources\Concerns\HasTabs;
 use Filament\Support\Enums\Alignment;
 use Filament\Tables;
 use Filament\Tables\Contracts\HasTable;
-use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -43,6 +41,7 @@ class ElectorEmails extends ElectionPage implements HasTable
     public static function canAccessPage(Election $election): bool
     {
         return parent::canAccessPage($election)
+            && filled($election->preference)
             && (
                 self::hasBallotLink($election)
                 || self::hasMfa($election)

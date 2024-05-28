@@ -6,12 +6,11 @@ use App\Filament\User\Resources\ElectionResource\Pages\BallotSetup;
 use App\Filament\User\Resources\ElectionResource\Pages\Dashboard;
 use App\Filament\User\Resources\ElectionResource\Pages\Electors;
 use App\Filament\User\Resources\ElectionResource\Pages\Preference;
-use App\Models\Election;
 use Filament\Support\Contracts\HasDescription;
 use Filament\Support\Contracts\HasIcon;
 use Filament\Support\Contracts\HasLabel;
 
-enum ElectionSetupStep: string implements HasLabel, HasDescription, HasIcon
+enum ElectionSetupStep: string implements HasDescription, HasIcon, HasLabel
 {
     case Preference = 'preference';
     case Electors = 'electors';
@@ -22,7 +21,7 @@ enum ElectionSetupStep: string implements HasLabel, HasDescription, HasIcon
 
     public function getLabel(): ?string
     {
-        return __(key: 'app.enums.election_setup_step.' . $this->value . '.label');
+        return __(key: 'app.enums.election_setup_step.'.$this->value.'.label');
     }
 
     public function getDescription(): ?string
