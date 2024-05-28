@@ -2,18 +2,20 @@
 
 namespace App\Notifications\Election;
 
+use App\Enums\MailMessagePurpose;
 use App\Enums\SmsMessagePurpose;
 use App\Models\Ballot;
 use App\Models\Election;
 use App\Models\Elector;
 use App\Notifications\Concerns\HasSmsChannel;
+use App\Notifications\Contracts\HasMailMessagePurpose;
 use App\Notifications\Contracts\HasSmsMessagePurpose;
 use App\Settings\SmsTemplates;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Str;
 
-class VotedConfirmationNotification extends Notification implements HasSmsMessagePurpose
+class VotedConfirmationNotification extends Notification implements HasMailMessagePurpose, HasSmsMessagePurpose
 {
     use HasSmsChannel;
 
@@ -84,5 +86,10 @@ class VotedConfirmationNotification extends Notification implements HasSmsMessag
     public function getSmsMessagePurpose(object $notifiable): SmsMessagePurpose
     {
         return SmsMessagePurpose::VotedConfirmation;
+    }
+
+    public function getMailMessagePurpose(object $notifiable): MailMessagePurpose
+    {
+        return MailMessagePurpose::VotedConfirmation;
     }
 }
