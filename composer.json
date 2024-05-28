@@ -17,6 +17,7 @@
         "barryvdh/laravel-dompdf": "^2.0",
         "bezhansalleh/filament-language-switch": "^3.1",
         "clicksend/clicksend-php": "^5.0",
+        "coderflex/filament-turnstile": "^2.2",
         "filament/actions": "^3.2",
         "filament/filament": "^3.2",
         "filament/forms": "^3.2",

@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\User\Http\Controllers\ElectionUserInvitationController;
 use App\Filament\User\Pages\Auth\EditProfile;
+use App\Filament\User\Pages\Auth\Login;
 use App\Filament\User\Pages\Auth\Register;
 use App\Filament\User\Pages\Organisation\EditOrganisationProfile;
 use App\Filament\User\Pages\Organisation\Register as RegisterOrganisation;
@@ -56,7 +57,7 @@ class UserPanelProvider extends PanelProvider
                 Authenticate::class,
             ])
             ->registration(action: Register::class)
-            ->login()
+            ->login(action: Login::class)
             ->passwordReset()
             ->emailVerification()
             ->profile(page: EditProfile::class)

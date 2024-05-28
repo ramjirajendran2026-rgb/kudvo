@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Data\ContactFormData;
 use App\Mail\ContactFormMail;
+use Coderflex\FilamentTurnstile\Forms\Components\Turnstile;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use DanHarrin\LivewireRateLimiting\WithRateLimiting;
 use Filament\Forms\Components\Section;
@@ -14,6 +15,7 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 
 /**
@@ -54,6 +56,9 @@ class ContactForm extends Component implements HasForms
                             ->label(label: 'Your message')
                             ->minLength(length: 30)
                             ->required(),
+
+                        Turnstile::make(name: 'captcha')
+                            ->theme(theme: 'light'),
                     ]),
             ])
             ->statePath(path: 'data');
@@ -85,5 +90,10 @@ class ContactForm extends Component implements HasForms
             ->send();
 
         $this->form->fill([]);
+    }
+
+    protected function onValidationError(ValidationException $exception): void
+    {
+        $this->dispatch('reset-captcha');
     }
 }
