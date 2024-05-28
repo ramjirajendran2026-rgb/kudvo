@@ -71,6 +71,6 @@ class VotedBallotCopyNotification extends Notification implements HasMailMessage
             ->setOption([
                 'isRemoteEnabled' => true,
             ])
-            ->setPaper(paper: 'a4');
+            ->setPaper('a4');
     }
 }

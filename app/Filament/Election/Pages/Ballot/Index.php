@@ -14,14 +14,11 @@ use App\Notifications\Election\VotedConfirmationNotification;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\Alignment;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Session;
@@ -51,8 +48,8 @@ class Index extends BasePage
         $this->form->fill(
             state: $this->getBallot()?->votes
                 ->mapWithKeys(
-                    callback: fn(Vote $vote): array => [
-                        $vote->key => Arr::map($vote->secret?->toArray(), fn ($item) => $item['key'])
+                    callback: fn (Vote $vote): array => [
+                        $vote->key => Arr::map($vote->secret?->toArray(), fn ($item) => $item['key']),
                     ]
                 )
                 ->toArray() ??
@@ -90,7 +87,7 @@ class Index extends BasePage
                 ...$this->getElection()->positions
                     ->when(
                         value: $this->getElection()->preference->segmented_ballot,
-                        callback: fn(Collection $query) => $query
+                        callback: fn (Collection $query) => $query
                             ->where(
                                 fn (Position $position) => $position->segments()
                                     ->whereIn('id', $electorSegmentIds)
@@ -123,8 +120,8 @@ class Index extends BasePage
                         ->hidden(condition: fn (self $livewire): bool => $livewire->flashVotes || ! $livewire->preview)
                         ->size(size: ActionSize::ExtraLarge),
                 ])
-                ->alignment(alignment: fn (self $livewire): Alignment => $livewire->preview ? Alignment::Between : Alignment::End)
-                ->extraAttributes(attributes: ['class' => 'px-2 md:px-0']),
+                    ->alignment(alignment: fn (self $livewire): Alignment => $livewire->preview ? Alignment::Between : Alignment::End)
+                    ->extraAttributes(attributes: ['class' => 'px-2 md:px-0']),
             ]);
     }
 
@@ -139,7 +136,7 @@ class Index extends BasePage
             ->color(color: 'gray')
             ->hidden(condition: fn (self $livewire): bool => $livewire->flashVotes)
             ->icon(icon: 'heroicon-s-chevron-left')
-            ->label(label:__('filament.election.pages.ballot.index.form.actions.back.label'))
+            ->label(label: __('filament.election.pages.ballot.index.form.actions.back.label'))
             ->size(size: ActionSize::ExtraLarge)
             ->visible(condition: fn (self $livewire): bool => $livewire->preview);
     }
@@ -158,6 +155,7 @@ class Index extends BasePage
             $this->preview = true;
 
             $this->dispatch(event: 'scroll-to-top');
+
             return;
         }
 
@@ -223,11 +221,11 @@ class Index extends BasePage
         }
 
         Session::put(
-            key: 'elector_'.$this->getElector()->getKey().'_votes'.($this->isMock() ? '_mock': ''),
+            key: 'elector_'.$this->getElector()->getKey().'_votes'.($this->isMock() ? '_mock' : ''),
             value: encrypt(value: $data)
         );
         Cookie::queue(Cookie::forever(
-            name: 'election_'.Kudvo::getElection()->getKey().'_ballot'.($this->isMock() ? '_mock': ''),
+            name: 'election_'.Kudvo::getElection()->getKey().'_ballot'.($this->isMock() ? '_mock' : ''),
             value: $ballot->getKey()
         ));
 
