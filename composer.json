@@ -36,6 +36,7 @@
         "laravel/horizon": "^5.24",
         "laravel/reverb": "@beta",
         "laravel/sanctum": "^3.3",
+        "laravel/telescope": "^5.0",
         "laravel/tinker": "^2.8",
         "league/flysystem-aws-s3-v3": "^3.0",
         "mcamara/laravel-localization": "^2.0",

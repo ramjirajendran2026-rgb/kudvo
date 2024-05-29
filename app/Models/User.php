@@ -116,6 +116,6 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasMedia,
 
     public function getFilamentName(): string
     {
-        return $this->name ?: 'User';
+        return $this->name ?: (Filament::getTenant()?->name ?: 'Admin');
     }
 }
