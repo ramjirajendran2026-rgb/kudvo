@@ -17,13 +17,10 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
-class BallotLinkNotification extends Notification implements
-    HasMailMessagePurpose,
-    HasSmsMessagePurpose,
-    ShouldQueue
+class BallotLinkNotification extends Notification implements HasMailMessagePurpose, HasSmsMessagePurpose, ShouldQueue
 {
-    use Queueable;
     use HasSmsChannel;
+    use Queueable;
 
     public const VAR_BALLOT_LINK = '{#BALLOT_LINK#}';
 
@@ -40,7 +37,8 @@ class BallotLinkNotification extends Notification implements
     public function __construct(
         protected Elector $elector,
         protected Election $election,
-    ) { }
+    ) {
+    }
 
     public function via(object $notifiable): array
     {
@@ -56,7 +54,7 @@ class BallotLinkNotification extends Notification implements
             ->subject(subject: "eVoting Link for $election->name - $elector->membership_number")
             ->greeting(greeting: "Dear $elector->display_name,")
             ->line(line: "Use the following link to cast your vote for $election->name.")
-            ->action(text: "Vote Now", url: $this->getBallotLink())
+            ->action(text: 'Vote Now', url: $this->getBallotLink())
             ->line(line: 'Thank you for using our application!');
     }
 
@@ -75,7 +73,7 @@ class BallotLinkNotification extends Notification implements
 
     public function shouldSend(object $notifiable, string $channel): bool
     {
-        return !$this->getElector()->ballot?->isVoted();
+        return ! $this->getElector()->ballot?->isVoted();
     }
 
     public function getMailMessagePurpose(object $notifiable): MailMessagePurpose

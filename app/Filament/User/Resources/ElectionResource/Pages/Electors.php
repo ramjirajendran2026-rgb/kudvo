@@ -184,11 +184,13 @@ class Electors extends ElectionPage implements HasTable
         return BulkAction::make(name: 'sendBallotLinkBulk')
             ->authorize(abilities: fn (self $livewire): bool => static::can(action: 'sendBallotLinkBulk', election: $livewire->getElection()))
             ->requiresConfirmation()
-            ->action(action: function (BulkAction $action, Collection $collection) {
+            ->action(action: function (BulkAction $action, Collection $collection, HasElection $livewire) {
+                $election = $livewire->getElection();
+
                 $collection->each(
-                    callback: function (Elector $elector) {
+                    callback: function (Elector $elector) use ($election) {
                         if (! $elector->ballot?->isVoted()) {
-                            $elector->sendBallotLink();
+                            $elector->sendBallotLink(election: $election);
                         }
                     }
                 );
@@ -221,14 +223,14 @@ class Electors extends ElectionPage implements HasTable
 
                 $action->success();
             })
+            ->hidden()
             ->icon(icon: 'heroicon-m-bell-alert')
             ->label(label: 'Notify Voting Instructions')
             ->successNotification(
                 notification: fn (Notification $notification) => $notification
                     ->title(title: 'Voting Instructions Sent')
                     ->body(body: 'Voting instructions have been sent to selected electors who have not yet voted.')
-            )
-            ->visible(condition: $this->hasFullAccess());
+            );
     }
 
     public function getGenerateShortCodesAction(): TableAction
