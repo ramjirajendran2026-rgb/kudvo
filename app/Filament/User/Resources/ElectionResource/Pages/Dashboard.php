@@ -11,6 +11,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Facades\Filament;
+use Filament\Notifications\Notification;
 use Illuminate\Support\HtmlString;
 use Livewire\Attributes\On;
 
@@ -26,6 +27,21 @@ class Dashboard extends ElectionPage
 
     public ElectionDashboardState $state;
 
+    public function getListeners(): array
+    {
+        return [
+            "echo-private:elections.{$this->getElection()->getKey()},ElectionClosed" => 'dumpp',
+        ];
+    }
+
+    public function dumpp()
+    {
+        Notification::make()
+            ->title('closed')
+            ->success()
+            ->send();
+    }
+
     public function mount(int|string $record): void
     {
         parent::mount($record);
@@ -36,11 +52,13 @@ class Dashboard extends ElectionPage
 
         if ($currentStep === ElectionSetupStep::Preference) {
             $this->redirect(Preference::getUrl(parameters: [$this->getElection()]));
+
             return;
         }
 
         if ($currentStep === ElectionSetupStep::Electors) {
             $this->redirect(Electors::getUrl(parameters: [$this->getElection()]));
+
             return;
         }
 
@@ -97,7 +115,7 @@ class Dashboard extends ElectionPage
         return $this->state->getLabel(election: $this->getElection());
     }
 
-    public function getStateDescription(): string | HtmlString | null
+    public function getStateDescription(): string|HtmlString|null
     {
         return $this->state->getDescription(election: $this->getElection());
     }
@@ -111,7 +129,7 @@ class Dashboard extends ElectionPage
     {
         return match ($this->state) {
             ElectionDashboardState::Open,
-            ElectionDashboardState::Expired =>[
+            ElectionDashboardState::Expired => [
                 ElectionResource\Widgets\ElectionStatsOverview::class,
                 ElectionResource\Widgets\VotedBallots::class,
             ],
@@ -123,7 +141,7 @@ class Dashboard extends ElectionPage
     {
         return match ($this->state) {
             ElectionDashboardState::Closed,
-            ElectionDashboardState::Completed =>[
+            ElectionDashboardState::Completed => [
                 ElectionResource\Widgets\ElectionStatsOverview::class,
                 ElectionResource\Widgets\VotedBallots::class,
             ],
@@ -147,7 +165,7 @@ class Dashboard extends ElectionPage
                     ),
             ],
             ElectionDashboardState::PendingCheckout => [
-                $this->getProceedToPayAction()
+                $this->getProceedToPayAction(),
             ],
             ElectionDashboardState::ReadyToPublish => [
                 ElectionResource::getPublishAction()
@@ -236,7 +254,7 @@ class Dashboard extends ElectionPage
                     $this->isOwner() ||
                     $this->getElection()->getCollaboratorPermissions(Filament::auth()->user())->payment === ElectionCollaboratorPermission::FullAccess
                 ) && $livewire->getElection()->isCheckoutRequired()
-    )
+            )
             ->label(label: 'Proceed to Pay');
     }
 
