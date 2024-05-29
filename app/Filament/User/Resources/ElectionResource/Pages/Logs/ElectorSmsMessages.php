@@ -105,6 +105,7 @@ class ElectorSmsMessages extends ElectionPage implements HasTable
                     ->sortable()
                     ->wrap(),
             ])
+            ->defaultSort(column: 'created_at', direction: 'desc')
             ->filters(filters: [
                 SelectFilter::make('status')
                     ->options(options: SmsMessageStatus::class)

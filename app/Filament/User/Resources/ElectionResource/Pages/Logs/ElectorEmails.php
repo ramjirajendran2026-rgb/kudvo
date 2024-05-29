@@ -102,6 +102,7 @@ class ElectorEmails extends ElectionPage implements HasTable
                     ->sortable()
                     ->wrap(),
             ])
+            ->defaultSort(column: 'sent_at', direction: 'desc')
             ->hiddenFilterIndicators()
             ->filters(filters: [
                 Tables\Filters\Filter::make(name: 'bounced_at')
