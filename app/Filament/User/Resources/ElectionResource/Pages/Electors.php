@@ -165,7 +165,7 @@ class Electors extends ElectionPage implements HasTable
             ->authorize(abilities: 'sendBallotLink')
             ->requiresConfirmation()
             ->action(action: function (HasElection $livewire, Elector $elector, TableAction $action) {
-                $elector->sendBallotLink(election: $livewire->getElection(), now: true);
+                $elector->sendBallotLink(election: $livewire->getElection());
 
                 $action->success();
             })
