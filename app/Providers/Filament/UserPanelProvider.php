@@ -76,6 +76,7 @@ class UserPanelProvider extends PanelProvider
             ->font(family: 'Poppins')
             ->viteTheme(theme: 'resources/css/filament/user/theme.css')
             ->databaseNotifications()
+            ->databaseNotificationsPolling(interval: null)
             ->globalSearch(provider: false)
             ->topNavigation()
             ->breadcrumbs(condition: false)
