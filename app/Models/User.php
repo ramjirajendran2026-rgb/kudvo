@@ -78,7 +78,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasMedia,
     {
         return match ($panel->getId()) {
             'user' => true,
-            'admin' => str($this->email)->endsWith(needles: '@inodesys.com'),
+            'admin' => str($this->email)->endsWith(needles: '@inodesys.com') && $this->hasVerifiedEmail(),
             default => false,
         };
     }
