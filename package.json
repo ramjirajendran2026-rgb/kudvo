@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "aos": "next",
-    "laravel-echo": "^1.16.0",
+    "laravel-echo": "^1.16.1",
     "pint": "^0.2.1",
     "prettier": "^3.2.5",
     "prettier-plugin-blade": "^2.1.13",
