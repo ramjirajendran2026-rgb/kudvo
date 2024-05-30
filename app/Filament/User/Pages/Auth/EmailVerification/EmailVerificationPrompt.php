@@ -7,11 +7,10 @@ use Filament\Pages\Auth\EmailVerification\EmailVerificationPrompt as BasePage;
 
 class EmailVerificationPrompt extends BasePage
 {
-
     public function getListeners(): array
     {
         return [
-            'echo-private:App.Models.User.' . $this->getVerifiable()->id . ',Auth.EmailVerified' => 'checkStatus'
+            'echo-private:App.Models.User.'.$this->getVerifiable()->id.',Auth.EmailVerified' => 'checkStatus',
         ];
     }
 
