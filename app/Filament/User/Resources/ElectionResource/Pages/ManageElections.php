@@ -25,7 +25,12 @@ class ManageElections extends ManageRecords
                 ),
 
             ...Arr::mapWithKeys(
-                array: ElectionStatus::cases(),
+                array: [
+                    ElectionStatus::DRAFT,
+                    ElectionStatus::PUBLISHED,
+                    ElectionStatus::OPEN,
+                    ElectionStatus::COMPLETED,
+                ],
                 callback: fn (ElectionStatus $case) => [
                     $case->value => Tab::make(label: $case->getLabel())
                         ->badge(

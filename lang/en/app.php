@@ -17,6 +17,9 @@ return [
             'published' => [
                 'label' => 'Published',
             ],
+            'open' => [
+                'label' => 'Voting In Progress',
+            ],
             'completed' => [
                 'label' => 'Completed',
             ],

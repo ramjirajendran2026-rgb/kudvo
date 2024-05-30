@@ -337,6 +337,13 @@ class Election extends Model
             ->whereNull(columns: 'cancelled_at');
     }
 
+    public function scopeOpen(Builder $query): Builder
+    {
+        return $query->published()
+            ->whereDate('starts_at', '<=', now())
+            ->whereDate('ends_at', '>', now());
+    }
+
     public function scopeWhereUser(Builder $query, User $user): Builder
     {
         return $query->where(
