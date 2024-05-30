@@ -843,7 +843,7 @@ return [
         'user-resource' => [
             'form' => [
                 'name' => [
-                    'label' => 'Your name',
+                    'label' => 'Contact name',
                 ],
                 'email' => [
                     'label' => 'Email address',
