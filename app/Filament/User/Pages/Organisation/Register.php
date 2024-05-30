@@ -11,6 +11,8 @@ use Filament\Forms\Form;
 use Filament\Pages\Tenancy\RegisterTenant;
 use Illuminate\Database\Eloquent\Model;
 
+use function Filament\authorize;
+
 class Register extends RegisterTenant
 {
     public static function getLabel(): string
@@ -38,6 +40,8 @@ class Register extends RegisterTenant
 
     protected function handleRegistration(array $data): Model
     {
+        authorize('create', Filament::getTenantModel());
+
         /** @var User $user */
         $user = Filament::auth()->user();
 
