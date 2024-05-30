@@ -24,7 +24,8 @@ class AdminPanelProvider extends PanelProvider
     {
         return $panel
             ->id(id: 'admin')
-            ->path(path: 'admin')
+            ->domain(domain: config('app.admin_panel.domain'))
+            ->path(path: config('app.admin_panel.prefix'))
             ->discoverClusters(in: app_path('Filament/Admin/Clusters'), for: 'App\\Filament\\Admin\\Clusters')
             ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\\Filament\\Admin\\Resources')
             ->discoverPages(in: app_path('Filament/Admin/Pages'), for: 'App\\Filament\\Admin\\Pages')

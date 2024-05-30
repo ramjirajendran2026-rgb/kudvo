@@ -38,7 +38,8 @@ class UserPanelProvider extends PanelProvider
         return $panel
             ->default()
             ->id(id: 'user')
-            ->path(path: 'app')
+            ->domain(domain: config('app.user_panel.domain'))
+            ->path(path: config('app.user_panel.prefix'))
             ->discoverResources(in: app_path(path: 'Filament/User/Resources'), for: 'App\\Filament\\User\\Resources')
             ->discoverPages(in: app_path(path: 'Filament/User/Pages'), for: 'App\\Filament\\User\\Pages')
             ->discoverWidgets(in: app_path(path: 'Filament/User/Widgets'), for: 'App\\Filament\\User\\Widgets')

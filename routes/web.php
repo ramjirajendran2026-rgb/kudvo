@@ -29,56 +29,63 @@ use Mcamara\LaravelLocalization\Middleware\LocaleSessionRedirect;
 |
 */
 
-Route::prefix(LaravelLocalization::setLocale())
-    ->middleware([
-        LocaleSessionRedirect::class,
-        LaravelLocalizationRedirectFilter::class,
-        LaravelLocalizationViewPath::class,
-    ])
-    ->group(function () {
-        Livewire::setUpdateRoute(function ($handle) {
-            return Route::post('livewire/update', $handle);
-        });
+Route::group(
+    [
+        'domain' => config('app.main_domain'),
+    ],
+    function () {
+        Route::prefix(LaravelLocalization::setLocale())
+            ->middleware([
+                LocaleSessionRedirect::class,
+                LaravelLocalizationRedirectFilter::class,
+                LaravelLocalizationViewPath::class,
+            ])
+            ->group(function () {
+                Livewire::setUpdateRoute(function ($handle) {
+                    return Route::post('livewire/update', $handle);
+                });
 
-        Route::get(uri: '/', action: Home::class)
-            ->name(name: 'home');
-
-        Route::prefix('products/election')
-            ->name('products.election.')
-            ->group(function (): void {
-                Route::get(uri: '/', action: ElectionHome::class)
+                Route::get(uri: '/', action: Home::class)
                     ->name(name: 'home');
 
-                Route::get(uri: 'how-it-works', action: HowItWorks::class)
-                    ->name(name: 'how-it-works');
+                Route::prefix('products/election')
+                    ->name('products.election.')
+                    ->group(function (): void {
+                        Route::get(uri: '/', action: ElectionHome::class)
+                            ->name(name: 'home');
+
+                        Route::get(uri: 'how-it-works', action: HowItWorks::class)
+                            ->name(name: 'how-it-works');
+                    });
             });
-    });
 
-Route::get(uri: 'privacy-policy', action: PrivacyPolicy::class)
-    ->name(name: 'privacy-policy');
+        Route::get(uri: 'privacy-policy', action: PrivacyPolicy::class)
+            ->name(name: 'privacy-policy');
 
-Route::get(
-    uri: 'e/{election:short_code}',
-    action: fn (Election $election) => redirect(to: ElectionPanel::getUrl(parameters: ['election' => $election], panel: 'election'))
-)->name(name: 'short_link.election');
+        Route::get(
+            uri: 'e/{election:short_code}',
+            action: fn (Election $election) => redirect(to: ElectionPanel::getUrl(parameters: ['election' => $election], panel: 'election'))
+        )->name(name: 'short_link.election');
 
-Route::get(
-    uri: 'b/{elector:short_code}',
-    action: fn (Request $request, Elector $elector) => redirect(to: URL::signedRoute(name: 'filament.election.eul', parameters: ['election' => $elector->event, 'elector' => $elector]))
-)->name(name: 'short_link.ballot');
+        Route::get(
+            uri: 'b/{elector:short_code}',
+            action: fn (Request $request, Elector $elector) => redirect(to: URL::signedRoute(name: 'filament.election.eul', parameters: ['election' => $elector->event, 'elector' => $elector]))
+        )->name(name: 'short_link.ballot');
 
-Route::post(uri: 'clicksend/webhook', action: ClicksendWebhookController::class);
+        Route::post(uri: 'clicksend/webhook', action: ClicksendWebhookController::class);
 
-Route::get(uri: 'checkout/success', action: [CheckoutController::class, 'success'])
-    ->name(name: 'checkout.success');
+        Route::get(uri: 'checkout/success', action: [CheckoutController::class, 'success'])
+            ->name(name: 'checkout.success');
 
-Route::get(uri: 'checkout/cancel', action: [CheckoutController::class, 'cancel'])
-    ->name(name: 'checkout.cancel');
+        Route::get(uri: 'checkout/cancel', action: [CheckoutController::class, 'cancel'])
+            ->name(name: 'checkout.cancel');
 
-foreach (AwsSnsController::$routes as $routeKey => $route) {
-    $routeName = 'ses.notification.'.$routeKey;
+        foreach (AwsSnsController::$routes as $routeKey => $route) {
+            $routeName = 'ses.notification.'.$routeKey;
 
-    $controllerActionName = Str::camel($routeKey);
+            $controllerActionName = Str::camel($routeKey);
 
-    Route::post('ses/notification/'.$route, [AwsSnsController::class, $controllerActionName])->name($routeName);
-}
+            Route::post('ses/notification/'.$route, [AwsSnsController::class, $controllerActionName])->name($routeName);
+        }
+    }
+);
