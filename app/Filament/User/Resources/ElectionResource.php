@@ -134,7 +134,7 @@ class ElectionResource extends Resource
                 static::getCreateTableAction(),
             ])
             ->heading(heading: Str::title(value: static::getPluralModelLabel()))
-            ->recordUrl(url: fn (Election $election) => static::getUrl(name: 'dashboard', parameters: [$election]))
+            ->recordUrl(url: fn (Election $election) => $election->getPendingStep()?->getUrl([$election]) ?? static::getUrl(name: 'dashboard', parameters: [$election]))
             ->relationship(relationship: fn (): Relation => Filament::getTenant()?->elections());
     }
 

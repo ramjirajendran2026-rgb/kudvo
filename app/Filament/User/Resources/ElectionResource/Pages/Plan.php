@@ -87,6 +87,6 @@ class Plan extends ElectionPage
                 'class' => 'w-full',
             ])
             ->label(label: __('filament.user.election-resource.pages.plan.actions.choose_plan.label'))
-            ->successRedirectUrl(url: Dashboard::getUrl(parameters: [$this->getElection()]));
+            ->successRedirectUrl(url: $this->getRedirectUrl());
     }
 }

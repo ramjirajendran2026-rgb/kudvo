@@ -11,7 +11,6 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Facades\Filament;
-use Filament\Notifications\Notification;
 use Illuminate\Support\HtmlString;
 use Livewire\Attributes\On;
 
@@ -27,21 +26,6 @@ class Dashboard extends ElectionPage
 
     public ElectionDashboardState $state;
 
-    public function getListeners(): array
-    {
-        return [
-            "echo-private:elections.{$this->getElection()->getKey()},ElectionClosed" => 'dumpp',
-        ];
-    }
-
-    public function dumpp()
-    {
-        Notification::make()
-            ->title('closed')
-            ->success()
-            ->send();
-    }
-
     public function mount(int|string $record): void
     {
         parent::mount($record);
@@ -51,18 +35,24 @@ class Dashboard extends ElectionPage
         $currentStep = $this->getPendingStep();
 
         if ($currentStep === ElectionSetupStep::Preference) {
+            $this->notifyUnauthorized();
+
             $this->redirect(Preference::getUrl(parameters: [$this->getElection()]));
 
             return;
         }
 
         if ($currentStep === ElectionSetupStep::Electors) {
+            $this->notifyUnauthorized();
+
             $this->redirect(Electors::getUrl(parameters: [$this->getElection()]));
 
             return;
         }
 
         if ($currentStep === ElectionSetupStep::Ballot) {
+            $this->notifyUnauthorized();
+
             $this->redirect(BallotSetup::getUrl(parameters: [$this->getElection()]));
         }
     }

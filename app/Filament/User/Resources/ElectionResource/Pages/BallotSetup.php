@@ -444,6 +444,8 @@ HTML,
 
     protected function getEditCandidateAction(): InfolistAction
     {
+        $pref = $this->getElection()->preference;
+
         return InfolistAction::make(name: 'editCandidate')
             ->authorize(
                 abilities: fn (HasElection $livewire): bool => static::can(
@@ -471,6 +473,13 @@ HTML,
             ->iconButton()
             ->modalHeading(heading: fn (Candidate $record): string => __('filament.user.election-resource.pages.ballot_setup.actions.edit_candidate.modal_heading', ['label' => $record->full_name]))
             ->modalSubmitActionLabel(label: __('filament.user.election-resource.pages.ballot_setup.actions.edit_candidate.modal_actions.submit.label'))
+            ->modalWidth(width: match (true) {
+                $pref->candidate_symbol && $pref->candidate_photo => MaxWidth::ThreeExtraLarge,
+                $pref->candidate_symbol,
+                $pref->candidate_photo => MaxWidth::TwoExtraLarge,
+                default => MaxWidth::ExtraLarge,
+
+            })
             ->successNotificationTitle(title: __('filament.user.election-resource.pages.ballot_setup.actions.edit_candidate.success_notification.title'))
             ->visible(condition: $this->hasFullAccess());
     }

@@ -805,6 +805,6 @@ class Preference extends ElectionPage
             ->title(title: __('filament.user.election-resource.pages.preference.actions.save.success_notification.title'))
             ->send();
 
-        $this->redirect(url: Dashboard::getUrl(parameters: [$this->getElection()]));
+        $this->redirect(url: $this->getRedirectUrl());
     }
 }

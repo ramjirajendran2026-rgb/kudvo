@@ -149,14 +149,26 @@ abstract class ElectionPage extends Page implements HasElection, HasElectorGroup
         static::authorizeResourceAccess();
 
         if (! static::canAccessPage(election: $this->election)) {
-            Notification::make()
-                ->title(title: __('filament.user.election-resource.pages.base.access_denied.notification.title'))
-                ->body(body: __('filament.user.election-resource.pages.base.access_denied.notification.body'))
-                ->warning()
-                ->send();
+            $this->notifyUnauthorized();
 
             $this->redirect(Dashboard::getUrl(parameters: [$this->election]));
         }
+    }
+
+    public function notifyUnauthorized(): void
+    {
+        Notification::make()
+            ->title(title: __('filament.user.election-resource.pages.base.access_denied.notification.title'))
+            ->body(body: __('filament.user.election-resource.pages.base.access_denied.notification.body'))
+            ->warning()
+            ->send();
+    }
+
+    public function getRedirectUrl(): string
+    {
+        $params = $this->getSubNavigationParameters();
+
+        return $this->getElection()->getPendingStep()?->getUrl($params) ?? Dashboard::getUrl($params);
     }
 
     protected function configureAction(Action $action): void
