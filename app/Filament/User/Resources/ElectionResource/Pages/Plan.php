@@ -2,9 +2,12 @@
 
 namespace App\Filament\User\Resources\ElectionResource\Pages;
 
+use App\Filament\User\Resources\ElectionResource;
 use App\Models\ElectionPlan;
 use Filament\Actions\Action;
+use Filament\Actions\SelectAction;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Arr;
 use Nnjeim\World\Models\Country;
 
 class Plan extends ElectionPage
@@ -13,8 +16,9 @@ class Plan extends ElectionPage
 
     public string $currency = 'USD';
 
-    public ?int $activePlanId = null;
+    public int $totalElectors = 500;
 
+    public ?int $activePlanId = null;
 
     public static function getNavigationLabel(): string
     {
@@ -56,6 +60,17 @@ class Plan extends ElectionPage
         }
 
         return $plans;
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            ElectionResource::getEditAction()
+                ->iconButton(),
+
+            SelectAction::make(name: 'currency')
+                ->options(Arr::mapWithKeys(config('app.supported_currencies'), fn ($currency) => [$currency => $currency])),
+        ];
     }
 
     public function choosePlanAction()

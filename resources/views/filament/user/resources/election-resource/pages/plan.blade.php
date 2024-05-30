@@ -8,19 +8,38 @@
         </p>
     </div>
 
+    <div
+        x-data="{
+            totalElectors: $wire.entangle('totalElectors').live,
+            validateInput() {
+                const value = parseInt(this.totalElectors, 10)
+                if (isNaN(value) || value < 1 || value > 999999) {
+                    this.totalElectors = 500
+                }
+            },
+        }"
+        class="flex items-center justify-center gap-4"
+    >
+        <x-filament::input.wrapper
+            :inline-prefix="true"
+            :inline-suffix="true"
+            :prefix="__('filament.user.election-resource.pages.plan.total_electors_input.prefix')"
+            :suffix="__('filament.user.election-resource.pages.plan.total_electors_input.suffix')"
+            class="w-full max-w-60 !rounded-full"
+        >
+            <x-filament::input
+                type="number"
+                min="1"
+                max="999999"
+                step="1"
+                x-model="totalElectors"
+                @input="validateInput"
+                class="text-center font-mono font-semibold"
+            />
+        </x-filament::input.wrapper>
+    </div>
+
     <div class="grid gap-4 pt-6 text-center md:grid-cols-3 md:gap-6">
-        <div class="col-span-full flex items-center justify-center">
-            <x-filament::tabs label="Currency">
-                @foreach (config('app.supported_currencies') as $supportedCurrency)
-                    <x-filament::tabs.item
-                        :active="$supportedCurrency === $currency"
-                        wire:click="setCurrency('{{ $supportedCurrency }}')"
-                    >
-                        {{ $supportedCurrency }}
-                    </x-filament::tabs.item>
-                @endforeach
-            </x-filament::tabs>
-        </div>
         @foreach ($this->getPlans() as $plan)
             <div
                 wire:key="plan-{{ $plan->id }}"
@@ -32,16 +51,17 @@
                 <p class="text-gray-600 dark:text-gray-50">
                     {{ $plan->description }}
                 </p>
-                <div class="space-y-1 py-6">
+                <div class="space-y-1">
+                    <span wire:loading wire:target="totalElectors,currency">Calculating...</span>
+
                     <div class="flex items-end justify-center gap-1">
-                        <span class="font-mono text-3xl font-bold text-primary-600 dark:text-primary-500 md:text-4xl">
-                            @money($plan->elector_fee, $plan->currency)
+                        <span
+                            wire:loading.class="hidden"
+                            wire:target="totalElectors,currency"
+                            class="font-mono text-xl font-bold text-primary-600 dark:text-primary-500 md:text-2xl"
+                        >
+                            @money($plan->elector_fee * $totalElectors + $plan->base_fee, $plan->currency)
                         </span>
-                        <span>/elector</span>
-                    </div>
-                    <div class="font-mono">
-                        +
-                        @money($plan->base_fee, $plan->currency)
                     </div>
                 </div>
                 <ul x-data="{ showAddOns: false }" class="space-y-2 text-start">
@@ -70,7 +90,7 @@
                         </li>
                         @foreach ($plan->addOnFeatures() as $feature)
                             <li x-show="showAddOns" class="flex gap-2">
-                                <x-filament::icon icon="heroicon-o-sparkles" class="h-6 w-6 text-green-500" />
+                                <x-filament::icon icon="heroicon-o-sparkles" class="h-6 w-6 text-primary-500" />
                                 <span>
                                     {{ $feature->feature->getLabel() }}
                                 </span>

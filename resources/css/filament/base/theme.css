@@ -1,6 +1,18 @@
 @import '/vendor/filament/filament/resources/css/theme.css';
 @import '../../forms/theme.css';
 
+/* Hide the spinners for all number input fields */
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Hide the spinners for Firefox */
+input[type='number'] {
+    -moz-appearance: textfield;
+}
+
 .filepond--file .filepond--file-action-button {
     background-color: rgba(0, 0, 0, 0.5);
 }

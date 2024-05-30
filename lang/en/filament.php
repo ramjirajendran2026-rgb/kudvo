@@ -169,6 +169,11 @@ return [
                 'plan' => [
                     'heading' => 'Choose a Plan',
                     'description' => 'Choose a plan that best suits your needs.',
+                    'total_electors_input' => [
+                        'prefix' => 'for',
+                        'suffix' => 'electors',
+                    ],
+                    'price_loading_label' => 'Calculating...',
                     'whats_included' => 'What’s included',
                     'add_on_features' => 'Add-on features',
                     'per_elector' => '/elector',
