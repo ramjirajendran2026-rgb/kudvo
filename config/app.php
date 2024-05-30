@@ -195,12 +195,12 @@ return [
 
     'user_panel' => [
         'domain' => env('APP_USER_PANEL_DOMAIN'),
-        'prefix' => env('APP_USER_PANEL_PREFIX'),
+        'prefix' => env('APP_USER_PANEL_PREFIX', 'app'),
     ],
 
     'admin_panel' => [
         'domain' => env('APP_ADMIN_PANEL_DOMAIN'),
-        'prefix' => env('APP_ADMIN_PANEL_PREFIX'),
+        'prefix' => env('APP_ADMIN_PANEL_PREFIX', 'admin'),
     ],
 
     'default_currency' => 'INR',
