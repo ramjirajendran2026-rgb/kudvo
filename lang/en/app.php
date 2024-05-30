@@ -23,16 +23,16 @@ return [
         ],
         'election_setup_step' => [
             'preference' => [
-                'label' => 'Preference',
+                'label' => 'Preferences',
             ],
             'electors' => [
-                'label' => 'Add Electors',
+                'label' => 'Manage Electors',
             ],
             'ballot' => [
                 'label' => 'Setup Ballot',
             ],
             'timing' => [
-                'label' => 'Set Timing',
+                'label' => 'Set Time',
             ],
             'payment' => [
                 'label' => 'Payment',
