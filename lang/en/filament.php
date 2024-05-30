@@ -432,6 +432,7 @@ return [
                             'success_notification' => [
                                 'title' => 'Created',
                             ],
+                            'modal_heading' => 'New :position candidate',
                         ],
                         'edit_candidate' => [
                             'modal_heading' => 'Edit :label',
@@ -751,6 +752,7 @@ return [
                     'validation' => [
                         'exists' => 'This :attribute is not found in electors data',
                     ],
+                    'helper_text' => 'If membership number is not applicable then leave it blank.',
                 ],
                 'phone' => [
                     'label' => 'Phone number',

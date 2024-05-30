@@ -390,6 +390,8 @@ HTML,
 
     protected function getCreateCandidateAction(): InfolistAction
     {
+        $pref = $this->getElection()->preference;
+
         return InfolistAction::make(name: 'createCandidate')
             ->authorize(
                 abilities: fn (HasElection $livewire): bool => static::can(
@@ -425,7 +427,15 @@ HTML,
             ->form(form: fn (Form $form, Position $record) => CandidateResource::form(form: $form, position: $record))
             ->icon(icon: 'heroicon-m-plus')
             ->label(label: __('filament.user.election-resource.pages.ballot_setup.actions.create_candidate.label'))
+            ->modalHeading(heading: fn (Position $record): string => __('filament.user.election-resource.pages.ballot_setup.actions.create_candidate.modal_heading', ['position' => $record->name]))
             ->modalSubmitActionLabel(label: __('filament-actions::create.single.modal.actions.create.label'))
+            ->modalWidth(width: match (true) {
+                $pref->candidate_symbol && $pref->candidate_photo => MaxWidth::ThreeExtraLarge,
+                $pref->candidate_symbol,
+                $pref->candidate_photo => MaxWidth::TwoExtraLarge,
+                default => MaxWidth::ExtraLarge,
+
+            })
             ->outlined()
             ->size(size: ActionSize::Small)
             ->successNotificationTitle(title: __('filament.user.election-resource.pages.ballot_setup.actions.create_candidate.success_notification.title'))

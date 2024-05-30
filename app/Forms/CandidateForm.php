@@ -157,6 +157,7 @@ readonly class CandidateForm
                     ->where(column: 'event_type', value: Election::class)
                     ->where(column: 'event_id', value: $livewire->getElection()->getKey())
             )
+            ->helperText(text: __('filament.user.candidate-resource.form.membership_number.helper_text'))
             ->label(label: __('filament.user.candidate-resource.form.membership_number.label'))
             ->maxLength(length: 50)
             ->placeholder(placeholder: __('filament.user.candidate-resource.form.membership_number.placeholder'))
