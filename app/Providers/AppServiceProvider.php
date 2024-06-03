@@ -6,14 +6,12 @@ use App\KudvoManager;
 use App\Services\Clicksend\ClicksendChannel;
 use App\Services\TwentyFourSevenSms\TwentyFourSevenSmsChannel;
 use App\Settings\ServiceConfig;
-use BezhanSalleh\FilamentLanguageSwitch\Enums\Placement;
 use BezhanSalleh\FilamentLanguageSwitch\LanguageSwitch;
 use ClickSend\Api\SMSApi;
 use ClickSend\Configuration;
 use Coderflex\FilamentTurnstile\Forms\Components\Turnstile;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
-use Filament\Facades\Filament;
 use Filament\Forms\Components\Actions\Action as FormsAction;
 use Filament\Infolists\Components\Actions\Action as InfolistAction;
 use Filament\Notifications\Livewire\Notifications;
@@ -53,7 +51,7 @@ class AppServiceProvider extends ServiceProvider
             Mail::alwaysTo(address: 'iliyas.m@inodesys.com');
         }
 
-        Str::macro(name: 'isUnicode', macro: fn($string): bool => strlen($string) != strlen(utf8_decode($string)));
+        Str::macro(name: 'isUnicode', macro: fn ($string): bool => strlen($string) != strlen(utf8_decode($string)));
         Str::macro(name: 'maxLimit', macro: function ($value, $limit = 100, $end = '...'): string {
             if (mb_strwidth($value, 'UTF-8') <= $limit) {
                 return $value;
@@ -73,21 +71,21 @@ class AppServiceProvider extends ServiceProvider
 
             $lastItem = array_pop($array);
 
-            return implode(separator: $separator, array: $array) . ' and ' . $lastItem;
+            return implode(separator: $separator, array: $array).' and '.$lastItem;
         });
 
         Notification::resolved(
-            fn(ChannelManager $service) => $service
+            fn (ChannelManager $service) => $service
                 ->extend(
                     driver: TwentyFourSevenSmsChannel::NAME,
-                    callback: fn() => app(abstract: TwentyFourSevenSmsChannel::class)
+                    callback: fn () => app(abstract: TwentyFourSevenSmsChannel::class)
                 )
         );
         Notification::resolved(
-            fn(ChannelManager $service) => $service
+            fn (ChannelManager $service) => $service
                 ->extend(
                     driver: ClicksendChannel::NAME,
-                    callback: fn() => app(abstract: ClicksendChannel::class)
+                    callback: fn () => app(abstract: ClicksendChannel::class)
                 )
         );
 
@@ -116,6 +114,8 @@ class AppServiceProvider extends ServiceProvider
         Notifications::verticalAlignment(alignment: VerticalAlignment::Start);
 
         Table::$defaultDateTimeDisplayFormat = 'M j, Y h:i:s A';
+        Table::$defaultDateDisplayFormat = 'M j, Y';
+        Table::$defaultTimeDisplayFormat = 'h:i A';
 
         Action::configureUsing(modifyUsing: function (Action $action) {
             $action->closeModalByClickingAway(condition: false);

@@ -7,7 +7,7 @@ use App\Filament\Base\Contracts\HasElection;
 use App\Filament\User\Resources\ElectionResource\Pages;
 use App\Filament\User\Resources\ElectionResource\Widgets\ElectionStatsOverview;
 use App\Filament\User\Resources\ElectionResource\Widgets\VotedBallots;
-use App\Forms\Components\TranslatableContainer;
+use App\Forms\Components\TimezonePicker;
 use App\Forms\ElectionForm;
 use App\Models\Election;
 use App\Models\Elector;
@@ -31,6 +31,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;
+use stdClass;
 
 class ElectionResource extends Resource
 {
@@ -101,18 +102,39 @@ class ElectionResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make(name: 'sno')
+                    ->alignCenter()
+                    ->label(label: __('filament.user.elector-resource.table.sno.label'))
+                    ->getStateUsing(callback: fn (stdClass $rowLoop) => $rowLoop->iteration),
+
                 Tables\Columns\TextColumn::make(name: 'code')
+                    ->alignCenter()
                     ->badge()
                     ->copyable()
                     ->icon(icon: 'heroicon-m-clipboard-document')
                     ->iconPosition(iconPosition: IconPosition::After)
-                    ->label(label: __('filament.user.election-resource.table.code.label'))
-                    ->searchable(),
+                    ->label(label: __('filament.user.election-resource.table.code.label')),
 
                 Tables\Columns\TextColumn::make(name: 'name')
+                    ->alignCenter()
                     ->label(label: __('filament.user.election-resource.table.name.label'))
-                    ->searchable()
                     ->wrap(),
+
+                Tables\Columns\TextColumn::make(name: 'starts_at_local')
+                    ->alignCenter()
+                    ->date()
+                    ->description(description: fn (Election $record): ?string => $record->starts_at_local?->format(format: Table::$defaultTimeDisplayFormat))
+                    ->label(label: __('filament.user.election-resource.table.starts_at.label'))
+                    ->sortable(condition: ['starts_at'])
+                    ->tooltip(tooltip: fn (Election $record): ?string => TimezonePicker::getDisplayLabel($record->ends_at_local?->timezone->getName() ?? 'UTC')),
+
+                Tables\Columns\TextColumn::make(name: 'ends_at_local')
+                    ->alignCenter()
+                    ->date()
+                    ->description(description: fn (Election $record): ?string => $record->ends_at_local?->format(format: Table::$defaultTimeDisplayFormat))
+                    ->label(label: __('filament.user.election-resource.table.ends_at.label'))
+                    ->sortable(condition: ['ends_at'])
+                    ->tooltip(tooltip: fn (Election $record): ?string => TimezonePicker::getDisplayLabel($record->starts_at_local?->timezone->getName() ?? 'UTC')),
 
                 Tables\Columns\TextColumn::make(name: 'status')
                     ->alignCenter()
@@ -126,6 +148,7 @@ class ElectionResource extends Resource
                     DeleteTableAction::make(),
                 ]),
             ])
+            ->defaultSort(column: 'id', direction: 'desc')
             ->emptyStateActions(actions: [
                 static::getCreateTableAction(),
             ])

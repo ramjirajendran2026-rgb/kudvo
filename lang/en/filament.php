@@ -584,6 +584,12 @@ return [
                 'status' => [
                     'label' => 'Status',
                 ],
+                'starts_at' => [
+                    'label' => 'Starts at',
+                ],
+                'ends_at' => [
+                    'label' => 'Ends at',
+                ],
             ],
             'actions' => [
                 'set_timing' => [
@@ -708,6 +714,9 @@ return [
                 ],
                 'segments' => [
                     'label' => 'Segments',
+                ],
+                'sno' => [
+                    'label' => 'S.No',
                 ],
             ],
         ],
