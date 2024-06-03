@@ -864,6 +864,12 @@ return [
             ],
         ],
         'pages' => [
+            'auth' => [
+                'register' => [
+                    'title' => 'Host sign up',
+                    'heading' => 'Host sign up',
+                ],
+            ],
             'organisation' => [
                 'edit' => [
                     'label' => 'Organisation Profile',

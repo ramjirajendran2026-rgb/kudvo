@@ -7,6 +7,7 @@ use Coderflex\FilamentTurnstile\Forms\Components\Turnstile;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Form;
 use Filament\Pages\Auth\Register as BasePage;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Validation\ValidationException;
 
 class Register extends BasePage
@@ -50,5 +51,15 @@ class Register extends BasePage
         $this->dispatch('reset-captcha');
 
         parent::onValidationError($exception);
+    }
+
+    public function getTitle(): string|Htmlable
+    {
+        return __('filament.user.pages.auth.register.title');
+    }
+
+    public function getHeading(): string|Htmlable
+    {
+        return __('filament.user.pages.auth.register.heading');
     }
 }
