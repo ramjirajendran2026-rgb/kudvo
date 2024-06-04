@@ -15,6 +15,7 @@ class BallotLinkBlastInitiated implements ShouldBroadcast
 
     public function __construct(public BallotLinkBlast $blast)
     {
+        $this->blast->unsetRelations();
     }
 
     public function broadcastOn(): array
