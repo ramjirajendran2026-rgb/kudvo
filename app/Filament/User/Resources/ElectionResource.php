@@ -14,7 +14,9 @@ use App\Models\Elector;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Facades\Filament;
+use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Resources\Concerns\Translatable;
@@ -31,7 +33,6 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;
-use stdClass;
 
 class ElectionResource extends Resource
 {
@@ -105,7 +106,7 @@ class ElectionResource extends Resource
                 Tables\Columns\TextColumn::make(name: 'sno')
                     ->alignCenter()
                     ->label(label: __('filament.user.elector-resource.table.sno.label'))
-                    ->getStateUsing(callback: fn (stdClass $rowLoop) => $rowLoop->iteration),
+                    ->rowIndex(),
 
                 Tables\Columns\TextColumn::make(name: 'code')
                     ->alignCenter()
@@ -170,6 +171,7 @@ class ElectionResource extends Resource
             'preference' => Pages\Preference::route(path: '/{record}/preference'),
             'electors' => Pages\Electors::route(path: '/{record}/electors'),
             'ballot.setup' => Pages\BallotSetup::route(path: '/{record}/ballot/setup'),
+            'ballot_link_blasts' => Pages\BallotLinkBlasts::route(path: '/{record}/ballot-link-blasts'),
             'result' => Pages\Result::route(path: '/{record}/result'),
             'monitor_tokens' => Pages\MonitorTokens::route(path: '/{record}/monitor-tokens'),
             'booth_tokens' => Pages\BoothTokens::route(path: '/{record}/booth-tokens'),
@@ -189,6 +191,7 @@ class ElectionResource extends Resource
             Pages\Preference::class,
             Pages\Electors::class,
             Pages\BallotSetup::class,
+            Pages\BallotLinkBlasts::class,
             Pages\Result::class,
             Pages\MonitorTokens::class,
             Pages\BoothTokens::class,
@@ -294,17 +297,11 @@ class ElectionResource extends Resource
             ->action(action: function (HasElection $livewire, Action $action, array $data): void {
                 $livewire->getElection()->publish();
 
-                if (isset($data['notify_electors']) && $data['notify_electors']) {
-                    $livewire->getElection()->electors()
-                        ->chunkById(
-                            count: 300,
-                            callback: fn (Collection $collection) => $collection
-                                ->each(
-                                    callback: fn (Elector $elector) => $elector
-                                        ->sendBallotLink(election: $livewire->getElection())
-                                )
-                        );
-                }
+                $livewire->getElection()
+                    ->ballotLinkBlasts()
+                    ->create(attributes: [
+                        'scheduled_at' => $data['scheduled_at'] ?? now(),
+                    ]);
 
                 $action->success();
             })
@@ -316,8 +313,26 @@ class ElectionResource extends Resource
             )
             ->color(color: ElectionStatus::PUBLISHED->getColor())
             ->form(form: [
-                Toggle::make(name: 'notify_electors')
-                    ->label(label: __('filament.user.election-resource.actions.publish.form.notify_electors.label')),
+                ToggleButtons::make(name: 'notify_electors')
+                    ->colors(['warning', 'warning'])
+                    ->default(state: true)
+                    ->helperText(text: 'Delivery may take several minutes, depending on the number of electors. Please plan accordingly.')
+                    ->inline()
+                    ->label(label: 'Send ballot links to voters')
+                    ->live()
+                    ->options(options: [
+                        true => 'Immediately',
+                        false => 'Later',
+                    ]),
+
+                DateTimePicker::make(name: 'scheduled_at')
+                    ->hiddenLabel()
+                    ->label(label: 'Schedule at')
+                    ->minDate(date: fn (HasElection $livewire): string => now($livewire->getElection()->timezone)->format('Y-m-d H:i'))
+                    ->required()
+                    ->seconds(condition: false)
+                    ->timezone(timezone: fn (HasElection $livewire): ?string => $livewire->getElection()->timezone)
+                    ->visible(condition: fn (Get $get): bool => $get('notify_electors') == false),
             ])
             ->label(label: __('filament.user.election-resource.actions.publish.label'))
             ->modalIcon(icon: ElectionStatus::PUBLISHED->getIcon())

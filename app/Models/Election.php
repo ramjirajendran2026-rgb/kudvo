@@ -300,6 +300,11 @@ class Election extends Model
         return $this->hasMany(related: ElectionBoothToken::class);
     }
 
+    public function ballotLinkBlasts(): HasMany
+    {
+        return $this->hasMany(related: BallotLinkBlast::class);
+    }
+
     public function result(): HasOne
     {
         return $this->hasOne(related: ElectionResult::class)

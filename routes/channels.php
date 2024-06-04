@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\BallotLinkBlast;
 use App\Models\Election;
 use Illuminate\Support\Facades\Broadcast;
 
@@ -18,6 +19,6 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
 });
 
-Broadcast::channel('elections.{election}', function ($user, Election $election) {
+Broadcast::channel('elections.{electionId}', function ($user, $electionId) {
     return true;
 });

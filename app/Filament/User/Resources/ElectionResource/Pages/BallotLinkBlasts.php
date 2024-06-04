@@ -1,0 +1,63 @@
+<?php
+
+namespace App\Filament\User\Resources\ElectionResource\Pages;
+
+use App\Enums\ElectionCollaboratorPermission;
+use App\Filament\User\Resources\BallotLinkBlastResource;
+use App\Filament\User\Resources\ElectionResource\Pages\ElectionPage;
+use App\Models\Election;
+use Filament\Facades\Filament;
+use Filament\Resources\Concerns\InteractsWithRelationshipTable;
+use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Table;
+
+class BallotLinkBlasts extends ElectionPage implements HasTable
+{
+    use InteractsWithRelationshipTable;
+
+    protected static string $view = 'filament.user.resources.election-resource.pages.electors';
+
+    protected static ?string $navigationIcon = 'heroicon-o-bell-alert';
+
+    protected static ?string $activeNavigationIcon = 'heroicon-s-bell-alert';
+
+    public function getListeners(): array
+    {
+        return [
+            'echo-private:elections.'.$this->getElection()->id.',BallotLinkBlastInitiated' => '$refresh',
+            'echo-private:elections.'.$this->getElection()->id.',BallotLinkBlastCompleted' => '$refresh',
+        ];
+    }
+
+    public static function getRelationshipName(): string
+    {
+        return 'ballotLinkBlasts';
+    }
+
+    public function getOwnerRecord(): Election
+    {
+        return $this->getElection();
+    }
+
+    public function hasReadAccess(): bool
+    {
+        return $this->isOwner()
+            || $this->getElection()->getCollaboratorPermissions(Filament::auth()->user())->ballot_link_blasts !== ElectionCollaboratorPermission::NoAccess;
+    }
+
+    public function hasFullAccess(): bool
+    {
+        return $this->isOwner()
+            || $this->getElection()->getCollaboratorPermissions(Filament::auth()->user())->ballot_link_blasts === ElectionCollaboratorPermission::FullAccess;
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('filament.user.election-resource.pages.ballot_link_blasts.navigation_label');
+    }
+
+    public function table(Table $table): Table
+    {
+        return BallotLinkBlastResource::table(table: $table);
+    }
+}

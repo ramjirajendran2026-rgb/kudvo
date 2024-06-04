@@ -519,6 +519,12 @@ return [
                             'payment' => [
                                 'label' => 'Payment',
                             ],
+                            'ballot_link_blasts' => [
+                                'label' => 'Ballot link blasts',
+                            ],
+                            'booth_tokens' => [
+                                'label' => 'Booth tokens',
+                            ],
                             'monitor_tokens' => [
                                 'label' => 'Monitor tokens',
                             ],
@@ -572,6 +578,9 @@ return [
                         'navigation_label' => 'SMS Logs',
                         'navigation_group' => 'Elector Reports',
                     ],
+                ],
+                'ballot_link_blasts' => [
+                    'navigation_label' => 'Ballot Link Blasts',
                 ],
             ],
             'table' => [
@@ -892,6 +901,16 @@ return [
                             ],
                         ],
                     ],
+                ],
+            ],
+        ],
+        'ballot-link-blast-resource' => [
+            'model_label' => 'Ballot Link Blast',
+            'plural_model_label' => 'Ballot Link Blasts',
+            'form' => [
+                'scheduled_at' => [
+                    'helper_text' => 'Delivery may take several minutes, depending on the number of electors. Please plan accordingly.',
+                    'label' => 'Schedule at',
                 ],
             ],
         ],

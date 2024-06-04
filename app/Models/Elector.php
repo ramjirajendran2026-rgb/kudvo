@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Enums\MailMessagePurpose;
 use App\Facades\Kudvo;
 use App\Filament\Election\ElectionPanel;
 use App\Filament\Nomination\NominationPanel;
@@ -30,16 +29,11 @@ use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Http\Request;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Validator;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Elector extends Model implements
-    AuthenticatableContract,
-    AuthorizableContract,
-    FilamentUser,
-    HasAvatar,
-    HasMedia,
-    HasName
+class Elector extends Model implements AuthenticatableContract, AuthorizableContract, FilamentUser, HasAvatar, HasMedia, HasName
 {
     use Authenticatable;
     use Authorizable;
@@ -76,7 +70,7 @@ class Elector extends Model implements
     protected function displayName(): Attribute
     {
         return Attribute::make(
-            get: fn($value, array $attributes) => collect(value: [$this->title, $this->full_name])
+            get: fn ($value, array $attributes) => collect(value: [$this->title, $this->full_name])
                 ->filter(callback: fn (?string $item): bool => filled($item))
                 ->implode(value: ' ')
         );
@@ -210,7 +204,7 @@ class Elector extends Model implements
     protected static function booted(): void
     {
         static::saving(callback: function (Elector $elector) {
-            if (!is_null($elector->groups)) {
+            if (! is_null($elector->groups)) {
                 $elector->groups = collect(value: explode(separator: ',', string: $elector->groups))
                     ->map(callback: fn (string $item): string => trim(string: $item))
                     ->unique()
@@ -252,6 +246,20 @@ class Elector extends Model implements
     public function routeNotificationForSms(?Notification $notification = null)
     {
         return $this->phone;
+    }
+
+    public function routeNotificationForMail(?Notification $notification = null)
+    {
+        $validator = Validator::make(
+            data: [
+                'email' => $this->email,
+            ],
+            rules: [
+                'email' => 'required|email:rfc,dns',
+            ],
+        );
+
+        return $validator->passes() ? $this->email : null;
     }
 
     public function createAuthSession(string $sessionId, string $guardName, Request $request): AuthSession
