@@ -41,7 +41,7 @@ class BallotLinkBlastResource extends Resource
                 DateTimePicker::make(name: 'scheduled_at')
                     ->helperText(text: __('filament.user.ballot-link-blast-resource.form.scheduled_at.helper_text'))
                     ->hiddenLabel()
-                    ->label(label: __('filament.user.ballot-link-blast-resource.form.scheduled_at.label'))
+                    ->label(label: 'Schedule at')
                     ->minDate(date: fn (HasElection $livewire): string => now($livewire->getElection()->timezone)->format('Y-m-d H:i'))
                     ->required()
                     ->seconds(condition: false)

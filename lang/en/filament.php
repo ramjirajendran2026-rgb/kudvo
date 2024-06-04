@@ -579,9 +579,6 @@ return [
                         'navigation_group' => 'Elector Reports',
                     ],
                 ],
-                'ballot_link_blasts' => [
-                    'navigation_label' => 'Ballot Link Blasts',
-                ],
             ],
             'table' => [
                 'code' => [
@@ -910,7 +907,6 @@ return [
             'form' => [
                 'scheduled_at' => [
                     'helper_text' => 'Delivery may take several minutes, depending on the number of electors. Please plan accordingly.',
-                    'label' => 'Schedule at',
                 ],
             ],
         ],

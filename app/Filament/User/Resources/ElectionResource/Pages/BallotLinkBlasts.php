@@ -53,7 +53,7 @@ class BallotLinkBlasts extends ElectionPage implements HasTable
 
     public static function getNavigationLabel(): string
     {
-        return __('filament.user.election-resource.pages.ballot_link_blasts.navigation_label');
+        return 'Ballot Link Blasts';
     }
 
     public function table(Table $table): Table
