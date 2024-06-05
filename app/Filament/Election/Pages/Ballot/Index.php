@@ -209,6 +209,7 @@ class Index extends BasePage
 
             $this->dispatch(event: 'scroll-to-top');
             $this->dispatch(event: 'flash-session-timeout');
+            $this->dispatch(event: 'play-beep');
 
             Notification::make()
                 ->title(title: __('filament.election.pages.ballot.index.form.actions.submit.booth_success_notification.title'))
