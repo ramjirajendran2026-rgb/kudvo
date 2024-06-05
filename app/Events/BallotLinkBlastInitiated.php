@@ -24,4 +24,14 @@ class BallotLinkBlastInitiated implements ShouldBroadcast
             new PrivateChannel("elections.{$this->blast->election_id}"),
         ];
     }
+
+    public function broadcastAs(): string
+    {
+        return static::getBroadcastName();
+    }
+
+    public static function getBroadcastName(): string
+    {
+        return 'election.ballot_link_blast.initiated';
+    }
 }

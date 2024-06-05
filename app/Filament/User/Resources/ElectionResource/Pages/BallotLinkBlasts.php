@@ -3,8 +3,9 @@
 namespace App\Filament\User\Resources\ElectionResource\Pages;
 
 use App\Enums\ElectionCollaboratorPermission;
+use App\Events\BallotLinkBlastCompleted;
+use App\Events\BallotLinkBlastInitiated;
 use App\Filament\User\Resources\BallotLinkBlastResource;
-use App\Filament\User\Resources\ElectionResource\Pages\ElectionPage;
 use App\Models\Election;
 use Filament\Facades\Filament;
 use Filament\Resources\Concerns\InteractsWithRelationshipTable;
@@ -24,8 +25,8 @@ class BallotLinkBlasts extends ElectionPage implements HasTable
     public function getListeners(): array
     {
         return [
-            'echo-private:elections.'.$this->getElection()->id.',BallotLinkBlastInitiated' => '$refresh',
-            'echo-private:elections.'.$this->getElection()->id.',BallotLinkBlastCompleted' => '$refresh',
+            'echo-private:elections.'.$this->getElection()->id.',.'.BallotLinkBlastInitiated::getBroadcastName() => '$refresh',
+            'echo-private:elections.'.$this->getElection()->id.',.'.BallotLinkBlastCompleted::getBroadcastName() => '$refresh',
         ];
     }
 
