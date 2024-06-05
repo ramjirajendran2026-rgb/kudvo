@@ -35,6 +35,7 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\HtmlString;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use ipinfo\ipinfolaravel\ipinfolaravel;
 
 class ElectionPanelProvider extends PanelProvider
 {
@@ -58,6 +59,7 @@ class ElectionPanelProvider extends PanelProvider
                 VerifyCsrfToken::class,
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
+                ipinfolaravel::class,
                 DispatchServingFilamentEvent::class,
             ])
             ->middleware(middleware: [IdentifyBoothToken::class, IdentifyPanelState::class, EnsureStateIsAllowed::class], isPersistent: true)
