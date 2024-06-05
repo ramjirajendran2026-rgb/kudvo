@@ -18,7 +18,7 @@ return [
                     'type' => [
                         'label' => 'Method',
                     ],
-                    'description' => 'Updated at :timestamp',
+                    'description' => 'As of :timestamp',
                 ],
             ],
             'election_stats_overview' => [

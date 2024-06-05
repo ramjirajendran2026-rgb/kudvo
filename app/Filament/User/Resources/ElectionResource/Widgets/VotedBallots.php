@@ -6,5 +6,4 @@ use App\Filament\Base\Widgets\VotedBallots as BaseWidget;
 
 class VotedBallots extends BaseWidget
 {
-
 }

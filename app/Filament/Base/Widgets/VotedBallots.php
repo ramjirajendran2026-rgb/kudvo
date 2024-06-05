@@ -14,7 +14,7 @@ class VotedBallots extends BaseWidget
 {
     public Election $election;
 
-    protected int | string | array $columnSpan = 'full';
+    protected int|string|array $columnSpan = 'full';
 
     public static function getHeading(): ?string
     {
