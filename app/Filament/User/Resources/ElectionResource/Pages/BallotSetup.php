@@ -385,6 +385,7 @@ HTML,
             ->modalWidth(width: MaxWidth::ExtraLarge)
             ->options(options: [
                 'election_id' => $this->getElection()->getKey(),
+                'locale' => app()->currentLocale(),
             ])
             ->visible(condition: $this->hasFullAccess());
     }

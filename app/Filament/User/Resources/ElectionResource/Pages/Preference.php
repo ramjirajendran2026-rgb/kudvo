@@ -625,7 +625,8 @@ class Preference extends ElectionPage
                                         hideAddOnPrice: ! $this->canSave(),
                                     )
                                     ->hidden(condition: ! $plan->hasFeature(feature: ElectionFeature::BoothVoting))
-                                    ->label(label: __('filament.user.election-resource.pages.preference.form.booth_voting.label')),
+                                    ->label(label: __('filament.user.election-resource.pages.preference.form.booth_voting.label'))
+                                    ->live(),
 
                                 Toggle::make(name: 'web_app_manifest_enabled')
                                     ->afterStateUpdated(callback: function (bool $state, Set $set, Get $get, self $livewire): void {
