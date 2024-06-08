@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Data\Election\BoothPreferenceData;
 use App\Data\Election\CollaboratorPermissionsData;
 use App\Data\Election\PlanFeatureData;
 use App\Data\Election\PreferenceData;
@@ -38,6 +39,7 @@ class Election extends Model
         'description',
         'ballot_locales',
         'preference',
+        'booth_preference',
         'timezone',
         'starts_at',
         'ends_at',
@@ -58,6 +60,7 @@ class Election extends Model
 
     protected $casts = [
         'preference' => PreferenceData::class,
+        'booth_preference' => BoothPreferenceData::class,
         'starts_at' => 'datetime',
         'ends_at' => 'datetime',
         'booth_starts_at' => 'datetime',

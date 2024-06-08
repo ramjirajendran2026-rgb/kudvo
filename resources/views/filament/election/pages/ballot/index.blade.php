@@ -9,7 +9,7 @@
     x-on:flash-session-timeout="
         setTimeout(
             () => $dispatch('session-expired'),
-            30000,
+            $event.detail.interval,
         );
     "
     x-on:scroll-to-top.window="
@@ -24,6 +24,7 @@
         )
     "
     x-on:play-beep="playBeep()"
+    x-on:do-logout.window="$dispatch('session-expired')"
 >
     <form wire:submit="submit" class="my-auto">
         {{ $this->form }}

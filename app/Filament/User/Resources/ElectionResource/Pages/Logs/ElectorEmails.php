@@ -2,12 +2,14 @@
 
 namespace App\Filament\User\Resources\ElectionResource\Pages\Logs;
 
+use App\Enums\ElectionCollaboratorPermission;
 use App\Enums\MailMessagePurpose;
 use App\Filament\Exports\ElectorEmailExporter;
 use App\Filament\User\Resources\ElectionResource\Pages\ElectionPage;
 use App\Models\Election;
 use App\Models\Elector;
 use App\Models\Email;
+use Filament\Facades\Filament;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Concerns\HasTabs;
 use Filament\Support\Enums\Alignment;
@@ -68,7 +70,13 @@ class ElectorEmails extends ElectionPage implements HasTable
     public function table(Table $table): Table
     {
         return $table
-            ->query(fn (): Builder => $this->getTableQuery())
+            ->query(
+                fn (): Builder => $this->getTableQuery()
+                    ->when(
+                        value: ! $this->hasReadAccess(),
+                        callback: fn (Builder $query) => $query->whereKey(null)
+                    )
+            )
             ->modifyQueryUsing($this->modifyQueryWithActiveTab(...))
             ->columns([
                 Tables\Columns\TextColumn::make('sno')
@@ -143,7 +151,8 @@ class ElectorEmails extends ElectionPage implements HasTable
                     ->modalHeading(heading: 'Export Email Logs')
                     ->options(options: [
                         'timezone' => $this->getElection()->timezone,
-                    ]),
+                    ])
+                    ->visible(condition: fn (): bool => $this->hasFullAccess()),
             ]);
     }
 
@@ -207,5 +216,17 @@ class ElectorEmails extends ElectionPage implements HasTable
     public static function hasVotedBallot(Election $election): bool
     {
         return $election->preference->voted_ballot_mail;
+    }
+
+    public function hasReadAccess(): bool
+    {
+        return $this->isOwner() ||
+            $this->getElection()->getCollaboratorPermissions(Filament::auth()->user())->elector_logs !== ElectionCollaboratorPermission::NoAccess;
+    }
+
+    public function hasFullAccess(): bool
+    {
+        return $this->isOwner() ||
+            $this->getElection()->getCollaboratorPermissions(Filament::auth()->user())->elector_logs === ElectionCollaboratorPermission::FullAccess;
     }
 }

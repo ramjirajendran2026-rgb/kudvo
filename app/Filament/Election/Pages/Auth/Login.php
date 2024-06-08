@@ -2,9 +2,10 @@
 
 namespace App\Filament\Election\Pages\Auth;
 
+use App\Actions\Election\Booth\UpdateOnElectorLogin;
 use App\Enums\OneTimePasswordPurpose;
+use App\Events\ElectorAssignedToBoothEvent;
 use App\Facades\Kudvo;
-use App\Filament\Election\Http\Middleware\EnsureStateIsAllowed;
 use App\Filament\Election\Pages\Mfa\Notice;
 use App\Models\Election;
 use App\Models\Elector;
@@ -13,6 +14,7 @@ use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Group;
 use Filament\Forms\Form;
 use Filament\Http\Responses\Auth\Contracts\LoginResponse;
 use Filament\Notifications\Notification;
@@ -26,6 +28,30 @@ use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
 class Login extends BasePage
 {
+    public function getListeners(): array
+    {
+        $listeners = parent::getListeners();
+
+        if (Kudvo::isBoothDevice()) {
+            $listeners['echo:election-booth.'.Kudvo::getElectionBoothToken()?->getKey().',.'.ElectorAssignedToBoothEvent::getBroadcastName()] = 'electorAssignedToBooth';
+        }
+
+        return $listeners;
+    }
+
+    public function electorAssignedToBooth(): ?LoginResponse
+    {
+        $boothToken = Kudvo::getElectionBoothToken();
+
+        $elector = $boothToken?->currentElector;
+
+        if (blank($elector)) {
+            return null;
+        }
+
+        return $this->proceedWithElector($elector);
+    }
+
     public function getHeading(): string|Htmlable
     {
         return Kudvo::getElection()->name;
@@ -60,11 +86,16 @@ class Login extends BasePage
             $this->throwFailureValidationException();
         }
 
+        return $this->proceedWithElector($elector);
+    }
+
+    protected function proceedWithElector(Elector $elector): ?LoginResponse
+    {
         if (! $elector->canAccessPanel(Filament::getCurrentPanel())) {
             $this->throwFailureValidationException();
         }
 
-        if ($elector->ballot?->isVoted() && !Kudvo::getElection()?->preference?->voted_ballot_update) {
+        if ($elector->ballot?->isVoted() && ! Kudvo::getElection()?->preference?->voted_ballot_update) {
             Notification::make()
                 ->title(title: 'Already voted')
                 ->warning()
@@ -94,6 +125,8 @@ class Login extends BasePage
             guardName: $panel->getAuthGuard(),
             request: $request,
         );
+
+        UpdateOnElectorLogin::execute(elector: $elector);
     }
 
     protected function sendMfaCode(Elector $elector): void
@@ -136,6 +169,7 @@ class Login extends BasePage
     protected function getAuthenticateFormAction(): Action
     {
         return parent::getAuthenticateFormAction()
+            ->visible(condition: $this->isBoothSelfLoginAllowed())
             ->label(
                 label: Kudvo::getElection()->isMfaRequired() ?
                     __('filament.election.pages.auth.login.form.actions.authenticate.get_otp_label') :
@@ -146,12 +180,18 @@ class Login extends BasePage
     public function form(Form $form): Form
     {
         return $form
+            ->disabled(condition: ! $this->isBoothSelfLoginAllowed())
             ->schema(components: [
-                $this->getPhoneComponent()
-                    ->initialCountry(value: Kudvo::getOrganisation()?->country),
+                Group::make()
+                    ->schema(components: [
+                        $this->getPhoneComponent()
+                            ->initialCountry(value: Kudvo::getOrganisation()?->country),
 
-                $this->getMfaConsentComponent(),
-            ]);
+                        $this->getMfaConsentComponent(),
+                    ])
+                    ->visible($this->isBoothSelfLoginAllowed()),
+            ],
+            );
     }
 
     protected function getPhoneComponent()
@@ -170,5 +210,10 @@ class Login extends BasePage
             ->label(label: __('filament.election.pages.auth.login.form.consent.label'))
             ->validationAttribute(label: 'consent')
             ->visible(condition: Kudvo::getElection()->isMfaRequired());
+    }
+
+    protected function isBoothSelfLoginAllowed(): bool
+    {
+        return ! Kudvo::isBoothDevice() || Kudvo::getElection()->booth_preference?->login_by_self;
     }
 }

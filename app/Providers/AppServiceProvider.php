@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Filament\Election\Http\Responses\Auth\LogoutResponse;
 use App\KudvoManager;
 use App\Services\Clicksend\ClicksendChannel;
 use App\Services\TwentyFourSevenSms\TwentyFourSevenSmsChannel;
@@ -13,6 +14,7 @@ use Coderflex\FilamentTurnstile\Forms\Components\Turnstile;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use Filament\Forms\Components\Actions\Action as FormsAction;
+use Filament\Http\Responses\Auth\Contracts\LogoutResponse as LogoutResponseContract;
 use Filament\Infolists\Components\Actions\Action as InfolistAction;
 use Filament\Notifications\Livewire\Notifications;
 use Filament\Support\Enums\Alignment;
@@ -40,6 +42,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(abstract: 'kudvo', concrete: function (): KudvoManager {
             return new KudvoManager();
         });
+
+        $this->app->bind(LogoutResponseContract::class, LogoutResponse::class);
     }
 
     /**
@@ -106,6 +110,7 @@ class AppServiceProvider extends ServiceProvider
         if (count($supportedLocales) > 1) {
             LanguageSwitch::configureUsing(function (LanguageSwitch $switch) use ($supportedLocales) {
                 $switch
+                    ->excludes(excludes: ['election'])
                     ->locales(array_keys($supportedLocales));
             });
         }

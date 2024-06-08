@@ -2,8 +2,37 @@
 
 @config 'tailwind.config.js';
 
+@page {
+    size: A5;
+    margin: 0;
+}
+
+.fi-topbar,
+.fi-header,
+.fi-footer {
+    @apply print:hidden;
+}
+
+.fi-vote-picker {
+    .fi-section-header-description {
+        @apply print:hidden;
+    }
+}
+
 .fi-btn {
     @apply rounded-full px-12;
+}
+
+.fi-header-heading {
+    @apply !text-primary-600 dark:!text-primary-400;
+}
+
+.fi-body:has(.fi-footer[data-booth-self-logout='false']) {
+    .fi-user-menu {
+        & > .fi-dropdown-panel > .fi-dropdown-list:last-of-type {
+            @apply hidden;
+        }
+    }
 }
 
 .fi-main {

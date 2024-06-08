@@ -122,7 +122,7 @@ return [
                             'submit' => [
                                 'booth_success_notification' => [
                                     'title' => 'Submitted',
-                                    'body' => 'Your votes are submitted successfully. This page will be automatically expire in 30 seconds.',
+                                    'body' => 'Your votes are submitted successfully. This page will be automatically expire in :seconds seconds.',
                                 ],
                             ],
                         ],

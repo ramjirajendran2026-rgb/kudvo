@@ -85,7 +85,7 @@ class ElectionPanelProvider extends PanelProvider
 
                         if (
                             blank($elector) ||
-                            !Kudvo::getElection()->preference->ballot_link_unique
+                            ! Kudvo::getElection()->preference->ballot_link_unique
                         ) {
                             return redirect(to: Index::getUrl());
                         }
@@ -118,7 +118,7 @@ class ElectionPanelProvider extends PanelProvider
             )
             ->renderHook(
                 name: PanelsRenderHook::FOOTER,
-                hook: fn () => Blade::render(string: '<x-filament.nomination.footer />')
+                hook: fn () => Blade::render(string: '<x-filament.nomination.footer data-booth-self-logout="'.((! Kudvo::isBoothDevice() || Kudvo::getElection()->booth_preference?->logout_by_self) ? 'true' : 'false').'" />')
             );
     }
 

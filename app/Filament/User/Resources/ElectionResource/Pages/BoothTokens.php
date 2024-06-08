@@ -2,31 +2,52 @@
 
 namespace App\Filament\User\Resources\ElectionResource\Pages;
 
-use App\Filament\User\Resources\ElectionResource;
+use App\Enums\ElectionCollaboratorPermission;
+use App\Events\ElectorAssignedToBoothEvent;
+use App\Events\ElectorCastedVoteInBoothEvent;
+use App\Events\ElectorRevokedFromBoothEvent;
 use App\Models\Election;
 use App\Models\ElectionBoothToken;
-use App\Models\ElectionMonitorToken;
+use App\Models\Elector;
+use Filament\Facades\Filament;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
-use Filament\Notifications\Notification;
 use Filament\Resources\Concerns\InteractsWithRelationshipTable;
-use Filament\Resources\Pages\Page;
+use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\IconPosition;
+use Filament\Support\Enums\MaxWidth;
 use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\ActionGroup;
+use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Jenssegers\Agent\Agent;
 
 class BoothTokens extends ElectionPage implements HasTable
 {
     use InteractsWithRelationshipTable;
 
-    protected static string $view = 'filament.user.resources.election-resource.pages.monitor-tokens';
+    protected static string $view = 'filament.user.resources.election-resource.pages.booth-tokens';
 
     protected static ?string $navigationIcon = 'heroicon-o-archive-box';
 
     protected static ?string $activeNavigationIcon = 'heroicon-s-archive-box';
+
+    protected function getListeners(): array
+    {
+        $listeners = parent::getListeners();
+
+        $listeners['echo-private:elections.'.$this->getElection()->id.',.'.ElectorAssignedToBoothEvent::getBroadcastName()] = '$refresh';
+        $listeners['echo-private:elections.'.$this->getElection()->id.',.'.ElectorRevokedFromBoothEvent::getBroadcastName()] = '$refresh';
+        $listeners['echo-private:elections.'.$this->getElection()->id.',.'.ElectorCastedVoteInBoothEvent::getBroadcastName()] = '$refresh';
+
+        return $listeners;
+    }
 
     public static function getRelationshipName(): string
     {
@@ -43,42 +64,133 @@ class BoothTokens extends ElectionPage implements HasTable
         return __('filament.user.election-resource.pages.booth_tokens.navigation_label');
     }
 
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema(components: [
+                TextInput::make(name: 'name')
+                    ->default(state: ElectionBoothToken::make(['election_id' => $this->getElection()->getKey()])->getHighestOrderNumber() + 1)
+                    ->maxLength(length: 30),
+            ]);
+    }
+
     public function table(Table $table): Table
     {
         return $table
-            ->defaultSort(column: 'id', direction: 'desc')
-            ->headerActions(actions: [
-                Action::make(name: 'createNewToken')
-                    ->requiresConfirmation()
-                    ->color(color: 'info')
-                    ->action(action: function (self $livewire): void {
-                        $livewire->getElection()->boothTokens()->create();
+            ->actions(actions: [
+                EditAction::make('assign')
+                    ->after(callback: fn (ElectionBoothToken $record) => broadcast(new ElectorAssignedToBoothEvent($record->getKey(), $record->current_elector_id))->toOthers())
+                    ->form(form: [
+                        Select::make(name: 'currentElector')
+                            ->getOptionLabelFromRecordUsing(callback: fn (Elector $record) => "$record->membership_number - $record->display_name")
+                            ->hiddenLabel()
+                            ->placeholder(placeholder: 'Select an elector')
+                            ->preload()
+                            ->relationship(
+                                titleAttribute: 'membership_number',
+                                modifyQueryUsing: fn (Builder $query): Builder => $query
+                                    ->where('event_type', Election::class)
+                                    ->where('event_id', $this->getElection()->id)
+                                    ->whereDoesntHave(relation: 'booth')
+                                    ->whereDoesntHave(
+                                        relation: 'ballot',
+                                        callback: fn (Builder $query): Builder => $query->scopes(scopes: 'voted')
+                                    ),
+                            )
+                            ->searchable(condition: ['membership_number', 'full_name']),
+                    ])
+                    ->icon(icon: 'heroicon-s-user-plus')
+                    ->iconButton()
+                    ->label(label: 'Assign')
+                    ->modalCancelAction(action: false)
+                    ->modalFooterActionsAlignment(alignment: Alignment::Center)
+                    ->modalHeading(heading: 'Assign Elector to Booth')
+                    ->modalWidth(width: MaxWidth::Medium)
+                    ->visible(
+                        condition: fn (ElectionBoothToken $record): bool => $this->hasFullAccess()
+                            && $record->isActivated()
+                            && blank($record->current_elector_id)
+                            && $this->getElection()->booth_preference?->login_by_admin
+                    ),
 
-                        Notification::make()
-                            ->title(title: 'Created')
-                            ->success()
-                            ->send();
-                    }),
+                Action::make(name: 'revoke')
+                    ->requiresConfirmation()
+                    ->action(action: function (ElectionBoothToken $record, Action $action): void {
+                        $record->update(attributes: ['current_elector_id' => null]);
+
+                        $action->success();
+                    })
+                    ->after(callback: fn (ElectionBoothToken $record) => broadcast(new ElectorRevokedFromBoothEvent($record->getKey()))->toOthers())
+                    ->icon(icon: 'heroicon-s-user-minus')
+                    ->iconButton()
+                    ->label(label: 'Revoke')
+                    ->successNotificationTitle(title: 'Revoked')
+                    ->visible(
+                        condition: fn (ElectionBoothToken $record): bool => $this->hasFullAccess()
+                            && filled($record->current_elector_id)
+                            && $this->getElection()->booth_preference?->logout_by_admin
+                    ),
+
+                EditAction::make()
+                    ->form(form: fn (Form $form): Form => $this->form(form: $form))
+                    ->iconButton()
+                    ->modalCancelAction(action: false)
+                    ->modalFooterActionsAlignment(alignment: Alignment::Center)
+                    ->modalWidth(width: MaxWidth::Medium)
+                    ->visible(condition: fn (): bool => $this->hasFullAccess()),
+
+                DeleteAction::make()
+                    ->hidden(condition: fn (ElectionBoothToken $record): bool => $record->isActivated())
+                    ->iconButton()
+                    ->visible(condition: fn (): bool => $this->hasFullAccess()),
+
+                ActionGroup::make(actions: [
+                    Action::make(name: 'copyActivationLink')
+                        ->alpineClickHandler(
+                            handler: fn (ElectionBoothToken $record): string => 'window.navigator.clipboard.writeText("'.$record->getLink().'");
+                                $tooltip(\'Copied\', {theme: $store.theme,
+                                    timeout: 2000,
+                                })'
+                        )
+                        ->hidden(condition: fn (ElectionBoothToken $record): bool => $record->isActivated())
+                        ->visible(condition: fn (): bool => $this->hasFullAccess()),
+                ]),
             ])
             ->columns(components: [
-                TextColumn::make(name: 'key')
-                    ->copyable()
-                    ->copyableState(state: fn (ElectionBoothToken $token): string => $token->getLink())
-                    ->icon(icon: 'heroicon-m-document-duplicate')
-                    ->iconPosition(iconPosition: IconPosition::After)
-                    ->size(size: TextColumn\TextColumnSize::ExtraSmall),
-
-                TextColumn::make(name: 'activated_at')
-                    ->dateTime(timezone: $this->getElection()->timezone),
+                TextColumn::make(name: 'name')
+                    ->alignCenter()
+                    ->color(color: 'primary')
+                    ->size(size: TextColumn\TextColumnSize::Large),
 
                 TextColumn::make(name: 'user_agent')
+                    ->description(
+                        description: fn (ElectionBoothToken $record): ?string => $record->activated_at
+                            ?->timezone($this->getElection()->timezone)
+                            ->format(Table::$defaultDateTimeDisplayFormat)
+                    )
                     ->formatStateUsing(callback: fn (?Agent $state): ?string => filled($state) ? $state->platform().' - '.$state->browser() : null)
                     ->label(label: 'Device'),
+
+                TextColumn::make(name: 'status')
+                    ->badge(),
+
+                TextColumn::make(name: 'currentElector.membership_number')
+                    ->color(color: fn (ElectionBoothToken $record): ?string => $record->currentElector?->ballot?->isVoted() ? 'success' : null)
+                    ->description(description: fn (ElectionBoothToken $record): ?string => $record->currentElector?->display_name)
+                    ->icon(icon: fn (ElectionBoothToken $record): ?string => $record->currentElector?->ballot?->isVoted() ? 'heroicon-m-shield-check' : null)
+                    ->iconPosition(iconPosition: IconPosition::After)
+                    ->wrap(),
             ])
-            ->actions(actions: [
-                DeleteAction::make()
-                    ->iconButton(),
-            ]);
+            ->defaultSort(column: 'id', direction: 'desc')
+            ->headerActions(actions: [
+                CreateAction::make()
+                    ->form(form: fn (Form $form): Form => $this->form($form))
+                    ->modalCancelAction(action: false)
+                    ->modalWidth(width: MaxWidth::Medium)
+                    ->visible(condition: fn (): bool => $this->hasFullAccess()),
+            ])
+            ->modelLabel(label: 'Booth')
+            ->recordTitleAttribute(attribute: 'name');
     }
 
     public static function canAccessPage(Election $election): bool
@@ -90,5 +202,17 @@ class BoothTokens extends ElectionPage implements HasTable
     public static function shouldRegisterNavigation(array $parameters = []): bool
     {
         return static::canAccessPage(election: $parameters['record']);
+    }
+
+    public function hasReadAccess(): bool
+    {
+        return $this->isOwner() ||
+            $this->getElection()->getCollaboratorPermissions(Filament::auth()->user())->booth_tokens !== ElectionCollaboratorPermission::NoAccess;
+    }
+
+    public function hasFullAccess(): bool
+    {
+        return $this->isOwner() ||
+            $this->getElection()->getCollaboratorPermissions(Filament::auth()->user())->booth_tokens === ElectionCollaboratorPermission::FullAccess;
     }
 }

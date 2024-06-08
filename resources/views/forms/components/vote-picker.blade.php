@@ -155,6 +155,7 @@
         :description="$getSectionDescription()"
         @class([
             "fi-vote-picker",
+            "[&_.fi-section-header]:print:py-2",
             "fi-invalid [&_.fi-fo-field-wrp-error-message]:hidden" => $errors->has(
                 $statePath,
             ),
@@ -276,7 +277,7 @@
                                 "
                             @endif
                             @class([
-                                "break-inside-avoid border-gray-200 py-2 dark:border-white/10" =>
+                                "break-inside-avoid border-gray-200 py-2 dark:border-white/10 print:py-0" =>
                                     $gridDirection === "column",
                             ])
                         >
@@ -299,7 +300,7 @@
                                                     $applyStateBindingModifiers('wire:model') => $statePath,
                                                     'x-on:change' => 'checkIfAllCheckboxesAreChecked($event)',
                                                 ], escape: false)
-                                                ->class(['mt-1 w-8 h-8 peer'])
+                                                ->class(['mt-1 w-8 h-8 peer print:hidden'])
                                         "
                                     />
                                     <svg

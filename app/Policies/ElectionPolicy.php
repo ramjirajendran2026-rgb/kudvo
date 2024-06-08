@@ -4,10 +4,8 @@ namespace App\Policies;
 
 use App\Models\Election;
 use App\Models\Elector;
-use App\Models\Organisation;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 
 class ElectionPolicy
@@ -247,7 +245,7 @@ class ElectionPolicy
     {
         return $election->is_open &&
             (
-                !$elector->ballot?->isVoted() ||
+                ! $elector->ballot?->isVoted() ||
                 $election->preference->voted_ballot_update
             );
     }
@@ -256,7 +254,7 @@ class ElectionPolicy
     {
         return $election->is_booth_open &&
             (
-                !$elector->ballot?->isVoted() ||
+                ! $elector->ballot?->isVoted() ||
                 $election->preference->voted_ballot_update
             );
     }

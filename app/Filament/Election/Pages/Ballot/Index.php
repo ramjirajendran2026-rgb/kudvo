@@ -3,6 +3,7 @@
 namespace App\Filament\Election\Pages\Ballot;
 
 use App\Enums\BallotType;
+use App\Events\ElectorCastedVoteInBoothEvent;
 use App\Facades\Kudvo;
 use App\Filament\Election\Pages\BasePage;
 use App\Forms\Components\VotePicker;
@@ -23,7 +24,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\HtmlString;
-use Livewire\Attributes\On;
+use Livewire\Attributes\Locked;
 
 class Index extends BasePage
 {
@@ -33,9 +34,14 @@ class Index extends BasePage
 
     public array $data = [];
 
+    #[Locked]
     public bool $preview = false;
 
+    #[Locked]
     public bool $flashVotes = false;
+
+    #[Locked]
+    public bool $isVoted = false;
 
     public function mountCanAuthorizeAccess(): void
     {
@@ -79,10 +85,10 @@ class Index extends BasePage
             ->statePath(path: 'data')
             ->schema(components: [
                 Placeholder::make(name: 'confirmation')
-                    ->content(content: new HtmlString('<h2 class="text-lg md:text-2xl font-semibold">Review your selection</h2>'))
+                    ->content(content: new HtmlString('<h2 class="text-lg md:text-xl font-semibold text-warning-600 dark:text-warning-400">Review & confirm your selection</h2>'))
                     ->extraAttributes(attributes: ['class' => 'text-center'])
-                    ->hidden(condition: fn (self $livewire): bool => ! $this->preview)
-                    ->hiddenLabel(),
+                    ->hiddenLabel()
+                    ->visible(condition: fn (self $livewire): bool => $this->preview && ! $this->isVoted),
 
                 ...$this->getElection()->positions
                     ->when(
@@ -109,16 +115,22 @@ class Index extends BasePage
                     Actions\Action::make(name: 'continue')
                         ->label(label: __('filament.election.pages.ballot.index.form.actions.continue.label'))
                         ->action(action: 'submit')
-                        ->hidden(condition: fn (self $livewire): bool => $livewire->flashVotes || $livewire->preview)
                         ->size(size: ActionSize::ExtraLarge)
-                        ->submit(form: 'submit'),
+                        ->submit(form: 'submit')
+                        ->visible(condition: fn (self $livewire): bool => ! $livewire->preview),
 
                     Actions\Action::make(name: 'confirm')
                         ->requiresConfirmation()
                         ->action(action: 'submit')
                         ->label(label: __('filament.election.pages.ballot.index.form.actions.confirm.label'))
-                        ->hidden(condition: fn (self $livewire): bool => $livewire->flashVotes || ! $livewire->preview)
-                        ->size(size: ActionSize::ExtraLarge),
+                        ->size(size: ActionSize::ExtraLarge)
+                        ->visible(condition: fn (self $livewire): bool => $livewire->preview && ! $livewire->isVoted),
+
+                    Actions\Action::make(name: 'print')
+                        ->alpineClickHandler(handler: 'window.print()')
+                        ->label(label: 'Print')
+                        ->size(size: ActionSize::ExtraLarge)
+                        ->visible(condition: fn (self $livewire): bool => $this->isVoted && $livewire->getElection()->booth_preference?->voted_ballot_print_by_self),
                 ])
                     ->alignment(alignment: fn (self $livewire): Alignment => $livewire->preview ? Alignment::Between : Alignment::End)
                     ->extraAttributes(attributes: ['class' => 'px-2 md:px-0']),
@@ -134,11 +146,10 @@ class Index extends BasePage
                 $livewire->dispatch(event: 'scroll-to-top');
             })
             ->color(color: 'gray')
-            ->hidden(condition: fn (self $livewire): bool => $livewire->flashVotes)
             ->icon(icon: 'heroicon-s-chevron-left')
             ->label(label: __('filament.election.pages.ballot.index.form.actions.back.label'))
             ->size(size: ActionSize::ExtraLarge)
-            ->visible(condition: fn (self $livewire): bool => $livewire->preview);
+            ->visible(condition: fn (self $livewire): bool => $livewire->preview && ! $this->isVoted);
     }
 
     public function submit(): void
@@ -176,13 +187,15 @@ class Index extends BasePage
             $ballot->votes()->delete();
         }
 
+        $voteIds = [];
+
         foreach ($data as $key => $secret) {
-            $vote = Vote::create(attributes: [
+            $voteIds[] = Vote::create(attributes: [
                 'key' => $key,
                 'secret' => $secret,
                 'mock' => $this->isMock(),
                 'ballot_id' => $this->getElection()->preference->dnt_votes ? null : $ballot->getKey(),
-            ]);
+            ])->getKey();
         }
 
         if (filled($acknowledgementVia = $this->getElection()->voted_confirmation_via)) {
@@ -204,19 +217,37 @@ class Index extends BasePage
             );
         }
 
+        $this->isVoted = true;
+        Session::put(
+            key: 'elector_'.$this->getElector()->getKey().'_vote_ids'.($this->isMock() ? '_mock' : ''),
+            value: encrypt(value: $voteIds)
+        );
+
         if (Kudvo::isBoothDevice()) {
-            $this->flashVotes = true;
+            broadcast(event: new ElectorCastedVoteInBoothEvent(Kudvo::getElectionBoothToken()?->getKey()))
+                ->toOthers();
+        }
+
+        if (false && Kudvo::isBoothDevice()) {
+            $boothPreference = $this->getElection()->booth_preference;
+            $this->flashVotes = $boothPreference->flash_voted_ballot;
+
+            $interval = $boothPreference->after_vote_session_timeout;
 
             $this->dispatch(event: 'scroll-to-top');
-            $this->dispatch(event: 'flash-session-timeout');
+
             $this->dispatch(event: 'play-beep');
 
-            Notification::make()
-                ->title(title: __('filament.election.pages.ballot.index.form.actions.submit.booth_success_notification.title'))
-                ->body(body: __('filament.election.pages.ballot.index.form.actions.submit.booth_success_notification.body'))
-                ->success()
-                ->seconds(seconds: 30)
-                ->send();
+            if (filled($interval)) {
+                $this->dispatch(event: 'flash-session-timeout', interval: $interval * 1000);
+
+                Notification::make()
+                    ->title(title: __('filament.election.pages.ballot.index.form.actions.submit.booth_success_notification.title'))
+                    ->body(body: __('filament.election.pages.ballot.index.form.actions.submit.booth_success_notification.body', ['seconds' => $interval]))
+                    ->success()
+                    ->seconds(seconds: $interval)
+                    ->send();
+            }
 
             return;
         }
@@ -230,7 +261,7 @@ class Index extends BasePage
             value: $ballot->getKey()
         ));
 
-        $this->redirect(url: Filament::getUrl());
+        $this->redirect(url: Filament::getUrl(), navigate: $this->isSpa());
     }
 
     protected function getBallot(): ?Ballot
@@ -240,11 +271,5 @@ class Index extends BasePage
         }
 
         return $this->getElector()->ballot;
-    }
-
-    #[On(event: 'session-expired')]
-    public function destroySession(): void
-    {
-        Filament::auth()->logout();
     }
 }

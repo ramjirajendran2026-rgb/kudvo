@@ -2,6 +2,7 @@
 
 namespace App\Filament\Election\Pages;
 
+use App\Events\ElectorRevokedFromBoothEvent;
 use App\Facades\Kudvo;
 use App\Filament\Base\Contracts\HasElection;
 use App\Filament\Base\Contracts\HasElector;
@@ -11,21 +12,36 @@ use App\Filament\Election\Pages\Concerns\InteractsWithElector;
 use App\Models\Election;
 use Filament\Facades\Filament;
 use Filament\Forms\Form;
+use Filament\Http\Responses\Auth\Contracts\LogoutResponse;
 use Filament\Pages\Page;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
+use Livewire\Attributes\On;
+
 use function Filament\authorize;
 
 /**
  * @property Form $form
  */
-abstract class BasePage extends Page implements HasElector, HasElection
+abstract class BasePage extends Page implements HasElection, HasElector
 {
-    use InteractsWithElector;
     use InteractsWithElection;
+    use InteractsWithElector;
 
     protected static bool $shouldRegisterNavigation = false;
+
     public bool $mock;
+
+    public function getListeners(): array
+    {
+        $listeners = parent::getListeners();
+
+        if (Kudvo::isBoothDevice()) {
+            $listeners['echo:election-booth.'.Kudvo::getElectionBoothToken()?->getKey().',.'.ElectorRevokedFromBoothEvent::getBroadcastName()] = 'destroySession';
+        }
+
+        return $listeners;
+    }
 
     public function mount(Request $request): void
     {
@@ -62,5 +78,13 @@ abstract class BasePage extends Page implements HasElector, HasElection
     public function getRedirectUrl(): ?string
     {
         return Index::getUrl(parameters: $this->isMock() ? ['mock' => 1] : []);
+    }
+
+    #[On(event: 'session-expired')]
+    public function destroySession()
+    {
+        Filament::auth()->logout();
+
+        return app(LogoutResponse::class);
     }
 }

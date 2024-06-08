@@ -2,14 +2,11 @@
 
 namespace App\Filament\User\Resources\ElectionResource\Pages;
 
-use App\Filament\User\Resources\ElectionResource;
+use App\Enums\ElectionCollaboratorPermission;
 use App\Models\Election;
-use App\Models\ElectionBoothToken;
 use App\Models\ElectionMonitorToken;
-use Filament\Forms\Form;
-use Filament\Notifications\Notification;
+use Filament\Facades\Filament;
 use Filament\Resources\Concerns\InteractsWithRelationshipTable;
-use Filament\Resources\Pages\Page;
 use Filament\Support\Enums\IconPosition;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\DeleteAction;
@@ -53,6 +50,7 @@ class MonitorTokens extends ElectionPage implements HasTable
                     ->color(color: 'info')
                     ->label(label: __('filament.user.election-resource.pages.monitor_tokens.table.actions.create.label'))
                     ->successNotificationTitle(title: __('filament.user.election-resource.pages.monitor_tokens.table.actions.create.success_notification.title'))
+                    ->visible(condition: fn (): bool => $this->hasFullAccess())
                     ->action(action: function (self $livewire, Action $action): void {
                         $livewire->getElection()->monitorTokens()->create();
 
@@ -78,7 +76,8 @@ class MonitorTokens extends ElectionPage implements HasTable
             ])
             ->actions(actions: [
                 DeleteAction::make()
-                    ->iconButton(),
+                    ->iconButton()
+                    ->visible(condition: fn (): bool => $this->hasFullAccess()),
             ]);
     }
 
@@ -91,5 +90,17 @@ class MonitorTokens extends ElectionPage implements HasTable
     public static function shouldRegisterNavigation(array $parameters = []): bool
     {
         return static::canAccessPage(election: $parameters['record']);
+    }
+
+    public function hasReadAccess(): bool
+    {
+        return $this->isOwner() ||
+            $this->getElection()->getCollaboratorPermissions(Filament::auth()->user())->monitor_tokens !== ElectionCollaboratorPermission::NoAccess;
+    }
+
+    public function hasFullAccess(): bool
+    {
+        return $this->isOwner() ||
+            $this->getElection()->getCollaboratorPermissions(Filament::auth()->user())->monitor_tokens === ElectionCollaboratorPermission::FullAccess;
     }
 }

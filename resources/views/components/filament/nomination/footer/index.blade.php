@@ -2,7 +2,7 @@
     use App\Facades\Kudvo;
 @endphp
 
-<footer class="fi-footer">
+<footer {{ $attributes->class(['fi-footer']) }}>
     <div>
         <div>
             {{ Kudvo::isBoothDevice() ? 'Booth Voting by' : 'Powered by' }}

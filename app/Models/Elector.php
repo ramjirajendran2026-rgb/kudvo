@@ -95,6 +95,12 @@ class Elector extends Model implements AuthenticatableContract, AuthorizableCont
         );
     }
 
+    public function booth(): HasOne
+    {
+        return $this->hasOne(related: ElectionBoothToken::class, foreignKey: 'current_elector_id')
+            ->latestOfMany();
+    }
+
     public function ballots(): HasMany
     {
         return $this->hasMany(related: Ballot::class)
