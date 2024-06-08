@@ -5,6 +5,7 @@ namespace App\Filament\User\Resources\ElectionResource\Pages;
 use App\Enums\ElectionCollaboratorPermission;
 use App\Enums\ElectionSetupStep;
 use App\Filament\Base\Contracts\HasElection;
+use App\Filament\Imports\CandidateImporter;
 use App\Filament\Imports\ElectorImporter;
 use App\Filament\User\Resources\CandidateResource;
 use App\Filament\User\Resources\PositionResource;
@@ -379,7 +380,7 @@ HTML,
         return ImportAction::make(name: 'importCandidate')
             ->authorize(abilities: 'importCandidate')
             ->icon(icon: 'heroicon-m-arrow-up-tray')
-            ->importer(importer: ElectorImporter::class)
+            ->importer(importer: CandidateImporter::class)
             ->label(label: __('filament.user.election-resource.pages.ballot_setup.actions.import_candidate.label'))
             ->modalWidth(width: MaxWidth::ExtraLarge)
             ->options(options: [
