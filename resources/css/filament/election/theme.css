@@ -4,7 +4,7 @@
 @config 'tailwind.config.js';
 
 @page {
-    size: A5;
+    size: 80mm 110mm;
     margin: 0;
 }
 
