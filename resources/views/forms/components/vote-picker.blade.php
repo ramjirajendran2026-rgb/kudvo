@@ -285,7 +285,7 @@
                                 data-candidate-group="{{ $getCandidateGroupId($value) }}"
                                 @class([
                                     "fi-fo-checkbox-list-option-label flex items-center gap-x-3 rounded-xl py-2",
-                                    "cursor-pointer md:hover:bg-gray-100 md:hover:px-4 dark:md:hover:bg-white/5" => ! $isDisabled,
+                                    "cursor-pointer lg:hover:bg-gray-100 lg:hover:px-4 dark:lg:hover:bg-white/5" => ! $isDisabled,
                                 ])
                             >
                                 <div class="relative">

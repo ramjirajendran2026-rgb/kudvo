@@ -7,6 +7,10 @@
     margin: 0;
 }
 
+html {
+    @apply overscroll-none;
+}
+
 .fi-topbar,
 .fi-header,
 .fi-footer {
