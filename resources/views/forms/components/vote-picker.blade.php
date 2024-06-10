@@ -40,15 +40,14 @@
 
                 event.target.dispatchEvent(new Event('change'))
 
-                new FilamentNotification()
-                    .title('Maximum Selection Reached')
-                    .body(
+                Swal.fire({
+                    title: 'Maximum Selection Reached',
+                    text:
                         'You can only select a maximum of ' +
-                            this.maxItems +
-                            ' candidates for this position. Please deselect a candidate before selecting another one.',
-                    )
-                    .danger()
-                    .send()
+                        this.maxItems +
+                        ' candidates for this position. Please deselect a candidate before selecting another one.',
+                    icon: 'warning',
+                })
 
                 return
             }

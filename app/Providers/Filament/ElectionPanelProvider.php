@@ -102,7 +102,10 @@ class ElectionPanelProvider extends PanelProvider
                 'primary' => Color::Green,
             ])
             ->font(family: 'Poppins')
-            ->viteTheme(theme: 'resources/css/filament/election/theme.css')
+            ->viteTheme(theme: [
+                'resources/css/filament/election/theme.css',
+                'resources/js/filament/election/scripts.js',
+            ])
             ->navigation(builder: false)
             ->databaseNotifications(condition: false)
             ->breadcrumbs(condition: false)

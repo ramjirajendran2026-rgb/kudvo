@@ -23,6 +23,7 @@
     "prettier": "^3.2.5",
     "prettier-plugin-blade": "^2.1.13",
     "prettier-plugin-tailwindcss": "^0.5.14",
-    "pusher-js": "^8.4.0-rc2"
+    "pusher-js": "^8.4.0-rc2",
+    "sweetalert2": "^11.11.1"
   }
 }

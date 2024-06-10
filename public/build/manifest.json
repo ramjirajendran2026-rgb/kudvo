@@ -1,11 +1,15 @@
 {
+  "__commonjsHelpers-Cpj98o6Y.js": {
+    "file": "assets/_commonjsHelpers-Cpj98o6Y.js",
+    "name": "_commonjsHelpers"
+  },
   "resources/css/app.css": {
     "file": "assets/app-DmovG0J5.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
   "resources/css/filament/election/theme.css": {
-    "file": "assets/theme-OCX5gUda.css",
+    "file": "assets/theme-BV9Jh7bc.css",
     "src": "resources/css/filament/election/theme.css",
     "isEntry": true
   },
@@ -20,12 +24,24 @@
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-DnP3vJC2.js",
+    "file": "assets/app-wX1ValMN.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
+    "imports": [
+      "__commonjsHelpers-Cpj98o6Y.js"
+    ],
     "css": [
       "assets/app-Bxn43R6l.css"
+    ]
+  },
+  "resources/js/filament/election/scripts.js": {
+    "file": "assets/scripts-BIyZnC14.js",
+    "name": "scripts",
+    "src": "resources/js/filament/election/scripts.js",
+    "isEntry": true,
+    "imports": [
+      "__commonjsHelpers-Cpj98o6Y.js"
     ]
   }
 }

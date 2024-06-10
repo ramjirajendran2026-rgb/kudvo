@@ -1,14 +1,11 @@
 @import '../base/theme.css';
+@import '../base/sweetalert2.css';
 
 @config 'tailwind.config.js';
 
 @page {
     size: A5;
     margin: 0;
-}
-
-html {
-    @apply overscroll-none;
 }
 
 .fi-topbar,

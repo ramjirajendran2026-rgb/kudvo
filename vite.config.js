@@ -9,6 +9,7 @@ export default defineConfig({
                 'resources/js/app.js',
 
                 'resources/css/filament/election/theme.css',
+                'resources/js/filament/election/scripts.js',
 
                 'resources/css/filament/nomination/theme.css',
 

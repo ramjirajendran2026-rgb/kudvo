@@ -1,0 +1,23 @@
+.swal2-icon {
+    @apply size-8;
+
+    .swal2-icon-content {
+        @apply text-2xl font-bold;
+    }
+}
+
+.swal2-title {
+    @apply text-xl font-bold;
+}
+
+.swal2-html-container {
+    @apply !text-base;
+}
+
+.swal2-actions {
+    button[type='button'] {
+        @apply rounded-full border-0 bg-primary-600 font-semibold text-white shadow-sm outline-none transition
+            duration-75 hover:bg-primary-500 hover:shadow-none focus-visible:ring-2
+            focus-visible:ring-primary-500/5 dark:bg-primary-500 dark:hover:bg-primary-400 dark:focus-visible:ring-primary-400/5;
+    }
+}
