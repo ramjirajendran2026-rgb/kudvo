@@ -251,7 +251,7 @@
                         \Filament\Support\prepare_inherited_attributes($attributes)
                             ->merge($getExtraAttributes(), escape: false)
                             ->class([
-                                'fi-fo-checkbox-list gap-0',
+                                'fi-fo-checkbox-list gap-0 print:divide-y-2',
                                 '-my-4' => $gridDirection === 'column',
                             ])
                     "
@@ -318,7 +318,7 @@
                                     <img
                                         src="{{ $getPhotoUrl($value) }}"
                                         alt="{{ $label }}'s photo"
-                                        class="h-10 w-10 max-w-none rounded-full object-cover object-center md:h-20 md:w-20"
+                                        class="h-10 w-10 max-w-none rounded-full object-cover object-center md:h-20 md:w-20 print:hidden"
                                     />
                                 @endif
 

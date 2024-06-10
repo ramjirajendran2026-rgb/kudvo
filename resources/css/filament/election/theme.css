@@ -4,12 +4,12 @@
 @config 'tailwind.config.js';
 
 @page {
-    size: 80mm 110mm;
+    size: 80mm;
     margin: 0;
 }
 
 .fi-topbar,
-.fi-header,
+.fi-header-subheading,
 .fi-footer {
     @apply print:hidden;
 }
@@ -25,7 +25,7 @@
 }
 
 .fi-header-heading {
-    @apply !text-primary-600 dark:!text-primary-400;
+    @apply !text-primary-600 dark:!text-primary-400 print:!text-gray-950;
 }
 
 .fi-body:has(.fi-footer[data-booth-self-logout='false']) {
