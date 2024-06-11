@@ -4,14 +4,8 @@
 @config 'tailwind.config.js';
 
 @page {
-    size: 80mm;
+    size: 72mm 256mm;
     margin: 0;
-}
-
-.fi-topbar,
-.fi-header-subheading,
-.fi-footer {
-    @apply print:hidden;
 }
 
 .fi-vote-picker {
@@ -81,5 +75,72 @@
     > div {
         @apply flex h-auto min-h-16 items-center justify-center gap-x-4 px-4 py-4 text-sm font-medium leading-6
         text-gray-950 dark:text-white;
+    }
+}
+
+@media print {
+    .fi-body {
+        .fi-topbar {
+            & > nav {
+                @apply justify-center shadow-none ring-0;
+
+                & > div:not(:first-child) {
+                    @apply hidden;
+                }
+
+                .fi-logo {
+                    & > div {
+                        @apply select-none text-center;
+                    }
+                }
+            }
+        }
+
+        .fi-header-subheading,
+        .fi-footer {
+            @apply hidden;
+        }
+
+        .fi-main {
+            @apply h-auto;
+
+            .fi-vote-picker {
+                @apply border border-black shadow-none ring-0;
+
+                .fi-section-header {
+                    @apply relative border-b-0;
+
+                    .fi-section-header-heading {
+                        @apply underline underline-offset-4;
+                    }
+                }
+
+                .fi-section-content-ctn {
+                    @apply border border-black ring-0;
+
+                    .fi-section-content {
+                        @apply p-0;
+
+                        .fi-fo-checkbox-list {
+                            &.-my-4 {
+                                @apply my-0;
+                            }
+
+                            .fi-vote-picker-item {
+                                @apply border-t border-black px-4;
+
+                                .checkbox-ctn {
+                                    @apply hidden;
+                                }
+                            }
+                        }
+
+                        .fi-placeholder {
+                            @apply border-t border-black py-4;
+                        }
+                    }
+                }
+            }
+        }
     }
 }

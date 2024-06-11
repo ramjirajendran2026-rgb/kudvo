@@ -85,6 +85,8 @@ abstract class BasePage extends Page implements HasElection, HasElector
     {
         Filament::auth()->logout();
 
+        $this->skipRender();
+
         return app(LogoutResponse::class);
     }
 }

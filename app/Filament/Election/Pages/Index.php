@@ -217,7 +217,7 @@ class Index extends Page
                                 )
                                 ->when(
                                     value: $boothPreference?->voted_ballot_print_by_self || $boothPreference?->voted_ballot_print_by_admin,
-                                    callback: fn (Collection $collection) => $collection->add(item: 'print:block'),
+                                    callback: fn (Collection $collection) => $collection->add(item: 'print:grid'),
                                 ),
                             default: fn (Collection $collection) => $collection->add(item: 'hidden')
                         )

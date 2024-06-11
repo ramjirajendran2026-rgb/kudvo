@@ -154,7 +154,6 @@
         :description="$getSectionDescription()"
         @class([
             "fi-vote-picker",
-            "[&_.fi-section-header]:print:py-2",
             "fi-invalid [&_.fi-fo-field-wrp-error-message]:hidden" => $errors->has(
                 $statePath,
             ),
@@ -251,7 +250,7 @@
                         \Filament\Support\prepare_inherited_attributes($attributes)
                             ->merge($getExtraAttributes(), escape: false)
                             ->class([
-                                'fi-fo-checkbox-list gap-0 print:divide-y-2',
+                                'fi-fo-checkbox-list gap-0',
                                 '-my-4' => $gridDirection === 'column',
                             ])
                     "
@@ -276,7 +275,7 @@
                                 "
                             @endif
                             @class([
-                                "break-inside-avoid border-gray-200 py-2 dark:border-white/10 print:py-0" =>
+                                "fi-vote-picker-item break-inside-avoid border-gray-200 py-2 dark:border-white/10" =>
                                     $gridDirection === "column",
                             ])
                         >
@@ -287,7 +286,7 @@
                                     "cursor-pointer lg:hover:bg-gray-100 lg:hover:px-4 dark:lg:hover:bg-white/5" => ! $isDisabled,
                                 ])
                             >
-                                <div class="relative">
+                                <div class="checkbox-ctn relative">
                                     <x-filament::input.checkbox
                                         :valid="! $errors->has($statePath)"
                                         :attributes="
@@ -299,7 +298,7 @@
                                                     $applyStateBindingModifiers('wire:model') => $statePath,
                                                     'x-on:change' => 'checkIfAllCheckboxesAreChecked($event)',
                                                 ], escape: false)
-                                                ->class(['mt-1 w-8 h-8 peer print:hidden'])
+                                                ->class(['mt-1 w-8 h-8 peer'])
                                         "
                                     />
                                     <svg
@@ -353,7 +352,7 @@
                 @if (blank($options))
                     <div
                         wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.empty"
-                        class="px-6 py-12 text-center text-base font-semibold leading-6 text-gray-950 dark:text-white"
+                        class="fi-placeholder px-6 py-12 text-center text-base font-semibold leading-6 text-gray-950 dark:text-white"
                     >
                         {{ $getPlaceholder() }}
                     </div>
