@@ -40,6 +40,12 @@ class BallotLinkBlasts extends ElectionPage implements HasTable
         return $this->getElection();
     }
 
+    public static function canAccessPage(Election $election): bool
+    {
+        return parent::canAccessPage($election)
+            && $election->preference?->isBallotLinkBlastNeeded();
+    }
+
     public function hasReadAccess(): bool
     {
         return $this->isOwner()

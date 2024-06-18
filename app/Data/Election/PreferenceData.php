@@ -62,7 +62,11 @@ class PreferenceData extends Data
         public bool $booth_voting = false,
 
         public ?WebAppManifestData $web_app_manifest = null,
-    )
+    ) {
+    }
+
+    public function isBallotLinkBlastNeeded(): bool
     {
+        return $this->ballot_link_mail || $this->ballot_link_sms;
     }
 }

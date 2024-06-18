@@ -176,7 +176,8 @@ class Electors extends ElectionPage implements HasTable
                 notification: fn (Notification $notification) => $notification
                     ->title(title: __('filament.user.election-resource.pages.electors.actions.send_ballot_link.success_notification.title'))
                     ->body(body: __('filament.user.election-resource.pages.electors.actions.send_ballot_link.success_notification.body'))
-            );
+            )
+            ->visible(condition: fn (HasElection $livewire): bool => $livewire->getElection()->preference?->isBallotLinkBlastNeeded());
     }
 
     protected function getSendBallotLinkBulkAction(): BulkAction
@@ -204,7 +205,7 @@ class Electors extends ElectionPage implements HasTable
                     ->title(title: __('filament.user.election-resource.pages.electors.bulk_actions.send_ballot_link.success_notification.title'))
                     ->body(body: __('filament.user.election-resource.pages.electors.bulk_actions.send_ballot_link.success_notification.body'))
             )
-            ->visible(condition: $this->hasFullAccess());
+            ->visible(condition: fn (self $livewire): bool => $livewire->hasFullAccess() && $livewire->getElection()->preference?->isBallotLinkBlastNeeded());
     }
 
     public function getNotifyVotingInstructionsBulkAction()

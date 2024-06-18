@@ -58,7 +58,7 @@ class BallotLinkBlast extends Model
 
     public function scopePending(Builder $query): Builder
     {
-        return $query->whereDate('scheduled_at', '>=', now())
+        return $query->where('scheduled_at', '<=', now())
             ->whereNull('initiated_at')
             ->whereNull('job_batch_id');
     }

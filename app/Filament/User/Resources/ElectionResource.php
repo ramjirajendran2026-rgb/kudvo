@@ -10,8 +10,8 @@ use App\Filament\User\Resources\ElectionResource\Widgets\VotedBallots;
 use App\Forms\Components\TimezonePicker;
 use App\Forms\ElectionForm;
 use App\Models\Election;
-use App\Models\Elector;
 use Filament\Actions\Action;
+use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\EditAction;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\DateTimePicker;
@@ -30,7 +30,7 @@ use Filament\Tables\Actions\CreateAction as CreateTableAction;
 use Filament\Tables\Actions\DeleteAction as DeleteTableAction;
 use Filament\Tables\Actions\ReplicateAction as ReplicateTableAction;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;
 
@@ -297,11 +297,13 @@ class ElectionResource extends Resource
             ->action(action: function (HasElection $livewire, Action $action, array $data): void {
                 $livewire->getElection()->publish();
 
-                $livewire->getElection()
-                    ->ballotLinkBlasts()
-                    ->create(attributes: [
-                        'scheduled_at' => $data['scheduled_at'] ?? now(),
-                    ]);
+                if ($livewire->getElection()->preference->isBallotLinkBlastNeeded()) {
+                    $livewire->getElection()
+                        ->ballotLinkBlasts()
+                        ->create(attributes: [
+                            'scheduled_at' => $data['scheduled_at'] ?? now(),
+                        ]);
+                }
 
                 $action->success();
             })
@@ -323,7 +325,8 @@ class ElectionResource extends Resource
                     ->options(options: [
                         true => 'Immediately',
                         false => 'Later',
-                    ]),
+                    ])
+                    ->visible(condition: fn (HasElection $livewire): bool => $livewire->getElection()->preference->isBallotLinkBlastNeeded()),
 
                 DateTimePicker::make(name: 'scheduled_at')
                     ->hiddenLabel()
@@ -400,6 +403,9 @@ class ElectionResource extends Resource
                     $replica->replicateBallotSetup(from: $record);
                 }
             })
+            ->beforeReplicaSaved(callback: function (Election $replica, array $data) {
+                $replica->fill($data);
+            })
             ->excludeAttributes(attributes: [
                 'cancelled_at',
                 'code',
@@ -422,6 +428,13 @@ class ElectionResource extends Resource
                 Toggle::make(name: 'replicate_ballot_setup')
                     ->default(state: true)
                     ->label(label: __('filament.user.election-resource.actions.replicate.form.replicate_ballot_setup.label')),
-            ]);
+            ])
+            ->mutateRecordDataUsing(function (HasActions $livewire, Model $record, array $data): array {
+                if ($translatableContentDriver = $livewire->makeFilamentTranslatableContentDriver()) {
+                    $data = $translatableContentDriver->getRecordAttributesToArray($record);
+                }
+
+                return $data;
+            });
     }
 }

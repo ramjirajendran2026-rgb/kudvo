@@ -12,38 +12,19 @@ use Illuminate\Support\Arr;
 
 class ManageElections extends ManageRecords
 {
+    use ManageRecords\Concerns\Translatable;
+
     protected static string $resource = ElectionResource::class;
 
     protected ?string $heading = '';
 
     public function getTabs(): array
     {
-        return [
-            'all' => Tab::make(label: __('app.all'))
-                ->badge(
-                    badge: $this->getTableQuery()->count()
-                ),
-
-            ...Arr::mapWithKeys(
-                array: [
-                    ElectionStatus::DRAFT,
-                    ElectionStatus::PUBLISHED,
-                    ElectionStatus::OPEN,
-                    ElectionStatus::COMPLETED,
-                ],
-                callback: fn (ElectionStatus $case) => [
-                    $case->value => Tab::make(label: $case->getLabel())
-                        ->badge(
-                            badge: $this->getTableQuery()->scopes(scopes: Arr::wrap(value: $case->getScopes()))->count()
-                        )
-                        ->badgeColor(color: $case->getColor())
-                        ->icon(icon: $case->getIcon())
-                        ->modifyQueryUsing(
-                            callback: fn (Builder $query): Builder => $query->scopes(scopes: Arr::wrap(value: $case->getScopes()))
-                        ),
-                ]
-            ),
-        ];
+        return Arr::map(
+            array: ElectionStatus::getTabs(),
+            callback: fn (Tab $tab, string $key): Tab => $tab
+                ->badge(badge: fn (Builder $query, Tab $component): int => $this->getTableQuery()->scopes(scopes: ElectionStatus::tryFrom($key)?->getScopes())->count())
+        );
     }
 
     protected function getTableQuery(): ?Builder

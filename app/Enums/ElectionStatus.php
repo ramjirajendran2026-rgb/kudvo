@@ -29,7 +29,7 @@ enum ElectionStatus: string implements HasColor, HasIcon, HasLabel
             self::DRAFT => 'draft',
             self::PUBLISHED => 'published',
             self::OPEN => 'open',
-            self::COMPLETED => ['completed', 'closed', 'cancelled'],
+            self::COMPLETED => 'completed',
             default => null,
         };
     }
@@ -52,7 +52,7 @@ enum ElectionStatus: string implements HasColor, HasIcon, HasLabel
             $this->value => Tab::make(label: $this->getLabel())
                 ->icon(icon: $this->getIcon())
                 ->modifyQueryUsing(
-                    callback: fn (Builder $query): Builder => $query->scopes(scopes: Arr::wrap(value: $this->getScopes()))
+                    callback: fn (Builder $query): Builder => $query->scopes(scopes: $this->getScopes())
                 ),
         ];
     }
