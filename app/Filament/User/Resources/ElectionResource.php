@@ -219,7 +219,7 @@ class ElectionResource extends Resource
             ->mutateFormDataUsing(callback: function (array $data): array {
                 return array_merge($data, ['owner_id' => Filament::auth()->id()]);
             })
-            ->successRedirectUrl(url: fn (Election $election) => static::getUrl(name: 'dashboard', parameters: [$election]));
+            ->successRedirectUrl(url: fn (Election $election) => $election->getPendingStep()?->getUrl([$election]) ?? static::getUrl(name: 'dashboard', parameters: [$election]));
     }
 
     public static function getEditAction(): EditAction
