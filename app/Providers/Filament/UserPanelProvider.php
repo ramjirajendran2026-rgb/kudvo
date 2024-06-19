@@ -73,7 +73,7 @@ class UserPanelProvider extends PanelProvider
                 )->name(name: 'election-collaborators.accept');
             })
             ->colors(colors: [
-                'primary' => Color::Violet,
+                'primary' => Color::Teal,
             ])
             ->font(family: 'Poppins')
             ->viteTheme(theme: 'resources/css/filament/user/theme.css')
