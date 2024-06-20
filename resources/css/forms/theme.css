@@ -3,31 +3,35 @@
 }
 
 .fi-vote-picker {
-    & .fi-section-header {
-        & .fi-section-header-heading {
-            @apply text-xl;
-        }
-
-        @apply sticky top-0 z-10 rounded-t-xl border-b border-gray-200 bg-inherit text-center dark:border-white/10;
-    }
-
     &.fi-invalid {
         @apply ring-danger-600;
 
-        & .fi-section-header-description {
+        .fi-section-header-description {
             @apply text-danger-600 dark:text-danger-400;
         }
     }
 
-    & .fi-section-content-ctn {
+    .fi-section-header {
+        @apply sticky top-0 z-10 rounded-t-xl border-b border-gray-200 bg-inherit text-center dark:border-white/10;
+
+        .fi-section-header-heading {
+            @apply text-xl;
+        }
+
+        .fi-section-header-description {
+            @apply font-mono text-xl;
+        }
+    }
+
+    .fi-section-content-ctn {
         @apply border-none;
 
-        & .fi-section-content {
+        .fi-section-content {
             @apply p-4 md:p-6;
         }
     }
 
-    & .fi-checkbox-input {
-        @apply ring-info-600 dark:ring-info-500 hover:ring-primary-600 dark:hover:ring-primary-500 disabled:checked:text-primary-400 dark:disabled:checked:bg-primary-600 h-4 w-4 rotate-45 transform checked:bg-none md:h-8 md:w-8;
+    .fi-checkbox-input {
+        @apply h-4 w-4 rotate-45 transform ring-info-600 checked:bg-none hover:ring-primary-600 disabled:checked:text-primary-400 dark:ring-info-500 dark:hover:ring-primary-500 dark:disabled:checked:bg-primary-600 md:h-8 md:w-8;
     }
 }
