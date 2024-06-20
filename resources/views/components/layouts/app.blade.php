@@ -82,7 +82,7 @@
             >
                 <div class="flex w-full items-center justify-between lg:w-auto">
                     <a href="{{ route('home') }}" class="flex cursor-pointer items-center gap-2">
-                        <img src="{{ asset('img/logo-500.png') }}" alt="Logo" class="h-12" />
+                        <img src="{{ asset('img/nav-logo.png') }}" alt="Logo" class="h-12" />
                         <div class="text-xl font-bold leading-5 tracking-tight text-gray-950 dark:text-white">
                             {{ config('app.name') }}
                         </div>
