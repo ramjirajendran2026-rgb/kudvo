@@ -25,7 +25,7 @@ class WebManifestController extends Controller
         $data->display = WebAppManifestDisplay::Standalone;
 
         $data->icons?->map(function (WebAppManifestIconData $icon) use ($election) {
-            $icon->src = Storage::url(path: $icon->src);
+            $icon->src = Storage::disk(config('filament.default_filesystem_disk'))->url(path: $icon->src);
 
             return $icon;
         });
