@@ -101,9 +101,8 @@ class Candidate extends Model implements HasAvatar, HasMedia, HasName, Sortable
             get: fn ($value, array $attributes) => $this->getFirstMediaUrl(collectionName: static::MEDIA_COLLECTION_SYMBOL) ?:
                 'https://ui-avatars.com/api/?name='.
                 $this->sort.
-                '&color=FFFFFF&background='.
-                str(Rgb::fromString('rgb('.FilamentColor::getColors()['info'][800].')')->toHex())
-                    ->after('#'),
+                '&background=FFFFFF00&color=FFFFFF'.
+                '&font-size=0.8&bold=true',
         );
     }
 

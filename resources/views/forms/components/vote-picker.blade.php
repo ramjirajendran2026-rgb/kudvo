@@ -160,10 +160,10 @@
         ])
     >
         <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
-            <div>
+            <div class="space-y-4">
                 @if ($hasCandidateGroup())
                     <div
-                        class="mb-4 flex flex-wrap justify-center gap-4"
+                        class="flex flex-wrap justify-center gap-4"
                         @candidate-group-selected.window="candidateGroupSelected($event.detail.group)"
                     >
                         @foreach ($getCandidateGroups() as $key => $group)
@@ -191,7 +191,6 @@
                             inline-prefix
                             prefix-icon="heroicon-m-magnifying-glass"
                             prefix-icon-alias="forms:components.checkbox-list.search-field"
-                            class="mb-4"
                         >
                             <x-filament::input
                                 inline-prefix
@@ -211,7 +210,6 @@
                     @if ($isBulkToggleable && count($getOptions()))
                         <div
                             x-cloak
-                            class="mb-2"
                             wire:key="{{ $this->getId() }}.{{ $getStatePath() }}.{{ $field::class }}.actions"
                         >
                             <span
@@ -250,8 +248,8 @@
                         \Filament\Support\prepare_inherited_attributes($attributes)
                             ->merge($getExtraAttributes(), escape: false)
                             ->class([
-                                'fi-fo-checkbox-list gap-0',
-                                '-my-4' => $gridDirection === 'column',
+                                'fi-fo-checkbox-list',
+                                '!mt-0' => $isBulkToggleable && count($getOptions()),
                             ])
                     "
                 >
@@ -275,15 +273,14 @@
                                 "
                             @endif
                             @class([
-                                "fi-vote-picker-item break-inside-avoid border-gray-200 py-2 dark:border-white/10" =>
-                                    $gridDirection === "column",
+                                "fi-vote-picker-item break-inside-avoid border-gray-200 dark:border-white/10",
                             ])
                         >
                             <label
                                 data-candidate-group="{{ $getCandidateGroupId($value) }}"
                                 @class([
-                                    "fi-fo-checkbox-list-option-label flex items-center gap-x-3 rounded-xl py-2",
-                                    "cursor-pointer lg:hover:bg-gray-100 lg:hover:px-4 dark:lg:hover:bg-white/5" => ! $isDisabled,
+                                    "fi-fo-checkbox-list-option-label group flex items-center gap-x-3 px-2 py-2 lg:px-4",
+                                    "cursor-pointer lg:hover:bg-gray-100 dark:lg:hover:bg-white/5" => ! $isDisabled,
                                 ])
                             >
                                 <div class="checkbox-ctn relative">
@@ -302,7 +299,7 @@
                                         "
                                     />
                                     <svg
-                                        class="absolute inset-0 top-2 hidden h-4 w-4 peer-checked:block md:top-1 md:h-8 md:w-8"
+                                        class="absolute inset-0 top-2 hidden h-4 w-4 peer-checked:block"
                                         viewBox="0 0 16 16"
                                         fill="white"
                                         xmlns="http://www.w3.org/2000/svg"
@@ -313,11 +310,19 @@
                                     </svg>
                                 </div>
 
+                                @if ($hasSymbol())
+                                    <img
+                                        src="{{ $getSymbolUrl($value) }}"
+                                        alt="{{ $label }}'s symbol"
+                                        class="img-symbol group-has-[:checked]:!bg-primary-600 print:group-has-[:checked]:!bg-black"
+                                    />
+                                @endif
+
                                 @if ($hasPhoto())
                                     <img
                                         src="{{ $getPhotoUrl($value) }}"
                                         alt="{{ $label }}'s photo"
-                                        class="h-10 w-10 max-w-none rounded-full object-cover object-center md:h-20 md:w-20 print:hidden"
+                                        class="h-10 w-10 max-w-none rounded-full object-cover object-center print:hidden"
                                     />
                                 @endif
 
@@ -336,14 +341,6 @@
                                         </p>
                                     @endif
                                 </div>
-
-                                @if ($hasSymbol())
-                                    <img
-                                        src="{{ $getSymbolUrl($value) }}"
-                                        alt="{{ $label }}'s symbol"
-                                        class="h-10 w-10 max-w-none rounded-xl object-cover object-center md:h-20 md:w-20"
-                                    />
-                                @endif
                             </label>
                         </div>
                     @endforeach

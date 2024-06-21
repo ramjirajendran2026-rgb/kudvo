@@ -109,7 +109,7 @@ class ElectionPanelProvider extends PanelProvider
             ->navigation(builder: false)
             ->databaseNotifications(condition: false)
             ->breadcrumbs(condition: false)
-            ->maxContentWidth(maxContentWidth: MaxWidth::FiveExtraLarge)
+            ->maxContentWidth(maxContentWidth: MaxWidth::ScreenTwoExtraLarge)
             ->brandName(name: fn (): string => Kudvo::getOrganisation()?->name)
             ->brandLogo(logo: fn (): HtmlString => $this->getBrandLogo())
             ->spa()

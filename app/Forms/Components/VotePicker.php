@@ -27,15 +27,15 @@ class VotePicker extends CheckboxList
 
     protected string $view = 'forms.components.vote-picker';
 
-    protected string | Htmlable | Closure | null $description = null;
+    protected string|Htmlable|Closure|null $description = null;
 
-    protected bool | Closure $preview = false;
+    protected bool|Closure $preview = false;
 
-    protected bool | Closure $photo = false;
+    protected bool|Closure $photo = false;
 
-    protected bool | Closure $symbol = false;
+    protected bool|Closure $symbol = false;
 
-    protected bool | Closure $candidateGroup = false;
+    protected bool|Closure $candidateGroup = false;
 
     public static function makeFor(Position $position): static
     {
@@ -67,7 +67,7 @@ class VotePicker extends CheckboxList
         return $this->evaluate(value: $this->preview);
     }
 
-    public function photo(bool | Closure $condition = true): static
+    public function photo(bool|Closure $condition = true): static
     {
         $this->photo = $condition;
 
@@ -79,7 +79,7 @@ class VotePicker extends CheckboxList
         return (bool) $this->evaluate(value: $this->photo);
     }
 
-    public function symbol(bool | Closure $condition = true): static
+    public function symbol(bool|Closure $condition = true): static
     {
         $this->symbol = $condition;
 
@@ -91,7 +91,7 @@ class VotePicker extends CheckboxList
         return (bool) $this->evaluate(value: $this->symbol);
     }
 
-    public function candidateGroup(bool | Closure $condition = true): static
+    public function candidateGroup(bool|Closure $condition = true): static
     {
         $this->candidateGroup = $condition;
 
@@ -109,11 +109,14 @@ class VotePicker extends CheckboxList
 
         $position = $this->position;
 
+        $this->columns();
+        $this->gridDirection(gridDirection: 'row');
+
         $txtSelected = __('filament.forms.components.vote_picker.general.selected');
         $this->description(
             description: new HtmlString(
                 html: $this->getDescriptionHint().
-                " • ".
+                ' • '.
                 '<span class="text-info-500" x-text="checkedOptionsCount+\' '.$txtSelected.'\'"></span>'
             )
         );
@@ -137,7 +140,7 @@ class VotePicker extends CheckboxList
                         values: $state,
                     )
                 )
-                ->mapWithKeys(callback: fn(Candidate $candidate) => [$candidate->uuid => $candidate->display_name])
+                ->mapWithKeys(callback: fn (Candidate $candidate) => [$candidate->uuid => $candidate->display_name])
         );
         $this->descriptions(
             descriptions: fn (string $operation, array $state, self $component) => $position
@@ -153,17 +156,16 @@ class VotePicker extends CheckboxList
                     value: $component->hasCandidateGroup(),
                     callback: fn (Collection $collection) => $collection->load(relations: 'candidateGroup')
                 )
-                ->mapWithKeys(callback: fn(Candidate $candidate) => [
+                ->mapWithKeys(callback: fn (Candidate $candidate) => [
                     $candidate->uuid => collect(value: [
                         $candidate->membership_number,
                         $component->hasCandidateGroup() ? $candidate->candidateGroup?->name : null,
                     ])
                         ->filter(callback: fn (?string $item): bool => filled($item))
-                        ->implode(value: ' • ')
+                        ->implode(value: ' • '),
                 ])
         );
         $this->bulkToggleable();
-        $this->searchable(condition: $position->candidates->count() > 5);
         $this->maxItems(count: $position->quota);
         $this->minItems(count: $position->threshold);
 
@@ -175,14 +177,14 @@ class VotePicker extends CheckboxList
         $this->mutateDehydratedStateUsing(callback: fn ($state) => Arr::map($state, fn ($item) => new VoteSecretData(key: $item, value: 1)));
     }
 
-    public function description(string | Htmlable | Closure | null $description = null): static
+    public function description(string|Htmlable|Closure|null $description = null): static
     {
         $this->description = $description;
 
         return $this;
     }
 
-    public function getSectionDescription(): string | Htmlable | null
+    public function getSectionDescription(): string|Htmlable|null
     {
         return $this->evaluate($this->description);
     }
@@ -207,11 +209,11 @@ class VotePicker extends CheckboxList
         $position = $this->position;
 
         return $position->abstain ?
-            "Choose".
-            ($position->threshold ? " at least $position->threshold and" : "").
+            'Choose'.
+            ($position->threshold ? " at least $position->threshold and" : '').
             " upto $position->quota ".
             Str::plural('candidate', $position->quota) :
-            "Choose exactly $position->quota ".Str::plural("candidate", $position->quota);
+            "Choose exactly $position->quota ".Str::plural('candidate', $position->quota);
     }
 
     public function getCandidateGroupId(string $uuid): ?int

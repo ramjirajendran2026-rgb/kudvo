@@ -27,11 +27,65 @@
         @apply border-none;
 
         .fi-section-content {
-            @apply p-4 md:p-6;
+            @apply p-4;
+
+            .fi-vote-picker-item {
+                @apply md:border-x md:border-b md:[&:first-child]:border-t md:[&:nth-child(2)]:border-t md:[&:nth-child(even)]:border-l-0;
+
+                .fi-fo-checkbox-list-option-label {
+                    .fi-checkbox-input {
+                        @apply h-4 w-4 rotate-45 transform ring-primary-600 checked:bg-none hover:ring-primary-600 disabled:checked:text-primary-400 dark:ring-primary-500 dark:hover:ring-primary-500 dark:disabled:checked:bg-primary-600;
+                    }
+
+                    .img-symbol {
+                        @apply h-10 w-10 max-w-none rounded bg-info-600 object-cover object-center;
+                    }
+                }
+            }
         }
     }
+}
 
-    .fi-checkbox-input {
-        @apply h-4 w-4 rotate-45 transform ring-info-600 checked:bg-none hover:ring-primary-600 disabled:checked:text-primary-400 dark:ring-info-500 dark:hover:ring-primary-500 dark:disabled:checked:bg-primary-600 md:h-8 md:w-8;
+@media print {
+    .fi-vote-picker {
+        @apply border border-black shadow-none ring-0;
+
+        .fi-section-header {
+            @apply relative border-b-0;
+
+            .fi-section-header-heading {
+                @apply underline underline-offset-4;
+            }
+        }
+
+        .fi-section-content-ctn {
+            @apply border ring-0;
+
+            .fi-section-content {
+                @apply p-0;
+
+                .fi-fo-checkbox-list {
+                    &.-my-4 {
+                        @apply my-0;
+                    }
+
+                    .fi-vote-picker-item {
+                        @apply border-t border-black;
+
+                        .fi-fo-checkbox-list-option-label {
+                            @apply text-black;
+
+                            .checkbox-ctn {
+                                @apply hidden;
+                            }
+                        }
+                    }
+                }
+
+                .fi-placeholder {
+                    @apply border-t border-black py-4;
+                }
+            }
+        }
     }
 }

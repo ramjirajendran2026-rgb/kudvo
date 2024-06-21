@@ -103,44 +103,6 @@
 
         .fi-main {
             @apply h-auto;
-
-            .fi-vote-picker {
-                @apply border border-black shadow-none ring-0;
-
-                .fi-section-header {
-                    @apply relative border-b-0;
-
-                    .fi-section-header-heading {
-                        @apply underline underline-offset-4;
-                    }
-                }
-
-                .fi-section-content-ctn {
-                    @apply border border-black ring-0;
-
-                    .fi-section-content {
-                        @apply p-0;
-
-                        .fi-fo-checkbox-list {
-                            &.-my-4 {
-                                @apply my-0;
-                            }
-
-                            .fi-vote-picker-item {
-                                @apply border-t border-black px-4;
-
-                                .checkbox-ctn {
-                                    @apply hidden;
-                                }
-                            }
-                        }
-
-                        .fi-placeholder {
-                            @apply border-t border-black py-4;
-                        }
-                    }
-                }
-            }
         }
     }
 }
