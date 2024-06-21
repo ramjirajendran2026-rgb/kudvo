@@ -38,7 +38,7 @@
                     }
 
                     .img-symbol {
-                        @apply h-10 w-10 max-w-none rounded bg-info-600 object-cover object-center;
+                        @apply size-full rounded bg-info-600 object-cover object-center;
                     }
                 }
             }

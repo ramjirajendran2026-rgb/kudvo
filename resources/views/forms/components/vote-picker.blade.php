@@ -311,11 +311,21 @@
                                 </div>
 
                                 @if ($hasSymbol())
-                                    <img
-                                        src="{{ $getSymbolUrl($value) }}"
-                                        alt="{{ $label }}'s symbol"
-                                        class="img-symbol group-has-[:checked]:!bg-primary-600 print:group-has-[:checked]:!bg-black"
-                                    />
+                                    <div class="relative h-10 w-10 max-w-none rounded">
+                                        <svg
+                                            class="absolute inset-0 hidden rounded print:block"
+                                            viewBox="0 0 100 100"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                            <rect width="100" height="100" fill="#000000" />
+                                        </svg>
+
+                                        <img
+                                            src="{{ $getSymbolUrl($value) }}"
+                                            alt="{{ $label }}'s symbol"
+                                            class="img-symbol absolute group-has-[:checked]:!bg-primary-600 print:group-has-[:checked]:!bg-transparent"
+                                        />
+                                    </div>
                                 @endif
 
                                 @if ($hasPhoto())
