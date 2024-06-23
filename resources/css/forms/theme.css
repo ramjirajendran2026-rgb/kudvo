@@ -30,7 +30,7 @@
             @apply p-4;
 
             .fi-vote-picker-item {
-                @apply md:border-x md:border-b md:[&:first-child]:border-t md:[&:nth-child(2)]:border-t md:[&:nth-child(even)]:border-l-0;
+                @apply lg:border-x lg:border-b lg:[&:first-child]:border-t lg:[&:nth-child(2)]:border-t lg:[&:nth-child(even)]:border-l-0;
 
                 .fi-fo-checkbox-list-option-label {
                     .fi-checkbox-input {

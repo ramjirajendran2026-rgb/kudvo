@@ -279,7 +279,7 @@
                             <label
                                 data-candidate-group="{{ $getCandidateGroupId($value) }}"
                                 @class([
-                                    "fi-fo-checkbox-list-option-label group flex items-center gap-x-3 px-2 py-2 lg:px-4",
+                                    "fi-fo-checkbox-list-option-label group flex items-center gap-x-3 p-2 lg:p-4",
                                     "cursor-pointer lg:hover:bg-gray-100 dark:lg:hover:bg-white/5" => ! $isDisabled,
                                 ])
                             >
