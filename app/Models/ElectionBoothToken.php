@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\URL;
 use Jenssegers\Agent\Agent;
@@ -77,6 +78,18 @@ class ElectionBoothToken extends Model implements Sortable
     public function currentElector(): BelongsTo
     {
         return $this->belongsTo(related: Elector::class);
+    }
+
+    public function ballots(): HasMany
+    {
+        return $this->hasMany(related: Ballot::class, foreignKey: 'booth_id')
+            ->where('mock', false);
+    }
+
+    public function mockBallots(): HasMany
+    {
+        return $this->hasMany(related: Ballot::class, foreignKey: 'booth_id')
+            ->where('mock', true);
     }
 
     public function scopeActivated(Builder $query): Builder

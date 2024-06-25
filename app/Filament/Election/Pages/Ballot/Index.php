@@ -180,6 +180,7 @@ class Index extends BasePage
                     'ip_address' => request()->ip(),
                     'voted_at' => now(),
                     'auth_session_id' => $this->getElector()->authSession->getKey(),
+                    'booth_id' => Kudvo::getElectionBoothToken()?->getKey(),
                 ]
             );
 
@@ -195,6 +196,7 @@ class Index extends BasePage
                 'secret' => $secret,
                 'mock' => $this->isMock(),
                 'ballot_id' => $this->getElection()->preference->dnt_votes ? null : $ballot->getKey(),
+                'booth_id' => Kudvo::getElectionBoothToken()?->getKey(),
             ])->getKey();
         }
 

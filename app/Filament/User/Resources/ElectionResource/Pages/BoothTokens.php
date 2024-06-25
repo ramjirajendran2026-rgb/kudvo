@@ -15,6 +15,8 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Concerns\InteractsWithRelationshipTable;
 use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\FontFamily;
+use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\IconPosition;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Tables\Actions\Action;
@@ -160,16 +162,16 @@ class BoothTokens extends ElectionPage implements HasTable
                 TextColumn::make(name: 'name')
                     ->alignCenter()
                     ->color(color: 'primary')
+                    ->label(label: 'Booth')
                     ->size(size: TextColumn\TextColumnSize::Large),
 
-                TextColumn::make(name: 'user_agent')
-                    ->description(
-                        description: fn (ElectionBoothToken $record): ?string => $record->activated_at
-                            ?->timezone($this->getElection()->timezone)
-                            ->format(Table::$defaultDateTimeDisplayFormat)
-                    )
-                    ->formatStateUsing(callback: fn (?Agent $state): ?string => filled($state) ? $state->platform().' - '.$state->browser() : null)
-                    ->label(label: 'Device'),
+                TextColumn::make(name: 'ballots_count')
+                    ->alignCenter()
+                    ->color(color: 'primary')
+                    ->counts(relationships: 'ballots')
+                    ->fontFamily(family: FontFamily::Mono)
+                    ->label(label: 'Votes Polled')
+                    ->size(size: TextColumn\TextColumnSize::Large),
 
                 TextColumn::make(name: 'status')
                     ->badge(),

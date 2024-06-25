@@ -7,6 +7,7 @@ use App\Models\Election;
 use App\Models\Position;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Filament\Actions\Action;
+use Filament\Actions\SelectAction;
 use Filament\Infolists\Components\Group;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\Section;
@@ -15,6 +16,7 @@ use Filament\Infolists\Components\Split;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Support\Enums\FontWeight;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
@@ -26,6 +28,8 @@ class Result extends ElectionPage
     protected static ?string $navigationIcon = 'heroicon-o-chart-pie';
 
     protected static ?string $activeNavigationIcon = 'heroicon-s-chart-pie';
+
+    public ?int $boothId = null;
 
     public static function canAccessPage(Election $election): bool
     {
@@ -52,6 +56,7 @@ class Result extends ElectionPage
                     ))
                     ->schema(components: [
                         Section::make(heading: fn (Position $state): ?string => $state->name)
+                            ->collapsed()
                             ->collapsible()
                             ->compact()
                             ->description(description: fn (Position $state): ?string => $state->quota.Str::plural(value: ' Post', count: $state->quota))
@@ -88,7 +93,7 @@ class Result extends ElectionPage
                                                             callback: fn (Candidate $record): ?string => collect(value: [
                                                                 $record->membership_number,
                                                                 $record->email,
-                                                                $record->phone
+                                                                $record->phone,
                                                             ])->filter(callback: fn (?string $item): bool => filled(value: $item))->implode(value: ' • ')
                                                         )
                                                         ->hiddenLabel()
@@ -98,7 +103,7 @@ class Result extends ElectionPage
                                             SpatieMediaLibraryImageEntry::make(name: 'symbol')
                                                 ->collection(collection: Candidate::MEDIA_COLLECTION_SYMBOL)
                                                 ->defaultImageUrl(url: fn (Candidate $record): ?string => $record->symbol_url)
-                                                ->extraImgAttributes(attributes: ['class' => 'rounded-xl'])
+                                                ->extraImgAttributes(attributes: ['class' => 'rounded-xl bg-black'])
                                                 ->grow(condition: false)
                                                 ->hiddenLabel()
                                                 ->size(size: 80)
@@ -110,7 +115,7 @@ class Result extends ElectionPage
                                             ->color(color: 'primary')
                                             ->extraAttributes(attributes: ['class' => 'bg-gray-50 dark:bg-white/5 rounded-lg py-2'])
                                             ->formatStateUsing(callback: fn (int $state): string => Str::plural(value: "$state vote", count: $state))
-                                            ->getStateUsing(callback: fn (Candidate $record) => $this->getElection()->result?->meta->toCollection()->firstWhere('key', $record->uuid)?->value ?? 0)
+                                            ->getStateUsing(callback: fn (Candidate $record) => $this->getCandidateVotes($record->uuid, $this->boothId))
                                             ->grow(condition: false)
                                             ->hiddenLabel()
                                             ->size(size: TextEntry\TextEntrySize::Large)
@@ -125,6 +130,18 @@ class Result extends ElectionPage
     {
         return parent::makeInfolist()
             ->record($this->getElection());
+    }
+
+    protected function getCandidateVotes(string $key, ?int $boothId = null): int
+    {
+        return $this->getElection()->result?->meta->toCollection()
+            ->when(
+                filled($boothId),
+                fn (Collection $collection) => $collection->where('key', "$key:booth:$boothId"),
+                fn (Collection $collection) => $collection->where('key', "$key"),
+            )
+            ->first()
+            ?->value ?? 0;
     }
 
     protected function generateEmptyStatePlaceholder(string $heading, ?string $description = null, ?string $icon = null, array $actions = []): HtmlString
@@ -154,6 +171,11 @@ HTML,
     protected function getHeaderActions(): array
     {
         return [
+            SelectAction::make(name: 'boothId')
+                ->options(options: $this->getElection()->boothTokens()->pluck('name', 'id'))
+                ->placeholder(placeholder: 'All Booths')
+                ->label(label: fn () => $this->getElection()->boothTokens()->find(id: $this->boothId)?->name),
+
             $this->getDownloadAction(),
         ];
     }
@@ -168,6 +190,7 @@ HTML,
                     'pdf.election.result',
                     [
                         'election' => $election,
+                        'boothId' => $this->boothId,
                     ],
                     [],
                     'UTF-8'

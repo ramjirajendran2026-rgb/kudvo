@@ -15,6 +15,7 @@ class Ballot extends Model
         'ip_address',
         'voted_at',
         'mock',
+        'booth_id',
         'elector_id',
         'auth_session_id',
     ];
@@ -23,9 +24,15 @@ class Ballot extends Model
         'type' => BallotType::class,
         'voted_at' => 'datetime',
         'mock' => 'bool',
+        'booth_id' => 'int',
         'elector_id' => 'int',
         'auth_session_id' => 'int',
     ];
+
+    public function booth(): BelongsTo
+    {
+        return $this->belongsTo(related: ElectionBoothToken::class);
+    }
 
     public function elector(): BelongsTo
     {

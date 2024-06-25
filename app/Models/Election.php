@@ -544,9 +544,15 @@ class Election extends Model
                 count: 300,
                 callback: function (Collection $votes) use (&$data, $result) {
                     $votes->each(callback: function (Vote $vote) use (&$data) {
-                        $vote->secret->each(callback: function (VoteSecretData $secret) use (&$data) {
+                        $vote->secret->each(callback: function (VoteSecretData $secret) use (&$data, $vote) {
                             $data[$secret->key] ??= 0;
                             $data[$secret->key] += $secret->value;
+
+                            if (isset($vote->booth_id)) {
+                                $boothKey = "$secret->key:booth:$vote->booth_id";
+                                $data[$boothKey] ??= 0;
+                                $data[$boothKey] += $secret->value;
+                            }
                         });
                     });
 

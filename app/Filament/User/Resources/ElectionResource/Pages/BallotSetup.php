@@ -127,7 +127,7 @@ class BallotSetup extends ElectionPage
                                             SpatieMediaLibraryImageEntry::make(name: 'symbol')
                                                 ->collection(collection: Candidate::MEDIA_COLLECTION_SYMBOL)
                                                 ->defaultImageUrl(url: fn (Candidate $record): ?string => $record->symbol_url)
-                                                ->extraImgAttributes(attributes: ['class' => 'rounded-xl'])
+                                                ->extraImgAttributes(attributes: ['class' => 'rounded-xl bg-black'])
                                                 ->grow(condition: false)
                                                 ->hiddenLabel()
                                                 ->size(size: 80)

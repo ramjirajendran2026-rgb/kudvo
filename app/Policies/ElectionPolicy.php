@@ -218,12 +218,12 @@ class ElectionPolicy
 
     public function viewAnyMonitorToken(User $user, Election $election): bool
     {
-        return $election->is_published || $election->is_completed;
+        return ! $election->is_draft;
     }
 
     public function viewAnyBoothToken(User $user, Election $election): bool
     {
-        return $election->is_published && $election->isBoothVotingEnabled();
+        return ! $election->is_draft && $election->isBoothVotingEnabled();
     }
 
     public function generateResult(User $user, Election $election): bool

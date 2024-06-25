@@ -313,7 +313,7 @@
                                 @if ($hasSymbol())
                                     <div class="relative h-10 w-10 max-w-none rounded">
                                         <svg
-                                            class="absolute inset-0 hidden rounded print:block"
+                                            class="absolute inset-0 rounded"
                                             viewBox="0 0 100 100"
                                             xmlns="http://www.w3.org/2000/svg"
                                         >

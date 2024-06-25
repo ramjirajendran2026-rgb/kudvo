@@ -1,4 +1,8 @@
 @php
+    use Illuminate\Support\Collection;
+@endphp
+
+@php
     /** @var \App\Models\Election $election */
 @endphp
 
@@ -119,12 +123,20 @@
                                     <img
                                         src="{{ $candidate->symbol_url }}"
                                         alt="{{ 'Candidate symbol' }}"
-                                        style="border-radius: 1mm; height: 15mm; width: 15mm"
+                                        style="border-radius: 1mm; height: 15mm; width: 15mm; background-color: black"
                                     />
                                 </td>
                                 <td style="width: 20%; text-align: end">
                                     @php
-                                        $votes = $election->result?->meta?->toCollection()->firstWhere('key', $candidate->uuid)?->value ?? 0;
+                                        $votes =
+                                            $election->result?->meta
+                                                ?->toCollection()
+                                                ->when(
+                                                    filled($boothId ?? null),
+                                                    fn (Collection $collection) => $collection->where('key', "$candidate->uuid:booth:$boothId"),
+                                                    fn (Collection $collection) => $collection->where('key', "$candidate->uuid"),
+                                                )
+                                                ->first()?->value ?? 0;
                                     @endphp
 
                                     {{ str(string: "$votes vote")->plural()->toString() }}

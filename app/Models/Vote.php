@@ -18,12 +18,14 @@ class Vote extends Model
         'secret',
         'mock',
         'ballot_id',
+        'booth_id',
     ];
 
     protected $casts = [
         'secret' => EncryptedDataCollection::class.':'.VoteSecretData::class,
         'mock' => 'bool',
         'ballot_id' => 'int',
+        'booth_id' => 'int',
     ];
 
     public $timestamps = false;
@@ -31,6 +33,11 @@ class Vote extends Model
     public function ballot(): BelongsTo
     {
         return $this->belongsTo(related: Ballot::class);
+    }
+
+    public function booth(): BelongsTo
+    {
+        return $this->belongsTo(related: ElectionBoothToken::class);
     }
 
     public function position(): BelongsTo
