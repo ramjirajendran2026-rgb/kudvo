@@ -249,6 +249,24 @@ class ElectionPolicy
         return $election->is_draft && ! $election->is_paid;
     }
 
+    public function disableAnyCandidate(User $user, Election $election): bool
+    {
+        if ($user->canAccessPanel(panel: Filament::getPanel(id: 'admin'))) {
+            return true;
+        }
+
+        return $election->is_draft && ! $election->is_paid;
+    }
+
+    public function enableAnyCandidate(User $user, Election $election): bool
+    {
+        if ($user->canAccessPanel(panel: Filament::getPanel(id: 'admin'))) {
+            return true;
+        }
+
+        return $election->is_draft && ! $election->is_paid;
+    }
+
     public function viewAnyMonitorToken(User $user, Election $election): bool
     {
         return ! $election->is_draft;

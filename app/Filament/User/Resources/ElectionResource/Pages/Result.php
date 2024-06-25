@@ -117,8 +117,20 @@ class Result extends ElectionPage
                                             ->formatStateUsing(callback: fn (int $state): string => Str::plural(value: "$state vote", count: $state))
                                             ->getStateUsing(callback: fn (Candidate $record) => $this->getCandidateVotes($record->uuid, $this->boothId))
                                             ->grow(condition: false)
+                                            ->hidden(condition: fn (Candidate $record): bool => $record->position->isUnopposed())
                                             ->hiddenLabel()
                                             ->size(size: TextEntry\TextEntrySize::Large)
+                                            ->weight(weight: FontWeight::Medium),
+
+                                        TextEntry::make(name: 'unopposed')
+                                            ->alignCenter()
+                                            ->color(color: 'primary')
+                                            ->extraAttributes(attributes: ['class' => 'bg-gray-50 dark:bg-white/5 rounded-lg py-2'])
+                                            ->getStateUsing(callback: fn () => 'Unopposed')
+                                            ->grow(condition: false)
+                                            ->hiddenLabel()
+                                            ->size(size: TextEntry\TextEntrySize::Large)
+                                            ->visible(condition: fn (Candidate $record): bool => $record->position->isUnopposed())
                                             ->weight(weight: FontWeight::Medium),
                                     ]),
                             ]),

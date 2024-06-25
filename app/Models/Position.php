@@ -75,6 +75,12 @@ class Position extends Model implements Sortable
             ->oldest(column: 'sort');
     }
 
+    public function allCandidates(): HasMany
+    {
+        return $this->candidates()
+            ->withoutGlobalScope(scope: 'disabled');
+    }
+
     public function rankedCandidates(): HasMany
     {
         return $this->hasMany(related: Candidate::class)
@@ -122,5 +128,11 @@ class Position extends Model implements Sortable
     public function getFallbackLocale()
     {
         return $this->locales()[0] ?? config('app.locale');
+    }
+
+    public function isUnopposed(): bool
+    {
+        return $this->event->preference?->disable_unopposed_selection
+            && $this->candidates()->count() <= $this->quota;
     }
 }

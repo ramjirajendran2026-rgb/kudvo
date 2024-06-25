@@ -17,6 +17,7 @@
             .page {
                 padding: 10mm;
             }
+
             table {
                 width: 100%;
                 border-collapse: collapse;
@@ -127,19 +128,23 @@
                                     />
                                 </td>
                                 <td style="width: 20%; text-align: end">
-                                    @php
-                                        $votes =
-                                            $election->result?->meta
-                                                ?->toCollection()
-                                                ->when(
-                                                    filled($boothId ?? null),
-                                                    fn (Collection $collection) => $collection->where('key', "$candidate->uuid:booth:$boothId"),
-                                                    fn (Collection $collection) => $collection->where('key', "$candidate->uuid"),
-                                                )
-                                                ->first()?->value ?? 0;
-                                    @endphp
+                                    @if ($position->isUnopposed())
+                                        Unopposed
+                                    @else
+                                        @php
+                                            $votes =
+                                                $election->result?->meta
+                                                    ?->toCollection()
+                                                    ->when(
+                                                        filled($boothId ?? null),
+                                                        fn (Collection $collection) => $collection->where('key', "$candidate->uuid:booth:$boothId"),
+                                                        fn (Collection $collection) => $collection->where('key', "$candidate->uuid"),
+                                                    )
+                                                    ->first()?->value ?? 0;
+                                        @endphp
 
-                                    {{ str(string: "$votes vote")->plural()->toString() }}
+                                        {{ str(string: "$votes vote")->plural()->toString() }}
+                                    @endif
                                 </td>
                             </tr>
                         @empty

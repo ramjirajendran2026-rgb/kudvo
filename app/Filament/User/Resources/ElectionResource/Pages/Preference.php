@@ -601,9 +601,21 @@ class Preference extends ElectionPage
                                 condition: ! $plan->hasAnyFeature(features: [
                                     ElectionFeature::SegmentedVoting,
                                     ElectionFeature::BoothVoting,
+                                    ElectionFeature::DisableUnopposedSelection,
                                 ])
                             )
                             ->schema(components: [
+                                FeatureToggle::make(name: 'disable_unopposed_selection')
+                                    ->addOn(
+                                        condition: $plan->hasAddOnFeature(feature: ElectionFeature::DisableUnopposedSelection),
+                                        featureFee: $plan->getFeatureFee(feature: ElectionFeature::DisableUnopposedSelection),
+                                        electorFee: $plan->getElectorFee(feature: ElectionFeature::DisableUnopposedSelection),
+                                        feeCurrency: $plan->currency,
+                                        hideAddOnPrice: ! $this->canSave(),
+                                    )
+                                    ->hidden(condition: ! $plan->hasFeature(feature: ElectionFeature::DisableUnopposedSelection))
+                                    ->label(label: 'Restrict selection for Unopposed candidates'),
+
                                 FeatureToggle::make(name: 'segmented_ballot')
                                     ->addOn(
                                         condition: $plan->hasAddOnFeature(feature: ElectionFeature::SegmentedVoting),

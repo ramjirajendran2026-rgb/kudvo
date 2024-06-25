@@ -32,6 +32,7 @@ enum ElectionFeature: string implements HasLabel
     case CandidatePhoto = 'candidate_photo';
     case CandidateSymbol = 'candidate_symbol';
     case CandidateTeam = 'candidate_team';
+    case DisableUnopposedSelection = 'disable_unopposed_selection';
     case SegmentedVoting = 'segmented_voting';
     case BoothVoting = 'booth_voting';
 
@@ -64,6 +65,7 @@ enum ElectionFeature: string implements HasLabel
             self::CandidatePhoto => 'Candidate photo',
             self::CandidateSymbol => 'Candidate symbol',
             self::CandidateTeam => 'Candidate team',
+            self::DisableUnopposedSelection => 'Restrict unopposed candidate selection',
             self::SegmentedVoting => 'Segmented voting',
             self::BoothVoting => 'Booth voting',
         };
@@ -96,6 +98,7 @@ enum ElectionFeature: string implements HasLabel
             self::CandidatePhoto => 'candidate_photo',
             self::CandidateSymbol => 'candidate_symbol',
             self::CandidateTeam => 'candidate_group',
+            self::DisableUnopposedSelection => 'disable_unopposed_selection',
             self::SegmentedVoting => 'segmented_ballot',
             self::BoothVoting => 'booth_voting',
             default => null,

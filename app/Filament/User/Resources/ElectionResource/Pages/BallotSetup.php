@@ -6,7 +6,6 @@ use App\Enums\ElectionCollaboratorPermission;
 use App\Enums\ElectionSetupStep;
 use App\Filament\Base\Contracts\HasElection;
 use App\Filament\Imports\CandidateImporter;
-use App\Filament\Imports\ElectorImporter;
 use App\Filament\User\Resources\CandidateResource;
 use App\Filament\User\Resources\PositionResource;
 use App\Models\Candidate;
@@ -69,8 +68,9 @@ class BallotSetup extends ElectionPage
                             ->description(
                                 description: fn (Position $state): ?string => collect(value: [
                                     Str::plural(value: $state->quota.' Post', count: $state->quota),
-                                    ...($state->abstain ? [Str::plural(value: " • Minimum $state->threshold selection", count: $state->threshold)] : []),
+                                    ...($state->abstain ? [Str::plural(value: "Minimum $state->threshold selection", count: $state->threshold)] : []),
                                     ...($this->getElection()->preference?->segmented_ballot ? $state->segments()->pluck(column: 'name') : []),
+                                    ...($state->isUnopposed() ? ['Unopposed'] : []),
                                 ])->implode(value: ' • ')
                             )
                             ->footerActions(actions: [
@@ -87,7 +87,7 @@ class BallotSetup extends ElectionPage
                                 $this->getDeletePositionAction(),
                             ])
                             ->schema(components: [
-                                RepeatableEntry::make(name: 'candidates')
+                                RepeatableEntry::make(name: 'allCandidates')
                                     ->extraAttributes(attributes: ['class' => 'candidate-repeatable-entry'])
                                     ->hiddenLabel()
                                     ->placeholder(placeholder: $this->generateEmptyStatePlaceholder(
@@ -107,10 +107,12 @@ class BallotSetup extends ElectionPage
                                                 ->visible(condition: $this->getElection()->preference?->candidate_photo),
 
                                             TextEntry::make(name: 'display_name')
+                                                ->extraAttributes(attributes: fn (Candidate $record): array => $record->disabled ? ['class' => 'line-through'] : [])
                                                 ->helperText(
                                                     text: fn (Candidate $record): ?string => collect(value: [
                                                         $record->membership_number,
                                                         $this->getElection()->preference->candidate_group ? $record->candidateGroup?->name : null,
+                                                        ! $record->disabled && $record->position->isUnopposed() ? 'Unopposed' : null,
                                                     ])
                                                         ->filter(callback: fn (?string $item): bool => filled($item))
                                                         ->implode(value: ' • ')
@@ -119,6 +121,10 @@ class BallotSetup extends ElectionPage
                                                 ->size(size: TextEntry\TextEntrySize::Large)
                                                 ->suffixActions(actions: [
                                                     $this->getEditCandidateAction(),
+
+                                                    $this->getDisableCandidateAction(),
+
+                                                    $this->getEnableCandidateAction(),
 
                                                     $this->getDeleteCandidateAction(),
                                                 ])
@@ -142,7 +148,10 @@ class BallotSetup extends ElectionPage
     protected function makeInfolist(): Infolist
     {
         return parent::makeInfolist()
-            ->record($this->getElection());
+            ->record(
+                record: $this->getElection()
+                    ->load(relations: ['positions.allCandidates'])
+            );
     }
 
     public function getCurrentStep(): ?ElectionSetupStep
@@ -506,6 +515,54 @@ HTML,
             ->iconButton()
             ->modalHeading(heading: fn (Candidate $record): string => __('filament.user.election-resource.pages.ballot_setup.actions.delete_candidate.modal_heading', ['label' => $record->full_name]))
             ->successNotificationTitle(title: __('filament.user.election-resource.pages.ballot_setup.actions.delete_candidate.success_notification.title'))
+            ->visible(condition: $this->hasFullAccess());
+    }
+
+    protected function getDisableCandidateAction(): InfolistAction
+    {
+        return InfolistAction::make(name: 'disableCandidate')
+            ->authorize(
+                abilities: fn (HasElection $livewire): bool => static::can(
+                    action: 'disableAnyCandidate',
+                    election: $livewire->getElection()
+                )
+            )
+            ->requiresConfirmation()
+            ->action(action: function (InfolistAction $action, Candidate $record): void {
+                $record->update(attributes: ['disabled' => true]);
+
+                $action->success();
+            })
+            ->color(color: 'danger')
+            ->hidden(condition: fn (Candidate $record): string => $record->disabled)
+            ->icon(icon: 'heroicon-m-eye-slash')
+            ->iconButton()
+            ->modalHeading(heading: fn (Candidate $record): string => "Disable $record->display_name")
+            ->successNotificationTitle(title: 'Disabled')
+            ->visible(condition: $this->hasFullAccess());
+    }
+
+    protected function getEnableCandidateAction(): InfolistAction
+    {
+        return InfolistAction::make(name: 'enableCandidate')
+            ->authorize(
+                abilities: fn (HasElection $livewire): bool => static::can(
+                    action: 'enableAnyCandidate',
+                    election: $livewire->getElection()
+                )
+            )
+            ->requiresConfirmation()
+            ->action(action: function (InfolistAction $action, Candidate $record): void {
+                $record->update(attributes: ['disabled' => false]);
+
+                $action->success();
+            })
+            ->color(color: 'success')
+            ->hidden(condition: fn (Candidate $record): string => ! $record->disabled)
+            ->icon(icon: 'heroicon-m-eye')
+            ->iconButton()
+            ->modalHeading(heading: fn (Candidate $record): string => "Enable $record->display_name")
+            ->successNotificationTitle(title: 'Enabled')
             ->visible(condition: $this->hasFullAccess());
     }
 

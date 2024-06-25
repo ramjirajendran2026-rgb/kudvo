@@ -39,6 +39,7 @@ class Candidate extends Model implements HasAvatar, HasMedia, HasName, Sortable
         'last_name',
         'email',
         'phone',
+        'disabled',
         'sort',
         'rank',
         'position_id',
@@ -47,6 +48,7 @@ class Candidate extends Model implements HasAvatar, HasMedia, HasName, Sortable
     ];
 
     protected $casts = [
+        'disabled' => 'bool',
         'sort' => 'int',
         'rank' => 'int',
         'position_id' => 'int',
@@ -129,6 +131,14 @@ class Candidate extends Model implements HasAvatar, HasMedia, HasName, Sortable
     public function uniqueIds(): array
     {
         return ['uuid'];
+    }
+
+    protected static function booted(): void
+    {
+        static::addGlobalScope(
+            scope: 'disabled',
+            implementation: fn (Builder $builder) => $builder->where('disabled', false),
+        );
     }
 
     public function buildSortQuery(): Builder

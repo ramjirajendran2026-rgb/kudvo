@@ -37,6 +37,8 @@ class VotePicker extends CheckboxList
 
     protected bool|Closure $candidateGroup = false;
 
+    protected bool|Closure $unopposed = false;
+
     public static function makeFor(Position $position): static
     {
         $static = app(abstract: static::class, parameters: ['name' => $position->uuid]);
@@ -103,6 +105,18 @@ class VotePicker extends CheckboxList
         return $this->evaluate(value: $this->candidateGroup) && ! $this->isPreview();
     }
 
+    public function unopposed(bool|Closure $condition = true): static
+    {
+        $this->unopposed = $condition;
+
+        return $this;
+    }
+
+    public function isUnopposed(): bool
+    {
+        return (bool) $this->evaluate(value: $this->unopposed);
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -114,7 +128,7 @@ class VotePicker extends CheckboxList
 
         $txtSelected = __('filament.forms.components.vote_picker.general.selected');
         $this->description(
-            description: new HtmlString(
+            description: fn () => $this->isUnopposed() ? 'Unopposed' : new HtmlString(
                 html: $this->getDescriptionHint().
                 ' • '.
                 '<span class="text-info-500" x-text="checkedOptionsCount+\' '.$txtSelected.'\'"></span>'
@@ -142,6 +156,7 @@ class VotePicker extends CheckboxList
                 )
                 ->mapWithKeys(callback: fn (Candidate $candidate) => [$candidate->uuid => $candidate->display_name])
         );
+        $this->disableOptionWhen(callback: fn () => $this->isUnopposed());
         $this->descriptions(
             descriptions: fn (string $operation, array $state, self $component) => $position
                 ->candidates
@@ -160,6 +175,7 @@ class VotePicker extends CheckboxList
                     $candidate->uuid => collect(value: [
                         $candidate->membership_number,
                         $component->hasCandidateGroup() ? $candidate->candidateGroup?->name : null,
+                        $this->position->isUnopposed() ? 'Unopposed' : null,
                     ])
                         ->filter(callback: fn (?string $item): bool => filled($item))
                         ->implode(value: ' • '),
@@ -167,14 +183,20 @@ class VotePicker extends CheckboxList
         );
         $this->bulkToggleable();
         $this->maxItems(count: $position->quota);
-        $this->minItems(count: $position->threshold);
+        $this->minItems(count: fn () => $this->isUnopposed() ? 0 : $position->threshold);
 
         $this->validationMessages(messages: [
             'max' => fn (self $component): ?string => $component->getDescriptionHint(),
             'min' => fn (self $component): ?string => $component->getDescriptionHint(),
         ]);
 
+        $this->dehydrated(condition: fn () => ! $this->isUnopposed());
+
         $this->mutateDehydratedStateUsing(callback: fn ($state) => Arr::map($state, fn ($item) => new VoteSecretData(key: $item, value: 1)));
+
+        $this->unopposed(condition: $position->isUnopposed());
+
+        $this->hidden(condition: fn (self $component) => $component->isPreview() && $component->isUnopposed());
     }
 
     public function description(string|Htmlable|Closure|null $description = null): static

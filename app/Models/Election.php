@@ -621,7 +621,7 @@ class Election extends Model
                                 ->toArray()
                         );
 
-                    $position->candidates()
+                    $position->allCandidates()
                         ->cursor()
                         ->each(
                             callback: function (Candidate $candidate) use ($replicaPosition) {
