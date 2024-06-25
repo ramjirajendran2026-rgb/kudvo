@@ -5,6 +5,7 @@ namespace App\Policies;
 use App\Models\Election;
 use App\Models\Elector;
 use App\Models\User;
+use Filament\Facades\Filament;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Support\Facades\DB;
 
@@ -162,11 +163,19 @@ class ElectionPolicy
 
     public function createPosition(User $user, Election $election): bool
     {
+        if ($user->canAccessPanel(panel: Filament::getPanel(id: 'admin'))) {
+            return true;
+        }
+
         return $election->is_draft && ! $election->is_paid;
     }
 
     public function reorderPosition(User $user, Election $election): bool
     {
+        if ($user->canAccessPanel(panel: Filament::getPanel(id: 'admin'))) {
+            return true;
+        }
+
         return $election->is_draft && ! $election->is_paid &&
             ($election->positions_count ?? $election->loadCount(relations: ['positions'])->positions_count) > 1;
     }
@@ -178,16 +187,28 @@ class ElectionPolicy
 
     public function updateAnyPosition(User $user, Election $election): bool
     {
+        if ($user->canAccessPanel(panel: Filament::getPanel(id: 'admin'))) {
+            return true;
+        }
+
         return $election->is_draft && ! $election->is_paid;
     }
 
     public function deleteAnyPosition(User $user, Election $election): bool
     {
+        if ($user->canAccessPanel(panel: Filament::getPanel(id: 'admin'))) {
+            return true;
+        }
+
         return $election->is_draft && ! $election->is_paid;
     }
 
     public function createCandidate(User $user, Election $election): bool
     {
+        if ($user->canAccessPanel(panel: Filament::getPanel(id: 'admin'))) {
+            return true;
+        }
+
         return $election->is_draft && ! $election->is_paid;
     }
 
@@ -198,6 +219,10 @@ class ElectionPolicy
 
     public function reorderCandidate(User $user, Election $election): bool
     {
+        if ($user->canAccessPanel(panel: Filament::getPanel(id: 'admin'))) {
+            return true;
+        }
+
         return $election->is_draft && ! $election->is_paid;
     }
 
@@ -208,11 +233,19 @@ class ElectionPolicy
 
     public function updateAnyCandidate(User $user, Election $election): bool
     {
+        if ($user->canAccessPanel(panel: Filament::getPanel(id: 'admin'))) {
+            return true;
+        }
+
         return $election->is_draft && ! $election->is_paid;
     }
 
     public function deleteAnyCandidate(User $user, Election $election): bool
     {
+        if ($user->canAccessPanel(panel: Filament::getPanel(id: 'admin'))) {
+            return true;
+        }
+
         return $election->is_draft && ! $election->is_paid;
     }
 
