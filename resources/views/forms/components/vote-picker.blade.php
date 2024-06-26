@@ -314,7 +314,7 @@
                                 @endif
 
                                 @if ($hasSymbol())
-                                    <div class="relative h-10 w-10 max-w-none rounded">
+                                    <div class="relative size-8 max-w-none rounded md:size-12 lg:size-16">
                                         <svg
                                             class="absolute inset-0 rounded"
                                             viewBox="0 0 100 100"
@@ -335,7 +335,7 @@
                                     <img
                                         src="{{ $getPhotoUrl($value) }}"
                                         alt="{{ $label }}'s photo"
-                                        class="h-10 w-10 max-w-none rounded-full object-cover object-center print:hidden"
+                                        class="size-8 max-w-none rounded-full object-cover object-center md:size-12 lg:size-16 print:hidden"
                                     />
                                 @endif
 

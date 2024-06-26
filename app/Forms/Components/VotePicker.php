@@ -123,7 +123,11 @@ class VotePicker extends CheckboxList
 
         $position = $this->position;
 
-        $this->columns();
+        $this->columns(columns: [
+            'md' => 2,
+            'xl' => 3,
+            '2xl' => 4,
+        ]);
         $this->gridDirection(gridDirection: 'row');
 
         $txtSelected = __('filament.forms.components.vote_picker.general.selected');
