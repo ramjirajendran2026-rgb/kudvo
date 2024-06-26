@@ -257,20 +257,16 @@
                     @foreach ($options as $value => $label)
                         <div
                             wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.options.{{ $value }}"
-                            @if (! $isPreview)
+                            @if ($isSearchable)
                                 x-show="
-                                    (group === 'all' ||
-                                        group === '{{ $getCandidateGroupId($value) }}' ||
-                                        (group === 'independent' && ! '{{ $getCandidateGroupId($value) }}')) &&
-                                        (@js(! $isSearchable) ||
-                                            $el
-                                                .querySelector('.fi-fo-checkbox-list-option-label')
-                                                ?.innerText.toLowerCase()
-                                                .includes(search.toLowerCase()) ||
-                                            $el
-                                                .querySelector('.fi-fo-checkbox-list-option-description')
-                                                ?.innerText.toLowerCase()
-                                                .includes(search.toLowerCase()))
+                                    $el
+                                        .querySelector('.fi-fo-checkbox-list-option-label')
+                                        ?.innerText.toLowerCase()
+                                        .includes(search.toLowerCase()) ||
+                                        $el
+                                            .querySelector('.fi-fo-checkbox-list-option-description')
+                                            ?.innerText.toLowerCase()
+                                            .includes(search.toLowerCase())
                                 "
                             @endif
                             @class([
