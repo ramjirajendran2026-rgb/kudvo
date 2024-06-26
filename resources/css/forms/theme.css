@@ -30,7 +30,7 @@
             @apply p-4;
 
             .fi-vote-picker-item {
-                @apply border;
+                @apply border has-[:checked]:bg-primary-200 dark:has-[:checked]:bg-primary-400;
 
                 .fi-fo-checkbox-list-option-label {
                     .fi-checkbox-input {
