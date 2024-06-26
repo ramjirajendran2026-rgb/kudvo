@@ -11,6 +11,7 @@ class BoothPreferenceData extends Data
         public bool $login_by_self = true,
         public bool $logout_by_admin = false,
         public bool $logout_by_self = true,
+        public bool $voted_ballot_auto_print = false,
         public bool $voted_ballot_print_by_admin = false,
         public bool $voted_ballot_print_by_self = false,
         public bool $flash_voted_ballot = false,

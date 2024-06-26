@@ -3,18 +3,22 @@
     x-data="{
         playBeep: {{ \Illuminate\Support\Js::from(data: $this->playBeep) }},
         autoPrint: {{ \Illuminate\Support\Js::from(data: $this->autoPrint) }},
+        printBallot() {
+            setTimeout(() => {
+                window.print();
+            }, 1000);
+        },
         init() {
             if (this.playBeep) {
                 this.$refs.audio.play();
             }
 
             if (this.autoPrint) {
-                setTimeout(() => {
-                    window.print();
-                }, 1000);
+                this.printBallot();
             }
         }
     }"
+    @print-ballot="printBallot()"
     class="fi-pg-home"
 >
     @if ($state = $this->getStateHeading())

@@ -3,6 +3,7 @@
 namespace App\Filament\Election\Pages;
 
 use App\Enums\ElectionPanelState;
+use App\Events\Election\Booth\PrintBallot;
 use App\Events\ElectorRevokedFromBoothEvent;
 use App\Facades\Kudvo;
 use App\Filament\Base\Pages\Concerns\HasStateSection;
@@ -65,7 +66,10 @@ class Index extends Page
         $listeners = parent::getListeners();
 
         if (Kudvo::isBoothDevice()) {
-            $listeners['echo:election-booth.'.Kudvo::getElectionBoothToken()?->getKey().',.'.ElectorRevokedFromBoothEvent::getBroadcastName()] = 'destroySession';
+            $boothId = Kudvo::getElectionBoothToken()->getKey();
+
+            $listeners["echo:election-booth.$boothId,.".ElectorRevokedFromBoothEvent::getBroadcastName()] = 'destroySession';
+            $listeners["echo:election-booth.$boothId,.".PrintBallot::getBroadcastName()] = 'dispatchPrintBallotEvent';
         }
 
         return $listeners;
@@ -102,15 +106,27 @@ class Index extends Page
                 []
             );
 
-            $this->autoPrint = filled($this->sessionVotes) && $this->canSelfPrintBallot();
+            $this->autoPrint = $this->canAutoPrintBallot();
         }
     }
 
     protected function canSelfPrintBallot(): bool
     {
-        return filled($this->sessionVoteIds) &&
-            Kudvo::isBoothDevice() &&
+        return $this->canPrintBallot() &&
             Kudvo::getElection()->booth_preference?->voted_ballot_print_by_self;
+    }
+
+    protected function canAutoPrintBallot(): bool
+    {
+        return $this->canPrintBallot() &&
+            filled($this->sessionVotes) &&
+            Kudvo::getElection()->booth_preference?->voted_ballot_auto_print;
+    }
+
+    protected function canPrintBallot(): bool
+    {
+        return filled($this->sessionVoteIds) &&
+            Kudvo::isBoothDevice();
     }
 
     public static function getRelativeRouteName(): string
@@ -286,5 +302,10 @@ class Index extends Page
         Filament::auth()->logout();
 
         return app(LogoutResponse::class);
+    }
+
+    public function dispatchPrintBallotEvent(): void
+    {
+        $this->dispatch('print-ballot');
     }
 }

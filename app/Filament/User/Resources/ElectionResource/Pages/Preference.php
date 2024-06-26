@@ -766,6 +766,8 @@ class Preference extends ElectionPage
 
                         Toggle::make(name: 'voted_ballot_print_by_self'),
 
+                        Toggle::make(name: 'voted_ballot_auto_print'),
+
                         Toggle::make(name: 'flash_voted_ballot'),
                     ]),
             ]);

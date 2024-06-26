@@ -3,6 +3,7 @@
 namespace App\Filament\User\Resources\ElectionResource\Pages;
 
 use App\Enums\ElectionCollaboratorPermission;
+use App\Events\Election\Booth\PrintBallot;
 use App\Events\ElectorAssignedToBoothEvent;
 use App\Events\ElectorCastedVoteInBoothEvent;
 use App\Events\ElectorRevokedFromBoothEvent;
@@ -131,6 +132,23 @@ class BoothTokens extends ElectionPage implements HasTable
                         condition: fn (ElectionBoothToken $record): bool => $this->hasFullAccess()
                             && filled($record->current_elector_id)
                             && $this->getElection()->booth_preference?->logout_by_admin
+                    ),
+
+                Action::make(name: 'print')
+                    ->requiresConfirmation()
+                    ->action(action: function (ElectionBoothToken $record, Action $action): void {
+                        broadcast(new PrintBallot($record->getKey()))->toOthers();
+
+                        $action->success();
+                    })
+                    ->icon(icon: 'heroicon-s-printer')
+                    ->iconButton()
+                    ->label(label: 'Print ballot')
+                    ->successNotificationTitle(title: 'Submitted')
+                    ->visible(
+                        condition: fn (ElectionBoothToken $record): bool => $this->hasFullAccess()
+                            && $record->currentElector?->ballot?->isVoted()
+                            && $this->getElection()->booth_preference?->voted_ballot_print_by_admin
                     ),
 
                 EditAction::make()
