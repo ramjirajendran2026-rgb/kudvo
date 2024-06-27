@@ -1,16 +1,17 @@
 <x-filament-panels::page
     :full-height="true"
     x-data="{
-        playBeep: {{ \Illuminate\Support\Js::from(data: $this->playBeep) }},
         autoPrint: {{ \Illuminate\Support\Js::from(data: $this->autoPrint) }},
+        voteCastedMessage: 'Thank you. Your vote has been submitted successfully',
+        playVoteCastedMessage: {{ \Illuminate\Support\Js::from(data: $this->playVoteCastedMessage) }},
         printBallot() {
             setTimeout(() => {
                 window.print();
             }, 1000);
         },
         init() {
-            if (this.playBeep) {
-                this.$refs.audio.play();
+            if (this.playVoteCastedMessage) {
+                tts(this.voteCastedMessage);
             }
 
             if (this.autoPrint) {
@@ -35,6 +36,4 @@
     @if ($this->sessionVoteIds)
         {{ $this->form }}
     @endif
-
-    <audio x-ref="audio" src="{{ asset('assets/long-beep.mp3') }}"></audio>
 </x-filament-panels::page>

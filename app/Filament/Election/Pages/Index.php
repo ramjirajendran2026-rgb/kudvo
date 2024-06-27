@@ -53,7 +53,7 @@ class Index extends Page
     #[Locked]
     public bool $isVotedNow = true;
 
-    public bool $playBeep = false;
+    public bool $playVoteCastedMessage = false;
 
     public bool $autoPrint = false;
 
@@ -89,7 +89,7 @@ class Index extends Page
 
         $this->sessionVotes = Session::pull(key: 'elector_'.($this->getElector()?->getKey()).'_votes');
         if (filled($this->sessionVotes)) {
-            $this->playBeep = true;
+            $this->playVoteCastedMessage = true;
         }
 
         $this->sessionVoteIds = Session::get(key: 'elector_'.($this->getElector()?->getKey()).'_vote_ids');
