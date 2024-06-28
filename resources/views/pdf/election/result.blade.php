@@ -100,6 +100,25 @@
                     <tbody>
                         @forelse ($position->rankedCandidates as $candidate)
                             <tr>
+                                <td style="height: 16mm; width: 16mm; text-align: end">
+                                    <span
+                                        style="
+                                            font-size: 3.5rem;
+                                            font-weight: bold;
+                                            font-family:
+                                                ui-monospace,
+                                                SFMono-Regular,
+                                                Menlo,
+                                                Monaco,
+                                                Consolas,
+                                                Liberation Mono,
+                                                'Courier New',
+                                                monospace;
+                                        "
+                                    >
+                                        {{ $candidate->sort }}
+                                    </span>
+                                </td>
                                 <td style="height: 16mm; width: 16mm">
                                     <img
                                         src="{{ $candidate->photo_url }}"
@@ -119,13 +138,6 @@
 
                                         {{ implode(' • ', $contacts) }}
                                     </div>
-                                </td>
-                                <td style="height: 16mm; width: 16mm">
-                                    <img
-                                        src="{{ $candidate->symbol_url }}"
-                                        alt="{{ 'Candidate symbol' }}"
-                                        style="border-radius: 1mm; height: 15mm; width: 15mm; background-color: black"
-                                    />
                                 </td>
                                 <td style="width: 20%; text-align: end">
                                     @if ($position->isUnopposed())
