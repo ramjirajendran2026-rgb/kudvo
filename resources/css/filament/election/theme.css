@@ -83,7 +83,7 @@
         }
 
         & div {
-            @apply text-7xl;
+            @apply text-7xl print:text-2xl;
         }
     }
 
