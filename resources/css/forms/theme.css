@@ -12,7 +12,7 @@
     }
 
     .fi-section-header {
-        @apply sticky top-0 z-10 rounded-t-xl border-b border-gray-200 bg-inherit text-center dark:border-white/10;
+        @apply sticky top-0 z-10 rounded-t-xl border-b border-gray-200 bg-inherit text-center dark:border-white/10 py-2;
 
         .fi-section-header-heading {
             @apply text-xl;
@@ -73,7 +73,7 @@
                         @apply border-t border-black;
 
                         .fi-fo-checkbox-list-option-label {
-                            @apply text-black;
+                            @apply text-black p-2 lg:p-2;
 
                             .checkbox-ctn {
                                 @apply hidden;
