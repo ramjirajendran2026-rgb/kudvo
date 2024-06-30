@@ -93,7 +93,8 @@ class Candidate extends Model implements HasAvatar, HasMedia, HasName, Sortable
                 $this->full_name.
                 '&color=FFFFFF&background='.
                 str(Rgb::fromString('rgb('.FilamentColor::getColors()['primary'][800].')')->toHex())
-                    ->after('#'),
+                    ->after('#').
+                '&uuid='.$this->uuid,
         );
     }
 
@@ -104,7 +105,8 @@ class Candidate extends Model implements HasAvatar, HasMedia, HasName, Sortable
                 'https://ui-avatars.com/api/?name='.
                 $this->sort.
                 '&background=FFFFFF00&color=FFFFFF'.
-                '&font-size=0.8&bold=true',
+                '&font-size=0.8&bold=true'.
+                '&uuid='.$this->uuid,
         );
     }
 
