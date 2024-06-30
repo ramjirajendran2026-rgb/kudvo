@@ -25,6 +25,8 @@ class ElectorBallotExporter extends Exporter
 
             ExportColumn::make(name: 'email'),
 
+            ExportColumn::make(name: 'ballot.booth.name'),
+
             ExportColumn::make(name: 'ballot.voted_at')
                 ->formatStateUsing(callback: fn (?Carbon $state, array $options) => $state?->timezone(value: $options['timezone'] ?? null))
                 ->label(label: 'Voted At'),
@@ -36,7 +38,7 @@ class ElectorBallotExporter extends Exporter
 
     public static function modifyQuery(Builder $query): Builder
     {
-        return $query->with(relations: ['ballot']);
+        return $query->with(relations: ['ballot', 'ballot.booth']);
     }
 
     public static function getCompletedNotificationBody(Export $export): string
