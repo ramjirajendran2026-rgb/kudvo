@@ -69,7 +69,7 @@
         }
 
         & div {
-            @apply text-5xl print:text-2xl;
+            @apply text-5xl print:text-lg;
         }
     }
 }
@@ -132,6 +132,10 @@
                     }
                 }
             }
+        }
+
+        .fi-header-heading {
+            @apply text-lg;
         }
 
         .fi-header-subheading,

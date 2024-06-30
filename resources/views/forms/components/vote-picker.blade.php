@@ -337,7 +337,7 @@
 
                                 <div class="grid flex-1 text-sm leading-6">
                                     <span
-                                        class="fi-fo-checkbox-list-option-label text-lg font-medium text-gray-950 dark:text-white"
+                                        class="fi-fo-checkbox-list-option-label text-lg print:text-base font-medium text-gray-950 dark:text-white"
                                     >
                                         {{ $label }}
                                     </span>
