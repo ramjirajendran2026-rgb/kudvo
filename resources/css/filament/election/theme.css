@@ -86,6 +86,10 @@
             @apply text-7xl;
         }
     }
+
+    .fi-simple-main {
+        @apply sm:max-w-full;
+    }
 }
 
 .fi-simple-header-heading {
