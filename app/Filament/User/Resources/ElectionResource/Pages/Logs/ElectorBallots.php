@@ -82,6 +82,10 @@ class ElectorBallots extends ElectionPage implements HasTable
                     ->label(label: 'Email')
                     ->searchable(),
 
+                Tables\Columns\TextColumn::make('ballot.booth.name')
+                    ->label(label: 'Booth')
+                    ->visible(condition: $this->getElection()->preference?->booth_voting),
+
                 Tables\Columns\TextColumn::make('ballot.voted_at')
                     ->dateTime(timezone: $this->getElection()->timezone)
                     ->label(label: 'Voted at')
