@@ -73,7 +73,7 @@
                         @apply border-t border-black;
 
                         .fi-fo-checkbox-list-option-label {
-                            @apply text-black p-2 lg:p-2;
+                            @apply text-black;
 
                             .checkbox-ctn {
                                 @apply hidden;
