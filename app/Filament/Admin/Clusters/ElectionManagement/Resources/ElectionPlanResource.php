@@ -10,16 +10,20 @@ use App\Forms\Components\CurrencyPicker;
 use App\Models\ElectionPlan;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Resources\Concerns\Translatable;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Str;
 use Squire\Models\Currency;
 
 class ElectionPlanResource extends Resource
 {
+    use Translatable;
+
     protected static ?string $model = ElectionPlan::class;
 
     protected static ?string $activeNavigationIcon = 'heroicon-s-banknotes';
@@ -132,6 +136,15 @@ class ElectionPlanResource extends Resource
             ])
             ->actions(actions: [
                 Tables\Actions\ReplicateAction::make()
+                    ->fillForm(data: function (Model $record, Table $table, Tables\Actions\ReplicateAction $action) {
+                        if ($translatableContentDriver = $table->makeTranslatableContentDriver()) {
+                            $data = $translatableContentDriver->getRecordAttributesToArray($record);
+                        } else {
+                            $data = $record->attributesToArray();
+                        }
+
+                        return $data;
+                    })
                     ->form(form: [
                         Forms\Components\TextInput::make(name: 'name')
                             ->maxLength(length: 50)
