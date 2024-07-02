@@ -65,35 +65,39 @@
         @apply flex h-auto items-center justify-center gap-x-4;
 
         & img {
-            @apply h-10 w-auto rounded-lg md:h-20;
+            @apply h-10 w-auto rounded-lg lg:h-16;
         }
 
         & div {
-            @apply text-5xl print:text-lg;
+            @apply text-center lg:text-4xl print:text-lg;
         }
     }
 }
 
 .fi-simple-layout {
     .fi-logo {
-        @apply flex flex-col h-auto items-center justify-center gap-4;
+        @apply flex h-auto flex-col items-center justify-center gap-4;
 
         & img {
-            @apply h-20 w-auto rounded-lg md:h-60;
+            @apply h-20 w-auto rounded-lg md:h-32;
         }
 
         & div {
-            @apply text-7xl print:text-2xl;
+            @apply lg:text-5xl print:text-2xl;
         }
     }
 
     .fi-simple-main {
         @apply sm:max-w-full;
+
+        form {
+            @apply mx-auto w-full max-w-screen-sm;
+        }
     }
 }
 
 .fi-simple-header-heading {
-    @apply text-3xl;
+    @apply lg:text-3xl;
 }
 
 .fi-header {
