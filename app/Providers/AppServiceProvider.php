@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Filament\Election\Http\Responses\Auth\LogoutResponse;
 use App\KudvoManager;
+use App\Models\User;
 use App\Services\Clicksend\ClicksendChannel;
 use App\Services\TwentyFourSevenSms\TwentyFourSevenSmsChannel;
 use App\Settings\ServiceConfig;
@@ -13,6 +14,7 @@ use ClickSend\Configuration;
 use Coderflex\FilamentTurnstile\Forms\Components\Turnstile;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\Actions\Action as FormsAction;
 use Filament\Forms\Components\Contracts\CanBeLengthConstrained;
 use Filament\Forms\Components\Field;
@@ -30,6 +32,7 @@ use GuzzleHttp\Client;
 use Illuminate\Notifications\ChannelManager;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\HtmlString;
@@ -58,6 +61,10 @@ class AppServiceProvider extends ServiceProvider
         if (App::isLocal()) {
             Mail::alwaysTo(address: 'iliyas.m@inodesys.com');
         }
+
+        Gate::define('viewPulse', function (User $user) {
+            return $user->canAccessPanel(panel: Filament::getPanel(id: 'admin'));
+        });
 
         Str::macro(name: 'isUnicode', macro: fn ($string): bool => strlen($string) != strlen(utf8_decode($string)));
         Str::macro(name: 'maxLimit', macro: function ($value, $limit = 100, $end = '...'): string {
