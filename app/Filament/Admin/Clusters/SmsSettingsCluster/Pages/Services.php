@@ -1,17 +1,14 @@
 <?php
 
-namespace App\Filament\Admin\Clusters\Settings\Pages;
+namespace App\Filament\Admin\Clusters\SmsSettingsCluster\Pages;
 
 use App\Data\ClicksendConfigData;
 use App\Data\TwentyFourSevenSmsConfigData;
-use App\Filament\Admin\Clusters\Settings;
+use App\Filament\Admin\Clusters\SmsSettingsCluster;
 use App\Settings\ServiceConfig;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
-use Filament\Support\Exceptions\Halt;
-use Filament\Support\Facades\FilamentView;
-use function Filament\Support\is_app_url;
 
 class Services extends SettingsPage
 {
@@ -21,7 +18,7 @@ class Services extends SettingsPage
 
     protected static string $settings = ServiceConfig::class;
 
-    protected static ?string $cluster = Settings::class;
+    protected static ?string $cluster = SmsSettingsCluster::class;
 
     public function form(Form $form): Form
     {

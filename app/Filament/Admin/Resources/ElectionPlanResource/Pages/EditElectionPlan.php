@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Admin\Clusters\ElectionManagement\Resources\ElectionPlanResource\Pages;
+namespace App\Filament\Admin\Resources\ElectionPlanResource\Pages;
 
-use App\Filament\Admin\Clusters\ElectionManagement\Resources\ElectionPlanResource;
+use App\Filament\Admin\Resources\ElectionPlanResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 

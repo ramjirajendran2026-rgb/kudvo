@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Filament\Admin\Clusters\Settings\Pages;
+namespace App\Filament\Admin\Clusters\SmsSettingsCluster\Pages;
 
-use App\Filament\Admin\Clusters\Settings;
-use App\Notifications\Election\MfaCodeNotification;
+use App\Filament\Admin\Clusters\SmsSettingsCluster;
 use App\Notifications\Election\BallotLinkNotification;
+use App\Notifications\Election\MfaCodeNotification;
 use App\Notifications\Election\VotedConfirmationNotification;
 use App\Settings\SmsTemplates;
 use Filament\Forms;
@@ -14,7 +14,7 @@ use Filament\Support\Enums\ActionSize;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
-class ManageSmsTemplates extends SettingsPage
+class Templates extends SettingsPage
 {
     protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-bottom-center-text';
 
@@ -22,9 +22,7 @@ class ManageSmsTemplates extends SettingsPage
 
     protected static string $settings = SmsTemplates::class;
 
-    protected static ?string $cluster = Settings::class;
-
-    protected static ?string $title = 'SMS Templates';
+    protected static ?string $cluster = SmsSettingsCluster::class;
 
     public function form(Form $form): Form
     {

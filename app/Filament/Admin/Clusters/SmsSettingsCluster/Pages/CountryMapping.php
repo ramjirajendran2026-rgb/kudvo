@@ -1,27 +1,24 @@
 <?php
 
-namespace App\Filament\Admin\Clusters\Settings\Pages;
+namespace App\Filament\Admin\Clusters\SmsSettingsCluster\Pages;
 
 use App\Enums\SmsChannel;
-use App\Filament\Admin\Clusters\Settings;
+use App\Filament\Admin\Clusters\SmsSettingsCluster;
 use App\Forms\Components\CountryPicker;
 use App\Settings\SmsSettings;
 use Filament\Forms;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
 
-class ManageSmsSettings extends SettingsPage
+class CountryMapping extends SettingsPage
 {
-    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-ellipsis';
+    protected static ?string $navigationIcon = 'heroicon-o-globe-alt';
 
-    protected static ?string $activeNavigationIcon = 'heroicon-s-chat-bubble-left-ellipsis';
+    protected static ?string $activeNavigationIcon = 'heroicon-s-globe-alt';
 
     protected static string $settings = SmsSettings::class;
 
-    protected static ?string $cluster = Settings::class;
-
-    protected static ?string $title = 'SMS Settings';
+    protected static ?string $cluster = SmsSettingsCluster::class;
 
     public function form(Form $form): Form
     {

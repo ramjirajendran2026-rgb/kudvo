@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Admin\Clusters\ElectionManagement\Resources;
+namespace App\Filament\Admin\Resources;
 
 use App\Data\Election\PlanFeatureData;
 use App\Enums\ElectionFeature;
@@ -30,9 +30,12 @@ class ElectionPlanResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-banknotes';
 
-    protected static ?string $cluster = ElectionManagement::class;
-
     protected static ?string $modelLabel = 'Plan';
+
+    public static function getNavigationGroup(): ?string
+    {
+        return 'Election';
+    }
 
     public static function form(Form $form): Form
     {
@@ -181,9 +184,9 @@ class ElectionPlanResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListElectionPlans::route('/'),
-            'create' => Pages\CreateElectionPlan::route('/create'),
-            'edit' => Pages\EditElectionPlan::route('/{record}/edit'),
+            'index' => ElectionPlanResource\Pages\ListElectionPlans::route('/'),
+            'create' => ElectionPlanResource\Pages\CreateElectionPlan::route('/create'),
+            'edit' => ElectionPlanResource\Pages\EditElectionPlan::route('/{record}/edit'),
         ];
     }
 
