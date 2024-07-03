@@ -14,6 +14,9 @@ use Coderflex\FilamentTurnstile\Forms\Components\Turnstile;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use Filament\Forms\Components\Actions\Action as FormsAction;
+use Filament\Forms\Components\Contracts\CanBeLengthConstrained;
+use Filament\Forms\Components\Field;
+use Filament\Forms\Components\Textarea;
 use Filament\Http\Responses\Auth\Contracts\LogoutResponse as LogoutResponseContract;
 use Filament\Infolists\Components\Actions\Action as InfolistAction;
 use Filament\Notifications\Livewire\Notifications;
@@ -29,6 +32,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\HtmlString;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 
@@ -117,6 +121,35 @@ class AppServiceProvider extends ServiceProvider
 
         Notifications::alignment(alignment: Alignment::Center);
         Notifications::verticalAlignment(alignment: VerticalAlignment::Start);
+
+        Textarea::configureUsing(
+            modifyUsing: fn (Textarea $component) => $component
+                ->autosize()
+        );
+        Field::macro(
+            name: 'charCounter',
+            macro: function (int $count = 60) {
+                $this->helperText(
+                    text: function (CanBeLengthConstrained $component) use ($count) {
+                        $liveCount = '$wire.'.$component->getStatePath();
+
+                        return new HtmlString(
+                            html: <<<HTML
+<div
+    x-data="{get liveCount() { return $liveCount != null ? $liveCount.length : 0 }}"
+    class="text-end"
+    :class="liveCount > $count ? 'text-danger-600 dark:text-danger-400' : null"
+    x-text="liveCount+'/$count'"
+>
+</div>
+HTML
+                        );
+                    }
+                );
+
+                return $this;
+            }
+        );
 
         Table::$defaultDateTimeDisplayFormat = 'M j, Y h:i:s A';
         Table::$defaultDateDisplayFormat = 'M j, Y';
