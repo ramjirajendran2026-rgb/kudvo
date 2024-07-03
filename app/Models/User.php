@@ -10,6 +10,7 @@ use Filament\Models\Contracts\HasTenants;
 use Filament\Panel;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -48,6 +49,13 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasMedia,
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    protected function displayName(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value, array $attributes) => $this->name ?: $this->email,
+        );
+    }
 
     public function organisations(): BelongsToMany
     {
