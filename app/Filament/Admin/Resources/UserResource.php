@@ -5,12 +5,14 @@ namespace App\Filament\Admin\Resources;
 use App\Filament\Admin\Resources\UserResource\Pages;
 use App\Models\User;
 use Exception;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\IconPosition;
 use Filament\Tables;
 use Filament\Tables\Table;
+use STS\FilamentImpersonate\Tables\Actions\Impersonate;
 
 class UserResource extends Resource
 {
@@ -47,6 +49,10 @@ class UserResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->actions(actions: [
+                Impersonate::make()
+                    ->redirectTo(redirectTo: fn (User $record): string => Filament::getPanel(id: 'app')->getUrl()),
+            ])
             ->columns(components: [
                 Tables\Columns\TextColumn::make(name: 'id')
                     ->sortable(),

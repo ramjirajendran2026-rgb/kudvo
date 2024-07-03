@@ -54,6 +54,7 @@
         "spatie/laravel-settings": "^3.2",
         "spatie/laravel-translatable": "^6.7",
         "squirephp/currencies-en": "^3.5",
+        "stechstudio/filament-impersonate": "^3.9",
         "symfony/psr-http-message-bridge": "^7.0",
         "ysfkaya/filament-phone-input": "^2.2"
     },
