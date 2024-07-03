@@ -3,15 +3,12 @@
 namespace App\Filament\Admin\Resources;
 
 use App\Filament\Admin\Resources\WikiPageResource\Pages;
-use App\Filament\Admin\Resources\WikiPageResource\RelationManagers;
 use App\Models\WikiPage;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class WikiPageResource extends Resource
 {
@@ -26,20 +23,47 @@ class WikiPageResource extends Resource
         return $form
             ->columns(columns: null)
             ->schema([
-                Forms\Components\TextInput::make(name: 'title')
-                    ->maxLength(length: 255)
-                    ->required(),
+                Forms\Components\Section::make()
+                    ->schema(components: [
+                        Forms\Components\TextInput::make(name: 'title')
+                            ->afterStateUpdated(callback: function (?string $state, Forms\Get $get, Forms\Set $set, ?string $old) {
+                                if ($old == $get('seo.title')) {
+                                    $set('seo.title', $state);
+                                }
+                            })
+                            ->live(onBlur: true)
+                            ->maxLength(length: 255)
+                            ->required(),
 
-                Forms\Components\SpatieMediaLibraryFileUpload::make(name: 'cover')
-                    ->collection(collection: WikiPage::MEDIA_COLLECTION_COVER)
-                    ->image()
-                    ->imageCropAspectRatio(ratio: '16:9')
-                    ->imageEditor()
-                    ->imageEditorAspectRatios(ratios: ['16:9', '1:1']),
+                        Forms\Components\SpatieMediaLibraryFileUpload::make(name: 'cover')
+                            ->collection(collection: WikiPage::MEDIA_COLLECTION_COVER)
+                            ->image()
+                            ->imageCropAspectRatio(ratio: '16:9')
+                            ->imageEditor()
+                            ->imageEditorAspectRatios(ratios: ['16:9', '1:1']),
 
-                Forms\Components\Textarea::make(name: 'summary'),
+                        Forms\Components\Textarea::make(name: 'summary')
+                            ->afterStateUpdated(callback: function (?string $state, Forms\Get $get, Forms\Set $set, ?string $old) {
+                                if ($old == $get('seo.description')) {
+                                    $set('seo.description', $state);
+                                }
+                            })
+                            ->live(onBlur: true),
 
-                Forms\Components\RichEditor::make(name: 'content'),
+                        Forms\Components\RichEditor::make(name: 'content'),
+                    ]),
+
+                Forms\Components\Section::make(heading: 'SEO')
+                    ->relationship(name: 'seo')
+                    ->schema(components: [
+                        Forms\Components\TextInput::make(name: 'title')
+                            ->charCounter()
+                            ->maxLength(length: 255),
+
+                        Forms\Components\Textarea::make(name: 'description')
+                            ->charCounter(count: 160)
+                            ->maxLength(length: 255),
+                    ]),
             ]);
     }
 
