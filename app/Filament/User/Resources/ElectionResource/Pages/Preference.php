@@ -671,11 +671,13 @@ class Preference extends ElectionPage
                                     ->visible(condition: static fn (Get $get): bool => $get(path: 'web_app_manifest_enabled'))
                                     ->schema(components: [
                                         TextInput::make(name: 'name')
+                                            ->charCounter(count: 80)
                                             ->label(label: 'Name')
-                                            ->maxLength(length: 100)
+                                            ->maxLength(length: 80)
                                             ->required(),
 
                                         TextInput::make(name: 'short_name')
+                                            ->charCounter(count: 12)
                                             ->label(label: 'Short name')
                                             ->maxLength(length: 12)
                                             ->required(),
