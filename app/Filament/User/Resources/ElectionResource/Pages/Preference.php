@@ -212,13 +212,15 @@ class Preference extends ElectionPage
                                     ->live(),
 
                                 Quantity::make(name: 'ip_restriction_threshold')
+                                    ->dehydratedWhenHidden()
+                                    ->dehydrateStateUsing(callback: fn (Get $get, ?int $state): ?int => $get('ip_restriction') ? ($state ?: 1) : null)
                                     ->formatStateUsing(callback: static fn (?int $state): ?int => $state ?: 1)
                                     ->hiddenLabel()
                                     ->heading(heading: __('filament.user.election-resource.pages.preference.form.ip_restriction_threshold.heading'))
                                     ->maxValue(value: 10000)
                                     ->minValue(value: 1)
                                     ->numeric()
-                                    ->required()
+                                    ->requiredIfAccepted(statePath: 'ip_restriction')
                                     ->visible(condition: static fn (Get $get): bool => $get(path: 'ip_restriction')),
                             ]),
 
