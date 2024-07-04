@@ -31,3 +31,19 @@
         @apply rounded-none border-gray-200 bg-inherit shadow-none ring-0 dark:border-white/10 dark:bg-inherit;
     }
 }
+
+.fi-page.fi-resource-list-records-page.fi-resource-elections {
+    .fi-ta-ctn {
+        @apply divide-y-0 bg-transparent shadow-none ring-0;
+
+        .fi-ta-record {
+            & > div.flex:first-child {
+                @apply h-full;
+
+                & > div.flex:first-child {
+                    @apply h-full;
+                }
+            }
+        }
+    }
+}

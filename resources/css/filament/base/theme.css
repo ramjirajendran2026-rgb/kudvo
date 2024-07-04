@@ -13,6 +13,10 @@ input[type='number'] {
     -moz-appearance: textfield;
 }
 
+.fi-tabs-item-label {
+    @apply text-nowrap;
+}
+
 .filepond--file .filepond--file-action-button {
     background-color: rgba(0, 0, 0, 0.5);
 }

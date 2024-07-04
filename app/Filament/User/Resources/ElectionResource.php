@@ -23,6 +23,7 @@ use Filament\Resources\Concerns\Translatable;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\IconPosition;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Tables;
@@ -32,7 +33,6 @@ use Filament\Tables\Actions\ReplicateAction as ReplicateTableAction;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\Str;
 
 class ElectionResource extends Resource
 {
@@ -103,51 +103,54 @@ class ElectionResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make(name: 'sno')
-                    ->alignCenter()
-                    ->label(label: __('filament.user.elector-resource.table.sno.label'))
-                    ->rowIndex(),
+                Tables\Columns\Layout\Stack::make(schema: [
+                    Tables\Columns\Layout\Split::make(schema: [
+                        Tables\Columns\TextColumn::make(name: 'code')
+                            ->badge()
+                            ->size(size: Tables\Columns\TextColumn\TextColumnSize::Large)
+                            ->copyable()
+                            ->grow(condition: false)
+                            ->icon(icon: 'heroicon-m-clipboard-document')
+                            ->iconPosition(iconPosition: IconPosition::After)
+                            ->label(label: __('filament.user.election-resource.table.code.label')),
 
-                Tables\Columns\TextColumn::make(name: 'code')
-                    ->alignCenter()
-                    ->badge()
-                    ->copyable()
-                    ->icon(icon: 'heroicon-m-clipboard-document')
-                    ->iconPosition(iconPosition: IconPosition::After)
-                    ->label(label: __('filament.user.election-resource.table.code.label')),
+                        Tables\Columns\TextColumn::make(name: 'status')
+                            ->badge()
+                            ->grow(condition: false)
+                            ->label(label: __('filament.user.election-resource.table.status.label')),
+                    ]),
 
-                Tables\Columns\TextColumn::make(name: 'name')
-                    ->alignCenter()
-                    ->label(label: __('filament.user.election-resource.table.name.label'))
-                    ->wrap(),
+                    Tables\Columns\TextColumn::make(name: 'name')
+                        ->weight(weight: FontWeight::SemiBold)
+                        ->label(label: __('filament.user.election-resource.table.name.label'))
+                        ->size(size: Tables\Columns\TextColumn\TextColumnSize::Large)
+                        ->wrap(),
 
-                Tables\Columns\TextColumn::make(name: 'starts_at_local')
-                    ->alignCenter()
-                    ->date()
-                    ->description(description: fn (Election $record): ?string => $record->starts_at_local?->format(format: Table::$defaultTimeDisplayFormat))
-                    ->label(label: __('filament.user.election-resource.table.starts_at.label'))
-                    ->sortable(condition: ['starts_at'])
-                    ->tooltip(tooltip: fn (Election $record): ?string => TimezonePicker::getDisplayLabel($record->ends_at_local?->timezone->getName() ?? 'UTC')),
+                    Tables\Columns\Layout\Split::make(schema: [
+                        Tables\Columns\TextColumn::make(name: 'starts_at_local')
+                            ->dateTime()
+                            ->description(description: __('filament.user.election-resource.table.starts_at.label'), position: 'above')
+                            ->label(label: __('filament.user.election-resource.table.starts_at.label'))
+                            ->tooltip(tooltip: fn (Election $record): ?string => TimezonePicker::getDisplayLabel($record->ends_at_local?->timezone->getName() ?? 'UTC')),
 
-                Tables\Columns\TextColumn::make(name: 'ends_at_local')
-                    ->alignCenter()
-                    ->date()
-                    ->description(description: fn (Election $record): ?string => $record->ends_at_local?->format(format: Table::$defaultTimeDisplayFormat))
-                    ->label(label: __('filament.user.election-resource.table.ends_at.label'))
-                    ->sortable(condition: ['ends_at'])
-                    ->tooltip(tooltip: fn (Election $record): ?string => TimezonePicker::getDisplayLabel($record->starts_at_local?->timezone->getName() ?? 'UTC')),
-
-                Tables\Columns\TextColumn::make(name: 'status')
-                    ->alignCenter()
-                    ->badge()
-                    ->label(label: __('filament.user.election-resource.table.status.label')),
+                        Tables\Columns\TextColumn::make(name: 'ends_at_local')
+                            ->alignEnd()
+                            ->dateTime()
+                            ->description(description: __('filament.user.election-resource.table.ends_at.label'), position: 'above')
+                            ->label(label: __('filament.user.election-resource.table.ends_at.label'))
+                            ->tooltip(tooltip: fn (Election $record): ?string => TimezonePicker::getDisplayLabel($record->starts_at_local?->timezone->getName() ?? 'UTC')),
+                    ]),
+                ])->space(),
             ])
             ->actions(actions: [
                 Tables\Actions\ActionGroup::make(actions: [
                     static::getReplicateAction(),
 
                     DeleteTableAction::make(),
-                ]),
+                ])->dropdownPlacement(placement: 'bottom-start'),
+            ])
+            ->contentGrid(grid: [
+                'md' => 2,
             ])
             ->defaultSort(column: 'id', direction: 'desc')
             ->emptyStateActions(actions: [
@@ -157,7 +160,13 @@ class ElectionResource extends Resource
             ->headerActions(actions: [
                 static::getCreateTableAction(),
             ])
-            ->heading(heading: Str::title(value: static::getPluralModelLabel()))
+            ->recordClasses(classes: fn (Election $election) => match ($election->status->getColor()) {
+                'info' => '!bg-info-600/30 dark:!bg-info-400/30',
+                'primary' => '!bg-primary-600/30 dark:!bg-primary-400/30',
+                'success' => '!bg-success-600/30 dark:!bg-success-400/30',
+                'warning' => '!bg-warning-600/30 dark:!bg-warning-400/30',
+                default => null,
+            })
             ->recordUrl(url: fn (Election $election) => $election->getPendingStep()?->getUrl([$election]) ?? static::getUrl(name: 'dashboard', parameters: [$election]))
             ->relationship(relationship: fn (): Relation => Filament::getTenant()?->elections());
     }
