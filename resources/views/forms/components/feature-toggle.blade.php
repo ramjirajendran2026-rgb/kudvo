@@ -10,7 +10,7 @@
     <x-filament::badge
         x-data="{}"
         size="sm"
-        color="warning"
+        color="primary"
         :x-tooltip="filled($addOnTooltip) ? '{ content: ' . \Illuminate\Support\Js::from($addOnTooltip) . ', theme: $store.theme }' : null"
     >
         {{ __('app.add_on') }}

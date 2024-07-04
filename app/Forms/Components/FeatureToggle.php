@@ -29,8 +29,17 @@ class FeatureToggle extends Toggle
         $this->electorFee(fee: $electorFee);
         $this->feeCurrency(currency: $feeCurrency);
         $this->hideAddOnPrice(condition: $hideAddOnPrice);
-        $this->hint(
-            hint: function (self $component) {
+
+        $this->hintColor(color: 'primary');
+        $this->hintIcon(
+            icon: function (self $component) {
+                if (! $component->isAddOn() || $component->shouldHideAddOnPrice()) {
+                    return null;
+                }
+
+                return 'heroicon-o-banknotes';
+            },
+            tooltip: function (self $component) {
                 if (! $component->isAddOn() || $component->shouldHideAddOnPrice()) {
                     return null;
                 }
