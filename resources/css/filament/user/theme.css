@@ -32,7 +32,7 @@
     }
 }
 
-.fi-page.fi-resource-list-records-page.fi-resource-elections {
+.fi-page.fi-resource-list-records-page.fi-resource-elections:has(.pg-election-list) {
     .fi-ta-ctn {
         @apply divide-y-0 bg-transparent shadow-none ring-0;
 

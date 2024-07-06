@@ -160,11 +160,12 @@ class ElectionResource extends Resource
             ->headerActions(actions: [
                 static::getCreateTableAction(),
             ])
+            ->paginationPageOptions(options: [6, 10, 20])
             ->recordClasses(classes: fn (Election $election) => match ($election->status->getColor()) {
-                'info' => '!bg-info-600/30 dark:!bg-info-400/30',
-                'primary' => '!bg-primary-600/30 dark:!bg-primary-400/30',
-                'success' => '!bg-success-600/30 dark:!bg-success-400/30',
-                'warning' => '!bg-warning-600/30 dark:!bg-warning-400/30',
+                'info' => '!bg-info-100 dark:!bg-info-400/30',
+                'primary' => '!bg-primary-100 dark:!bg-primary-400/30',
+                'success' => '!bg-success-100 dark:!bg-success-400/30',
+                'warning' => '!bg-warning-100 dark:!bg-warning-400/30',
                 default => null,
             })
             ->recordUrl(url: fn (Election $election) => $election->getPendingStep()?->getUrl([$election]) ?? static::getUrl(name: 'dashboard', parameters: [$election]))

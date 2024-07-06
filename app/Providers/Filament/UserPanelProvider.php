@@ -9,6 +9,7 @@ use App\Filament\User\Pages\Auth\Login;
 use App\Filament\User\Pages\Auth\Register;
 use App\Filament\User\Pages\Organisation\EditOrganisationProfile;
 use App\Filament\User\Pages\Organisation\Register as RegisterOrganisation;
+use App\Filament\User\Resources\ElectionResource\Pages\ManageElections;
 use App\Models\Organisation;
 use Exception;
 use Filament\Http\Middleware\Authenticate;
@@ -18,6 +19,7 @@ use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\SpatieLaravelTranslatablePlugin;
 use Filament\Support\Colors\Color;
+use Filament\View\PanelsRenderHook;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -25,6 +27,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\HtmlString;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use ipinfo\ipinfolaravel\ipinfolaravel;
 
@@ -83,6 +86,11 @@ class UserPanelProvider extends PanelProvider
             ->topNavigation()
             ->breadcrumbs(condition: false)
             ->spa()
+            ->renderHook(
+                name: PanelsRenderHook::PAGE_START,
+                hook: fn () => new HtmlString(html: '<span class="pg-election-list hidden"></span>'),
+                scopes: ManageElections::class
+            )
             ->plugins(plugins: [
                 SpatieLaravelTranslatablePlugin::make()
                     ->defaultLocales(defaultLocales: array_keys(config('laravellocalization.supportedLocales'))),
