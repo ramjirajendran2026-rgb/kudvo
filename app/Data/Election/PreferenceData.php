@@ -4,6 +4,7 @@ namespace App\Data\Election;
 
 use App\Data\WebAppManifestData;
 use App\Enums\CandidateSort;
+use App\Models\Elector;
 use Spatie\LaravelData\Data;
 
 class PreferenceData extends Data
@@ -64,11 +65,15 @@ class PreferenceData extends Data
         public bool $booth_voting = false,
 
         public ?WebAppManifestData $web_app_manifest = null,
-    ) {
-    }
+    ) {}
 
-    public function isBallotLinkBlastNeeded(): bool
+    public function isBallotLinkBlastNeeded(?Elector $elector = null): bool
     {
-        return $this->ballot_link_mail || $this->ballot_link_sms;
+        if (blank($elector)) {
+            return $this->ballot_link_mail || $this->ballot_link_sms;
+        }
+
+        return (filled($elector?->email) && $this->ballot_link_mail) ||
+            (filled($elector?->phone) && $this->ballot_link_sms);
     }
 }

@@ -33,6 +33,7 @@ class ElectorPolicy
 
         return $election instanceof Election &&
             $election->is_published &&
+            $election->preference->isBallotLinkBlastNeeded(elector: $elector) &&
             ! $elector->ballot?->isVoted();
     }
 }
