@@ -18,6 +18,7 @@ use Filament\Pages\Page;
 use Filament\Panel;
 use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\Alignment;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -36,6 +37,11 @@ class Preview extends Page implements HasElection
     public bool $flashVotes = false;
 
     protected static bool $shouldRegisterNavigation = false;
+
+    public function getTitle(): string|Htmlable
+    {
+        return 'Ballot Preview - ' . $this->getElection()->name;
+    }
 
     public static function getWithoutRouteMiddleware(Panel $panel): string|array
     {

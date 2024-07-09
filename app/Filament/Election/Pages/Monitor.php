@@ -11,6 +11,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Filament\Actions\Action;
 use Filament\Pages\Page;
 use Filament\Panel;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
 use Jenssegers\Agent\Agent;
@@ -74,6 +75,11 @@ class Monitor extends Page
         return [
             $this->getDownloadAction(),
         ];
+    }
+
+    public function getTitle(): string|Htmlable
+    {
+        return 'Monitor - ' . $this->getElection()->name;
     }
 
     protected function getDownloadAction(): Action
