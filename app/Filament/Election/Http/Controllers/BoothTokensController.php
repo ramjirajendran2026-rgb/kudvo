@@ -2,6 +2,7 @@
 
 namespace App\Filament\Election\Http\Controllers;
 
+use App\Events\Election\Booth\Activated;
 use App\Facades\Kudvo;
 use App\Filament\Election\Pages\Index;
 use App\Http\Controllers\Controller;
@@ -33,6 +34,8 @@ class BoothTokensController extends Controller
                 Cookie::forever(name: 'election_'.$token->election->getKey().'_booth_token', value: $token->key)
             );
         }
+
+        broadcast(new Activated(boothId: $token->getKey()));
 
         return redirect()->to(Index::getUrl());
     }
