@@ -3,6 +3,7 @@
 namespace App\Filament\User\Resources\ElectionResource\Pages;
 
 use App\Enums\ElectionCollaboratorPermission;
+use App\Events\Election\Booth\Activated;
 use App\Events\Election\Booth\PrintBallot;
 use App\Events\ElectorAssignedToBoothEvent;
 use App\Events\ElectorCastedVoteInBoothEvent;
@@ -45,6 +46,7 @@ class BoothTokens extends ElectionPage implements HasTable
     {
         $listeners = parent::getListeners();
 
+        $listeners['echo-private:elections.'.$this->getElection()->id.',.'.Activated::getBroadcastName()] = '$refresh';
         $listeners['echo-private:elections.'.$this->getElection()->id.',.'.ElectorAssignedToBoothEvent::getBroadcastName()] = '$refresh';
         $listeners['echo-private:elections.'.$this->getElection()->id.',.'.ElectorRevokedFromBoothEvent::getBroadcastName()] = '$refresh';
         $listeners['echo-private:elections.'.$this->getElection()->id.',.'.ElectorCastedVoteInBoothEvent::getBroadcastName()] = '$refresh';
