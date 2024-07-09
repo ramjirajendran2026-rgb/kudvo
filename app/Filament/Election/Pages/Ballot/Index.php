@@ -19,6 +19,7 @@ use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\Alignment;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cookie;
@@ -42,6 +43,11 @@ class Index extends BasePage
 
     #[Locked]
     public bool $isVoted = false;
+
+    public function getTitle(): string|Htmlable
+    {
+        return 'Ballot - ' . $this->getElection()->name;
+    }
 
     public function mountCanAuthorizeAccess(): void
     {
