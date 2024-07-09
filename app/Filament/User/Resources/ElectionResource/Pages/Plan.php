@@ -70,6 +70,12 @@ class Plan extends ElectionPage
 
             SelectAction::make(name: 'currency')
                 ->options(Arr::mapWithKeys(config('app.supported_currencies'), fn ($currency) => [$currency => $currency])),
+
+            Action::make(name: 'back')
+                ->color(color: 'gray')
+                ->icon(icon: 'heroicon-o-arrow-uturn-left')
+                ->url(url: Preference::getUrl(parameters: [$this->getElection()]))
+                ->visible(condition: fn (): bool => filled($this->getElection()->plan_id)),
         ];
     }
 
