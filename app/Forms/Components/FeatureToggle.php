@@ -37,7 +37,7 @@ class FeatureToggle extends Toggle
                     return null;
                 }
 
-                return 'heroicon-o-banknotes';
+                return ($this->getElectorFee() || $this->getFeatureFee()) ? 'heroicon-o-banknotes' : null;
             },
             tooltip: function (self $component) {
                 if (! $component->isAddOn() || $component->shouldHideAddOnPrice()) {
@@ -46,7 +46,7 @@ class FeatureToggle extends Toggle
 
                 return collect(value: [
                     $component->getElectorFee() ? money(amount: $component->getElectorFee(), currency: $component->getFeeCurrency()).'/elector' : null,
-                    $component->getFeatureFee() ? money(amount: $component->getFeatureFee(), currency: $component->getFeeCurrency()) : null,
+                    $component->getFeatureFee() ? money(amount: $component->getFeatureFee(), currency: $component->getFeeCurrency()).'' : null,
                 ])->filter(callback: fn ($fee): bool => filled(value: $fee))->implode(value: ' + ') ?: null;
             }
         );
