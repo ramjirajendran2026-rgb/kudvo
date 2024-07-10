@@ -113,6 +113,6 @@
             "php-http/discovery": true
         }
     },
-    "minimum-stability": "stable",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "minimum-stability": "stable"
 }
