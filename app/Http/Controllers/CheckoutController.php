@@ -20,7 +20,7 @@ class CheckoutController extends Controller
     {
         $sessionId = $request->query(key: 'session_id');
 
-        $session = Cashier::stripe()->checkout->sessions->retrieve(id: $sessionId, params: ['expand' => ['invoice']]);
+        $session = Cashier::stripe()->checkout->sessions->retrieve(id: $sessionId, params: ['expand' => ['invoice.charge']]);
 
         $related = filled($session->metadata) ? ($session->metadata['related_type'] ?? null) : null;
 
