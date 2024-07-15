@@ -145,6 +145,7 @@ class ElectorResource extends Resource
     public static function getTableImportAction(): TableImportAction
     {
         return TableImportAction::make()
+            ->chunkSize(size: 50)
             ->color(color: 'gray')
             ->icon(icon: 'heroicon-s-arrow-up-tray')
             ->importer(importer: ElectorImporter::class)

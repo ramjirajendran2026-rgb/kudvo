@@ -254,8 +254,6 @@ class Dashboard extends ElectionPage
             ->action(action: function (self $livewire) {
                 $election = $livewire->getElection();
 
-                config(['app.name' => 'SecuredVoting']); // TODO: Remove this line after the issue is fixed
-
                 $pdf = Pdf::loadView(
                     'pdf.election.physical-ballot',
                     [

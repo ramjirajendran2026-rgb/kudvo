@@ -11,7 +11,10 @@ use App\Data\Election\VoteSecretData;
 use App\Enums\ElectionSetupStep;
 use App\Enums\ElectionStatus;
 use App\Enums\InvoiceStatus;
+use App\Filament\Imports\CandidateImporter;
+use App\Filament\Imports\ElectorImporter;
 use App\Models\Concerns\HasShortCode;
+use Filament\Actions\Imports\Models\Import;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -312,6 +315,25 @@ class Election extends Model
     {
         return $this->hasOne(related: ElectionResult::class)
             ->latestOfMany();
+    }
+
+    public function imports(): BelongsToMany
+    {
+        return $this->belongsToMany(related: Import::class)
+            ->using(class: ElectionImport::class)
+            ->withPivot(columns: ['options', 'column_map']);
+    }
+
+    public function electorImports(): BelongsToMany
+    {
+        return $this->imports()
+            ->where('importer', ElectorImporter::class);
+    }
+
+    public function candidateImports(): BelongsToMany
+    {
+        return $this->imports()
+            ->where('importer', CandidateImporter::class);
     }
 
     public function scopeCancelled(Builder $query): Builder
