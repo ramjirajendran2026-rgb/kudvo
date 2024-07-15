@@ -191,8 +191,9 @@ class Dashboard extends ElectionPage
 
                 ElectionResource::getCancelAction(),
 
-                Action::make(name: 'download_invoice')
-                    ->url(url: fn (self $livewire) => $livewire->getElection()->stripe_invoice_data['invoice_pdf'])
+                Action::make(name: 'payment_receipt')
+                    ->icon(icon: 'heroicon-s-receipt-percent')
+                    ->url(url: fn (self $livewire) => $livewire->getElection()->stripe_invoice_data['charge']['receipt_url'], shouldOpenInNewTab: true)
                     ->visible(condition: fn (self $livewire) => filled($livewire->getElection()->stripe_invoice_data)),
 
             ])->dropdownPlacement(placement: 'bottom-end'),
