@@ -18,7 +18,7 @@
     @foreach (ElectionSetupStep::cases() as $step)
         <li class="relative flex">
             <a
-                href="{{ $step->getUrl($this->getSubNavigationParameters()) ?? '#' }}"
+                {{ \Filament\Support\generate_href_html($step->getUrl($this->getSubNavigationParameters()) ?? '#') }}
                 class="flex h-full items-center gap-x-4 px-6 py-4 text-start"
             >
                 <div
