@@ -86,6 +86,7 @@ class UserPanelProvider extends PanelProvider
             ->topNavigation()
             ->breadcrumbs(condition: false)
             ->spa()
+            ->unsavedChangesAlerts()
             ->renderHook(
                 name: PanelsRenderHook::PAGE_START,
                 hook: fn () => new HtmlString(html: '<span class="pg-election-list hidden"></span>'),
