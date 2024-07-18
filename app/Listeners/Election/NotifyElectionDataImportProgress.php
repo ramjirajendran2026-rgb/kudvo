@@ -2,16 +2,16 @@
 
 namespace App\Listeners\Election;
 
-use App\Events\Election\ElectionDataImportJobProcessed;
+use App\Events\Election\ElectionDataImportChunkProcessed;
 use App\Filament\Imports\CandidateImporter;
 use App\Filament\Imports\ElectorImporter;
 use App\Models\Election;
-use Filament\Actions\Imports\Events\ImportCsvProcessed;
+use Filament\Actions\Imports\Events\ImportChunkProcessed;
 use Illuminate\Database\Eloquent\Builder;
 
 class NotifyElectionDataImportProgress
 {
-    public function handle(ImportCsvProcessed $event): void
+    public function handle(ImportChunkProcessed$event): void
     {
         $import = $event->getImport();
 
@@ -27,7 +27,7 @@ class NotifyElectionDataImportProgress
             return;
         }
 
-        broadcast(event: new ElectionDataImportJobProcessed(
+        broadcast(event: new ElectionDataImportChunkProcessed(
             electionId: $election->getKey(),
             importId: $event->getImport()->getKey()
         ));

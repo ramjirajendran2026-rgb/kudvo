@@ -17,9 +17,9 @@ use App\Listeners\LogTwentyFourSevenSmsSentMessage;
 use App\Listeners\SendNomineeNominatedNotifications;
 use App\Services\Clicksend\SmsSent;
 use App\Services\TwentyFourSevenSms\SmsMessageSent;
+use Filament\Actions\Imports\Events\ImportChunkProcessed;
 use Filament\Actions\Imports\Events\ImportCompleted;
-use Filament\Actions\Imports\Events\ImportCsvProcessed;
-use Filament\Actions\Imports\Events\ImportInitiated;
+use Filament\Actions\Imports\Events\ImportStarted;
 use Illuminate\Auth\Events\CurrentDeviceLogout;
 use Illuminate\Auth\Events\Logout;
 use Illuminate\Auth\Events\Registered;
@@ -64,7 +64,7 @@ class EventServiceProvider extends ServiceProvider
         Verified::class => [
             NotifyEmailVerified::class,
         ],
-        ImportInitiated::class => [
+        ImportStarted::class => [
             AssociateElectorImportToElection::class,
             AssociateCandidateImportToElection::class,
         ],
@@ -72,7 +72,7 @@ class EventServiceProvider extends ServiceProvider
             NotifyElectorImportCompletion::class,
             NotifyCandidateImportCompletion::class,
         ],
-        ImportCsvProcessed::class => [
+        ImportChunkProcessed::class => [
             NotifyElectionDataImportProgress::class,
         ],
     ];

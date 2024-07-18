@@ -4,13 +4,13 @@ namespace App\Listeners\Election;
 
 use App\Filament\Imports\ElectorImporter;
 use App\Models\Election;
-use Filament\Actions\Imports\Events\ImportInitiated;
+use Filament\Actions\Imports\Events\ImportStarted;
 
 class AssociateElectorImportToElection
 {
     public function __construct() {}
 
-    public function handle(ImportInitiated $event): void
+    public function handle(ImportStarted $event): void
     {
         if (
             $event->getImport()->importer !== ElectorImporter::class ||

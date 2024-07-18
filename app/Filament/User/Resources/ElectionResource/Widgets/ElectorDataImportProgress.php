@@ -2,7 +2,7 @@
 
 namespace App\Filament\User\Resources\ElectionResource\Widgets;
 
-use App\Events\Election\ElectionDataImportJobProcessed;
+use App\Events\Election\ElectionDataImportChunkProcessed;
 use App\Models\Election;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
@@ -37,7 +37,7 @@ class ElectorDataImportProgress extends Widget implements HasActions, HasForms
     protected function getListeners(): array
     {
         return [
-            'echo-private:elections.'.$this->election->id.',.'.ElectionDataImportJobProcessed::getBroadcastName() => 'sync',
+            'echo-private:elections.'.$this->election->id.',.'.ElectionDataImportChunkProcessed::getBroadcastName() => 'sync',
         ];
     }
 
