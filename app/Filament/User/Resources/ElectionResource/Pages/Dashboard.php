@@ -193,7 +193,7 @@ class Dashboard extends ElectionPage
 
                 Action::make(name: 'payment_receipt')
                     ->icon(icon: 'heroicon-s-receipt-percent')
-                    ->url(url: fn (self $livewire) => $livewire->getElection()->stripe_invoice_data['charge']['receipt_url'], shouldOpenInNewTab: true)
+                    ->url(url: fn (self $livewire) => (($charge = $livewire->getElection()->stripe_invoice_data['charge'] ?? null) && is_array($charge)) ? $charge['receipt_url'] : $livewire->getElection()->stripe_invoice_data['invoice_pdf'], shouldOpenInNewTab: true)
                     ->visible(condition: fn (self $livewire) => filled($livewire->getElection()->stripe_invoice_data)),
 
             ])->dropdownPlacement(placement: 'bottom-end'),
