@@ -4,9 +4,12 @@ namespace App\Filament\User\Resources\ElectionResource\Pages;
 
 use App\Enums\ElectionCollaboratorPermission;
 use App\Enums\ElectionSetupStep;
+use App\Enums\ElectionStatus;
+use App\Events\Election\CandidateImportCompleted;
 use App\Filament\Base\Contracts\HasElection;
 use App\Filament\Imports\CandidateImporter;
 use App\Filament\User\Resources\CandidateResource;
+use App\Filament\User\Resources\ElectionResource\Widgets\ElectorDataImportProgress;
 use App\Filament\User\Resources\PositionResource;
 use App\Models\Candidate;
 use App\Models\Election;
@@ -16,6 +19,7 @@ use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ImportAction;
+use Filament\Actions\Imports\Models\Import;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
@@ -42,6 +46,15 @@ class BallotSetup extends ElectionPage
     protected static ?string $navigationIcon = 'heroicon-o-list-bullet';
 
     protected static ?string $activeNavigationIcon = 'heroicon-s-list-bullet';
+
+    protected function getListeners(): array
+    {
+        return [
+            ...parent::getListeners(),
+
+            'echo-private:elections.'.$this->getElection()->id.',.'.CandidateImportCompleted::getBroadcastName() => 'notifyImportCompletion',
+        ];
+    }
 
     public static function getNavigationLabel(): string
     {
@@ -112,7 +125,7 @@ class BallotSetup extends ElectionPage
                                                     text: fn (Candidate $record): ?string => collect(value: [
                                                         $record->membership_number,
                                                         $this->getElection()->preference->candidate_group ? $record->candidateGroup?->name : null,
-                                                        ! $record->disabled && $record->position->isUnopposed() ? 'Unopposed' : null,
+                                                        ! $record->disabled && $record->position?->isUnopposed() ? 'Unopposed' : null,
                                                     ])
                                                         ->filter(callback: fn (?string $item): bool => filled($item))
                                                         ->implode(value: ' • ')
@@ -193,6 +206,25 @@ HTML,
         );
     }
 
+    protected function getHeaderWidgets(): array
+    {
+        return $this->getImportProgressWidgets();
+    }
+
+    protected function getImportProgressWidgets(): array
+    {
+        if ($this->getElection()->status !== ElectionStatus::DRAFT) {
+            return [];
+        }
+
+        return $this->getElection()
+            ->candidateImports()
+            ->whereNull(columns: 'completed_at')
+            ->get()
+            ->map(callback: fn (Import $import) => ElectorDataImportProgress::make(['import' => $import]))
+            ->toArray();
+    }
+
     protected function getHeaderActions(): array
     {
         return [
@@ -263,7 +295,7 @@ HTML,
                     ->hiddenLabel()
                     ->orderColumn()
                     ->relationship()
-                    ->reorderable() // TODO: Bug in filament
+                    ->reorderable()
                     ->simple(field: TextInput::make(name: 'name')->disabled()),
             ])
             ->icon(icon: 'heroicon-m-arrows-up-down')
@@ -368,7 +400,7 @@ HTML,
                             ->hiddenLabel()
                             ->orderColumn()
                             ->relationship()
-                            ->reorderable() // TODO: Bug in filament
+                            ->reorderable()
                             ->simple(
                                 field: TextInput::make(name: 'display_name')
                                     ->disabled()
@@ -388,6 +420,7 @@ HTML,
     {
         return ImportAction::make(name: 'importCandidate')
             ->authorize(abilities: 'importCandidate')
+            ->chunkSize(size: 25)
             ->icon(icon: 'heroicon-m-arrow-up-tray')
             ->importer(importer: CandidateImporter::class)
             ->label(label: __('filament.user.election-resource.pages.ballot_setup.actions.import_candidate.label'))
@@ -396,7 +429,7 @@ HTML,
                 'election_id' => $this->getElection()->getKey(),
                 'locale' => app()->currentLocale(),
             ])
-            ->visible(condition: $this->hasFullAccess());
+            ->visible(condition: fn (): bool => $this->canImportCandidate());
     }
 
     protected function getCreateCandidateAction(): InfolistAction
@@ -570,5 +603,11 @@ HTML,
     {
         return parent::canAccessPage(election: $election) &&
             static::can(action: 'viewBallotSetup', election: $election);
+    }
+
+    protected function canImportCandidate(): bool
+    {
+        return $this->hasFullAccess()
+            && $this->getElection()->candidateImports()->whereNull('completed_at')->count() < 1;
     }
 }

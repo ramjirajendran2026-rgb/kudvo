@@ -28,6 +28,7 @@ use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Notifications\Notification;
+use Filament\Pages\Concerns\HasUnsavedDataChangesAlert;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Support\Enums\Alignment;
 use Illuminate\Database\Eloquent\Collection;
@@ -38,6 +39,7 @@ use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class Preference extends ElectionPage
 {
+    use HasUnsavedDataChangesAlert;
     use InteractsWithFormActions;
 
     protected static string $view = 'filament.user.resources.election-resource.pages.preference';

@@ -191,8 +191,9 @@ class Dashboard extends ElectionPage
 
                 ElectionResource::getCancelAction(),
 
-                Action::make(name: 'download_invoice')
-                    ->url(url: fn (self $livewire) => $livewire->getElection()->stripe_invoice_data['invoice_pdf'])
+                Action::make(name: 'payment_receipt')
+                    ->icon(icon: 'heroicon-s-receipt-percent')
+                    ->url(url: fn (self $livewire) => (($charge = $livewire->getElection()->stripe_invoice_data['charge'] ?? null) && is_array($charge)) ? $charge['receipt_url'] : $livewire->getElection()->stripe_invoice_data['invoice_pdf'], shouldOpenInNewTab: true)
                     ->visible(condition: fn (self $livewire) => filled($livewire->getElection()->stripe_invoice_data)),
 
             ])->dropdownPlacement(placement: 'bottom-end'),
@@ -253,8 +254,6 @@ class Dashboard extends ElectionPage
         return Action::make(name: 'download_physical_ballot')
             ->action(action: function (self $livewire) {
                 $election = $livewire->getElection();
-
-                config(['app.name' => 'SecuredVoting']); // TODO: Remove this line after the issue is fixed
 
                 $pdf = Pdf::loadView(
                     'pdf.election.physical-ballot',

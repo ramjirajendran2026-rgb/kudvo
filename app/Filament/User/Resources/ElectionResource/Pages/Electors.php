@@ -4,12 +4,15 @@ namespace App\Filament\User\Resources\ElectionResource\Pages;
 
 use App\Enums\ElectionCollaboratorPermission;
 use App\Enums\ElectionSetupStep;
+use App\Events\Election\ElectorImportCompleted;
 use App\Filament\Base\Contracts\HasElection;
 use App\Filament\User\Resources\ElectionResource;
+use App\Filament\User\Resources\ElectionResource\Widgets\ElectorDataImportProgress;
 use App\Filament\User\Resources\ElectorResource;
 use App\Models\Election;
 use App\Models\Elector;
 use Filament\Actions\Action;
+use Filament\Actions\Imports\Models\Import;
 use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Filament\Resources\Concerns\InteractsWithRelationshipTable;
@@ -33,6 +36,15 @@ class Electors extends ElectionPage implements HasTable
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
 
     protected static ?string $activeNavigationIcon = 'heroicon-s-user-group';
+
+    protected function getListeners(): array
+    {
+        return [
+            ...parent::getListeners(),
+
+            'echo-private:elections.'.$this->getElection()->id.',.'.ElectorImportCompleted::getBroadcastName() => 'notifyImportCompletion',
+        ];
+    }
 
     public static function getRelationshipName(): string
     {
@@ -101,12 +113,25 @@ class Electors extends ElectionPage implements HasTable
 
     protected function getHeaderWidgets(): array
     {
-        return match (true) {
-            $this->canShowStats() => [
-                ElectionResource\Widgets\ElectionStatsOverview::class,
-            ],
-            default => [],
-        };
+        return [
+            ...$this->canShowStats() ? [ElectionResource\Widgets\ElectionStatsOverview::class] : [],
+
+            ...$this->getImportProgressWidgets(),
+        ];
+    }
+
+    protected function getImportProgressWidgets(): array
+    {
+        if (! $this->getElection()->is_draft) {
+            return [];
+        }
+
+        return $this->getElection()
+            ->electorImports()
+            ->whereNull(columns: 'completed_at')
+            ->get()
+            ->map(callback: fn (Import $import) => ElectorDataImportProgress::make(['import' => $import]))
+            ->toArray();
     }
 
     protected function getHeaderActions(): array
@@ -287,7 +312,9 @@ class Electors extends ElectionPage implements HasTable
 
     protected function canImport(): bool
     {
-        return $this->hasFullAccess() && static::can(action: 'importElector', election: $this->getElection());
+        return $this->hasFullAccess()
+            && static::can(action: 'importElector', election: $this->getElection())
+            && $this->getElection()->electorImports()->whereNull('completed_at')->count() < 1;
     }
 
     protected function canEdit(): bool

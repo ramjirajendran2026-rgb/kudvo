@@ -56,4 +56,6 @@
             />
         </x-filament::section>
     @endif
+
+    <x-filament-panels::page.unsaved-data-changes-alert />
 </x-filament-panels::page>
