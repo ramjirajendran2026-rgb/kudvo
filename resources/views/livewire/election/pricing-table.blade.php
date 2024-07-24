@@ -41,7 +41,10 @@
                     @endif
 
                     <li class="flex gap-2">
-                        <x-filament::icon icon="heroicon-o-check-circle" class="h-6 w-6 text-green-500" />
+                        <x-filament::icon
+                            icon="heroicon-o-check-circle"
+                            class="h-6 w-6 text-green-500"
+                        />
                         <span>
                             {{ $feature->feature->getLabel() }}
                         </span>
@@ -53,14 +56,25 @@
                         @click="showAddOns = ! showAddOns"
                         class="flex cursor-pointer items-center gap-2 text-primary-600"
                     >
-                        <x-filament::icon x-show="! showAddOns" icon="heroicon-o-plus" class="h-6 w-6" />
-                        <x-filament::icon x-show="showAddOns" icon="heroicon-o-chevron-up" class="h-6 w-6" />
+                        <x-filament::icon
+                            x-show="! showAddOns"
+                            icon="heroicon-o-plus"
+                            class="h-6 w-6"
+                        />
+                        <x-filament::icon
+                            x-show="showAddOns"
+                            icon="heroicon-o-chevron-up"
+                            class="h-6 w-6"
+                        />
                         <span class="font-semibold">Add-ons</span>
                         <hr class="flex-1" />
                     </li>
                     @foreach ($plan->addOnFeatures() as $feature)
                         <li x-show="showAddOns" class="flex gap-2">
-                            <x-filament::icon icon="heroicon-o-sparkles" class="h-6 w-6 text-green-500" />
+                            <x-filament::icon
+                                icon="heroicon-o-sparkles"
+                                class="h-6 w-6 text-green-500"
+                            />
                             <span>
                                 {{ $feature->feature->getLabel() }}
                             </span>

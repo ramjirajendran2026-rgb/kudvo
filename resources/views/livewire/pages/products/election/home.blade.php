@@ -10,8 +10,13 @@
 
 <main class="pg-el pg-home h-full w-full">
     <section id="hero" class="py-16">
-        <div class="mx-auto flex max-w-screen-lg flex-col items-center justify-center gap-6 lg:flex-row">
-            <div data-aos="fade-right" class="flex-1 space-y-6 text-center lg:space-y-8 lg:text-start">
+        <div
+            class="mx-auto flex max-w-screen-lg flex-col items-center justify-center gap-6 lg:flex-row"
+        >
+            <div
+                data-aos="fade-right"
+                class="flex-1 space-y-6 text-center lg:space-y-8 lg:text-start"
+            >
                 <h2 class="font-sans text-3xl font-bold sm:text-4xl">
                     {{ __('pages/products/election/home.content.hero.title') }}
                 </h2>
@@ -38,8 +43,10 @@
     </section>
 
     <section id="benefits" class="bg-white py-16">
-        <div class="container grid gap-6 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-10">
-            <div class="col-span-full animate-zoomIn space-y-4">
+        <div
+            class="container grid gap-6 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-10"
+        >
+            <div class="animate-zoomIn col-span-full space-y-4">
                 <h3 class="text-center text-2xl font-semibold sm:text-3xl">
                     {{ __('pages/products/election/home.content.benefits.title') }}
                 </h3>
@@ -51,7 +58,9 @@
             @foreach ($benefits as $item)
                 <div class="space-y-4 text-center">
                     {!! $item->icon !!}
-                    <h5 class="text-lf font-semibold sm:text-xl">{{ $item->title }}</h5>
+                    <h5 class="text-lf font-semibold sm:text-xl">
+                        {{ $item->title }}
+                    </h5>
                     <p class="text-gray-600">
                         {{ $item->description }}
                     </p>
@@ -61,7 +70,9 @@
     </section>
 
     <section id="how-it-works" class="py-16">
-        <div class="container grid gap-6 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-10">
+        <div
+            class="container grid gap-6 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-10"
+        >
             <div class="col-span-full space-y-4">
                 <h3 class="text-center text-2xl font-semibold sm:text-3xl">
                     {{ __('pages/products/election/home.content.how_it_works.title') }}
@@ -74,7 +85,9 @@
             @foreach ($howItWorks as $item)
                 <div class="space-y-4 text-center">
                     {!! $item->icon !!}
-                    <h5 class="text-lf font-semibold sm:text-xl">{{ $item->title }}</h5>
+                    <h5 class="text-lf font-semibold sm:text-xl">
+                        {{ $item->title }}
+                    </h5>
                     <p class="text-gray-600">
                         {{ $item->description }}
                     </p>
@@ -99,8 +112,15 @@
             <div
                 class="{{ $loop->even ? 'md:flex-row-reverse' : 'md:flex-row' }} container flex flex-col items-center justify-center gap-6"
             >
-                <div class="flex flex-1 items-center justify-center" data-aos="flip-left">
-                    <img src="{{ $section['image'] }}" alt="{{ $section['title'] }}" class="h-80 object-contain" />
+                <div
+                    class="flex flex-1 items-center justify-center"
+                    data-aos="flip-left"
+                >
+                    <img
+                        src="{{ $section['image'] }}"
+                        alt="{{ $section['title'] }}"
+                        class="h-80 object-contain"
+                    />
                 </div>
                 <div class="flex-1 space-y-6 lg:space-y-8">
                     <h3 class="text-2xl font-semibold sm:text-3xl">

@@ -1,5 +1,6 @@
 @php
     use function Filament\Support\prepare_inherited_attributes;
+
     $id = $getId();
     $isConcealed = $isConcealed();
     $isDisabled = $isDisabled();
@@ -132,7 +133,7 @@
                     :valid="! $errors->has($statePath)"
                     :attributes="
                         \Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())
-                        ->class(['overflow-hidden'])
+                            ->class(['overflow-hidden'])
                     "
                 >
                     <input
@@ -140,7 +141,7 @@
                         type="{{ $isNumeric ? 'number' : 'text' }}"
                         required
                         {!! $isDisabled ? 'disabled' : 'wire:loading.attr="disabled"' !!}
-                        class="fi-input fi-otp-input block w-full border-none bg-white/0 py-1.5 pe-3 ps-3 text-center text-base text-gray-950 transition duration-75 placeholder:text-gray-400 focus:ring-0 disabled:text-gray-500 disabled:[-webkit-text-fill-color:theme(colors.gray.500)] disabled:placeholder:[-webkit-text-fill-color:theme(colors.gray.400)] sm:text-sm sm:leading-6 dark:text-white dark:placeholder:text-gray-500 dark:disabled:text-gray-400 dark:disabled:[-webkit-text-fill-color:theme(colors.gray.400)] dark:disabled:placeholder:[-webkit-text-fill-color:theme(colors.gray.500)]"
+                        class="fi-input fi-otp-input block w-full border-none bg-white/0 py-1.5 pe-3 ps-3 text-center text-base text-gray-950 transition duration-75 placeholder:text-gray-400 focus:ring-0 disabled:text-gray-500 disabled:[-webkit-text-fill-color:theme(colors.gray.500)] disabled:placeholder:[-webkit-text-fill-color:theme(colors.gray.400)] dark:text-white dark:placeholder:text-gray-500 dark:disabled:text-gray-400 dark:disabled:[-webkit-text-fill-color:theme(colors.gray.400)] dark:disabled:placeholder:[-webkit-text-fill-color:theme(colors.gray.500)] sm:text-sm sm:leading-6"
                         x-ref="{{ $column }}"
                         x-bind:readonly="readOnly || (autoFillOnly && ! ios)"
                         x-on:keydown="handleKeydown($event, {{ $column }})"

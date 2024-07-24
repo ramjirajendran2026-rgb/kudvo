@@ -1,4 +1,4 @@
-import preset from '../../../../vendor/filament/filament/tailwind.config.preset';
+import preset from '../../../../vendor/filament/filament/tailwind.config.preset'
 
 export default {
     presets: [preset],
@@ -16,4 +16,4 @@ export default {
 
         './vendor/bezhansalleh/filament-language-switch/resources/views/language-switch.blade.php',
     ],
-};
+}
