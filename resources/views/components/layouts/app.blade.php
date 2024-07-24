@@ -81,9 +81,18 @@
                 class="container flex h-16 gap-x-4 lg:items-center lg:justify-between"
             >
                 <div class="flex w-full items-center justify-between lg:w-auto">
-                    <a href="{{ route('home') }}" class="flex cursor-pointer items-center gap-2">
-                        <img src="{{ asset('img/nav-logo.png') }}" alt="Logo" class="h-12" />
-                        <div class="text-xl font-bold leading-5 tracking-tight text-gray-950 dark:text-white">
+                    <a
+                        href="{{ route('home') }}"
+                        class="flex cursor-pointer items-center gap-2"
+                    >
+                        <img
+                            src="{{ asset('img/nav-logo.png') }}"
+                            alt="Logo"
+                            class="h-12"
+                        />
+                        <div
+                            class="text-xl font-bold leading-5 tracking-tight text-gray-950 dark:text-white"
+                        >
                             {{ config('app.name') }}
                         </div>
                     </a>
@@ -113,7 +122,9 @@
                     />
                 </div>
 
-                <ul class="hidden flex-1 items-center gap-x-4 lg:flex lg:justify-center">
+                <ul
+                    class="hidden flex-1 items-center gap-x-4 lg:flex lg:justify-center"
+                >
                     <x-filament-panels::topbar.item :url="route('home')">
                         {{ __('app.nav.home.label') }}
                     </x-filament-panels::topbar.item>
@@ -146,7 +157,9 @@
                         </x-filament::dropdown.list>
                     </x-filament::dropdown>
 
-                    <x-filament-panels::topbar.item :url="route('home').'#clientele'">
+                    <x-filament-panels::topbar.item
+                        :url="route('home').'#clientele'"
+                    >
                         {{ __('app.nav.clientele.label') }}
                     </x-filament-panels::topbar.item>
 
@@ -156,7 +169,9 @@
                         </x-filament-panels::topbar.item>
                     --}}
 
-                    <x-filament-panels::topbar.item :url="route('home').'#contact'">
+                    <x-filament-panels::topbar.item
+                        :url="route('home').'#contact'"
+                    >
                         {{ __('app.nav.contact.label') }}
                     </x-filament-panels::topbar.item>
                 </ul>
@@ -165,15 +180,25 @@
                     <x-locale-switch />
 
                     @auth
-                        <x-filament::button :href="route('filament.user.auth.login')" tag="a">
+                        <x-filament::button
+                            :href="route('filament.user.auth.login')"
+                            tag="a"
+                        >
                             {{ __('app.nav.dashboard.label') }}
                         </x-filament::button>
                     @else
-                        <x-filament::button color="gray" :href="route('filament.user.auth.login')" tag="a">
+                        <x-filament::button
+                            color="gray"
+                            :href="route('filament.user.auth.login')"
+                            tag="a"
+                        >
                             {{ __('app.nav.sign_in.label') }}
                         </x-filament::button>
 
-                        <x-filament::button :href="route('filament.user.auth.register')" tag="a">
+                        <x-filament::button
+                            :href="route('filament.user.auth.register')"
+                            tag="a"
+                        >
                             {{ __('app.nav.sign_up.label') }}
                         </x-filament::button>
                     @endauth
@@ -184,7 +209,9 @@
                     @click.away="isOpen = false"
                     class="absolute inset-x-2 top-20 z-50 origin-top-right transform space-y-6 rounded-xl bg-white px-4 py-6 shadow-lg transition lg:hidden"
                 >
-                    <ul class="flex w-full flex-col items-start space-y-4 lg:flex-row">
+                    <ul
+                        class="flex w-full flex-col items-start space-y-4 lg:flex-row"
+                    >
                         <x-filament-panels::topbar.item :url="route('home')">
                             {{ __('app.nav.home.label') }}
                         </x-filament-panels::topbar.item>
@@ -218,7 +245,9 @@
                             </x-filament::dropdown.list>
                         </x-filament::dropdown>
 
-                        <x-filament-panels::topbar.item :url="route('home').'#clientele'">
+                        <x-filament-panels::topbar.item
+                            :url="route('home').'#clientele'"
+                        >
                             {{ __('app.nav.clientele.label') }}
                         </x-filament-panels::topbar.item>
 
@@ -228,7 +257,9 @@
                             </x-filament-panels::topbar.item>
                         --}}
 
-                        <x-filament-panels::topbar.item :url="route('home').'#contact'">
+                        <x-filament-panels::topbar.item
+                            :url="route('home').'#contact'"
+                        >
                             {{ __('app.nav.contact.label') }}
                         </x-filament-panels::topbar.item>
                     </ul>
@@ -237,7 +268,11 @@
                         <x-locale-switch />
 
                         @auth
-                            <x-filament::button :href="route('filament.user.auth.login')" tag="a" class="flex-1">
+                            <x-filament::button
+                                :href="route('filament.user.auth.login')"
+                                tag="a"
+                                class="flex-1"
+                            >
                                 {{ __('app.nav.dashboard.label') }}
                             </x-filament::button>
                         @else
@@ -250,7 +285,11 @@
                                 {{ __('app.nav.sign_in.label') }}
                             </x-filament::button>
 
-                            <x-filament::button :href="route('filament.user.auth.register')" tag="a" class="flex-1">
+                            <x-filament::button
+                                :href="route('filament.user.auth.register')"
+                                tag="a"
+                                class="flex-1"
+                            >
                                 {{ __('app.nav.sign_up.label') }}
                             </x-filament::button>
                         @endauth
@@ -262,9 +301,13 @@
         {{ $slot }}
 
         <footer class="border-t bg-white">
-            <div class="container grid grid-cols-2 gap-4 px-4 py-8 md:grid-cols-4 md:gap-8 md:px-6 lg:px-8">
+            <div
+                class="container grid grid-cols-2 gap-4 px-4 py-8 md:grid-cols-4 md:gap-8 md:px-6 lg:px-8"
+            >
                 <div class="space-y-4">
-                    <h6 class="text-xl font-semibold">{{ __('app.nav.products.label') }}</h6>
+                    <h6 class="text-xl font-semibold">
+                        {{ __('app.nav.products.label') }}
+                    </h6>
                     <ul class="list-none space-y-2">
                         <li>
                             <a href="{{ route('products.election.home') }}">
@@ -272,18 +315,26 @@
                             </a>
                         </li>
                         <li>
-                            <a href="#">{{ __('app.nav.products.items.resolution_voting.label') }}</a>
+                            <a href="#">
+                                {{ __('app.nav.products.items.resolution_voting.label') }}
+                            </a>
                         </li>
                     </ul>
                 </div>
                 <div class="space-y-4">
-                    <h6 class="text-xl font-semibold">{{ __('app.footer.quick_links.label') }}</h6>
+                    <h6 class="text-xl font-semibold">
+                        {{ __('app.footer.quick_links.label') }}
+                    </h6>
                     <ul class="list-none space-y-2">
                         <li>
-                            <a href="{{ route('home') }}">{{ __('app.nav.home.label') }}</a>
+                            <a href="{{ route('home') }}">
+                                {{ __('app.nav.home.label') }}
+                            </a>
                         </li>
                         <li>
-                            <a href="{{ route('home') }}#contact">{{ __('app.nav.contact.label') }}</a>
+                            <a href="{{ route('home') }}#contact">
+                                {{ __('app.nav.contact.label') }}
+                            </a>
                         </li>
                         {{--
                             <li>
@@ -291,24 +342,44 @@
                             </li>
                         --}}
                         <li>
-                            <a href="{{ route('privacy-policy') }}">{{ __('app.nav.privacy_policy.label') }}</a>
+                            <a href="{{ route('privacy-policy') }}">
+                                {{ __('app.nav.privacy_policy.label') }}
+                            </a>
                         </li>
                     </ul>
                 </div>
-                <div class="col-span-full space-y-4 text-center md:col-span-2 md:text-start">
+                <div
+                    class="col-span-full space-y-4 text-center md:col-span-2 md:text-start"
+                >
                     <p>{{ __('app.footer.description') }}</p>
-                    <div class="flex items-center justify-center gap-4 md:justify-start">
-                        <x-filament::icon icon="heroicon-o-phone" class="h-6 w-6" />
+                    <div
+                        class="flex items-center justify-center gap-4 md:justify-start"
+                    >
+                        <x-filament::icon
+                            icon="heroicon-o-phone"
+                            class="h-6 w-6"
+                        />
                         <div class="text-lg">
                             <span>{{ __('app.contact.phone.label') }}</span>
-                            <a href="tel:{{ __('app.contact.phone.number') }}" class="cursor-pointer text-nowrap">
+                            <a
+                                href="tel:{{ __('app.contact.phone.number') }}"
+                                class="cursor-pointer text-nowrap"
+                            >
                                 {{ __('app.contact.phone.number') }}
                             </a>
                         </div>
                     </div>
-                    <div class="flex items-center justify-center gap-4 md:justify-start">
-                        <x-filament::icon icon="heroicon-o-envelope" class="h-6 w-6" />
-                        <a href="mailto://{{ __('app.contact.email.address') }}" class="cursor-pointer text-lg">
+                    <div
+                        class="flex items-center justify-center gap-4 md:justify-start"
+                    >
+                        <x-filament::icon
+                            icon="heroicon-o-envelope"
+                            class="h-6 w-6"
+                        />
+                        <a
+                            href="mailto://{{ __('app.contact.email.address') }}"
+                            class="cursor-pointer text-lg"
+                        >
                             {{ __('app.contact.email.address') }}
                         </a>
                     </div>
@@ -324,7 +395,11 @@
                                 xmlns="http://www.w3.org/2000/svg"
                             >
                                 <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                                <g
+                                    id="SVGRepo_tracerCarrier"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                ></g>
                                 <g id="SVGRepo_iconCarrier">
                                     <title>facebook</title>
                                     <path
@@ -344,7 +419,11 @@
                                 xmlns="http://www.w3.org/2000/svg"
                             >
                                 <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                                <g
+                                    id="SVGRepo_tracerCarrier"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                ></g>
                                 <g id="SVGRepo_iconCarrier">
                                     <path
                                         d="M10 .4C4.698.4.4 4.698.4 10s4.298 9.6 9.6 9.6 9.6-4.298 9.6-9.6S15.302.4 10 .4zM7.65 13.979H5.706V7.723H7.65v6.256zm-.984-7.024c-.614 0-1.011-.435-1.011-.973 0-.549.409-.971 1.036-.971s1.011.422 1.023.971c0 .538-.396.973-1.048.973zm8.084 7.024h-1.944v-3.467c0-.807-.282-1.355-.985-1.355-.537 0-.856.371-.997.728-.052.127-.065.307-.065.486v3.607H8.814v-4.26c0-.781-.025-1.434-.051-1.996h1.689l.089.869h.039c.256-.408.883-1.01 1.932-1.01 1.279 0 2.238.857 2.238 2.699v3.699z"
@@ -372,8 +451,12 @@
                 </div>
             </div>
             <div class="bg-black text-white md:flex-row">
-                <div class="container flex flex-col items-center justify-center px-4 py-4 md:flex-row lg:px-8">
-                    <span>&copy; {{ date('Y ') . ' - ' . config('app.name') }}</span>
+                <div
+                    class="container flex flex-col items-center justify-center px-4 py-4 md:flex-row lg:px-8"
+                >
+                    <span>
+                        &copy; {{ date('Y ').' - '.config('app.name') }}
+                    </span>
                 </div>
             </div>
         </footer>

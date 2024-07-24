@@ -8,7 +8,10 @@
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net" />
-        <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
+        <link
+            href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap"
+            rel="stylesheet"
+        />
 
         <!-- Styles -->
         <style>
@@ -67,8 +70,8 @@
             kbd,
             pre,
             samp {
-                font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
-                    monospace;
+                font-family: ui-monospace, SFMono-Regular, Menlo, Monaco,
+                    Consolas, 'Liberation Mono', 'Courier New', monospace;
                 font-size: 1em;
             }
             small {
@@ -424,8 +427,13 @@
             .scale-100 {
                 --tw-scale-x: 1;
                 --tw-scale-y: 1;
-                transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate))
-                    skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+                transform: translate(
+                        var(--tw-translate-x),
+                        var(--tw-translate-y)
+                    )
+                    rotate(var(--tw-rotate)) skewX(var(--tw-skew-x))
+                    skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x))
+                    scaleY(var(--tw-scale-y));
             }
             .grid-cols-1 {
                 grid-template-columns: repeat(1, minmax(0, 1fr));
@@ -469,11 +477,13 @@
             .from-gray-700\/50 {
                 --tw-gradient-from: rgb(55 65 81 / 0.5);
                 --tw-gradient-to: rgb(55 65 81 / 0);
-                --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+                --tw-gradient-stops: var(--tw-gradient-from),
+                    var(--tw-gradient-to);
             }
             .via-transparent {
                 --tw-gradient-to: rgb(0 0 0 / 0);
-                --tw-gradient-stops: var(--tw-gradient-from), transparent, var(--tw-gradient-to);
+                --tw-gradient-stops: var(--tw-gradient-from), transparent,
+                    var(--tw-gradient-to);
             }
             .bg-center {
                 background-position: center;
@@ -534,7 +544,8 @@
             .shadow-2xl {
                 --tw-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
                 --tw-shadow-colored: 0 25px 50px -12px var(--tw-shadow-color);
-                box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+                box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000),
+                    var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
             }
             .shadow-gray-500\/20 {
                 --tw-shadow-color: rgb(107 114 128 / 0.2);
@@ -591,8 +602,12 @@
                 .motion-safe\:hover\:scale-\[1\.01\]:hover {
                     --tw-scale-x: 1.01;
                     --tw-scale-y: 1.01;
-                    transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate))
-                        skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x))
+                    transform: translate(
+                            var(--tw-translate-x),
+                            var(--tw-translate-y)
+                        )
+                        rotate(var(--tw-rotate)) skewX(var(--tw-skew-x))
+                        skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x))
                         scaleY(var(--tw-scale-y));
                 }
             }
@@ -611,7 +626,10 @@
                     background-image: url("data:image/svg+xml,%3Csvg width='30' height='30' viewBox='0 0 30 30' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1.22676 0C1.91374 0 2.45351 0.539773 2.45351 1.22676C2.45351 1.91374 1.91374 2.45351 1.22676 2.45351C0.539773 2.45351 0 1.91374 0 1.22676C0 0.539773 0.539773 0 1.22676 0Z' fill='rgba(255,255,255,0.07)'/%3E%3C/svg%3E");
                 }
                 .dark\:bg-gradient-to-bl {
-                    background-image: linear-gradient(to bottom left, var(--tw-gradient-stops));
+                    background-image: linear-gradient(
+                        to bottom left,
+                        var(--tw-gradient-stops)
+                    );
                 }
                 .dark\:stroke-gray-600 {
                     stroke: #4b5563;
@@ -627,15 +645,17 @@
                 .dark\:shadow-none {
                     --tw-shadow: 0 0 #0000;
                     --tw-shadow-colored: 0 0 #0000;
-                    box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000),
-                        var(--tw-shadow);
+                    box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000),
+                        var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
                 }
                 .dark\:ring-1 {
-                    --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width)
-                        var(--tw-ring-offset-color);
-                    --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width))
+                    --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0
+                        var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+                    --tw-ring-shadow: var(--tw-ring-inset) 0 0 0
+                        calc(1px + var(--tw-ring-offset-width))
                         var(--tw-ring-color);
-                    box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+                    box-shadow: var(--tw-ring-offset-shadow),
+                        var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
                 }
                 .dark\:ring-inset {
                     --tw-ring-inset: inset;
@@ -700,7 +720,7 @@
     </head>
     <body class="antialiased">
         <div
-            class="bg-dots-darker dark:bg-dots-lighter relative min-h-screen bg-gray-100 bg-center selection:bg-red-500 selection:text-white sm:flex sm:items-center sm:justify-center dark:bg-gray-900"
+            class="bg-dots-darker dark:bg-dots-lighter relative min-h-screen bg-gray-100 bg-center selection:bg-red-500 selection:text-white dark:bg-gray-900 sm:flex sm:items-center sm:justify-center"
         >
             @if (Route::has('login'))
                 <div class="z-10 p-6 text-right sm:fixed sm:right-0 sm:top-0">
@@ -771,11 +791,19 @@
                                     </svg>
                                 </div>
 
-                                <h2 class="mt-6 text-xl font-semibold text-gray-900 dark:text-white">Documentation</h2>
+                                <h2
+                                    class="mt-6 text-xl font-semibold text-gray-900 dark:text-white"
+                                >
+                                    Documentation
+                                </h2>
 
-                                <p class="mt-4 text-sm leading-relaxed text-gray-500 dark:text-gray-400">
-                                    Laravel has wonderful documentation covering every aspect of the framework. Whether
-                                    you are a newcomer or have prior experience with Laravel, we recommend reading our
+                                <p
+                                    class="mt-4 text-sm leading-relaxed text-gray-500 dark:text-gray-400"
+                                >
+                                    Laravel has wonderful documentation covering
+                                    every aspect of the framework. Whether you
+                                    are a newcomer or have prior experience with
+                                    Laravel, we recommend reading our
                                     documentation from beginning to end.
                                 </p>
                             </div>
@@ -817,11 +845,19 @@
                                     </svg>
                                 </div>
 
-                                <h2 class="mt-6 text-xl font-semibold text-gray-900 dark:text-white">Laracasts</h2>
+                                <h2
+                                    class="mt-6 text-xl font-semibold text-gray-900 dark:text-white"
+                                >
+                                    Laracasts
+                                </h2>
 
-                                <p class="mt-4 text-sm leading-relaxed text-gray-500 dark:text-gray-400">
-                                    Laracasts offers thousands of video tutorials on Laravel, PHP, and JavaScript
-                                    development. Check them out, see for yourself, and massively level up your
+                                <p
+                                    class="mt-4 text-sm leading-relaxed text-gray-500 dark:text-gray-400"
+                                >
+                                    Laracasts offers thousands of video
+                                    tutorials on Laravel, PHP, and JavaScript
+                                    development. Check them out, see for
+                                    yourself, and massively level up your
                                     development skills in the process.
                                 </p>
                             </div>
@@ -864,12 +900,20 @@
                                     </svg>
                                 </div>
 
-                                <h2 class="mt-6 text-xl font-semibold text-gray-900 dark:text-white">Laravel News</h2>
+                                <h2
+                                    class="mt-6 text-xl font-semibold text-gray-900 dark:text-white"
+                                >
+                                    Laravel News
+                                </h2>
 
-                                <p class="mt-4 text-sm leading-relaxed text-gray-500 dark:text-gray-400">
-                                    Laravel News is a community driven portal and newsletter aggregating all of the
-                                    latest and most important news in the Laravel ecosystem, including new package
-                                    releases and tutorials.
+                                <p
+                                    class="mt-4 text-sm leading-relaxed text-gray-500 dark:text-gray-400"
+                                >
+                                    Laravel News is a community driven portal
+                                    and newsletter aggregating all of the latest
+                                    and most important news in the Laravel
+                                    ecosystem, including new package releases
+                                    and tutorials.
                                 </p>
                             </div>
 
@@ -910,12 +954,17 @@
                                     </svg>
                                 </div>
 
-                                <h2 class="mt-6 text-xl font-semibold text-gray-900 dark:text-white">
+                                <h2
+                                    class="mt-6 text-xl font-semibold text-gray-900 dark:text-white"
+                                >
                                     Vibrant Ecosystem
                                 </h2>
 
-                                <p class="mt-4 text-sm leading-relaxed text-gray-500 dark:text-gray-400">
-                                    Laravel's robust library of first-party tools and libraries, such as
+                                <p
+                                    class="mt-4 text-sm leading-relaxed text-gray-500 dark:text-gray-400"
+                                >
+                                    Laravel's robust library of first-party
+                                    tools and libraries, such as
                                     <a
                                         href="https://forge.laravel.com"
                                         class="underline hover:text-gray-700 focus:rounded-sm focus:outline focus:outline-2 focus:outline-red-500 dark:hover:text-white"
@@ -943,7 +992,8 @@
                                     >
                                         Envoyer
                                     </a>
-                                    help you take your projects to the next level. Pair them with powerful open source
+                                    help you take your projects to the next
+                                    level. Pair them with powerful open source
                                     libraries like
                                     <a
                                         href="https://laravel.com/docs/billing"
@@ -993,8 +1043,12 @@
                     </div>
                 </div>
 
-                <div class="mt-16 flex justify-center px-0 sm:items-center sm:justify-between">
-                    <div class="text-center text-sm text-gray-500 sm:text-left dark:text-gray-400">
+                <div
+                    class="mt-16 flex justify-center px-0 sm:items-center sm:justify-between"
+                >
+                    <div
+                        class="text-center text-sm text-gray-500 dark:text-gray-400 sm:text-left"
+                    >
                         <div class="flex items-center gap-4">
                             <a
                                 href="https://github.com/sponsors/taylorotwell"
@@ -1018,8 +1072,12 @@
                         </div>
                     </div>
 
-                    <div class="ml-4 text-center text-sm text-gray-500 sm:ml-0 sm:text-right dark:text-gray-400">
-                        Laravel v{{ Illuminate\Foundation\Application::VERSION }} (PHP v{{ PHP_VERSION }})
+                    <div
+                        class="ml-4 text-center text-sm text-gray-500 dark:text-gray-400 sm:ml-0 sm:text-right"
+                    >
+                        Laravel
+                        v{{ Illuminate\Foundation\Application::VERSION }} (PHP
+                        v{{ PHP_VERSION }})
                     </div>
                 </div>
             </div>

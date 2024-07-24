@@ -11,7 +11,7 @@
         x-data="{}"
         size="sm"
         color="primary"
-        :x-tooltip="filled($addOnTooltip) ? '{ content: ' . \Illuminate\Support\Js::from($addOnTooltip) . ', theme: $store.theme }' : null"
+        :x-tooltip="filled($addOnTooltip) ? '{ content: '.\Illuminate\Support\Js::from($addOnTooltip).', theme: $store.theme }' : null"
     >
         {{ __('app.add_on') }}
     </x-filament::badge>
