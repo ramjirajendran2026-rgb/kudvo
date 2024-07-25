@@ -17,6 +17,5 @@ class CollaboratorPermissionsData extends Data
         public ElectionCollaboratorPermission $booth_tokens = ElectionCollaboratorPermission::NoAccess,
         public ElectionCollaboratorPermission $monitor_tokens = ElectionCollaboratorPermission::NoAccess,
         public ElectionCollaboratorPermission $elector_logs = ElectionCollaboratorPermission::NoAccess,
-    ) {
-    }
+    ) {}
 }

@@ -21,7 +21,7 @@ class ElectorDataImportProgress extends Widget implements HasActions, HasForms
 
     protected static string $view = 'filament.user.resources.election-resource.widgets.import-progress';
 
-    protected int|string|array $columnSpan = 'full';
+    protected int | string | array $columnSpan = 'full';
 
     protected static bool $isLazy = false;
 
@@ -37,7 +37,7 @@ class ElectorDataImportProgress extends Widget implements HasActions, HasForms
     protected function getListeners(): array
     {
         return [
-            'echo-private:elections.'.$this->election->id.',.'.ElectionDataImportChunkProcessed::getBroadcastName() => 'sync',
+            'echo-private:elections.' . $this->election->id . ',.' . ElectionDataImportChunkProcessed::getBroadcastName() => 'sync',
         ];
     }
 
@@ -53,7 +53,7 @@ class ElectorDataImportProgress extends Widget implements HasActions, HasForms
 
     public function getProgress(): string
     {
-        return $this->getImport()->processed_rows.'/'.$this->getImport()->total_rows.' ('.$this->getPercentage().')';
+        return $this->getImport()->processed_rows . '/' . $this->getImport()->total_rows . ' (' . $this->getPercentage() . ')';
     }
 
     public function getPercentage(): string

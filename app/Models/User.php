@@ -100,7 +100,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasMedia,
         };
     }
 
-    public function getTenants(Panel $panel): array|Collection
+    public function getTenants(Panel $panel): array | Collection
     {
         return $this->organisations
             ->merge(

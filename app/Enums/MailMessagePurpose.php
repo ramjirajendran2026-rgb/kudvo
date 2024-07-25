@@ -27,8 +27,7 @@ enum MailMessagePurpose: string implements HasLabel
     }
 
     /**
-     * @param array<UnitEnum>|null $cases
-     * @return array
+     * @param  array<UnitEnum>|null  $cases
      */
     public static function getTabs(?array $cases = null): array
     {

@@ -31,6 +31,6 @@ class NominationPanel extends Panel implements ResolvesNomination
 
     public function getPath(): string
     {
-        return parent::getPath().'/{nomination}';
+        return parent::getPath() . '/{nomination}';
     }
 }

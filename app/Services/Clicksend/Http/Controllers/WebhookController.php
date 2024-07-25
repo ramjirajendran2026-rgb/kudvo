@@ -12,7 +12,7 @@ class WebhookController extends Controller
 {
     public function __invoke(Request $request)
     {
-        Log::info('[Clicksend] WebhookPayload: '.json_encode($request->all()));
+        Log::info('[Clicksend] WebhookPayload: ' . json_encode($request->all()));
 
         $payloadData = SmsReceiptData::from($request->all());
 

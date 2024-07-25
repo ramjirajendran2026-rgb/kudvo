@@ -76,7 +76,7 @@ class Notice extends Page implements HasNomination
                         Placeholder::make(name: 'description')
                             ->content(content: $this->getNoticeText())
                             ->extraAttributes(attributes: [
-                                'class' => 'text-center'
+                                'class' => 'text-center',
                             ])
                             ->hiddenLabel(),
 
@@ -121,7 +121,7 @@ class Notice extends Page implements HasNomination
         } catch (TooManyRequestsException $exception) {
             Notification::make()
                 ->title(title: 'Too many requests')
-                ->body(body: 'Please try again in '.$exception->secondsUntilAvailable.' seconds.')
+                ->body(body: 'Please try again in ' . $exception->secondsUntilAvailable . ' seconds.')
                 ->danger()
                 ->send();
 
@@ -156,7 +156,7 @@ class Notice extends Page implements HasNomination
             ...$this->getNomination()->preference->mfa_mail ? ['email address'] : [],
         ];
 
-        return '6 digit OTP code will be sent to your registered '.Arr::implodeWithAnd($via).'.';
+        return '6 digit OTP code will be sent to your registered ' . Arr::implodeWithAnd($via) . '.';
     }
 
     public static function getMfaSessionKey(Elector $elector): string
@@ -166,7 +166,7 @@ class Notice extends Page implements HasNomination
             array: [
                 Filament::getAuthGuard(),
                 'mfa',
-                $elector->getKey()
+                $elector->getKey(),
             ]
         );
     }
@@ -179,7 +179,7 @@ class Notice extends Page implements HasNomination
                 Filament::getAuthGuard(),
                 'mfa',
                 'completed',
-                $elector->getKey()
+                $elector->getKey(),
             ]
         );
     }

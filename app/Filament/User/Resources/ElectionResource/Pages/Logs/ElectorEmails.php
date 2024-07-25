@@ -33,7 +33,7 @@ class ElectorEmails extends ElectionPage implements HasTable
 
     public ?string $activeTab = null;
 
-    public function mount(int|string $record): void
+    public function mount(int | string $record): void
     {
         parent::mount($record);
 
@@ -156,7 +156,7 @@ class ElectorEmails extends ElectionPage implements HasTable
             ]);
     }
 
-    protected function getTableQuery(): Builder|Relation|null
+    protected function getTableQuery(): Builder | Relation | null
     {
         return Email::query()
             ->whereHasMorph(
@@ -195,7 +195,7 @@ class ElectorEmails extends ElectionPage implements HasTable
 
     protected function getExportFileName(): string
     {
-        return Str::kebab($this->activeTab.'-email-logs-').$this->getElection()->code;
+        return Str::kebab($this->activeTab . '-email-logs-') . $this->getElection()->code;
     }
 
     public static function hasBallotLink(Election $election): bool

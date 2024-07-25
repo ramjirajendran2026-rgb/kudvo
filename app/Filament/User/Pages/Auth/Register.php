@@ -53,12 +53,12 @@ class Register extends BasePage
         parent::onValidationError($exception);
     }
 
-    public function getTitle(): string|Htmlable
+    public function getTitle(): string | Htmlable
     {
         return __('filament.user.pages.auth.register.title');
     }
 
-    public function getHeading(): string|Htmlable
+    public function getHeading(): string | Htmlable
     {
         return __('filament.user.pages.auth.register.heading');
     }

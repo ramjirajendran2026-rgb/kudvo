@@ -8,7 +8,6 @@ use App\Events\NominatorDeclined;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Notifications\Notifiable;
 
 class Nominator extends Model
 {
@@ -39,7 +38,7 @@ class Nominator extends Model
     protected function displayName(): Attribute
     {
         return Attribute::make(
-            get: fn($value, array $attributes) => collect(value: [$this->title, $this->full_name])
+            get: fn ($value, array $attributes) => collect(value: [$this->title, $this->full_name])
                 ->filter(callback: fn (?string $item): bool => filled($item))
                 ->implode(value: ' ')
         );

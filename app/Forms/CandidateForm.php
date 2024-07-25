@@ -73,7 +73,7 @@ readonly class CandidateForm
                     ),
 
                 Hidden::make(name: 'election_id')
-                    ->dehydrateStateUsing(callback: fn(HasElection $livewire) => $livewire->getElection()->getKey())
+                    ->dehydrateStateUsing(callback: fn (HasElection $livewire) => $livewire->getElection()->getKey()),
             ])
             ->editOptionForm(schema: [
                 TextInput::make(name: 'name')

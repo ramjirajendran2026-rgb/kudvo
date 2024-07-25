@@ -2,7 +2,6 @@
 
 namespace App\Filament\Nomination\Http\Middleware;
 
-use App\Facades\Kudvo;
 use App\Filament\Nomination\Pages\Mfa\Notice;
 use App\Models\Elector;
 use Closure;

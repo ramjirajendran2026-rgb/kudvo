@@ -47,7 +47,7 @@ abstract class ElectionPage extends Page implements HasElection, HasElectorGroup
     #[Locked]
     public array $electorGroups = [];
 
-    public function mount(int|string $record): void
+    public function mount(int | string $record): void
     {
         $this->election = $this->resolveElection(key: $record);
 
@@ -59,7 +59,7 @@ abstract class ElectionPage extends Page implements HasElection, HasElectorGroup
 
     public function mountCanAuthorizeAccess(): void {}
 
-    protected function resolveElection(int|string $key): Election
+    protected function resolveElection(int | string $key): Election
     {
         /** @var Election $nomination */
         $nomination = app(ElectionResource::getModel())
@@ -92,12 +92,12 @@ abstract class ElectionPage extends Page implements HasElection, HasElectorGroup
         return $this->electorGroups;
     }
 
-    public function getTitle(): string|Htmlable
+    public function getTitle(): string | Htmlable
     {
-        return static::getNavigationLabel().' - '.$this->getRecordTitle();
+        return static::getNavigationLabel() . ' - ' . $this->getRecordTitle();
     }
 
-    public function getRecordTitle(): string|Htmlable
+    public function getRecordTitle(): string | Htmlable
     {
         if (! ElectionResource::hasRecordTitle()) {
             return ElectionResource::getTitleCaseModelLabel();
@@ -106,12 +106,12 @@ abstract class ElectionPage extends Page implements HasElection, HasElectorGroup
         return ElectionResource::getRecordTitle($this->getElection());
     }
 
-    public function getHeading(): string|Htmlable
+    public function getHeading(): string | Htmlable
     {
         return $this->getRecordTitle();
     }
 
-    public function getSubheading(): string|Htmlable|null
+    public function getSubheading(): string | Htmlable | null
     {
         if (! $this->getElection()->isTimingConfigured()) {
             return null;
@@ -140,7 +140,7 @@ abstract class ElectionPage extends Page implements HasElection, HasElectorGroup
         ];
     }
 
-    protected function getMountedActionFormModel(): Model|string|null
+    protected function getMountedActionFormModel(): Model | string | null
     {
         return $this->getElection();
     }

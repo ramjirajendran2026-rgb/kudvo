@@ -22,7 +22,7 @@ class Vote extends Model
     ];
 
     protected $casts = [
-        'secret' => EncryptedDataCollection::class.':'.VoteSecretData::class,
+        'secret' => EncryptedDataCollection::class . ':' . VoteSecretData::class,
         'mock' => 'bool',
         'ballot_id' => 'int',
         'booth_id' => 'int',

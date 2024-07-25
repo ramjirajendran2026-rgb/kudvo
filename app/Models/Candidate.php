@@ -89,12 +89,12 @@ class Candidate extends Model implements HasAvatar, HasMedia, HasName, Sortable
     {
         return Attribute::make(
             get: fn ($value, array $attributes) => $this->getFirstMediaUrl(collectionName: static::MEDIA_COLLECTION_PHOTO) ?:
-                'https://ui-avatars.com/api/?name='.
-                $this->full_name.
-                '&color=FFFFFF&background='.
-                str(Rgb::fromString('rgb('.FilamentColor::getColors()['primary'][800].')')->toHex())
-                    ->after('#').
-                '&uuid='.$this->uuid,
+                'https://ui-avatars.com/api/?name=' .
+                $this->full_name .
+                '&color=FFFFFF&background=' .
+                str(Rgb::fromString('rgb(' . FilamentColor::getColors()['primary'][800] . ')')->toHex())
+                    ->after('#') .
+                '&uuid=' . $this->uuid,
         );
     }
 
@@ -102,11 +102,11 @@ class Candidate extends Model implements HasAvatar, HasMedia, HasName, Sortable
     {
         return Attribute::make(
             get: fn ($value, array $attributes) => $this->getFirstMediaUrl(collectionName: static::MEDIA_COLLECTION_SYMBOL) ?:
-                'https://ui-avatars.com/api/?name='.
-                $this->sort.
-                '&background=FFFFFF00&color=FFFFFF'.
-                '&font-size=0.8&bold=true'.
-                '&uuid='.$this->uuid,
+                'https://ui-avatars.com/api/?name=' .
+                $this->sort .
+                '&background=FFFFFF00&color=FFFFFF' .
+                '&font-size=0.8&bold=true' .
+                '&uuid=' . $this->uuid,
         );
     }
 

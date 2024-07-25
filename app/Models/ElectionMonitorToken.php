@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -32,8 +31,8 @@ class ElectionMonitorToken extends Model
     protected function userAgent(): Attribute
     {
         return Attribute::make(
-            get: fn($value, array $attributes) => filled($value) ? new Agent(userAgent: $value) : null,
-            set: fn($value) => $value,
+            get: fn ($value, array $attributes) => filled($value) ? new Agent(userAgent: $value) : null,
+            set: fn ($value) => $value,
         );
     }
 

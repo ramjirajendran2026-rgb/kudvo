@@ -5,19 +5,15 @@ namespace App\Notifications\Election;
 use App\Enums\MailMessagePurpose;
 use App\Models\ElectionUserInvitation;
 use App\Notifications\Contracts\HasMailMessagePurpose;
-use Filament\Facades\Filament;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
 
 class CollaboratorInvitationNotification extends Notification implements HasMailMessagePurpose
 {
     public function __construct(
         public ElectionUserInvitation $invitation,
-    )
-    {
-    }
+    ) {}
 
     public function via($notifiable): array
     {

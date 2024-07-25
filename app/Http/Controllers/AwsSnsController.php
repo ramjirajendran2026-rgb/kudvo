@@ -17,16 +17,16 @@ use Psr\Http\Message\ServerRequestInterface;
 class AwsSnsController extends Controller
 {
     public static array $routes = [
-        'sends'              => 'sends',
+        'sends' => 'sends',
         'rendering_failures' => 'rendering-failures',
-        'rejects'            => 'rejects',
-        'deliveries'         => 'deliveries',
-        'bounces'            => 'bounces',
-        'complaints'         => 'complaints',
-        'delivery_delays'    => 'delivery-delays',
-        'subscriptions'      => 'subscriptions',
-        'opens'              => 'opens',
-        'clicks'             => 'clicks',
+        'rejects' => 'rejects',
+        'deliveries' => 'deliveries',
+        'bounces' => 'bounces',
+        'complaints' => 'complaints',
+        'delivery_delays' => 'delivery-delays',
+        'subscriptions' => 'subscriptions',
+        'opens' => 'opens',
+        'clicks' => 'clicks',
     ];
 
     /**
@@ -47,7 +47,7 @@ class AwsSnsController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => Str::studly($method).' processed.',
+                'message' => Str::studly($method) . ' processed.',
             ]);
         }
 
@@ -65,7 +65,7 @@ class AwsSnsController extends Controller
         $body = json_decode($body);
 
         if ($body === null) {
-            Log::error("Failed to parse AWS SES $type request ".json_last_error_msg());
+            Log::error("Failed to parse AWS SES $type request " . json_last_error_msg());
 
             return response()->json(['success' => false], 422);
         }
@@ -91,13 +91,13 @@ class AwsSnsController extends Controller
 
         $message = json_decode($body->Message);
 
-        if (!is_object($message)) {
-            Log::error('Result message failed to decode: '.json_last_error_msg());
+        if (! is_object($message)) {
+            Log::error('Result message failed to decode: ' . json_last_error_msg());
 
             return response()->json(['success' => false], 422);
         }
 
-        if (!isset($message->eventType)) {
+        if (! isset($message->eventType)) {
             $message->eventType = $message->notificationType;
         }
 
@@ -125,12 +125,12 @@ class AwsSnsController extends Controller
 
         $xml = simplexml_load_string($response->body());
 
-        if ($response->ok() && $xml !== false && !empty((string) $xml->ConfirmSubscriptionResult->SubscriptionArn)) {
-            $this->logMessage('Subscribed to ('.$body->TopicArn.') using GET Request '.$body->SubscribeURL);
+        if ($response->ok() && $xml !== false && ! empty((string) $xml->ConfirmSubscriptionResult->SubscriptionArn)) {
+            $this->logMessage('Subscribed to (' . $body->TopicArn . ') using GET Request ' . $body->SubscribeURL);
 
             return true;
         } else {
-            $this->logMessage('Subscription Attempt Failed for ('.$body->TopicArn.') using GET Request '.$body->SubscribeURL);
+            $this->logMessage('Subscription Attempt Failed for (' . $body->TopicArn . ') using GET Request ' . $body->SubscribeURL);
 
             return false;
         }
@@ -139,7 +139,7 @@ class AwsSnsController extends Controller
     protected function isSubscriptionConfirmation(object $body): bool
     {
         if (isset($body->Type) && ($body->Type === 'SubscriptionConfirmation')) {
-            $this->logMessage('Received subscription confirmation: '.$body->TopicArn);
+            $this->logMessage('Received subscription confirmation: ' . $body->TopicArn);
 
             return true;
         }
@@ -150,7 +150,7 @@ class AwsSnsController extends Controller
     protected function isTopicNotification(object $body): bool
     {
         if (isset($body->Type) && $body->Type == 'Notification') {
-            $this->logMessage('Received topic notification: '.$body->TopicArn);
+            $this->logMessage('Received topic notification: ' . $body->TopicArn);
 
             return true;
         }
@@ -160,7 +160,7 @@ class AwsSnsController extends Controller
 
     protected function isNotTopicNotification(object $body): bool
     {
-        return !$this->isTopicNotification($body);
+        return ! $this->isTopicNotification($body);
     }
 
     protected function logMessage(string $message): void
@@ -173,7 +173,7 @@ class AwsSnsController extends Controller
     protected function logResult(string $content): void
     {
         if ($this->debug()) {
-            Log::debug("REQUEST BODY:\n".$content);
+            Log::debug("REQUEST BODY:\n" . $content);
         }
     }
 

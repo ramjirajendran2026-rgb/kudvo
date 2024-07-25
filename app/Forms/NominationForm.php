@@ -18,6 +18,7 @@ readonly class NominationForm
             ->label(label: 'Description')
             ->maxLength(length: 2500);
     }
+
     public static function nameComponent(): TextInput
     {
         return TextInput::make(name: 'name')

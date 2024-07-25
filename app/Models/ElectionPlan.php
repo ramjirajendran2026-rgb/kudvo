@@ -27,7 +27,7 @@ class ElectionPlan extends Model
     protected $casts = [
         'base_fee' => 'int',
         'elector_fee' => 'int',
-        'features' => DataCollection::class.':'.PlanFeatureData::class,
+        'features' => DataCollection::class . ':' . PlanFeatureData::class,
     ];
 
     public array $translatable = [

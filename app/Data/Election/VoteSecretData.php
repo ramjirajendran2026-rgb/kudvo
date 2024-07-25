@@ -9,7 +9,5 @@ class VoteSecretData extends Data
     public function __construct(
         public string $key,
         public int $value,
-    )
-    {
-    }
+    ) {}
 }

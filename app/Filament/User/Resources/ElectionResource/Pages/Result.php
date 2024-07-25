@@ -59,7 +59,7 @@ class Result extends ElectionPage
                             ->collapsed()
                             ->collapsible()
                             ->compact()
-                            ->description(description: fn (Position $state): ?string => $state->quota.Str::plural(value: ' Post', count: $state->quota))
+                            ->description(description: fn (Position $state): ?string => $state->quota . Str::plural(value: ' Post', count: $state->quota))
                             ->schema(components: [
                                 RepeatableEntry::make(name: 'rankedCandidates')
                                     ->extraAttributes(attributes: ['class' => 'candidate-repeatable-entry [&_.fi-fo-component-ctn]:gap-2'])

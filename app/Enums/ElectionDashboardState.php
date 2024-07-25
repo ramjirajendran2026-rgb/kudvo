@@ -66,20 +66,20 @@ enum ElectionDashboardState: string
         };
     }
 
-    public function getDescription(Election $election): HtmlString|string|null
+    public function getDescription(Election $election): HtmlString | string | null
     {
         return match ($this) {
             self::Upcoming => new HtmlString(
                 html: Blade::render(
-                    string: '<x-timer-countdown wire:key="open-timer-'.$election->starts_at->unix().'" target="'.$election->starts_at->unix().'"'.
-                    ' label="Voting for this election will starts in "'.
+                    string: '<x-timer-countdown wire:key="open-timer-' . $election->starts_at->unix() . '" target="' . $election->starts_at->unix() . '"' .
+                    ' label="Voting for this election will starts in "' .
                     ' reload="true" />'
                 )
             ),
             self::Open => new HtmlString(
                 html: Blade::render(
-                    string: '<x-timer-countdown wire:key="close-timer-'.$election->ends_at->unix().'" target="'.$election->ends_at->unix().'"'.
-                    ' label="Voting for this election will ends in "'.
+                    string: '<x-timer-countdown wire:key="close-timer-' . $election->ends_at->unix() . '" target="' . $election->ends_at->unix() . '"' .
+                    ' label="Voting for this election will ends in "' .
                     ' reload="true" />'
                 )
             ),

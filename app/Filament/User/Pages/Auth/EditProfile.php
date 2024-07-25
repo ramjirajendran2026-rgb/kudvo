@@ -22,7 +22,7 @@ class EditProfile extends BasePage
             ->disabled(condition: fn (?User $user): bool => $user?->hasVerifiedEmail());
     }
 
-    public static function getWithoutRouteMiddleware(Panel $panel): string|array
+    public static function getWithoutRouteMiddleware(Panel $panel): string | array
     {
         return self::getEmailVerifiedMiddleware(panel: $panel);
     }

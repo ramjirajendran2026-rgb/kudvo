@@ -9,7 +9,6 @@ use Filament\Actions\Exports\ExportColumn;
 use Filament\Actions\Exports\Exporter;
 use Filament\Actions\Exports\Models\Export;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Carbon;
 
 class ElectorEmailExporter extends Exporter
 {

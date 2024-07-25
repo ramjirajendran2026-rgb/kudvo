@@ -15,8 +15,7 @@ class SendNomineeNominatedNotifications
 
         if (! $nominee->self_nomination) {
             $nominee->elector?->notify(instance: new NomineeAcceptanceNotification(nominee: $nominee));
-        }
-        elseif ($proposer = $nominee->proposer) {
+        } elseif ($proposer = $nominee->proposer) {
             $proposer->elector?->notify(instance: new ProposerAcceptanceNotification(nominee: $nominee));
         }
 

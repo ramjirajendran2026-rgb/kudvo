@@ -10,6 +10,5 @@ class HowItWorksData extends Data
         public string $title,
         public string $description,
         public string $icon,
-    ) {
-    }
+    ) {}
 }

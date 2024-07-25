@@ -1,7 +1,5 @@
 <?php
 
-use App\Models\BallotLinkBlast;
-use App\Models\Election;
 use Illuminate\Support\Facades\Broadcast;
 
 /*

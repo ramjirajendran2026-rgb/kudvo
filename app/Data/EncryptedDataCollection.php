@@ -4,7 +4,6 @@ namespace App\Data;
 
 use Spatie\LaravelData\DataCollection;
 use Spatie\LaravelData\Exceptions\CannotCastData;
-use Spatie\LaravelData\Support\EloquentCasts\DataCollectionEloquentCast;
 
 class EncryptedDataCollection extends DataCollection
 {

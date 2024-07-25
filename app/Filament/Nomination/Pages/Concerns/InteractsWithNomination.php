@@ -45,7 +45,7 @@ trait InteractsWithNomination
         return route(static::getRouteName($panel), $parameters, $isAbsolute);
     }
 
-    public function getHeading(): string|Htmlable
+    public function getHeading(): string | Htmlable
     {
         return $this->nomination->name;
     }

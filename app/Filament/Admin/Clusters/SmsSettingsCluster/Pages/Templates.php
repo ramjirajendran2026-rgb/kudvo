@@ -36,9 +36,9 @@ class Templates extends SettingsPage
                             'ELECTION_NAME' => BallotLinkNotification::VAR_ELECTION_NAME_SHORT,
                             'ELECTOR_NAME' => BallotLinkNotification::VAR_ELECTOR_NAME_SHORT,
                         ],
-                        callback: fn (string $value, string $key) => Forms\Components\Actions\Action::make(name: 'insert'.Str::title($key))
+                        callback: fn (string $value, string $key) => Forms\Components\Actions\Action::make(name: 'insert' . Str::title($key))
                             ->alpineClickHandler(
-                                handler: 'target = document.getElementById(\'data.elector_ballot_link\');$wire.data.elector_ballot_link = target.value.substring(0, target.selectionStart) + \''.$value.'\' + target.value.substring(target.selectionEnd)'
+                                handler: 'target = document.getElementById(\'data.elector_ballot_link\');$wire.data.elector_ballot_link = target.value.substring(0, target.selectionStart) + \'' . $value . '\' + target.value.substring(target.selectionEnd)'
                             )
                             ->color(color: 'info')
                             ->label(label: $key)
@@ -55,9 +55,9 @@ class Templates extends SettingsPage
                     ->compact()
                     ->headerActions(actions: Arr::map(
                         array: ['CODE' => MfaCodeNotification::VAR_CODE, 'APP_DOMAIN' => MfaCodeNotification::VAR_APP_DOMAIN],
-                        callback: fn (string $value, string $key) => Forms\Components\Actions\Action::make(name: 'insert'.Str::title($key))
+                        callback: fn (string $value, string $key) => Forms\Components\Actions\Action::make(name: 'insert' . Str::title($key))
                             ->alpineClickHandler(
-                                handler: 'target = document.getElementById(\'data.elector_ballot_mfa\');$wire.data.elector_ballot_mfa = target.value.substring(0, target.selectionStart) + \''.$value.'\' + target.value.substring(target.selectionEnd)'
+                                handler: 'target = document.getElementById(\'data.elector_ballot_mfa\');$wire.data.elector_ballot_mfa = target.value.substring(0, target.selectionStart) + \'' . $value . '\' + target.value.substring(target.selectionEnd)'
                             )
                             ->color(color: 'info')
                             ->label(label: $key)
@@ -78,9 +78,9 @@ class Templates extends SettingsPage
                             'ELECTOR_NAME' => VotedConfirmationNotification::VAR_ELECTOR_NAME_SHORT,
                             'VOTED_AT' => VotedConfirmationNotification::VAR_VOTED_AT,
                         ],
-                        callback: fn (string $value, string $key) => Forms\Components\Actions\Action::make(name: 'insert'.Str::title($key))
+                        callback: fn (string $value, string $key) => Forms\Components\Actions\Action::make(name: 'insert' . Str::title($key))
                             ->alpineClickHandler(
-                                handler: 'target = document.getElementById(\'data.elector_voted_confirmation\');$wire.data.elector_voted_confirmation = target.value.substring(0, target.selectionStart) + \''.$value.'\' + target.value.substring(target.selectionEnd)'
+                                handler: 'target = document.getElementById(\'data.elector_voted_confirmation\');$wire.data.elector_voted_confirmation = target.value.substring(0, target.selectionStart) + \'' . $value . '\' + target.value.substring(target.selectionEnd)'
                             )
                             ->color(color: 'info')
                             ->label(label: $key)
@@ -97,9 +97,9 @@ class Templates extends SettingsPage
                     ->compact()
                     ->headerActions(actions: Arr::map(
                         array: ['CODE' => MfaCodeNotification::VAR_CODE, 'APP_DOMAIN' => MfaCodeNotification::VAR_APP_DOMAIN],
-                        callback: fn (string $value, string $key) => Forms\Components\Actions\Action::make(name: 'insert'.Str::title($key))
+                        callback: fn (string $value, string $key) => Forms\Components\Actions\Action::make(name: 'insert' . Str::title($key))
                             ->alpineClickHandler(
-                                handler: 'target = document.getElementById(\'data.elector_nomination_mfa\');$wire.data.elector_nomination_mfa = target.value.substring(0, target.selectionStart) + \''.$value.'\' + target.value.substring(target.selectionEnd)'
+                                handler: 'target = document.getElementById(\'data.elector_nomination_mfa\');$wire.data.elector_nomination_mfa = target.value.substring(0, target.selectionStart) + \'' . $value . '\' + target.value.substring(target.selectionEnd)'
                             )
                             ->color(color: 'info')
                             ->label(label: $key)

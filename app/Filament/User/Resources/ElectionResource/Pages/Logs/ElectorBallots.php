@@ -31,7 +31,7 @@ class ElectorBallots extends ElectionPage implements HasTable
 
     public ?string $activeTab = null;
 
-    public function mount(int|string $record): void
+    public function mount(int | string $record): void
     {
         parent::mount($record);
 
@@ -111,7 +111,7 @@ class ElectorBallots extends ElectionPage implements HasTable
             ]);
     }
 
-    protected function getTableQuery(): Builder|Relation|null
+    protected function getTableQuery(): Builder | Relation | null
     {
         return Elector::query()
             ->whereMorphedTo(relation: 'event', model: $this->getElection());
@@ -132,7 +132,7 @@ class ElectorBallots extends ElectionPage implements HasTable
 
     protected function getExportFileName(): string
     {
-        return Str::kebab('elector-ballot-logs-').$this->getElection()->code;
+        return Str::kebab('elector-ballot-logs-') . $this->getElection()->code;
     }
 
     public static function canAccessPage(Election $election): bool

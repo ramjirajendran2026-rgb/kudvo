@@ -11,6 +11,5 @@ class SendSmsResponseData extends Data
     public function __construct(
         #[DataCollectionOf(SendSmsResponseMessageData::class)]
         public ?DataCollection $messages = null
-    ) {
-    }
+    ) {}
 }

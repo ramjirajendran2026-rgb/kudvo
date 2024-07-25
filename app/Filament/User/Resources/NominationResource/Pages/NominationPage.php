@@ -29,7 +29,7 @@ abstract class NominationPage extends Page implements HasElectorGroups, HasNomin
     #[Locked]
     public array $electorGroups = [];
 
-    public function mount(int|string $record): void
+    public function mount(int | string $record): void
     {
         $this->nomination = $this->resolveNomination(key: $record);
 
@@ -38,9 +38,7 @@ abstract class NominationPage extends Page implements HasElectorGroups, HasNomin
         $this->electorGroups = $this->getNomination()->getElectorGroups();
     }
 
-    public function mountCanAuthorizeAccess(): void
-    {
-    }
+    public function mountCanAuthorizeAccess(): void {}
 
     protected function resolveNomination(int | string $key): Nomination
     {
@@ -65,9 +63,9 @@ abstract class NominationPage extends Page implements HasElectorGroups, HasNomin
         return $this->electorGroups;
     }
 
-    public function getTitle(): string|Htmlable
+    public function getTitle(): string | Htmlable
     {
-        return static::getNavigationLabel().' - '.$this->getRecordTitle();
+        return static::getNavigationLabel() . ' - ' . $this->getRecordTitle();
     }
 
     public function getRecordTitle(): string | Htmlable
@@ -79,12 +77,12 @@ abstract class NominationPage extends Page implements HasElectorGroups, HasNomin
         return NominationResource::getRecordTitle($this->getNomination());
     }
 
-    public function getHeading(): string|Htmlable
+    public function getHeading(): string | Htmlable
     {
         return $this->getRecordTitle();
     }
 
-    public function getSubheading(): string|Htmlable|null
+    public function getSubheading(): string | Htmlable | null
     {
         if (! $this->getNomination()->isTimingConfigured()) {
             return null;
