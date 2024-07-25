@@ -16,6 +16,5 @@ class BoothPreferenceData extends Data
         public bool $voted_ballot_print_by_self = false,
         public bool $flash_voted_ballot = false,
         public ?int $after_vote_session_timeout = null
-    ) {
-    }
+    ) {}
 }

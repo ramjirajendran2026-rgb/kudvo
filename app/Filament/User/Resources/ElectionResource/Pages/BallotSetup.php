@@ -52,7 +52,7 @@ class BallotSetup extends ElectionPage
         return [
             ...parent::getListeners(),
 
-            'echo-private:elections.'.$this->getElection()->id.',.'.CandidateImportCompleted::getBroadcastName() => 'notifyImportCompletion',
+            'echo-private:elections.' . $this->getElection()->id . ',.' . CandidateImportCompleted::getBroadcastName() => 'notifyImportCompletion',
         ];
     }
 
@@ -80,7 +80,7 @@ class BallotSetup extends ElectionPage
                             ->compact()
                             ->description(
                                 description: fn (Position $state): ?string => collect(value: [
-                                    Str::plural(value: $state->quota.' Post', count: $state->quota),
+                                    Str::plural(value: $state->quota . ' Post', count: $state->quota),
                                     ...($state->abstain ? [Str::plural(value: "Minimum $state->threshold selection", count: $state->threshold)] : []),
                                     ...($this->getElection()->preference?->segmented_ballot ? $state->segments()->pluck(column: 'name') : []),
                                     ...($state->isUnopposed() ? ['Unopposed'] : []),

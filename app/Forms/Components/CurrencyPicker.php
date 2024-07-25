@@ -2,7 +2,6 @@
 
 namespace App\Forms\Components;
 
-use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Select;
 use Illuminate\Support\Str;
 use Squire\Models\Currency;

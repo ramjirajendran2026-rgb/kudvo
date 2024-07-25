@@ -12,7 +12,6 @@ use App\Models\OneTimePassword;
 use App\Notifications\Election\MfaCodeNotification;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use DanHarrin\LivewireRateLimiting\WithRateLimiting;
-use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Placeholder;
@@ -34,8 +33,8 @@ use Throwable;
  */
 class Verify extends Page implements HasElection
 {
-    use InteractsWithElector;
     use InteractsWithElection;
+    use InteractsWithElector;
     use WithRateLimiting;
 
     protected static string $view = 'filament.election.pages.mfa.verify';
@@ -109,7 +108,7 @@ class Verify extends Page implements HasElection
                         Placeholder::make(name: 'description')
                             ->content(content: $this->getNoticeText())
                             ->extraAttributes(attributes: [
-                                'class' => 'text-center'
+                                'class' => 'text-center',
                             ])
                             ->hiddenLabel(),
 

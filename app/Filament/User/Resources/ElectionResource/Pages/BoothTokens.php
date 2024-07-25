@@ -18,7 +18,6 @@ use Filament\Forms\Form;
 use Filament\Resources\Concerns\InteractsWithRelationshipTable;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\FontFamily;
-use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\IconPosition;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Tables\Actions\Action;
@@ -30,7 +29,6 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Jenssegers\Agent\Agent;
 
 class BoothTokens extends ElectionPage implements HasTable
 {
@@ -46,10 +44,10 @@ class BoothTokens extends ElectionPage implements HasTable
     {
         $listeners = parent::getListeners();
 
-        $listeners['echo-private:elections.'.$this->getElection()->id.',.'.Activated::getBroadcastName()] = '$refresh';
-        $listeners['echo-private:elections.'.$this->getElection()->id.',.'.ElectorAssignedToBoothEvent::getBroadcastName()] = '$refresh';
-        $listeners['echo-private:elections.'.$this->getElection()->id.',.'.ElectorRevokedFromBoothEvent::getBroadcastName()] = '$refresh';
-        $listeners['echo-private:elections.'.$this->getElection()->id.',.'.ElectorCastedVoteInBoothEvent::getBroadcastName()] = '$refresh';
+        $listeners['echo-private:elections.' . $this->getElection()->id . ',.' . Activated::getBroadcastName()] = '$refresh';
+        $listeners['echo-private:elections.' . $this->getElection()->id . ',.' . ElectorAssignedToBoothEvent::getBroadcastName()] = '$refresh';
+        $listeners['echo-private:elections.' . $this->getElection()->id . ',.' . ElectorRevokedFromBoothEvent::getBroadcastName()] = '$refresh';
+        $listeners['echo-private:elections.' . $this->getElection()->id . ',.' . ElectorCastedVoteInBoothEvent::getBroadcastName()] = '$refresh';
 
         return $listeners;
     }
@@ -169,7 +167,7 @@ class BoothTokens extends ElectionPage implements HasTable
                 ActionGroup::make(actions: [
                     Action::make(name: 'copyActivationLink')
                         ->alpineClickHandler(
-                            handler: fn (ElectionBoothToken $record): string => 'window.navigator.clipboard.writeText("'.$record->getLink().'");
+                            handler: fn (ElectionBoothToken $record): string => 'window.navigator.clipboard.writeText("' . $record->getLink() . '");
                                 $tooltip(\'Copied\', {theme: $store.theme,
                                     timeout: 2000,
                                 })'

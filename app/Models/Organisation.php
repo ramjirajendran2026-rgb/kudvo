@@ -36,10 +36,10 @@ class Organisation extends Model implements HasAvatar, HasMedia
     {
         return Attribute::make(
             get: fn ($value, array $attributes) => $this->getFirstMediaUrl(collectionName: static::MEDIA_COLLECTION_LOGO) ?:
-                'https://ui-avatars.com/api/?name='.
-                $this->name.
-                '&color=FFFFFF&background='.
-                str(Rgb::fromString('rgb('.FilamentColor::getColors()['primary'][800].')')->toHex())
+                'https://ui-avatars.com/api/?name=' .
+                $this->name .
+                '&color=FFFFFF&background=' .
+                str(Rgb::fromString('rgb(' . FilamentColor::getColors()['primary'][800] . ')')->toHex())
                     ->after('#'),
         );
     }
@@ -77,7 +77,7 @@ class Organisation extends Model implements HasAvatar, HasMedia
 
     public static function generateCode(): string
     {
-        return config(key: 'app.organisation.code.prefix').
+        return config(key: 'app.organisation.code.prefix') .
             Str::upper(value: Str::random(length: config(key: 'app.organisation.code.length')));
     }
 

@@ -30,9 +30,9 @@ use Illuminate\Support\Facades\Session;
  */
 class Notice extends Page implements HasElection
 {
-    use InteractsWithFormActions;
-    use InteractsWithElector;
     use InteractsWithElection;
+    use InteractsWithElector;
+    use InteractsWithFormActions;
     use WithRateLimiting;
 
     protected static string $view = 'filament.election.pages.mfa.notice';
@@ -171,7 +171,7 @@ class Notice extends Page implements HasElection
             array: [
                 Filament::getAuthGuard(),
                 'mfa',
-                $elector->getKey()
+                $elector->getKey(),
             ]
         );
     }

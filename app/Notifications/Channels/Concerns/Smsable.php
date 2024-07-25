@@ -19,12 +19,12 @@ trait Smsable
 
     protected function getSmsMessage(object $notifiable, Notification $notification, string $channel = 'sms')
     {
-        $method = 'to'.Str::studly($channel);
+        $method = 'to' . Str::studly($channel);
 
         return method_exists($notification, method: $method)
             ? $notification->{$method}($notifiable)
             : (
-            method_exists($notification, method: 'toSms')
+                method_exists($notification, method: 'toSms')
                 ? $notification->toSms($notifiable)
                 : null
             );

@@ -17,8 +17,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class IdentifyPanelState
 {
-    public function __construct(protected Agent $agent)
-    { }
+    public function __construct(protected Agent $agent) {}
 
     public function handle(Request $request, Closure $next)
     {
@@ -34,27 +33,27 @@ class IdentifyPanelState
         $elector = Filament::auth()->user();
 
         Kudvo::setElectionPanelState(state: match (true) {
-            !Kudvo::isBoothDevice() &&
+            ! Kudvo::isBoothDevice() &&
             blank($elector) &&
-            !$election->preference->ballot_link_common => ElectionPanelState::CommonLinkRestricted,
+            ! $election->preference->ballot_link_common => ElectionPanelState::CommonLinkRestricted,
 
-            !Kudvo::isBoothDevice() &&
+            ! Kudvo::isBoothDevice() &&
             $election->preference->mfa_sms_auto_fill_only &&
-            !$this->agent->isiOS() &&
-            !$this->agent->isAndroidOS() => ElectionPanelState::DeviceNotSupported,
+            ! $this->agent->isiOS() &&
+            ! $this->agent->isAndroidOS() => ElectionPanelState::DeviceNotSupported,
 
             $election->is_cancelled => ElectionPanelState::Cancelled,
 
             $elector?->ballot?->isVoted() => ElectionPanelState::Voted,
 
             $election->is_closed,
-            !Kudvo::isBoothDevice() && $election->is_expired,
+            ! Kudvo::isBoothDevice() && $election->is_expired,
             Kudvo::isBoothDevice() && $election->is_booth_expired => ElectionPanelState::Closed,
 
-            !Kudvo::isBoothDevice() && $election->is_upcoming,
+            ! Kudvo::isBoothDevice() && $election->is_upcoming,
             Kudvo::isBoothDevice() && $election->is_booth_upcoming => ElectionPanelState::YetToStart,
 
-            !Kudvo::isBoothDevice() && (
+            ! Kudvo::isBoothDevice() && (
                 (
                     $election->preference->prevent_duplicate_device &&
                     filled(Cookie::get(key: "election_{$election->getKey()}_ballot"))
@@ -73,7 +72,7 @@ class IdentifyPanelState
                 )
             ) => ElectionPanelState::DeviceAlreadyUsed,
 
-            !Kudvo::isBoothDevice() && $election->is_open,
+            ! Kudvo::isBoothDevice() && $election->is_open,
             Kudvo::isBoothDevice() && $election->is_booth_open => ElectionPanelState::Open,
 
             default => null,

@@ -6,7 +6,6 @@ use App\Actions\ParseMailMessageId;
 use App\Models\Email;
 use App\Models\OneTimePassword;
 use App\Notifications\Contracts\HasMailMessagePurpose;
-use App\Notifications\Election\BallotLinkNotification;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Mail\SentMessage;
 use Illuminate\Notifications\Events\NotificationSent;
@@ -43,8 +42,7 @@ class LogSentNotification
         if ($notifiable instanceof OneTimePassword) {
             $email->notifiable_type = $notifiable->relatable_type;
             $email->notifiable_id = $notifiable->relatable_id;
-        }
-        else if ($notifiable instanceof Model) {
+        } elseif ($notifiable instanceof Model) {
             $email->notifiable_type = $notifiable->getMorphClass();
             $email->notifiable_id = $notifiable->getKey();
         }

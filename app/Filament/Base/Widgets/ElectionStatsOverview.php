@@ -38,7 +38,7 @@ class ElectionStatsOverview extends BaseWidget
 
             Stat::make(
                 label: __('filament.base.widgets.election_stats_overview.voted_electors.label'),
-                value: $votedElectorsCount.' ('.Number::percentage(number: ($votedElectorsCount / $electorsCount) * 100, maxPrecision: 2).')',
+                value: $votedElectorsCount . ' (' . Number::percentage(number: ($votedElectorsCount / $electorsCount) * 100, maxPrecision: 2) . ')',
             )
                 ->color(color: 'success')
                 ->extraAttributes(attributes: ['class' => '[&_div.text-3xl]:text-success-600 [&_div.text-3xl]:dark:text-success-400'])

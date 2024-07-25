@@ -47,9 +47,10 @@ class CheckoutController extends Controller
 
                     return redirect(to: Dashboard::getUrl(parameters: ['tenant' => $election->organisation, 'record' => $election]));
                 }
-                return Number::currency($session->amount_total, $session->currency).' '.$session->payment_status;
+
+                return Number::currency($session->amount_total, $session->currency) . ' ' . $session->payment_status;
             default:
-                return Number::currency($session->amount_total, $session->currency).' '.$session->payment_status;
+                return Number::currency($session->amount_total, $session->currency) . ' ' . $session->payment_status;
         }
     }
 
@@ -77,9 +78,10 @@ class CheckoutController extends Controller
 
                     return redirect(to: Dashboard::getUrl(parameters: ['tenant' => $election->organisation, 'record' => $election]));
                 }
-                return Number::currency($session->amount_total, $session->currency).' '.$session->payment_status;
+
+                return Number::currency($session->amount_total, $session->currency) . ' ' . $session->payment_status;
             default:
-                return Number::currency($session->amount_total, $session->currency).' '.$session->payment_status;
+                return Number::currency($session->amount_total, $session->currency) . ' ' . $session->payment_status;
         }
     }
 }

@@ -71,7 +71,7 @@ class ContactForm extends Component implements HasForms
         } catch (TooManyRequestsException $e) {
             Notification::make()
                 ->title(title: 'Too many requests!')
-                ->body(body: 'Please try again in '.$e->secondsUntilAvailable.' seconds.')
+                ->body(body: 'Please try again in ' . $e->secondsUntilAvailable . ' seconds.')
                 ->danger()
                 ->send();
 

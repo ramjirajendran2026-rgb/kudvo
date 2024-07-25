@@ -37,7 +37,7 @@ abstract class BasePage extends Page implements HasElection, HasElector
         $listeners = parent::getListeners();
 
         if (Kudvo::isBoothDevice()) {
-            $listeners['echo:election-booth.'.Kudvo::getElectionBoothToken()?->getKey().',.'.ElectorRevokedFromBoothEvent::getBroadcastName()] = 'destroySession';
+            $listeners['echo:election-booth.' . Kudvo::getElectionBoothToken()?->getKey() . ',.' . ElectorRevokedFromBoothEvent::getBroadcastName()] = 'destroySession';
         }
 
         return $listeners;

@@ -10,8 +10,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
-enum NominationStatus: string
-    implements HasColor, HasIcon, HasLabel
+enum NominationStatus: string implements HasColor, HasIcon, HasLabel
 {
     case CANCELLED = 'cancelled';
 
@@ -23,7 +22,7 @@ enum NominationStatus: string
 
     case SCRUTINISED = 'scrutinised';
 
-    public function getScopes(): string|array|null
+    public function getScopes(): string | array | null
     {
         return match ($this) {
             self::CANCELLED => 'cancelled',
@@ -41,8 +40,8 @@ enum NominationStatus: string
 
             ...Arr::mapWithKeys(
                 array: self::cases(),
-                callback: fn(self $case) => $case->getTab()
-            )
+                callback: fn (self $case) => $case->getTab()
+            ),
         ];
     }
 
@@ -53,11 +52,11 @@ enum NominationStatus: string
                 ->icon(icon: $this->getIcon())
                 ->modifyQueryUsing(
                     callback: fn (Builder $query): Builder => $query->scopes(scopes: Arr::wrap(value: $this->getScopes()))
-                )
+                ),
         ];
     }
 
-    public function getColor(): string|array|null
+    public function getColor(): string | array | null
     {
         return match ($this) {
             self::CANCELLED => 'danger',

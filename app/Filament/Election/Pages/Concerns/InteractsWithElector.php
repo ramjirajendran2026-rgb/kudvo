@@ -4,7 +4,6 @@ namespace App\Filament\Election\Pages\Concerns;
 
 use App\Models\Elector;
 use Filament\Facades\Filament;
-use Livewire\Attributes\Locked;
 
 trait InteractsWithElector
 {

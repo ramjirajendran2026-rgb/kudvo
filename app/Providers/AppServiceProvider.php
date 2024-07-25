@@ -86,7 +86,7 @@ class AppServiceProvider extends ServiceProvider
 
             $lastItem = array_pop($array);
 
-            return implode(separator: $separator, array: $array).' and '.$lastItem;
+            return implode(separator: $separator, array: $array) . ' and ' . $lastItem;
         });
 
         Notification::resolved(
@@ -138,7 +138,7 @@ class AppServiceProvider extends ServiceProvider
             macro: function (int $count = 60) {
                 $this->helperText(
                     text: function (CanBeLengthConstrained $component) use ($count) {
-                        $liveCount = '$wire.'.$component->getStatePath();
+                        $liveCount = '$wire.' . $component->getStatePath();
 
                         return new HtmlString(
                             html: <<<HTML

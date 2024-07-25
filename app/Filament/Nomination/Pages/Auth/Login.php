@@ -17,7 +17,7 @@ use Illuminate\Validation\ValidationException;
 
 class Login extends BasePage
 {
-    public function getHeading(): string|Htmlable
+    public function getHeading(): string | Htmlable
     {
         return Kudvo::getNomination()->name;
     }

@@ -18,7 +18,7 @@ class MfaCodeNotification extends Notification
     public function __construct(
         public Nomination $nomination,
         public OneTimePassword $oneTimePassword
-    ) { }
+    ) {}
 
     public function via($notifiable): array
     {

@@ -81,7 +81,7 @@ class Electors extends NominationPage implements HasTable
     protected function getDeleteAction(): TableDeleteAction
     {
         return ElectorResource::getTableDeleteAction()
-            ->visible(condition:$this->canDelete());
+            ->visible(condition: $this->canDelete());
     }
 
     public static function canAccessPage(Nomination $nomination): bool

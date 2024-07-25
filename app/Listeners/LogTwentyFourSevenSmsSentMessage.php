@@ -29,7 +29,7 @@ class LogTwentyFourSevenSmsSentMessage
                 continue;
             }
 
-            Log::info(message: '[24x7SMS] Message Response: '.json_encode($message));
+            Log::info(message: '[24x7SMS] Message Response: ' . json_encode($message));
 
             SmsMessage::createOrFirst(
                 [
@@ -40,7 +40,7 @@ class LogTwentyFourSevenSmsSentMessage
                     'purpose' => $event->notification instanceof HasSmsMessagePurpose
                         ? $event->notification->getSmsMessagePurpose(notifiable: $event->notifiable)
                         : null,
-                    'phone' => '+'.$message[2],
+                    'phone' => '+' . $message[2],
                     'status' => SmsMessageStatus::SENT,
                     'provider_status' => $message[4],
                     'provider_meta' => [

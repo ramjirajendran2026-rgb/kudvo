@@ -71,7 +71,7 @@ class MonitorTokens extends ElectionPage implements HasTable
                     ->label(label: __('filament.user.election-resource.pages.monitor_tokens.table.activated_at.label')),
 
                 TextColumn::make(name: 'user_agent')
-                    ->formatStateUsing(callback: fn (?Agent $state): ?string => filled($state) ? $state->platform().' - '.$state->browser() : null)
+                    ->formatStateUsing(callback: fn (?Agent $state): ?string => filled($state) ? $state->platform() . ' - ' . $state->browser() : null)
                     ->label(label: __('filament.user.election-resource.pages.monitor_tokens.table.user_agent.label')),
             ])
             ->actions(actions: [

@@ -31,7 +31,7 @@ class BoothTokensController extends Controller
             $token->touch(attribute: 'activated_at');
 
             Cookie::queue(
-                Cookie::forever(name: 'election_'.$token->election->getKey().'_booth_token', value: $token->key)
+                Cookie::forever(name: 'election_' . $token->election->getKey() . '_booth_token', value: $token->key)
             );
         }
 

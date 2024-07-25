@@ -33,7 +33,7 @@ class Login extends BasePage
         $listeners = parent::getListeners();
 
         if (Kudvo::isBoothDevice()) {
-            $listeners['echo:election-booth.'.Kudvo::getElectionBoothToken()?->getKey().',.'.ElectorAssignedToBoothEvent::getBroadcastName()] = 'electorAssignedToBooth';
+            $listeners['echo:election-booth.' . Kudvo::getElectionBoothToken()?->getKey() . ',.' . ElectorAssignedToBoothEvent::getBroadcastName()] = 'electorAssignedToBooth';
         }
 
         return $listeners;
@@ -52,7 +52,7 @@ class Login extends BasePage
         return $this->proceedWithElector($elector);
     }
 
-    public function getHeading(): string|Htmlable
+    public function getHeading(): string | Htmlable
     {
         return Kudvo::getElection()->name;
     }
@@ -181,16 +181,17 @@ class Login extends BasePage
     {
         return $form
             ->disabled(condition: ! $this->isBoothSelfLoginAllowed())
-            ->schema(components: [
-                Group::make()
-                    ->schema(components: [
-                        $this->getPhoneComponent()
-                            ->initialCountry(value: Kudvo::getOrganisation()?->country),
+            ->schema(
+                components: [
+                    Group::make()
+                        ->schema(components: [
+                            $this->getPhoneComponent()
+                                ->initialCountry(value: Kudvo::getOrganisation()?->country),
 
-                        $this->getMfaConsentComponent(),
-                    ])
-                    ->visible($this->isBoothSelfLoginAllowed()),
-            ],
+                            $this->getMfaConsentComponent(),
+                        ])
+                        ->visible($this->isBoothSelfLoginAllowed()),
+                ],
             );
     }
 

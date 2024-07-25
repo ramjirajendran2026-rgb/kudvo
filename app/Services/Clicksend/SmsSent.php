@@ -14,6 +14,5 @@ class SmsSent
         public object $notifiable,
         public Notification $notification,
         public SendSmsResponseData $response
-    ) {
-    }
+    ) {}
 }

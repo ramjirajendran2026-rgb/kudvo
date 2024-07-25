@@ -6,9 +6,8 @@ use App\Services\Clicksend\ClicksendChannel;
 use App\Services\TwentyFourSevenSms\TwentyFourSevenSmsChannel;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
-use Illuminate\Support\Arr;
 
-enum SmsChannel: string implements HasLabel, HasColor
+enum SmsChannel: string implements HasColor, HasLabel
 {
     case Clicksend = ClicksendChannel::NAME;
 
@@ -22,7 +21,7 @@ enum SmsChannel: string implements HasLabel, HasColor
         };
     }
 
-    public function getColor(): string|array|null
+    public function getColor(): string | array | null
     {
         return 'info';
     }

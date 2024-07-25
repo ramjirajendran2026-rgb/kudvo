@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class NotifyElectionDataImportProgress
 {
-    public function handle(ImportChunkProcessed$event): void
+    public function handle(ImportChunkProcessed $event): void
     {
         $import = $event->getImport();
 

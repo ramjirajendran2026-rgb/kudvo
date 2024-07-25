@@ -26,7 +26,7 @@ class Dashboard extends ElectionPage
 
     public ElectionDashboardState $state;
 
-    public function mount(int|string $record): void
+    public function mount(int | string $record): void
     {
         parent::mount($record);
 
@@ -105,7 +105,7 @@ class Dashboard extends ElectionPage
         return $this->state->getLabel(election: $this->getElection());
     }
 
-    public function getStateDescription(): string|HtmlString|null
+    public function getStateDescription(): string | HtmlString | null
     {
         return $this->state->getDescription(election: $this->getElection());
     }

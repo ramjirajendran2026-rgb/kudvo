@@ -8,14 +8,11 @@ use App\Events\NomineeAccepted;
 use App\Events\NomineeApproved;
 use App\Events\NomineeDeclined;
 use App\Events\NomineeRejected;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Carbon;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
@@ -72,7 +69,7 @@ class Nominee extends Model implements HasMedia
     protected function displayName(): Attribute
     {
         return Attribute::make(
-            get: fn($value, array $attributes) => collect(value: [$this->title, $this->full_name])
+            get: fn ($value, array $attributes) => collect(value: [$this->title, $this->full_name])
                 ->filter(callback: fn (?string $item): bool => filled($item))
                 ->implode(value: ' ')
         );

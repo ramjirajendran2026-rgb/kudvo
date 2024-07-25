@@ -5,21 +5,17 @@ namespace App\Notifications\Election;
 use App\Enums\MailMessagePurpose;
 use App\Enums\SmsMessagePurpose;
 use App\Models\Election;
-use App\Models\Elector;
 use App\Models\OneTimePassword;
 use App\Notifications\Concerns\HasSmsChannel;
 use App\Notifications\Contracts\HasMailMessagePurpose;
 use App\Notifications\Contracts\HasSmsMessagePurpose;
 use App\Settings\SmsTemplates;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
-class MfaCodeNotification extends Notification implements
-    HasMailMessagePurpose,
-    HasSmsMessagePurpose
+class MfaCodeNotification extends Notification implements HasMailMessagePurpose, HasSmsMessagePurpose
 {
     use HasSmsChannel;
 
@@ -30,7 +26,7 @@ class MfaCodeNotification extends Notification implements
     public function __construct(
         protected Election $election,
         protected OneTimePassword $oneTimePassword
-    ) { }
+    ) {}
 
     public function via(object $notifiable): array
     {

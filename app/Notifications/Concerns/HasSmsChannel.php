@@ -3,7 +3,6 @@
 namespace App\Notifications\Concerns;
 
 use App\Settings\SmsSettings;
-use Illuminate\Support\Arr;
 
 trait HasSmsChannel
 {

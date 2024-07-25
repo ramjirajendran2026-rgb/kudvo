@@ -73,7 +73,7 @@ class NomineeResource extends Resource
                         ->relationship(
                             name: 'position',
                             titleAttribute: 'name',
-                            modifyQueryUsing: fn (Builder $query, HasElection|HasNomination $livewire): Builder => $query
+                            modifyQueryUsing: fn (Builder $query, HasElection | HasNomination $livewire): Builder => $query
                                 ->whereMorphedTo(
                                     relation: 'event',
                                     model: match (true) {

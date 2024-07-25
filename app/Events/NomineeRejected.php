@@ -9,9 +9,7 @@ class NomineeRejected
 {
     use Dispatchable;
 
-    public function __construct(protected Nominee $nominee)
-    {
-    }
+    public function __construct(protected Nominee $nominee) {}
 
     public function getNominee(): Nominee
     {

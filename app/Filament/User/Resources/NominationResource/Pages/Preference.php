@@ -25,7 +25,7 @@ class Preference extends NominationPage
 
     public ?array $data = [];
 
-    public function mount(int|string $record): void
+    public function mount(int | string $record): void
     {
         parent::mount($record);
 
@@ -35,7 +35,7 @@ class Preference extends NominationPage
     public function form(Form $form): Form
     {
         return $form
-            ->disabled(condition: !$this->canSave())
+            ->disabled(condition: ! $this->canSave())
             ->schema(components: [
                 Group::make()
                     ->relationship(name: 'preference')

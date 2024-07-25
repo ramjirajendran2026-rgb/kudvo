@@ -35,12 +35,12 @@ class VotedBallotCopyNotification extends Notification implements HasMailMessage
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject(subject: 'Voted Ballot Copy - '.$this->election->name)
-            ->greeting(greeting: 'Dear '.$this->elector->display_name.',')
-            ->line(line: 'You have successfully cast your vote for '.$this->election->name.' on '.$this->ballot->voted_at->timezone(value: $this->election->timezone)->format(format: 'M j, Y h:i A (T)').'. Here is your ballot copy.')
+            ->subject(subject: 'Voted Ballot Copy - ' . $this->election->name)
+            ->greeting(greeting: 'Dear ' . $this->elector->display_name . ',')
+            ->line(line: 'You have successfully cast your vote for ' . $this->election->name . ' on ' . $this->ballot->voted_at->timezone(value: $this->election->timezone)->format(format: 'M j, Y h:i A (T)') . '. Here is your ballot copy.')
             ->attachData(
                 data: $this->generateBallotCopyPdf()->output(),
-                name: 'ballot-copy-'.$this->election->code.'.pdf',
+                name: 'ballot-copy-' . $this->election->code . '.pdf',
             );
     }
 
@@ -54,7 +54,7 @@ class VotedBallotCopyNotification extends Notification implements HasMailMessage
         return MailMessagePurpose::VotedBallotCopy;
     }
 
-    protected function generateBallotCopyPdf(): Dompdf|\Barryvdh\DomPDF\PDF
+    protected function generateBallotCopyPdf(): Dompdf | \Barryvdh\DomPDF\PDF
     {
         $pdf = Pdf::loadView(
             'pdf.election.ballot-copy',

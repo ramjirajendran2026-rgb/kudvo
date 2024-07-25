@@ -19,9 +19,7 @@ class ClicksendChannel
 
     const NAME = 'clicksend';
 
-    public function __construct(protected SMSApi $api)
-    {
-    }
+    public function __construct(protected SMSApi $api) {}
 
     public function send(object $notifiable, Notification $notification): ?SendSmsResponseData
     {
@@ -53,14 +51,14 @@ class ClicksendChannel
                 );
             }
 
-            Log::info("[Clicksend] SendSMS Request: ".((string) $message));
+            Log::info('[Clicksend] SendSMS Request: ' . ((string) $message));
             $response = $this->api->smsSendPost(
                 (new SmsMessageCollection())
                     ->setMessages([$message])
             );
 
             if (! json_validate($response)) {
-                throw new Exception('Invalid response received. '.$response);
+                throw new Exception('Invalid response received. ' . $response);
             }
 
             Log::info("[Clicksend] SendSMS Response: $response");
@@ -70,7 +68,7 @@ class ClicksendChannel
             SmsSent::dispatch($notifiable, $notification, $responseData);
 
             return $responseData;
-        } catch (ApiException|Throwable $e) {
+        } catch (ApiException | Throwable $e) {
             Log::error("[Clicksend] SendSMS Error: {$e->getMessage()}");
 
             return null;

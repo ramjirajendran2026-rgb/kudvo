@@ -11,8 +11,7 @@ class SmsMessage
         protected ServiceName $serviceName = ServiceName::TEMPLATE_BASED,
         protected ?string $senderId = null,
         protected ?bool $unicode = null,
-    ) {
-    }
+    ) {}
 
     public function message(?string $value): static
     {
