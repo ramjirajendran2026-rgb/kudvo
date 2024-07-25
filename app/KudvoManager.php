@@ -7,7 +7,6 @@ use App\Models\Election;
 use App\Models\ElectionBoothToken;
 use App\Models\Nomination;
 use App\Models\Organisation;
-use Cookie;
 
 class KudvoManager
 {

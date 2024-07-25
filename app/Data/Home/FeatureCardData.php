@@ -10,6 +10,5 @@ class FeatureCardData extends Data
         public string $title,
         public string $image,
         public array $points = [],
-    ) {
-    }
+    ) {}
 }

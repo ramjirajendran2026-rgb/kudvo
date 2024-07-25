@@ -30,6 +30,5 @@ class SendSmsResponseMessageData extends Data
         public ?string $country = null,
         public ?string $carrier = null,
         public ?string $status = null,
-    ) {
-    }
+    ) {}
 }

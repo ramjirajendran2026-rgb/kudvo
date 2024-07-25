@@ -2,24 +2,15 @@
 
 namespace App\Filament\User\Resources\NominationResource\Pages;
 
-use App\Enums\NomineeScrutinyStatus;
 use App\Filament\User\Resources\NomineeResource;
 use App\Models\Nomination;
-use App\Models\Nominator;
 use App\Models\Nominee;
 use Exception;
 use Filament\Resources\Concerns\InteractsWithRelationshipTable;
-use Filament\Support\Enums\ActionSize;
-use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Actions\Action as TableAction;
 use Filament\Tables\Actions\ActionGroup;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\TextColumn\TextColumnSize;
 use Filament\Tables\Contracts\HasTable;
-use Filament\Tables\Enums\FiltersLayout;
-use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 
 class Nominees extends NominationPage implements HasTable
 {
@@ -31,7 +22,7 @@ class Nominees extends NominationPage implements HasTable
 
     protected static ?string $activeNavigationIcon = 'heroicon-s-document-text';
 
-    public function mount(int|string $record): void
+    public function mount(int | string $record): void
     {
         parent::mount($record);
 

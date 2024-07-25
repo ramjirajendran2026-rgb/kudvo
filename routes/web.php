@@ -81,11 +81,11 @@ Route::group(
             ->name(name: 'checkout.cancel');
 
         foreach (AwsSnsController::$routes as $routeKey => $route) {
-            $routeName = 'ses.notification.'.$routeKey;
+            $routeName = 'ses.notification.' . $routeKey;
 
             $controllerActionName = Str::camel($routeKey);
 
-            Route::post('ses/notification/'.$route, [AwsSnsController::class, $controllerActionName])->name($routeName);
+            Route::post('ses/notification/' . $route, [AwsSnsController::class, $controllerActionName])->name($routeName);
         }
     }
 );

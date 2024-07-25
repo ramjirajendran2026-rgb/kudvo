@@ -50,13 +50,13 @@ class WikiPage extends Model implements HasMedia
     protected static function booted(): void
     {
         static::created(callback: function (WikiPage $wikiPage) {
-            $wikiPage->slug = Str::slug(title: $wikiPage->title.' '.$wikiPage->getKey());
+            $wikiPage->slug = Str::slug(title: $wikiPage->title . ' ' . $wikiPage->getKey());
             $wikiPage->saveQuietly();
         });
 
         static::updating(callback: function (WikiPage $wikiPage) {
             if ($wikiPage->isDirty(attributes: 'title')) {
-                $wikiPage->slug = Str::slug(title: $wikiPage->title.' '.$wikiPage->getKey());
+                $wikiPage->slug = Str::slug(title: $wikiPage->title . ' ' . $wikiPage->getKey());
             }
         });
     }

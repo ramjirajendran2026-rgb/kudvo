@@ -12,6 +12,5 @@ class ProductCardData extends Data
         public ?string $title_color = null,
         public ?string $cta_label = null,
         public ?string $cta_url = null,
-    ) {
-    }
+    ) {}
 }

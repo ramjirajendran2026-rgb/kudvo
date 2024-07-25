@@ -7,9 +7,7 @@ use Illuminate\Auth\Events\Verified;
 
 class NotifyEmailVerified
 {
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
     public function handle(Verified $event): void
     {

@@ -32,6 +32,7 @@ readonly class ElectionForm
             ->label(label: __('filament.user.election-resource.form.description'))
             ->maxLength(length: 2500);
     }
+
     public static function nameComponent(): TextInput
     {
         return TextInput::make(name: 'name')

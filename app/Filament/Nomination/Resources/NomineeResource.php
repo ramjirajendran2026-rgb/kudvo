@@ -74,7 +74,7 @@ class NomineeResource extends Resource
                     ->icon(icon: fn (Nominator $state): ?string => $state->status->getIcon())
                     ->iconColor(color: fn (Nominator $state): ?string => $state->status->getColor())
                     ->listWithLineBreaks()
-                    ->size(size: Tables\Columns\TextColumn\TextColumnSize::Small)
+                    ->size(size: TextColumnSize::Small)
                     ->wrap(),
 
                 Tables\Columns\TextColumn::make(name: 'scrutiny_status')
@@ -116,7 +116,7 @@ class NomineeResource extends Resource
             ->modalHeading(heading: 'Confirmation')
             ->successNotificationTitle(title: 'Accepted')
             ->form(
-                form: fn (Nominee $nominee, HasElector|HasNomination $livewire): ?array => $nominee->elector
+                form: fn (Nominee $nominee, HasElector | HasNomination $livewire): ?array => $nominee->elector
                     ?->is($livewire->getElector()) ?
                     [
                         NomineeForm::photoComponent()
@@ -171,13 +171,13 @@ class NomineeResource extends Resource
     public static function getAcceptanceDescription(Nominee $nominee): HtmlString
     {
         return new HtmlString(
-            html: $nominee->proposer?->display_name.
-            ' nominating '.
-            "<b>$nominee->display_name</b>".
-            ' as '.
-            "<b>{$nominee->position->name}</b>".
-            ' for the upcoming '.
-            "<b>{$nominee->position->event->name}</b>".
+            html: $nominee->proposer?->display_name .
+            ' nominating ' .
+            "<b>$nominee->display_name</b>" .
+            ' as ' .
+            "<b>{$nominee->position->name}</b>" .
+            ' for the upcoming ' .
+            "<b>{$nominee->position->event->name}</b>" .
             '.'
         );
     }

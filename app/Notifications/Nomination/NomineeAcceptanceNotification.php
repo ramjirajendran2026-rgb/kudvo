@@ -13,9 +13,7 @@ class NomineeAcceptanceNotification extends Notification
 {
     public function __construct(
         public Nominee $nominee
-    )
-    {
-    }
+    ) {}
 
     public function via($notifiable): array
     {
@@ -38,11 +36,11 @@ class NomineeAcceptanceNotification extends Notification
             ->subject(subject: "Action Required: Nomination Proposal for $nomination->name")
             ->greeting(greeting: "Dear $nominee->display_name,")
             ->line(line: "You have been nominated for the position of $position->name by $proposer->display_name. Congratulations on this nomination!")
-            ->line(line: "To proceed further, we kindly request you to review the nomination and indicate your acceptance of the proposal. Your response is crucial for the progression of the nomination process.")
-            ->line(line: "Please click on the following button to access the nomination and respond accordingly.")
-            ->action(text: "Click Here", url: ManageNominees::getUrl(parameters: ['nomination' => $nomination]))
-            ->line(line: "If you have any questions or concerns, feel free to contact our support team.")
-            ->line(line: "Thank you for your prompt attention to this matter. We appreciate your active participation in the nomination process.");
+            ->line(line: 'To proceed further, we kindly request you to review the nomination and indicate your acceptance of the proposal. Your response is crucial for the progression of the nomination process.')
+            ->line(line: 'Please click on the following button to access the nomination and respond accordingly.')
+            ->action(text: 'Click Here', url: ManageNominees::getUrl(parameters: ['nomination' => $nomination]))
+            ->line(line: 'If you have any questions or concerns, feel free to contact our support team.')
+            ->line(line: 'Thank you for your prompt attention to this matter. We appreciate your active participation in the nomination process.');
     }
 
     public function toArray($notifiable): array

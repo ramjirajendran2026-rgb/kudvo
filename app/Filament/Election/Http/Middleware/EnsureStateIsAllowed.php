@@ -7,15 +7,12 @@ use App\Facades\Kudvo;
 use App\Filament\Election\Pages\Ballot\Index as Ballot;
 use App\Filament\Election\Pages\Index;
 use Closure;
-use Filament\Facades\Filament;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Jenssegers\Agent\Agent;
 
 class EnsureStateIsAllowed
 {
-    public function __construct(protected Agent $agent)
-    { }
+    public function __construct(protected Agent $agent) {}
 
     public function handle(Request $request, Closure $next)
     {

@@ -7,8 +7,7 @@ use Filament\Support\Contracts\HasIcon;
 use Filament\Support\Contracts\HasLabel;
 use Illuminate\Support\Str;
 
-enum NomineeStatus: string
-    implements HasColor, HasIcon, HasLabel
+enum NomineeStatus: string implements HasColor, HasIcon, HasLabel
 {
     case PENDING = 'pending';
 
@@ -30,7 +29,7 @@ enum NomineeStatus: string
         };
     }
 
-    public function getColor(): string|array|null
+    public function getColor(): string | array | null
     {
         return match ($this) {
             self::PENDING => 'warning',

@@ -8,8 +8,7 @@ use Filament\Support\Contracts\HasLabel;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
-enum NomineeScrutinyStatus: string
-    implements HasColor, HasIcon, HasLabel
+enum NomineeScrutinyStatus: string implements HasColor, HasIcon, HasLabel
 {
     case PENDING = 'pending';
 
@@ -21,7 +20,7 @@ enum NomineeScrutinyStatus: string
     {
         return Arr::mapWithKeys(
             array: self::cases(),
-            callback: fn(self $case): array => [$case->value => $case->getLabel()],
+            callback: fn (self $case): array => [$case->value => $case->getLabel()],
         );
     }
 
@@ -39,7 +38,7 @@ enum NomineeScrutinyStatus: string
         };
     }
 
-    public function getColor(): string|array|null
+    public function getColor(): string | array | null
     {
         return match ($this) {
             self::PENDING => 'warning',

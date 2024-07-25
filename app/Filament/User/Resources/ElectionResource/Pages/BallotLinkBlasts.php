@@ -25,8 +25,8 @@ class BallotLinkBlasts extends ElectionPage implements HasTable
     public function getListeners(): array
     {
         return [
-            'echo-private:elections.'.$this->getElection()->id.',.'.BallotLinkBlastInitiated::getBroadcastName() => '$refresh',
-            'echo-private:elections.'.$this->getElection()->id.',.'.BallotLinkBlastCompleted::getBroadcastName() => '$refresh',
+            'echo-private:elections.' . $this->getElection()->id . ',.' . BallotLinkBlastInitiated::getBroadcastName() => '$refresh',
+            'echo-private:elections.' . $this->getElection()->id . ',.' . BallotLinkBlastCompleted::getBroadcastName() => '$refresh',
         ];
     }
 

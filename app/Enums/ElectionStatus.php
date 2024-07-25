@@ -7,7 +7,6 @@ use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasIcon;
 use Filament\Support\Contracts\HasLabel;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Arr;
 
 enum ElectionStatus: string implements HasColor, HasIcon, HasLabel
 {
@@ -23,7 +22,7 @@ enum ElectionStatus: string implements HasColor, HasIcon, HasLabel
 
     case CLOSED = 'closed';
 
-    public function getScopes(): string|array|null
+    public function getScopes(): string | array | null
     {
         return match ($this) {
             self::DRAFT => 'draft',
@@ -57,7 +56,7 @@ enum ElectionStatus: string implements HasColor, HasIcon, HasLabel
         ];
     }
 
-    public function getColor(): string|array|null
+    public function getColor(): string | array | null
     {
         return match ($this) {
             self::DRAFT => 'info',
@@ -69,7 +68,7 @@ enum ElectionStatus: string implements HasColor, HasIcon, HasLabel
 
     public function getLabel(): ?string
     {
-        return __(key: 'app.enums.election_status.'.$this->value.'.label');
+        return __(key: 'app.enums.election_status.' . $this->value . '.label');
     }
 
     public function getIcon(): ?string

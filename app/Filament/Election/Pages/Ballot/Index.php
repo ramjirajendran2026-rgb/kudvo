@@ -44,7 +44,7 @@ class Index extends BasePage
     #[Locked]
     public bool $isVoted = false;
 
-    public function getTitle(): string|Htmlable
+    public function getTitle(): string | Htmlable
     {
         return 'Ballot - ' . $this->getElection()->name;
     }
@@ -227,7 +227,7 @@ class Index extends BasePage
 
         $this->isVoted = true;
         Session::put(
-            key: 'elector_'.$this->getElector()->getKey().'_vote_ids'.($this->isMock() ? '_mock' : ''),
+            key: 'elector_' . $this->getElector()->getKey() . '_vote_ids' . ($this->isMock() ? '_mock' : ''),
             value: encrypt(value: $voteIds)
         );
 
@@ -261,11 +261,11 @@ class Index extends BasePage
         }
 
         Session::put(
-            key: 'elector_'.$this->getElector()->getKey().'_votes'.($this->isMock() ? '_mock' : ''),
+            key: 'elector_' . $this->getElector()->getKey() . '_votes' . ($this->isMock() ? '_mock' : ''),
             value: encrypt(value: $data)
         );
         Cookie::queue(Cookie::forever(
-            name: 'election_'.Kudvo::getElection()->getKey().'_ballot'.($this->isMock() ? '_mock' : ''),
+            name: 'election_' . Kudvo::getElection()->getKey() . '_ballot' . ($this->isMock() ? '_mock' : ''),
             value: $ballot->getKey()
         ));
 

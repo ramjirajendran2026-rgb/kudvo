@@ -96,7 +96,7 @@ class Verify extends Page implements HasNomination
                         Placeholder::make(name: 'description')
                             ->content(content: $this->getNoticeText())
                             ->extraAttributes(attributes: [
-                                'class' => 'text-center'
+                                'class' => 'text-center',
                             ])
                             ->hiddenLabel(),
 
@@ -139,14 +139,14 @@ class Verify extends Page implements HasNomination
     /**
      * @throws Throwable
      */
-    public function submit(): RedirectResponse|Redirector|null
+    public function submit(): RedirectResponse | Redirector | null
     {
         try {
             $this->rateLimit(maxAttempts: 3);
         } catch (TooManyRequestsException $exception) {
             Notification::make()
                 ->title(title: 'Too many attempts')
-                ->body(body: 'Please try again in '.$exception->secondsUntilAvailable.' seconds.')
+                ->body(body: 'Please try again in ' . $exception->secondsUntilAvailable . ' seconds.')
                 ->danger()
                 ->send();
 
@@ -172,7 +172,7 @@ class Verify extends Page implements HasNomination
         } catch (TooManyRequestsException $exception) {
             Notification::make()
                 ->title(title: 'Too many requests')
-                ->body(body: 'Please try again in '.$exception->secondsUntilAvailable.' seconds.')
+                ->body(body: 'Please try again in ' . $exception->secondsUntilAvailable . ' seconds.')
                 ->danger()
                 ->send();
 
@@ -199,6 +199,6 @@ class Verify extends Page implements HasNomination
             ...$this->getNomination()->preference->mfa_mail ? ['email address'] : [],
         ];
 
-        return '6 digit OTP code has been sent to your registered '.Arr::implodeWithAnd($via).'.';
+        return '6 digit OTP code has been sent to your registered ' . Arr::implodeWithAnd($via) . '.';
     }
 }

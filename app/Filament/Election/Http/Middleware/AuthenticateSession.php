@@ -5,7 +5,6 @@ namespace App\Filament\Election\Http\Middleware;
 use App\Models\Elector;
 use Closure;
 use Filament\Facades\Filament;
-use Filament\Notifications\Notification;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Contracts\Auth\Factory;
 use Illuminate\Contracts\Auth\Guard;
@@ -38,7 +37,7 @@ class AuthenticateSession extends BaseMiddleware
         return $next($request);
     }
 
-    protected function guard(): Guard|StatefulGuard|Factory
+    protected function guard(): Guard | StatefulGuard | Factory
     {
         return Filament::auth();
     }

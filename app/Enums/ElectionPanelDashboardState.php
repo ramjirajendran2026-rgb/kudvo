@@ -44,13 +44,13 @@ enum ElectionPanelDashboardState: string
         };
     }
 
-    public function getDescription(Election $election): HtmlString|string
+    public function getDescription(Election $election): HtmlString | string
     {
         return match ($this) {
             self::YetToStart => new HtmlString(
                 html: Blade::render(
-                    string: '<x-timer-countdown target="'.$election->starts_at->unix().'"'.
-                    ' label="Voting for this election will starts in "'.
+                    string: '<x-timer-countdown target="' . $election->starts_at->unix() . '"' .
+                    ' label="Voting for this election will starts in "' .
                     ' reload="true" />'
                 )
             ),

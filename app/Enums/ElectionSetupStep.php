@@ -21,7 +21,7 @@ enum ElectionSetupStep: string implements HasDescription, HasIcon, HasLabel
 
     public function getLabel(): ?string
     {
-        return __(key: 'app.enums.election_setup_step.'.$this->value.'.label');
+        return __(key: 'app.enums.election_setup_step.' . $this->value . '.label');
     }
 
     public function getDescription(): ?string

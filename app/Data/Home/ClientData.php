@@ -9,6 +9,5 @@ class ClientData extends Data
     public function __construct(
         public string $name,
         public string $logo,
-    ) {
-    }
+    ) {}
 }

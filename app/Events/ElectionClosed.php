@@ -11,16 +11,16 @@ use Illuminate\Queue\SerializesModels;
 
 class ElectionClosed implements ShouldBroadcast
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
+    use Dispatchable;
+    use InteractsWithSockets;
+    use SerializesModels;
 
-    public function __construct(public Election $election)
-    {
-    }
+    public function __construct(public Election $election) {}
 
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('elections.'.$this->election->getKey()),
+            new PrivateChannel('elections.' . $this->election->getKey()),
         ];
     }
 }

@@ -42,7 +42,7 @@ class Electors extends ElectionPage implements HasTable
         return [
             ...parent::getListeners(),
 
-            'echo-private:elections.'.$this->getElection()->id.',.'.ElectorImportCompleted::getBroadcastName() => 'notifyImportCompletion',
+            'echo-private:elections.' . $this->getElection()->id . ',.' . ElectorImportCompleted::getBroadcastName() => 'notifyImportCompletion',
         ];
     }
 

@@ -1,6 +1,7 @@
 node_modules
 dist
 .env*
+storage/
 vendor/
 public/
 .git

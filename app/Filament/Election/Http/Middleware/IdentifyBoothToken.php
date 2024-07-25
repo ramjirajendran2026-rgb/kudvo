@@ -15,7 +15,7 @@ class IdentifyBoothToken
     public function handle(Request $request, Closure $next)
     {
         $election = Kudvo::getElection();
-        $token = Cookie::get(key: 'election_'.Kudvo::getElection()->getKey().'_booth_token');
+        $token = Cookie::get(key: 'election_' . Kudvo::getElection()->getKey() . '_booth_token');
 
         if (
             filled($token) &&

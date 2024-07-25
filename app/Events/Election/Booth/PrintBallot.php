@@ -10,16 +10,16 @@ use Illuminate\Queue\SerializesModels;
 
 class PrintBallot implements ShouldBroadcast
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
+    use Dispatchable;
+    use InteractsWithSockets;
+    use SerializesModels;
 
-    public function __construct(public readonly string $boothId)
-    {
-    }
+    public function __construct(public readonly string $boothId) {}
 
     public function broadcastOn(): array
     {
         return [
-            new Channel(name: 'election-booth.'.$this->boothId),
+            new Channel(name: 'election-booth.' . $this->boothId),
         ];
     }
 

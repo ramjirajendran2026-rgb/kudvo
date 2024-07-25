@@ -5,7 +5,6 @@ namespace App\Enums;
 use App\Facades\Kudvo;
 use App\Models\Election;
 use App\Models\Elector;
-use BladeUI\Heroicons\BladeHeroiconsServiceProvider;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 
@@ -27,7 +26,7 @@ enum ElectionPanelState: string
 
     case CommonLinkRestricted = 'common_link_restricted';
 
-    public function getLabel(Election $election): HtmlString|string|null
+    public function getLabel(Election $election): HtmlString | string | null
     {
         return match ($this) {
             self::YetToStart => 'Yet to start',
@@ -55,7 +54,7 @@ enum ElectionPanelState: string
         };
     }
 
-    public function getDescription(Election $election, ?Elector $elector = null): string | HtmlString |null
+    public function getDescription(Election $election, ?Elector $elector = null): string | HtmlString | null
     {
         $startsAt = Kudvo::isBoothDevice() ? $election->booth_starts_at_local : $election->starts_at_local;
 

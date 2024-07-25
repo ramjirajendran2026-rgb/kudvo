@@ -11,5 +11,5 @@ class WebAppManifestIconData extends Data
         public string $type,
         public string $sizes,
         public ?string $purpose = null,
-    ) { }
+    ) {}
 }

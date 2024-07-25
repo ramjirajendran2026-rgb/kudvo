@@ -1,4 +1,4 @@
-import preset from './vendor/filament/support/tailwind.config.preset.js';
+import preset from './vendor/filament/support/tailwind.config.preset.js'
 
 export default {
     presets: [preset],
@@ -34,7 +34,7 @@ export default {
                 '.bg-var-url': {
                     'background-image': 'var(--bg-url)',
                 },
-            });
+            })
         },
     ],
-};
+}

@@ -2,7 +2,6 @@
 
 namespace App\Listeners;
 
-use Akhan619\LaravelSesEventManager\App\Models\Email;
 use App\Actions\ParseMailMessageId;
 use Illuminate\Mail\Events\MessageSent;
 

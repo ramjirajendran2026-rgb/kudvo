@@ -68,8 +68,8 @@ class Index extends Page
         if (Kudvo::isBoothDevice()) {
             $boothId = Kudvo::getElectionBoothToken()->getKey();
 
-            $listeners["echo:election-booth.$boothId,.".ElectorRevokedFromBoothEvent::getBroadcastName()] = 'destroySession';
-            $listeners["echo:election-booth.$boothId,.".PrintBallot::getBroadcastName()] = 'dispatchPrintBallotEvent';
+            $listeners["echo:election-booth.$boothId,." . ElectorRevokedFromBoothEvent::getBroadcastName()] = 'destroySession';
+            $listeners["echo:election-booth.$boothId,." . PrintBallot::getBroadcastName()] = 'dispatchPrintBallotEvent';
         }
 
         return $listeners;
@@ -87,12 +87,12 @@ class Index extends Page
             return;
         }
 
-        $this->sessionVotes = Session::pull(key: 'elector_'.($this->getElector()?->getKey()).'_votes');
+        $this->sessionVotes = Session::pull(key: 'elector_' . ($this->getElector()?->getKey()) . '_votes');
         if (filled($this->sessionVotes)) {
             $this->playVoteCastedMessage = true;
         }
 
-        $this->sessionVoteIds = Session::get(key: 'elector_'.($this->getElector()?->getKey()).'_vote_ids');
+        $this->sessionVoteIds = Session::get(key: 'elector_' . ($this->getElector()?->getKey()) . '_vote_ids');
 
         if (filled($this->sessionVoteIds)) {
             $this->form->fill(
@@ -134,7 +134,7 @@ class Index extends Page
         return 'index';
     }
 
-    public static function getWithoutRouteMiddleware(Panel $panel): string|array
+    public static function getWithoutRouteMiddleware(Panel $panel): string | array
     {
         return [
             EnsureStateIsAllowed::class,
@@ -142,7 +142,7 @@ class Index extends Page
         ];
     }
 
-    public function getTitle(): string|Htmlable
+    public function getTitle(): string | Htmlable
     {
         return $this->getElection()->name;
     }
@@ -162,7 +162,7 @@ class Index extends Page
         return $this->state;
     }
 
-    public function getStateHeading(): string|Htmlable|null
+    public function getStateHeading(): string | Htmlable | null
     {
         return $this->getState()?->getLabel(election: $this->getElection());
     }
@@ -172,7 +172,7 @@ class Index extends Page
         return $this->getState()?->getIcon(election: $this->getElection());
     }
 
-    public function getStateDescription(): string|Htmlable|null
+    public function getStateDescription(): string | Htmlable | null
     {
         return $this->getState()?->getDescription(election: $this->getElection(), elector: $this->getElector());
     }
@@ -182,14 +182,15 @@ class Index extends Page
         return match ($this->getState()) {
             ElectionPanelState::Voted => [
                 Action::make(name: 'downloadMyBallot')
-                    ->action(action: fn (self $livewire) => response()
-                        ->streamDownload(
-                            callback: function () use ($livewire) {
-                                echo $livewire->generateBallotCopyPdf()
-                                    ->output();
-                            },
-                            name: "ballot-{$livewire->getElection()->code}.pdf",
-                        )
+                    ->action(
+                        action: fn (self $livewire) => response()
+                            ->streamDownload(
+                                callback: function () use ($livewire) {
+                                    echo $livewire->generateBallotCopyPdf()
+                                        ->output();
+                                },
+                                name: "ballot-{$livewire->getElection()->code}.pdf",
+                            )
                     )
                     ->visible(
                         condition: fn (self $livewire): bool => ! Kudvo::isBoothDevice() &&
@@ -274,7 +275,7 @@ class Index extends Page
         return $elector;
     }
 
-    protected function generateBallotCopyPdf(): Dompdf|\Barryvdh\DomPDF\PDF
+    protected function generateBallotCopyPdf(): Dompdf | \Barryvdh\DomPDF\PDF
     {
         $pdf = Pdf::loadView(
             'pdf.election.ballot-copy',

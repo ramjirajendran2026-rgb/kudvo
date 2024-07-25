@@ -11,14 +11,16 @@ use Illuminate\Queue\SerializesModels;
 
 class Activated implements ShouldBroadcast
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
+    use Dispatchable;
+    use InteractsWithSockets;
+    use SerializesModels;
 
     public function __construct(public readonly string $boothId) {}
 
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel(name: 'elections.'.ElectionBoothToken::find($this->boothId)?->election_id),
+            new PrivateChannel(name: 'elections.' . ElectionBoothToken::find($this->boothId)?->election_id),
         ];
     }
 

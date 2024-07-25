@@ -67,7 +67,7 @@ class Nominees extends BaseWidget
                     ->icon(icon: fn (Nominator $state): ?string => $state->status->getIcon())
                     ->iconColor(color: fn (Nominator $state): ?string => $state->status->getColor())
                     ->listWithLineBreaks()
-                    ->size(size: Tables\Columns\TextColumn\TextColumnSize::Small)
+                    ->size(size: TextColumnSize::Small)
                     ->wrap(),
 
                 Tables\Columns\TextColumn::make(name: 'scrutiny_status')

@@ -8,7 +8,7 @@ use Illuminate\Auth\Events\Logout;
 
 class DestroyBrowserSession
 {
-    public function handle(Logout|CurrentDeviceLogout $event): void
+    public function handle(Logout | CurrentDeviceLogout $event): void
     {
         $user = $event->user;
 

@@ -10,7 +10,9 @@ use Illuminate\Queue\SerializesModels;
 
 class ElectorImportCompleted implements ShouldBroadcastNow
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
+    use Dispatchable;
+    use InteractsWithSockets;
+    use SerializesModels;
 
     public function __construct(
         public readonly int $electionId,
@@ -20,7 +22,7 @@ class ElectorImportCompleted implements ShouldBroadcastNow
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel(name: 'elections.'.$this->electionId),
+            new PrivateChannel(name: 'elections.' . $this->electionId),
         ];
     }
 

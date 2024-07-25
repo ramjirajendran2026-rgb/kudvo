@@ -46,6 +46,6 @@ class ElectionPanel extends Panel implements ResolvesElection
 
     public function getPath(): string
     {
-        return parent::getPath().'/{election}';
+        return parent::getPath() . '/{election}';
     }
 }

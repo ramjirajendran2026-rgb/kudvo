@@ -9,9 +9,7 @@ class NominatorAccepted
 {
     use Dispatchable;
 
-    public function __construct(protected Nominator $nominator)
-    {
-    }
+    public function __construct(protected Nominator $nominator) {}
 
     public function getNominator(): Nominator
     {

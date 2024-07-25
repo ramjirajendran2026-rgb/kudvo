@@ -60,7 +60,7 @@ class Email extends Model
     protected function status(): Attribute
     {
         return Attribute::make(
-            get: fn($value, array $attributes) => match (true) {
+            get: fn ($value, array $attributes) => match (true) {
                 $this->isComplained() => EmailStatus::Complaint,
                 $this->isDelivered() => EmailStatus::Delivered,
                 $this->isBounced() => EmailStatus::Bounced,

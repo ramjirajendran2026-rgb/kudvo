@@ -174,7 +174,7 @@ class Collaborators extends ElectionPage implements HasTable
                     ->successNotificationTitle(title: __('filament.user.election-resource.pages.collaborators.table.actions.invite_collaborator.success_notification.title')),
             ])
             ->heading(heading: __('filament.user.election-resource.pages.collaborators.table.heading'))
-            ->recordTitle(title: fn (User $user): string => $user->name.' ('.$user->email.')');
+            ->recordTitle(title: fn (User $user): string => $user->name . ' (' . $user->email . ')');
     }
 
     public function getPermissionsSchema(): array

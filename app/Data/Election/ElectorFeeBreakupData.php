@@ -36,7 +36,7 @@ class ElectorFeeBreakupData extends Data
         public int $candidate_attachment = 0,
         public int $candidate_group = 0,
         public int $booth_voting = 0,
-    ) { }
+    ) {}
 
     public function ballotLinkCommon(int $fee): static
     {

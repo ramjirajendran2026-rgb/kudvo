@@ -21,7 +21,7 @@ class ElectionResult extends Model
         'total_votes' => 'int',
         'processed_votes' => 'int',
         'completed_at' => 'datetime',
-        'meta' => EncryptedDataCollection::class.':'.ResultMetaData::class.',default',
+        'meta' => EncryptedDataCollection::class . ':' . ResultMetaData::class . ',default',
         'election_id' => 'int',
     ];
 

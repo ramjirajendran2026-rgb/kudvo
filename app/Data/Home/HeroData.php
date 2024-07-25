@@ -14,6 +14,5 @@ class HeroData extends Data
         public ?string $cta_url = null,
         public ?string $cta2_label = null,
         public ?string $cta2_url = null,
-    ) {
-    }
+    ) {}
 }
