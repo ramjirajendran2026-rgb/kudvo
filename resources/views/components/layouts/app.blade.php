@@ -20,6 +20,9 @@
             rel="stylesheet"
         />
 
+         <!-- Favicon
+        <link rel="icon" type="image/x-icon" href="{{ url('/favicon.ico') }}"> -->
+
         <style>
             [x-cloak] {
                 display: none !important;
@@ -228,6 +231,7 @@
                                     :href="route('products.election.home')"
                                     icon="heroicon-o-archive-box"
                                     tag="a"
+                                    title="hello"
                                 >
                                     {{ __('app.nav.products.items.election.label') }}
                                 </x-filament::dropdown.list.item>

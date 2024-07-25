@@ -43,14 +43,14 @@ return [
          * See https://developers.google.com/search/docs/advanced/robots/robots_meta_tag
          * Default: 'max-snippet:-1, max-image-preview:large, max-video-preview:-1'
          */
-        'default' => 'noindex, nofollow',
+        'default' => 'index, follow',
 
         /**
          * Force set the robots `default` value and make it impossible to overwrite it. (e.g. via SEOData->robots)
          * Use case: You need to set `noindex, nofollow` for the entire website without exception.
          * Default: false
          */
-        'force_default' => true,
+        'force_default' => false,
     ],
 
     /**
@@ -59,7 +59,7 @@ return [
      *
      * You can use the following filetypes: ico, png, gif, jpeg, svg.
      */
-    'favicon' => null,
+    'favicon' => 'favicon.ico',
 
     'title' => [
         /**

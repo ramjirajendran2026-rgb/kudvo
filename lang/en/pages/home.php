@@ -2,8 +2,8 @@
 
 return [
     'seo' => [
-        'title' => 'Online Voting System',
-        'description' => 'Online Voting System',
+        'title' => 'Kudvo - Secure and Efficient Online Voting System',
+        'description' => 'Secure and Efficient Online Voting System for Clubs. Empower your club members with secure and efficient online voting. From board elections to event planning, streamline your decision-making process with our trusted system. Explore our products and pricing now!',
     ],
 
     'content' => [
@@ -129,42 +129,42 @@ return [
                 [
                     'title' => 'Online Election',
                     'description' => 'Host a variety of elections with ease using Kudvo\'s Online Election solution. Simplify board elections, committee votes, or organizational polls with adaptable voting methods.',
-                    'title_color' => '#49D8BE',
+                    'title_color' => '#37D8BE',
                     'cta_label' => 'See Products & Pricing',
                     'cta_url' => route('home'),
                 ],
                 [
                     'title' => 'Resolution Voting',
                     'description' => 'Make informed decisions on crucial matters with Kudvo\'s Resolution Voting feature. Propose, debate, and vote on resolutions effectively to ensure clarity and transparency.',
-                    'title_color' => '#49D8BE',
+                    'title_color' => '#fd9641',
                     'cta_label' => 'See Products & Pricing',
                     'cta_url' => route('home'),
                 ],
                 [
                     'title' => 'Survey',
                     'description' => 'Gather valuable insights and feedback from stakeholders with Kudvo\'s Survey tool. Conduct surveys on organizational performance, member satisfaction, and more to drive informed decision-making.',
-                    'title_color' => '#49D8BE',
+                    'title_color' => '#66D849',
                     'cta_label' => 'See Products & Pricing',
                     'cta_url' => route('home'),
                 ],
                 [
                     'title' => 'AGM Meeting Voting',
                     'description' => 'Streamline Annual General Meetings (AGMs) with Kudvo\'s AGM Meeting Voting solution. Enable remote participation and voting for attendees while maintaining the integrity of the process.',
-                    'title_color' => '#49D8BE',
+                    'title_color' => '#E92E66',
                     'cta_label' => 'See Products & Pricing',
                     'cta_url' => route('home'),
                 ],
                 [
                     'title' => 'Live Polling',
                     'description' => 'Engage your audience in real-time with Kudvo\'s Live Polling feature. Conduct interactive polls during events, webinars, or meetings to gather feedback and enhance audience interaction.',
-                    'title_color' => '#49D8BE',
+                    'title_color' => '#4285F7',
                     'cta_label' => 'See Products & Pricing',
                     'cta_url' => route('home'),
                 ],
                 [
                     'title' => 'Meeting Voting',
                     'description' => 'Make meetings more productive and inclusive with Kudvo\'s Meeting Voting functionality. Enable attendees to vote on agenda items, proposals, or decisions, ensuring every voice is heard.',
-                    'title_color' => '#49D8BE',
+                    'title_color' => '#0F1730',
                     'cta_label' => 'See Products & Pricing',
                     'cta_url' => route('home'),
                 ],

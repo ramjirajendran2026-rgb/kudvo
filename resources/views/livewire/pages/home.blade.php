@@ -33,6 +33,7 @@
         x-init="startSlider()"
     >
         <button
+        aria-label="previous slide"
             @click="prevSlide()"
             class="absolute left-5 top-1/2 z-10 -translate-y-1/2 transform rounded-full bg-gray-200 p-2 opacity-10 hover:opacity-100 focus:outline-none"
         >
@@ -49,6 +50,7 @@
             </svg>
         </button>
         <button
+         aria-label="Next slide"
             @click="nextSlide()"
             class="absolute right-5 top-1/2 z-10 -translate-y-1/2 transform rounded-full bg-gray-200 p-2 opacity-10 hover:opacity-100 focus:outline-none"
         >
@@ -135,8 +137,8 @@
         @endforeach
 
         <div class="absolute bottom-0 left-0 right-0 mb-8 flex justify-center">
-            <template x-for="slide in slides" :key="slide">
-                <button
+            <template  x-for="slide in slides" :key="slide">
+                <button aria-label="slider-change-button"
                     @click="activeSlide = slide - 1"
                     :class="{ 'bg-primary-500': activeSlide === slide - 1, 'bg-gray-200': activeSlide !== slide - 1 }"
                     class="mx-1 h-3 w-3 rounded-full focus:outline-none"
