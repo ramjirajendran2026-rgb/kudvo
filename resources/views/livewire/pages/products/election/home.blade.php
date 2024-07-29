@@ -34,6 +34,7 @@
             </div>
             <div data-aos="fade-left" class="flex items-center justify-center">
                 <img
+                    loading="lazy"
                     class="h-80 object-contain"
                     src="{{ asset('img/products/election/online-voting-system.webp') }}"
                     alt="Secure Online Voting with Kudvo"
@@ -117,6 +118,7 @@
                     data-aos="flip-left"
                 >
                     <img
+                        loading="lazy"
                         src="{{ $section['image'] }}"
                         alt="{{ $section['title'] }}"
                         class="h-80 object-contain"
