@@ -141,7 +141,6 @@
         <div class="absolute bottom-0 left-0 right-0 mb-8 flex justify-center">
             <template x-for="slide in slides" :key="slide">
                 <button
-                    aria-label="Slider change button"
                     @click="activeSlide = slide - 1"
                     :class="{ 'bg-primary-500': activeSlide === slide - 1, 'bg-gray-200': activeSlide !== slide - 1 }"
                     class="mx-1 h-3 w-3 rounded-full focus:outline-none"
@@ -151,7 +150,9 @@
                     x-transition:leave="transition-all duration-200 ease-out"
                     x-transition:leave-start="scale-100 opacity-100"
                     x-transition:leave-end="scale-95 opacity-0"
-                ></button>
+                >
+                    <span x-text="'Slider '+slide+' selector'" class="sr-only"></span>
+                </button>
             </template>
         </div>
     </section>
@@ -282,7 +283,7 @@
                             support@kudvo.com
                         </a>
                     </div>
-                    <div class="flex items-center justify-center gap-3">
+                    {{--<div class="flex items-center justify-center gap-3">
                         <a href="#" title="Facebook link">
                             <svg
                                 class="hover:fill-primary"
@@ -346,7 +347,7 @@
                                 ></path>
                             </svg>
                         </a>
-                    </div>
+                    </div>--}}
                 </div>
             </div>
         </div>

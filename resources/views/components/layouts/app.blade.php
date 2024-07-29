@@ -84,11 +84,13 @@
                     <a
                         href="{{ route('home') }}"
                         class="flex cursor-pointer items-center gap-2"
+                        title="Kudvo Logo"
                     >
                         <img
                             src="{{ asset('img/nav-logo.png') }}"
-                            alt="Logo"
-                            class="h-12 w-12"
+                            alt="Kudvo Logo"
+                            class="h-12 w-auto"
+
                         />
                         <div
                             class="text-xl font-bold leading-5 tracking-tight text-gray-950 dark:text-white"
@@ -306,9 +308,9 @@
                 class="container grid grid-cols-2 gap-4 px-4 py-8 md:grid-cols-4 md:gap-8 md:px-6 lg:px-8"
             >
                 <div class="space-y-4">
-                    <p class="text-xl font-semibold">
+                    <h3 class="text-xl font-semibold">
                         {{ __('app.nav.products.label') }}
-                    </p>
+                    </h3>
                     <ul class="list-none space-y-2">
                         <li>
                             <a href="{{ route('products.election.home') }}">
@@ -323,9 +325,9 @@
                     </ul>
                 </div>
                 <div class="space-y-4">
-                    <p class="text-xl font-semibold">
+                    <h3 class="text-xl font-semibold">
                         {{ __('app.footer.quick_links.label') }}
-                    </p>
+                    </h3>
                     <ul class="list-none space-y-2">
                         <li>
                             <a href="{{ route('home') }}">
@@ -365,6 +367,7 @@
                             <a
                                 href="tel:{{ __('app.contact.phone.number') }}"
                                 class="cursor-pointer text-nowrap"
+                                title="Kudvo Phone Number"
                             >
                                 {{ __('app.contact.phone.number') }}
                             </a>
@@ -380,11 +383,12 @@
                         <a
                             href="mailto://{{ __('app.contact.email.address') }}"
                             class="cursor-pointer text-lg"
+                            title="Kudvo Email"
                         >
                             {{ __('app.contact.email.address') }}
                         </a>
                     </div>
-                    <div class="flex justify-center gap-3 md:justify-start">
+                   {{-- <div class="flex justify-center gap-3 md:justify-start">
                         <a href="#" title="Facebook link">
                             <svg
                                 class="hover:fill-primary"
@@ -448,7 +452,7 @@
                                 ></path>
                             </svg>
                         </a>
-                    </div>
+                    </div>--}}
                 </div>
             </div>
             <div class="bg-primary-800 text-white md:flex-row">
