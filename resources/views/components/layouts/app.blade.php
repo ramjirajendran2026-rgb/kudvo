@@ -408,7 +408,7 @@
                         </g>
                         </svg>
                         </a>
-
+                        
                         <a href="#" title="Linkedin link">
                         <svg
                         class="hover:fill-primary"
@@ -431,7 +431,7 @@
                         </g>
                         </svg>
                         </a>
-
+                        
                         <a href="#" title="Twitter link">
                         <svg
                         class="hover:fill-primary"
