@@ -80,18 +80,17 @@
                     <a
                         href="{{ route('home') }}"
                         class="flex cursor-pointer items-center gap-2"
-                        title="Kudvo Logo"
                     >
                         <img
                             src="{{ asset('img/nav-logo.png') }}"
                             alt="{{ config('app.name') }} logo"
                             class="h-12 w-auto"
                         />
-                        <div
+                        <span
                             class="text-xl font-bold leading-5 tracking-tight text-gray-950 dark:text-white"
                         >
                             {{ config('app.name') }}
-                        </div>
+                        </span>
                     </a>
 
                     <x-filament::icon-button
@@ -409,7 +408,7 @@
                         </g>
                         </svg>
                         </a>
-                        
+
                         <a href="#" title="Linkedin link">
                         <svg
                         class="hover:fill-primary"
@@ -432,7 +431,7 @@
                         </g>
                         </svg>
                         </a>
-                        
+
                         <a href="#" title="Twitter link">
                         <svg
                         class="hover:fill-primary"
