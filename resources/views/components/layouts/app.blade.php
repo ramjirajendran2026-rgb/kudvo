@@ -124,34 +124,37 @@
                     <x-filament-panels::topbar.item :url="route('home')">
                         {{ __('app.nav.home.label') }}
                     </x-filament-panels::topbar.item>
+                    <li class="fi-topbar-item">
+                        <x-filament::dropdown placement="bottom-start" teleport>
+                            <x-slot name="trigger">
+                                <ul>
+                                    <x-filament-panels::topbar.item>
+                                        {{ __('app.nav.products.label') }}
+                                    </x-filament-panels::topbar.item>
+                                </ul>
+                            </x-slot>
 
-                    <x-filament::dropdown placement="bottom-start" teleport>
-                        <x-slot name="trigger">
-                            <x-filament-panels::topbar.item>
-                                {{ __('app.nav.products.label') }}
-                            </x-filament-panels::topbar.item>
-                        </x-slot>
+                            <x-filament::dropdown.list>
+                                <x-filament::dropdown.list.item
+                                    :href="route('products.election.home')"
+                                    icon="heroicon-o-archive-box"
+                                    tag="a"
+                                >
+                                    {{ __('app.nav.products.items.election.label') }}
+                                </x-filament::dropdown.list.item>
 
-                        <x-filament::dropdown.list>
-                            <x-filament::dropdown.list.item
-                                :href="route('products.election.home')"
-                                icon="heroicon-o-archive-box"
-                                tag="a"
-                            >
-                                {{ __('app.nav.products.items.election.label') }}
-                            </x-filament::dropdown.list.item>
-
-                            <x-filament::dropdown.list.item
-                                :disabled="true"
-                                icon="heroicon-o-scale"
-                                tag="a"
-                                href="#"
-                                badge="coming"
-                            >
-                                {{ __('app.nav.products.items.resolution_voting.label') }}
-                            </x-filament::dropdown.list.item>
-                        </x-filament::dropdown.list>
-                    </x-filament::dropdown>
+                                <x-filament::dropdown.list.item
+                                    :disabled="true"
+                                    icon="heroicon-o-scale"
+                                    tag="a"
+                                    href="#"
+                                    badge="coming"
+                                >
+                                    {{ __('app.nav.products.items.resolution_voting.label') }}
+                                </x-filament::dropdown.list.item>
+                            </x-filament::dropdown.list>
+                        </x-filament::dropdown>
+                    </li>
 
                     <x-filament-panels::topbar.item
                         :url="route('home') . '#clientele'"
@@ -408,7 +411,7 @@
                         </g>
                         </svg>
                         </a>
-                        
+
                         <a href="#" title="Linkedin link">
                         <svg
                         class="hover:fill-primary"
@@ -431,7 +434,7 @@
                         </g>
                         </svg>
                         </a>
-                        
+
                         <a href="#" title="Twitter link">
                         <svg
                         class="hover:fill-primary"
