@@ -88,7 +88,7 @@
                     >
                         <img
                             src="{{ asset('img/nav-logo.png') }}"
-                            alt="Kudvo Logo"
+                            alt="{{ config('app.name') }} logo"
                             class="h-12 w-auto"
                         />
                         <div
