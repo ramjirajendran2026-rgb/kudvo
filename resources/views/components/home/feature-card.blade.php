@@ -11,6 +11,7 @@
 <div class="rounded-xl bg-[#FAF9F6] p-2 shadow-sm dark:bg-gray-900">
     <div class="p-4">
         <img
+            loading="lazy"
             src="{{ $data->image }}"
             alt="{{ $data->title }}"
             title="{{ $data->title }}"
