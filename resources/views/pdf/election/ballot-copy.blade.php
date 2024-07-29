@@ -1,5 +1,7 @@
 @php
-    /** @var \App\Models\Election $election */
+    use App\Models\Election;
+
+    /** @var Election $election */
 @endphp
 
 <!DOCTYPE html>
@@ -72,7 +74,7 @@
                         <th rowspan="3" style="width: 10mm">
                             <img
                                 alt="Ballot QR code"
-                                src="data:image/svg+xml;base64,{!! base64_encode(\SimpleSoftwareIO\QrCode\Facades\QrCode::size(100)->generate($election->code.'|'.$elector->uuid)) !!}"
+                                src="data:image/svg+xml;base64,{!! base64_encode(QrCode::size(100)->generate($election->code . '|' . $elector->uuid)) !!}"
                             />
                         </th>
                     </tr>
@@ -104,7 +106,7 @@
                                 {{ $position->name }}
                                 <br />
                                 <small>
-                                    {{ str(string: $position->quota.' post')->plural(count: $position->quota) }}
+                                    {{ str(string: $position->quota . ' post')->plural(count: $position->quota) }}
                                 </small>
                             </th>
                         </tr>
@@ -131,7 +133,9 @@
                                     <div>{{ $candidate->full_name }}</div>
                                     <div>
                                         @php
-                                            $contacts = \Illuminate\Support\Arr::where(
+                                            use Illuminate\Support\Arr;
+
+                                            $contacts = Arr::where(
                                                 $candidate->only(['membership_number', 'phone', 'email']),
                                                 fn ($item) => filled($item),
                                             );

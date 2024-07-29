@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Actions\ParseMailMessageId;
+use App\Models\Email;
 use Illuminate\Mail\Events\MessageSent;
 
 class LogSentMail
@@ -15,7 +16,7 @@ class LogSentMail
             ->execute($event->sent);
 
         if (filled($messageId)) {
-            \App\Models\Email::create([
+            Email::create([
                 'message_id' => $messageId,
                 'from_address' => current($result->getOriginalMessage()->getFrom())->getAddress(),
                 'from_name' => current($result->getOriginalMessage()->getFrom())->getName(),

@@ -8,17 +8,19 @@
     'data',
 ])
 
-<div class="space-y-2 rounded-xl bg-white p-2 shadow-sm dark:bg-gray-900">
-    <img
-        src="{{ $data->image }}"
-        alt="{{ $data->title }}"
-        title="{{ $data->title }}"
-        class="aspect-square w-full rounded-xl"
-    />
+<div class="rounded-xl bg-[#FAF9F6] p-2 shadow-sm dark:bg-gray-900">
+    <div class="p-4">
+        <img
+            src="{{ $data->image }}"
+            alt="{{ $data->title }}"
+            title="{{ $data->title }}"
+            class="aspect-square w-full rounded-xl"
+        />
+    </div>
     <div class="space-y-2 p-2 md:p-4">
-        <h5 class="text-lg font-bold text-gray-900 dark:text-white">
+        <h3 class="text-lg font-bold text-gray-900 dark:text-white">
             {{ $data->title }}
-        </h5>
+        </h3>
         <ul class="space-y-2 text-base text-gray-600 dark:text-white">
             @foreach ($data->points as $point)
                 <li class="flex items-start gap-2">

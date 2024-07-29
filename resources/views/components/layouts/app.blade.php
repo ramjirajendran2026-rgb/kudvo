@@ -20,9 +20,6 @@
             rel="stylesheet"
         />
 
-         <!-- Favicon
-        <link rel="icon" type="image/x-icon" href="{{ url('/favicon.ico') }}"> -->
-
         <style>
             [x-cloak] {
                 display: none !important;
@@ -41,11 +38,11 @@
         <header
             x-data="{ isSticky: false }"
             x-bind:class="{
-                'bg-white shadow-lg dark:bg-gray-900 dark:ring-white/10ring-1 ring-gray-950/5':
+                'bg-white shadow-lg dark:bg-gray-900 dark:ring-white/10 ring-1 ring-gray-950/5 mb-0':
                     isSticky,
             }"
             x-on:scroll.window="isSticky = window.scrollY > 16"
-            class="sticky top-0 z-20 mt-4 overflow-x-clip transition-all md:px-6 lg:px-8"
+            class="sticky top-0 z-20 mb-4 mt-4 overflow-x-clip transition-all md:px-6 lg:px-8"
         >
             <nav
                 x-data="{
@@ -91,7 +88,7 @@
                         <img
                             src="{{ asset('img/nav-logo.png') }}"
                             alt="Logo"
-                            class="h-12"
+                            class="h-12 w-12"
                         />
                         <div
                             class="text-xl font-bold leading-5 tracking-tight text-gray-950 dark:text-white"
@@ -161,7 +158,7 @@
                     </x-filament::dropdown>
 
                     <x-filament-panels::topbar.item
-                        :url="route('home').'#clientele'"
+                        :url="route('home') . '#clientele'"
                     >
                         {{ __('app.nav.clientele.label') }}
                     </x-filament-panels::topbar.item>
@@ -173,13 +170,13 @@
                     --}}
 
                     <x-filament-panels::topbar.item
-                        :url="route('home').'#contact'"
+                        :url="route('home') . '#contact'"
                     >
                         {{ __('app.nav.contact.label') }}
                     </x-filament-panels::topbar.item>
                 </ul>
 
-                <ul class="ms-auto hidden gap-x-4 lg:flex lg:items-center">
+                <div class="ms-auto hidden gap-x-4 lg:flex lg:items-center">
                     <x-locale-switch />
 
                     @auth
@@ -205,9 +202,10 @@
                             {{ __('app.nav.sign_up.label') }}
                         </x-filament::button>
                     @endauth
-                </ul>
+                </div>
 
                 <div
+                    x-cloak
                     x-show="isOpen"
                     @click.away="isOpen = false"
                     class="absolute inset-x-2 top-20 z-50 origin-top-right transform space-y-6 rounded-xl bg-white px-4 py-6 shadow-lg transition lg:hidden"
@@ -231,7 +229,6 @@
                                     :href="route('products.election.home')"
                                     icon="heroicon-o-archive-box"
                                     tag="a"
-                                    title="hello"
                                 >
                                     {{ __('app.nav.products.items.election.label') }}
                                 </x-filament::dropdown.list.item>
@@ -250,7 +247,7 @@
                         </x-filament::dropdown>
 
                         <x-filament-panels::topbar.item
-                            :url="route('home').'#clientele'"
+                            :url="route('home') . '#clientele'"
                         >
                             {{ __('app.nav.clientele.label') }}
                         </x-filament-panels::topbar.item>
@@ -262,7 +259,7 @@
                         --}}
 
                         <x-filament-panels::topbar.item
-                            :url="route('home').'#contact'"
+                            :url="route('home') . '#contact'"
                         >
                             {{ __('app.nav.contact.label') }}
                         </x-filament-panels::topbar.item>
@@ -309,9 +306,9 @@
                 class="container grid grid-cols-2 gap-4 px-4 py-8 md:grid-cols-4 md:gap-8 md:px-6 lg:px-8"
             >
                 <div class="space-y-4">
-                    <h6 class="text-xl font-semibold">
+                    <p class="text-xl font-semibold">
                         {{ __('app.nav.products.label') }}
-                    </h6>
+                    </p>
                     <ul class="list-none space-y-2">
                         <li>
                             <a href="{{ route('products.election.home') }}">
@@ -326,9 +323,9 @@
                     </ul>
                 </div>
                 <div class="space-y-4">
-                    <h6 class="text-xl font-semibold">
+                    <p class="text-xl font-semibold">
                         {{ __('app.footer.quick_links.label') }}
-                    </h6>
+                    </p>
                     <ul class="list-none space-y-2">
                         <li>
                             <a href="{{ route('home') }}">
@@ -388,7 +385,7 @@
                         </a>
                     </div>
                     <div class="flex justify-center gap-3 md:justify-start">
-                        <a href="#">
+                        <a href="#" title="Facebook link">
                             <svg
                                 class="hover:fill-primary"
                                 fill="#000000"
@@ -413,7 +410,7 @@
                             </svg>
                         </a>
 
-                        <a href="#">
+                        <a href="#" title="Linkedin link">
                             <svg
                                 class="hover:fill-primary"
                                 fill="#000000"
@@ -436,7 +433,7 @@
                             </svg>
                         </a>
 
-                        <a href="#">
+                        <a href="#" title="Twitter link">
                             <svg
                                 class="hover:fill-primary"
                                 xmlns="http://www.w3.org/2000/svg"
@@ -454,12 +451,12 @@
                     </div>
                 </div>
             </div>
-            <div class="bg-black text-white md:flex-row">
+            <div class="bg-primary-800 text-white md:flex-row">
                 <div
                     class="container flex flex-col items-center justify-center px-4 py-4 md:flex-row lg:px-8"
                 >
                     <span>
-                        &copy; {{ date('Y ').' - '.config('app.name') }}
+                        &copy; {{ date('Y ') . ' - ' . config('app.name') }}
                     </span>
                 </div>
             </div>

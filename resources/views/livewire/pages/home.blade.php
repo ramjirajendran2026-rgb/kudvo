@@ -33,7 +33,7 @@
         x-init="startSlider()"
     >
         <button
-        aria-label="previous slide"
+            aria-label="Previous slide"
             @click="prevSlide()"
             class="absolute left-5 top-1/2 z-10 -translate-y-1/2 transform rounded-full bg-gray-200 p-2 opacity-10 hover:opacity-100 focus:outline-none"
         >
@@ -50,7 +50,7 @@
             </svg>
         </button>
         <button
-         aria-label="Next slide"
+            aria-label="Next slide"
             @click="nextSlide()"
             class="absolute right-5 top-1/2 z-10 -translate-y-1/2 transform rounded-full bg-gray-200 p-2 opacity-10 hover:opacity-100 focus:outline-none"
         >
@@ -69,6 +69,7 @@
 
         @foreach ($heroItems as $item)
             <div
+                {{ ! $loop->first ? 'x-cloak' : '' }}
                 x-data="{ currentSlide: @js($loop->index) }"
                 x-show="activeSlide === currentSlide"
                 class="relative flex flex-col bg-cover md:aspect-[2.23/1] md:bg-var-url lg:flex-row lg:pb-0 lg:pt-0"
@@ -131,14 +132,16 @@
                         class="block h-[343px] w-full object-cover object-right-bottom [mask-image:_linear-gradient(to_bottom,transparent_0,_black_100px,_black_calc(100%-1px),transparent_100%)] md:hidden"
                         src="{{ $item->image }}"
                         alt="{{ $item->title }}"
+                        title="{{ $item->title }}"
                     />
                 </div>
             </div>
         @endforeach
 
         <div class="absolute bottom-0 left-0 right-0 mb-8 flex justify-center">
-            <template  x-for="slide in slides" :key="slide">
-                <button aria-label="slider-change-button"
+            <template x-for="slide in slides" :key="slide">
+                <button
+                    aria-label="Slider change button"
                     @click="activeSlide = slide - 1"
                     :class="{ 'bg-primary-500': activeSlide === slide - 1, 'bg-gray-200': activeSlide !== slide - 1 }"
                     class="mx-1 h-3 w-3 rounded-full focus:outline-none"
@@ -152,21 +155,41 @@
             </template>
         </div>
     </section>
-
-    <section
-        id="features"
-        class="container grid gap-4 pt-16 md:grid-cols-3 md:gap-8"
-    >
-        @foreach ($featureItems as $feature)
-            <x-home.feature-card :data="$feature" />
-        @endforeach
+    <section id="intro" class="container pt-16">
+        <h1
+            class="mx-auto max-w-screen-lg text-center text-xl font-bold text-gray-900 sm:text-2xl md:text-4xl"
+        >
+            Secure
+            <span
+                class="bg-gradient-to-tr from-primary-600 to-primary-500 bg-clip-text text-transparent"
+            >
+                Online Voting System
+            </span>
+            for Seamless Election Management Anytime, Anywhere
+        </h1>
+    </section>
+    <section id="features" class="container pt-16">
+        <h2
+            class="underline-offset-3 text-center text-2xl font-semibold text-black underline decoration-primary-600 decoration-8 md:text-4xl"
+        >
+            Explore Our Features
+        </h2>
+        <div class="grid gap-4 md:grid-cols-3 md:gap-8">
+            @foreach ($featureItems as $feature)
+                <x-home.feature-card :data="$feature" />
+            @endforeach
+        </div>
     </section>
 
     <section id="products" class="container pt-16">
-        <div class="space-y-6 rounded-3xl bg-amber-200 p-6 md:space-y-8 md:p-8">
-            <h3 class="text-center text-2xl font-semibold md:text-4xl">
+        <div
+            class="space-y-6 rounded-3xl bg-primary-700/30 p-6 md:space-y-8 md:p-8"
+        >
+            <h4
+                class="text-center text-2xl font-semibold text-primary-950 md:text-4xl"
+            >
                 {{ __('pages/home.content.products.title') }}
-            </h3>
+            </h4>
             <div class="grid gap-4 md:grid-cols-3 md:gap-8">
                 @foreach ($productItems as $product)
                     <x-home.product-card :data="$product" />
@@ -176,9 +199,9 @@
     </section>
 
     <section id="clientele" class="container space-y-6 py-16">
-        <h3 class="text-center text-2xl font-semibold md:text-4xl">
+        <h4 class="text-center text-2xl font-semibold md:text-4xl">
             {{ __('pages/home.content.clientele.title') }}
-        </h3>
+        </h4>
         <div
             x-data="{}"
             x-init="
@@ -197,9 +220,10 @@
                 @foreach ($clientItems as $client)
                     <li class="mx-2 md:mx-8">
                         <img
-                            class="w-16 max-w-none md:w-28"
+                            class="aspect-square w-16 max-w-none md:w-28"
                             src="{{ $client->logo }}"
                             alt="{{ $client->name }}"
+                            title="{{ $client->name }}"
                         />
                     </li>
                 @endforeach
@@ -259,7 +283,7 @@
                         </a>
                     </div>
                     <div class="flex items-center justify-center gap-3">
-                        <a href="#">
+                        <a href="#" title="Facebook link">
                             <svg
                                 class="hover:fill-primary"
                                 fill="#000000"
@@ -284,7 +308,7 @@
                             </svg>
                         </a>
 
-                        <a href="#">
+                        <a href="#" title="Linkedin link">
                             <svg
                                 class="hover:fill-primary"
                                 fill="#000000"
@@ -307,7 +331,7 @@
                             </svg>
                         </a>
 
-                        <a href="#">
+                        <a href="#" title="Twitter link">
                             <svg
                                 class="hover:fill-primary"
                                 xmlns="http://www.w3.org/2000/svg"
