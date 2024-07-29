@@ -1,5 +1,7 @@
 import preset from './vendor/filament/support/tailwind.config.preset.js'
 
+const defaultTheme = require('tailwindcss/defaultTheme')
+
 export default {
     presets: [preset],
     content: [
@@ -25,6 +27,9 @@ export default {
             },
             animation: {
                 'infinite-scroll': 'infinite-scroll 25s linear infinite',
+            },
+            fontFamily: {
+                sans: ['Poppins', ...defaultTheme.fontFamily.sans],
             },
         },
     },
