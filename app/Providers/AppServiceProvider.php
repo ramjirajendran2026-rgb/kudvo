@@ -22,6 +22,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Http\Responses\Auth\Contracts\LogoutResponse as LogoutResponseContract;
 use Filament\Infolists\Components\Actions\Action as InfolistAction;
 use Filament\Notifications\Livewire\Notifications;
+use Filament\Support\Colors\Color;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\VerticalAlignment;
 use Filament\Support\Facades\FilamentColor;
@@ -128,19 +129,7 @@ class AppServiceProvider extends ServiceProvider
         }
 
         FilamentColor::register(colors: [
-            'primary' => [
-                50 => '#effefb',
-                100 => '#c8fff4',
-                200 => '#91feea',
-                300 => '#51f7df',
-                400 => '#1ee3cc',
-                500 => '#05c7b3',
-                600 => '#01b2a4',
-                700 => '#067f77',
-                800 => '#0a6560',
-                900 => '#0e5350',
-                950 => '#003332',
-            ],
+            'primary' => Color::Indigo,
         ]);
 
         Notifications::alignment(alignment: Alignment::Center);
