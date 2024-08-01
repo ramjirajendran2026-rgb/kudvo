@@ -81,7 +81,6 @@
             >
                 <img
                     {{ ! $loop->first ? 'loading="lazy"' : '' }}
-                    area-hidden="true"
                     class="absolute inset-0 -z-10 hidden aspect-[2.23/1] object-cover md:block"
                     src="{{ $item->image }}"
                     alt="{{ $item->title }}"
@@ -159,7 +158,7 @@
                 <button
                     @click="activeSlide = slide - 1"
                     :class="{ 'bg-primary-500': activeSlide === slide - 1, 'bg-gray-200': activeSlide !== slide - 1 }"
-                    class="mx-1 h-3 w-3 rounded-full focus:outline-none"
+                    class="mx-1 h-3 w-6 rounded-full focus:outline-none"
                     x-transition:enter="transition-all duration-300 ease-out"
                     x-transition:enter-start="scale-95 opacity-0"
                     x-transition:enter-end="scale-100 opacity-100"
@@ -329,7 +328,7 @@
                         </g>
                         </svg>
                         </a>
-                        
+
                         <a href="#" title="Linkedin link">
                         <svg
                         class="hover:fill-primary"
@@ -352,7 +351,7 @@
                         </g>
                         </svg>
                         </a>
-                        
+
                         <a href="#" title="Twitter link">
                         <svg
                         class="hover:fill-primary"
