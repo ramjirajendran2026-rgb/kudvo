@@ -75,6 +75,9 @@ class UserPanelProvider extends PanelProvider
                     action: [ElectionUserInvitationController::class, 'accept']
                 )->name(name: 'election-collaborators.accept');
             })
+            ->brandLogo(logo: asset(path: 'img/nav-logo.png'))
+            ->brandLogoHeight(height: '3rem')
+            ->brandName(name: config('app.name'))
             ->colors(colors: [
                 'primary' => Color::Teal,
             ])

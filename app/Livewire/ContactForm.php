@@ -16,11 +16,13 @@ use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
+use Livewire\Attributes\Lazy;
 use Livewire\Component;
 
 /**
  * @property Form $form
  */
+#[Lazy]
 class ContactForm extends Component implements HasForms
 {
     use InteractsWithForms;
