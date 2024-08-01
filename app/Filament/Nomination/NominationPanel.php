@@ -16,7 +16,7 @@ class NominationPanel extends Panel implements ResolvesNomination
             ->resolveRouteBinding(value: $key, field: $field);
 
         if (blank($election)) {
-            throw (new ModelNotFoundException())->setModel(model: Nomination::class, ids: [$key]);
+            throw (new ModelNotFoundException)->setModel(model: Nomination::class, ids: [$key]);
         }
 
         return $election;

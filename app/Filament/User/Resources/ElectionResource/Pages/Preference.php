@@ -63,7 +63,7 @@ class Preference extends ElectionPage
         }
 
         $election = $this->getElection();
-        $election->preference ??= new PreferenceData();
+        $election->preference ??= new PreferenceData;
 
         $this->form->fill($election->attributesToArray());
     }

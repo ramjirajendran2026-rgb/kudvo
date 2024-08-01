@@ -49,7 +49,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(abstract: 'kudvo', concrete: function (): KudvoManager {
-            return new KudvoManager();
+            return new KudvoManager;
         });
 
         $this->app->bind(LogoutResponseContract::class, LogoutResponse::class);
@@ -112,7 +112,7 @@ class AppServiceProvider extends ServiceProvider
                 $serviceConfig = app(abstract: ServiceConfig::class);
 
                 return new SMSApi(
-                    client: new Client(),
+                    client: new Client,
                     config: Configuration::getDefaultConfiguration()
                         ->setUsername($serviceConfig->clicksend->username)
                         ->setPassword($serviceConfig->clicksend->api_key)

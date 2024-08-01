@@ -444,7 +444,7 @@ HTML,
                 )
             )
             ->action(action: function (Position $record, array $data, Form $form, array $arguments, InfolistAction $action): void {
-                $candidate = new Candidate();
+                $candidate = new Candidate;
                 $candidate->fill(attributes: $data);
                 $record->candidates()->save(model: $candidate);
 

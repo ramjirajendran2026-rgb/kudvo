@@ -107,7 +107,7 @@ class AwsSnsController extends Controller
     protected function validateSns(ServerRequestInterface $request): void
     {
         $message = Message::fromPsrRequest($request);
-        $validator = new MessageValidator();
+        $validator = new MessageValidator;
 
         try {
             $validator->validate($message);

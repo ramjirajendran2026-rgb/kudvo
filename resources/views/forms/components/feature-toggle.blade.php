@@ -1,3 +1,5 @@
+@use(Filament\Support\Enums\VerticalAlignment)
+
 @php
     $offColor = $getOffColor() ?? 'gray';
     $onColor = $getOnColor() ?? 'primary';
