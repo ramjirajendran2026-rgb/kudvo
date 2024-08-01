@@ -271,7 +271,7 @@
 
             <div
                 class="flex aspect-video w-full flex-1 items-center justify-center bg-cover bg-no-repeat p-4 md:rounded-3xl"
-                style="background-image: url({{ url('img/contact-bg.png') }})"
+                style="background-image: url({{ url('img/contact-bg.webp') }})"
             >
                 <div class="space-y-4 rounded-xl bg-white p-4 md:p-6">
                     <h4 class="text-center text-2xl font-semibold md:text-4xl">
