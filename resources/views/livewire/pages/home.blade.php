@@ -3,6 +3,7 @@
         id="hero"
         class="container relative overflow-hidden"
         x-data="{
+            started: false,
             activeSlide: 0,
             slides: @js($heroItems->count()),
             intervalId: null,
@@ -11,6 +12,10 @@
             startSlider() {
                 this.intervalId = setInterval(() => {
                     this.activeSlide = (this.activeSlide + 1) % this.slides
+
+                    if (! this.started) {
+                        this.started = true
+                    }
                 }, 7000)
             },
 
@@ -82,7 +87,7 @@
                     alt="{{ $item->title }}"
                     title="{{ $item->title }}"
                     x-bind:class="{
-                        'animated-image': activeSlide === currentSlide,
+                        'animated-image': activeSlide === currentSlide && started,
                     }"
                 />
                 <div
@@ -91,7 +96,7 @@
                 <div
                     class="relative flex h-full w-full flex-col items-start justify-center px-4 md:w-[66.6%] md:px-0 lg:w-1/2 lg:px-8"
                     x-bind:class="{
-                        'animated-text': activeSlide === currentSlide,
+                        'animated-image': activeSlide === currentSlide && started,
                     }"
                 >
                     <div class="mb-16 md:mb-0 lg:my-auto lg:pr-5">
@@ -142,7 +147,7 @@
                         alt="{{ $item->title }}"
                         title="{{ $item->title }}"
                         x-bind:class="{
-                            'animated-image': activeSlide === currentSlide,
+                            'animated-image': activeSlide === currentSlide && started,
                         }"
                     />
                 </div>

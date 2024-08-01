@@ -30,7 +30,7 @@ class ClicksendChannel
         $message = $this->getSmsMessage($notifiable, $notification, self::NAME);
 
         if (is_string($message)) {
-            $message = (new SmsMessage())
+            $message = (new SmsMessage)
                 ->setBody($message);
         }
 
@@ -53,7 +53,7 @@ class ClicksendChannel
 
             Log::info('[Clicksend] SendSMS Request: ' . ((string) $message));
             $response = $this->api->smsSendPost(
-                (new SmsMessageCollection())
+                (new SmsMessageCollection)
                     ->setMessages([$message])
             );
 

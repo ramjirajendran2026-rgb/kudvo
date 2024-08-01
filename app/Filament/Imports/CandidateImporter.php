@@ -65,7 +65,7 @@ class CandidateImporter extends Importer
         //     'email' => $this->data['email'],
         // ]);
 
-        return new Candidate();
+        return new Candidate;
     }
 
     public static function getCompletedNotificationBody(Import $import): string
