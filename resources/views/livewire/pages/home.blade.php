@@ -80,7 +80,7 @@
                 class="relative flex flex-col bg-cover md:aspect-[2.23/1] md:bg-var-url lg:flex-row lg:pb-0 lg:pt-0"
             >
                 <img
-                    {{ ! $loop->first ? 'loading="lazy"' : '' }}
+                    {!! ! $loop->first ? 'loading="lazy"' : '' !!}
                     class="absolute inset-0 -z-10 hidden aspect-[2.23/1] object-cover md:block"
                     src="{{ $item->image }}"
                     alt="{{ $item->title }}"
@@ -140,7 +140,7 @@
                     class="inset-y-0 right-0 top-0 z-0 mx-auto block w-full md:hidden md:px-0 lg:absolute lg:mx-0 lg:mb-0 lg:pr-0 xl:px-0"
                 >
                     <img
-                        {{ ! $loop->first ? 'loading="lazy"' : '' }}
+                        {!! ! $loop->first ? 'loading="lazy"' : '' !!}
                         class="block h-[343px] w-full object-cover object-right-bottom [mask-image:_linear-gradient(to_bottom,transparent_0,_black_100px,_black_calc(100%-1px),transparent_100%)] md:hidden"
                         src="{{ $item->image }}"
                         alt="{{ $item->title }}"
@@ -271,7 +271,7 @@
 
             <div
                 class="flex aspect-video w-full flex-1 items-center justify-center bg-cover bg-no-repeat p-4 md:rounded-3xl"
-                style="background-image: url({{ url('img/contact-bg.png') }})"
+                style="background-image: url({{ url('img/contact-bg.webp') }})"
             >
                 <div class="space-y-4 rounded-xl bg-white p-4 md:p-6">
                     <h4 class="text-center text-2xl font-semibold md:text-4xl">

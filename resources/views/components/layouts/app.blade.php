@@ -82,9 +82,9 @@
                         class="flex cursor-pointer items-center gap-2"
                     >
                         <img
-                            src="{{ asset('img/nav-logo.png') }}"
+                            src="{{ asset('img/nav-logo.webp') }}"
                             alt="{{ config('app.name') }} logo"
-                            class="h-12 w-auto"
+                            class="size-12"
                         />
                         <span
                             class="text-xl font-bold leading-5 tracking-tight text-gray-950 dark:text-white"
