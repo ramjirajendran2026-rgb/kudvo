@@ -83,7 +83,7 @@
                     {!! ! $loop->first ? 'loading="lazy"' : '' !!}
                     class="absolute inset-0 -z-10 hidden aspect-[2.23/1] object-cover md:block"
                     src="{{ $item->image }}"
-                    alt="{{ $item->title }}"
+                    alt="{{ $item->image_alt }}"
                     title="{{ $item->title }}"
                     x-bind:class="{
                         'animated-image': activeSlide === currentSlide && started,
@@ -143,7 +143,7 @@
                         {!! ! $loop->first ? 'loading="lazy"' : '' !!}
                         class="block h-[343px] w-full object-cover object-right-bottom [mask-image:_linear-gradient(to_bottom,transparent_0,_black_100px,_black_calc(100%-1px),transparent_100%)] md:hidden"
                         src="{{ $item->image }}"
-                        alt="{{ $item->title }}"
+                        alt="{{ $item->image_alt }}"
                         title="{{ $item->title }}"
                         x-bind:class="{
                             'animated-image': activeSlide === currentSlide && started,
