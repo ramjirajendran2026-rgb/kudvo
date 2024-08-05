@@ -17,9 +17,9 @@
                 data-aos="fade-right"
                 class="flex-1 space-y-6 text-center lg:space-y-8 lg:text-start"
             >
-                <h2 class="font-sans text-3xl font-bold sm:text-4xl">
+                <h1 class="font-sans text-3xl font-bold sm:text-4xl">
                     {{ __('pages/products/election/home.content.hero.title') }}
-                </h2>
+                </h1>
                 <p class="text-base text-gray-700 md:text-lg">
                     {{ __('pages/products/election/home.content.hero.description') }}
                 </p>
@@ -38,6 +38,7 @@
                     class="h-80 object-contain"
                     src="{{ asset('img/products/election/online-voting-system.webp') }}"
                     alt="Secure Online Voting with Kudvo"
+                    title="Secure Online Voting with Kudvo"
                 />
             </div>
         </div>
@@ -48,9 +49,9 @@
             class="container grid gap-6 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-10"
         >
             <div class="animate-zoomIn col-span-full space-y-4">
-                <h3 class="text-center text-2xl font-semibold sm:text-3xl">
+                <h2 class="text-center text-2xl font-semibold sm:text-3xl">
                     {{ __('pages/products/election/home.content.benefits.title') }}
-                </h3>
+                </h2>
                 <p class="text-center text-gray-600">
                     {{ __('pages/products/election/home.content.benefits.description') }}
                 </p>
@@ -59,9 +60,9 @@
             @foreach ($benefits as $item)
                 <div class="space-y-4 text-center">
                     {!! $item->icon !!}
-                    <h5 class="text-lf font-semibold sm:text-xl">
+                    <h3 class="text-lf font-semibold sm:text-xl">
                         {{ $item->title }}
-                    </h5>
+                    </h3>
                     <p class="text-gray-600">
                         {{ $item->description }}
                     </p>
@@ -75,9 +76,9 @@
             class="container grid gap-6 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-10"
         >
             <div class="col-span-full space-y-4">
-                <h3 class="text-center text-2xl font-semibold sm:text-3xl">
+                <h2 class="text-center text-2xl font-semibold sm:text-3xl">
                     {{ __('pages/products/election/home.content.how_it_works.title') }}
-                </h3>
+                </h2>
                 <p class="text-center text-gray-600">
                     {{ __('pages/products/election/home.content.how_it_works.description') }}
                 </p>
@@ -86,9 +87,9 @@
             @foreach ($howItWorks as $item)
                 <div class="space-y-4 text-center">
                     {!! $item->icon !!}
-                    <h5 class="text-lf font-semibold sm:text-xl">
+                    <h3 class="text-lf font-semibold sm:text-xl">
                         {{ $item->title }}
-                    </h5>
+                    </h3>
                     <p class="text-gray-600">
                         {{ $item->description }}
                     </p>
@@ -101,6 +102,7 @@
                     :outlined="true"
                     tag="a"
                     size="xl"
+                    title="How its works page link"
                 >
                     {{ __('pages/products/election/home.content.how_it_works.cta.label') }}
                 </x-filament::button>
@@ -122,12 +124,13 @@
                         src="{{ $section['image'] }}"
                         alt="{{ $section['title'] }}"
                         class="h-80 object-contain"
+                        title="{{ $section['title'] }}"
                     />
                 </div>
                 <div class="flex-1 space-y-6 lg:space-y-8">
-                    <h3 class="text-2xl font-semibold sm:text-3xl">
+                    <h2 class="text-2xl font-semibold sm:text-3xl">
                         {{ $section['title'] }}
-                    </h3>
+                    </h2>
                     <p>
                         {{ $section['description'] }}
                     </p>
@@ -148,9 +151,9 @@
 
     <section id="pricing" class="py-16">
         <div class="container space-y-4 text-center">
-            <h3 class="text-2xl font-semibold sm:text-3xl">
+            <h2 class="text-2xl font-semibold sm:text-3xl">
                 {{ __('pages/products/election/home.content.pricing.title') }}
-            </h3>
+            </h2>
             <p class="text-gray-600">
                 {{ __('pages/products/election/home.content.pricing.description') }}
             </p>
@@ -161,9 +164,9 @@
 
     <section id="cta-section" class="bg-white py-16">
         <div class="container space-y-4 text-center">
-            <h3 class="text-2xl font-semibold sm:text-3xl">
+            <h2 class="text-2xl font-semibold sm:text-3xl">
                 {{ __('pages/products/election/home.content.cta_section.title') }}
-            </h3>
+            </h2>
             <p class="text-gray-600">
                 {{ __('pages/products/election/home.content.cta_section.description') }}
             </p>
@@ -171,6 +174,7 @@
                 tag="a"
                 :href="__('pages/products/election/home.content.cta_section.cta_url')"
                 size="xl"
+                title="Kudvo Sign up"
             >
                 {{ __('pages/products/election/home.content.cta_section.cta_label') }}
             </x-filament::button>
