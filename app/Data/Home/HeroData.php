@@ -10,6 +10,7 @@ class HeroData extends Data
         public ?string $title = null,
         public ?string $description = null,
         public ?string $image = null,
+        public ?string $image_alt = null,
         public ?string $cta_label = null,
         public ?string $cta_url = null,
         public ?string $cta2_label = null,
