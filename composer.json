@@ -54,6 +54,7 @@
         "spatie/laravel-data": "^3.11",
         "spatie/laravel-medialibrary": "^11.0.0",
         "spatie/laravel-pdf": "^1.5",
+        "spatie/laravel-permission": "^6.9",
         "spatie/laravel-settings": "^3.2",
         "spatie/laravel-translatable": "^6.7",
         "squirephp/currencies-en": "^3.5",

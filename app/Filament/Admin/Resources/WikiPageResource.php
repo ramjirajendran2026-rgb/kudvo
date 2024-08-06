@@ -9,6 +9,9 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Auth\Access\AuthorizationException;
+
+use function Filament\authorize;
 
 class WikiPageResource extends Resource
 {
@@ -92,13 +95,6 @@ class WikiPageResource extends Resource
             ]);
     }
 
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
-    }
-
     public static function getPages(): array
     {
         return [
@@ -106,5 +102,20 @@ class WikiPageResource extends Resource
             'create' => Pages\CreateWikiPage::route('/create'),
             'edit' => Pages\EditWikiPage::route('/{record}/edit'),
         ];
+    }
+
+    public static function canViewAny(): bool
+    {
+        if (static::shouldSkipAuthorization()) {
+            return true;
+        }
+
+        $model = static::getModel();
+
+        try {
+            return authorize('viewAny', $record ?? $model, static::shouldCheckPolicyExistence())->allowed();
+        } catch (AuthorizationException $exception) {
+            return $exception->toResponse()->allowed();
+        }
     }
 }
