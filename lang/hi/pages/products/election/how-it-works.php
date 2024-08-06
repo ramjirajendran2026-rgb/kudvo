@@ -10,7 +10,7 @@ return [
         'hero' => [
             'title' => '"3 सरल चरणों में चुनाव तैयार"',
             'description' => 'हमारे सहज प्लेटफ़ॉर्म के साथ ऑनलाइन मतदान की सरलता और दक्षता का अनुभव करें।<br /> पंजीकरण से परिणाम तक, इन प्रमुख चरणों के साथ अपने चुनाव को संचालित करें।',
-            'bg_image' => asset('img/products/election/how-its-work-bg.png'),
+            'bg_image' => asset('img/products/election/how-its-work-bg.webp'),
             'cta' => [
                 'label' => 'शुरू करें',
                 'url' => route('filament.user.auth.register'),

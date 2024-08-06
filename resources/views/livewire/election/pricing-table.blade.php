@@ -16,9 +16,9 @@
             wire:key="plan-{{ $plan->id }}"
             class="cursor-default space-y-4 rounded-3xl bg-white p-6 ring-primary-600 hover:translate-y-1 hover:ring-2 md:p-8"
         >
-            <h5 class="text-2xl font-semibold md:text-3xl">
+            <h4 class="text-2xl font-semibold md:text-3xl">
                 {{ $plan->name }}
-            </h5>
+            </h4>
             <p class="text-gray-600">
                 {{ $plan->description }}
             </p>

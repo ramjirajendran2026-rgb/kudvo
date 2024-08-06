@@ -150,9 +150,9 @@
 
     <section id="pricing" class="py-16">
         <div class="container space-y-4 text-center">
-            <h4 class="text-2xl font-semibold sm:text-3xl">
+            <h3 class="text-2xl font-semibold sm:text-3xl">
                 {{ __('pages/products/election/home.content.pricing.title') }}
-            </h4>
+            </h3>
             <p class="text-gray-600">
                 {{ __('pages/products/election/home.content.pricing.description') }}
             </p>
