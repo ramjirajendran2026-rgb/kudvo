@@ -8,9 +8,9 @@
         <div
             class="absolute inset-0 flex flex-col items-center justify-center gap-6 bg-black bg-opacity-50 p-4 text-center text-white sm:p-6"
         >
-            <h2 class="font-sans text-4xl font-bold md:text-6xl">
+            <h1 class="font-sans text-4xl font-bold md:text-6xl">
                 {{ __('pages/products/election/how-it-works.content.hero.title') }}
-            </h2>
+            </h1>
             <p class="text-base md:text-lg">
                 {!! __('pages/products/election/how-it-works.content.hero.description') !!}
             </p>
@@ -34,9 +34,9 @@
             @foreach (__('pages/products/election/how-it-works.content.steps') as $item)
                 <div class="space-y-4 text-center">
                     {!! $item['icon'] !!}
-                    <h5 class="text-lf font-semibold sm:text-xl">
+                    <h2 class="text-lf font-semibold sm:text-xl">
                         {{ $item['title'] }}
-                    </h5>
+                    </h2>
                     <p class="text-gray-600">
                         {{ $item['description'] }}
                     </p>

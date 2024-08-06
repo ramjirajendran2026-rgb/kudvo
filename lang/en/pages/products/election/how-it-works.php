@@ -2,8 +2,8 @@
 
 return [
     'seo' => [
-        'title' => 'How it works',
-        'description' => 'How it works',
+        'title' => 'Election Ready in 3 Simple Steps',
+        'description' => 'Discover how Kudvo.com makes online voting simple and secure with just 3 easy steps. Set up your election, invite voters, and ensure secure, anonymous voting with our encrypted platform.',
     ],
 
     'content' => [
