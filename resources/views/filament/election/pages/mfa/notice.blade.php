@@ -1,6 +1,6 @@
 <x-filament-panels::page :full-height="true">
     <x-filament-panels::form
-        :wire:key="$this->getId() . '.form'"
+        :wire:key="$this->getId().'.form'"
         wire:submit="submit"
         class="mx-auto my-auto w-full max-w-lg items-center"
     >

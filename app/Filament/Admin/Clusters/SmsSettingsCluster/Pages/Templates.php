@@ -113,4 +113,9 @@ class Templates extends SettingsPage
                     ]),
             ]);
     }
+
+    public static function canAccess(): bool
+    {
+        return SmsSettingsCluster::canAccess();
+    }
 }
