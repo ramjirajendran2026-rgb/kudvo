@@ -79,11 +79,13 @@
                 <div class="flex w-full items-center justify-between lg:w-auto">
                     <a
                         href="{{ route('home') }}"
+                        title="{{ config('app.name') }} home page"
                         class="flex cursor-pointer items-center gap-2"
                     >
                         <img
                             src="{{ asset('img/nav-logo.webp') }}"
                             alt="{{ config('app.name') }} logo"
+                            title="{{ config('app.name') }} logo"
                             class="size-12"
                         />
                         <span
