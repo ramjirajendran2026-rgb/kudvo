@@ -10,7 +10,7 @@ return [
         'hero' => [
             'title' => '"Election Ready in 3 Simple Steps"',
             'description' => 'Experience the ease and efficiency of online voting with our intuitive platform.<br />From registration to result, manage your election seamlessly with these key steps.',
-            'bg_image' => asset('img/products/election/how-its-work-bg.png'),
+            'bg_image' => asset('img/products/election/how-its-work-bg.webp'),
             'cta' => [
                 'label' => 'Get Started',
                 'url' => route('filament.user.auth.register'),

@@ -2,8 +2,8 @@
 
 return [
     'seo' => [
-        'title' => 'Online Election',
-        'description' => 'Online Election',
+        'title' => 'Secure Online Voting with Kudvo - Empower Your Community ',
+        'description' => 'Empower your community with Kudvo\'s seamless and secure online voting platform. Boost participation, get faster results, and ensure enhanced security for your elections with our intuitive 3-step process.',
     ],
     'content' => [
         'hero' => [
