@@ -34,8 +34,7 @@
             </div>
             <div data-aos="fade-left" class="flex items-center justify-center">
                 <img
-                    loading="lazy"
-                    class="h-80 object-contain"
+                    class="size-80 object-contain"
                     src="{{ asset('img/products/election/online-voting-system.webp') }}"
                     alt="Secure Online Voting with Kudvo"
                     title="Secure Online Voting with Kudvo"
@@ -123,7 +122,7 @@
                         loading="lazy"
                         src="{{ $section['image'] }}"
                         alt="{{ $section['title'] }}"
-                        class="h-80 object-contain"
+                        class="size-80 object-contain"
                         title="{{ $section['title'] }}"
                     />
                 </div>
@@ -151,9 +150,9 @@
 
     <section id="pricing" class="py-16">
         <div class="container space-y-4 text-center">
-            <h2 class="text-2xl font-semibold sm:text-3xl">
+            <h4 class="text-2xl font-semibold sm:text-3xl">
                 {{ __('pages/products/election/home.content.pricing.title') }}
-            </h2>
+            </h4>
             <p class="text-gray-600">
                 {{ __('pages/products/election/home.content.pricing.description') }}
             </p>

@@ -13,7 +13,7 @@
         <img
             loading="lazy"
             src="{{ $data->image }}"
-            alt="{{ $data->title }}"
+            alt="{{ $data->image_alt }}"
             title="{{ $data->title }}"
             class="aspect-square w-full rounded-xl"
         />
