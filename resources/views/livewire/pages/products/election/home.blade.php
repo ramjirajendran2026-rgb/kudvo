@@ -34,7 +34,6 @@
             </div>
             <div data-aos="fade-left" class="flex items-center justify-center">
                 <img
-
                     class="size-80 object-contain"
                     src="{{ asset('img/products/election/online-voting-system.webp') }}"
                     alt="Secure Online Voting with Kudvo"
