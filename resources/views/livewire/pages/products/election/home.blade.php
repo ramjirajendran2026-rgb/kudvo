@@ -36,8 +36,8 @@
                 <img
                     class="size-80 object-contain"
                     src="{{ asset('img/products/election/online-voting-system.webp') }}"
-                    alt="Secure Online Voting with Kudvo"
-                    title="Secure Online Voting with Kudvo"
+                    alt="{{ __('pages/products/election/home.content.hero.image_alt') }}"
+                    title="{{ __('pages/products/election/home.content.hero.title') }}"
                 />
             </div>
         </div>
@@ -121,7 +121,7 @@
                     <img
                         loading="lazy"
                         src="{{ $section['image'] }}"
-                        alt="{{ $section['title'] }}"
+                        alt="{{ $section['image_alt'] }}"
                         class="size-80 object-contain"
                         title="{{ $section['title'] }}"
                     />
