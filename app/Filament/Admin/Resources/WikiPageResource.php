@@ -98,7 +98,7 @@ class WikiPageResource extends Resource
                             ->relationship(name: 'seo')
                             ->schema(components: [
                                 Forms\Components\TextInput::make(name: 'title')
-                                    ->charCounter()
+                                    ->charCounter(60)
                                     ->maxLength(length: 255),
 
                                 Forms\Components\Textarea::make(name: 'description')
@@ -115,7 +115,7 @@ class WikiPageResource extends Resource
     {
         return $table
             ->contentGrid([
-                'sm' => 2
+                'sm' => 2,
             ])
             ->columns([
                 Tables\Columns\Layout\Stack::make([

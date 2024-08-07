@@ -33,7 +33,7 @@ class WikiTagResource extends Resource
             ->columns(null)
             ->schema([
                 Forms\Components\TextInput::make('name')
-                    ->afterStateUpdated(function (string $state, ?string $old, Forms\Get $get, Forms\Set $set) {
+                    ->afterStateUpdated(function (?string $state, ?string $old, Forms\Get $get, Forms\Set $set) {
                         $hasTitleSlug = $get('slug') == Str::slug($old ?? '');
 
                         if (! $hasTitleSlug) {
@@ -41,6 +41,15 @@ class WikiTagResource extends Resource
                         }
 
                         $set('slug', Str::slug($state ?? ''));
+                    })
+                    ->afterStateUpdated(function (?string $state, ?string $old, Forms\Get $get, Forms\Set $set) {
+                        $hasSameTitle = $get('seo.title') == $old;
+
+                        if (! $hasSameTitle) {
+                            return;
+                        }
+
+                        $set('seo.title', $state);
                     })
                     ->live(onBlur: true)
                     ->maxLength(80)
@@ -60,6 +69,20 @@ HTML
                     ->maxLength(80)
                     ->required()
                     ->unique(ignoreRecord: true),
+
+                Forms\Components\Section::make(heading: 'SEO')
+                    ->columns(null)
+                    ->compact()
+                    ->relationship(name: 'seo')
+                    ->schema(components: [
+                        Forms\Components\TextInput::make(name: 'title')
+                            ->charCounter(60)
+                            ->maxLength(length: 255),
+
+                        Forms\Components\Textarea::make(name: 'description')
+                            ->charCounter(count: 160)
+                            ->maxLength(length: 255),
+                    ]),
             ]);
     }
 
