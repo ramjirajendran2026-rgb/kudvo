@@ -145,6 +145,7 @@ class AppServiceProvider extends ServiceProvider
                 $this->hint(
                     hint: function (CanBeLengthConstrained $component) use ($count) {
                         $liveCount = '$wire.' . $component->getStatePath();
+                        $liveCount = preg_replace('/\.(\d+)/', '[$1]', $liveCount);
 
                         return new HtmlString(
                             html: <<<HTML
