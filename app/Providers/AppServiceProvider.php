@@ -168,6 +168,10 @@ HTML
         Table::$defaultDateDisplayFormat = 'M j, Y';
         Table::$defaultTimeDisplayFormat = 'h:i A';
 
+        Table::configureUsing(modifyUsing: function (Table $table) {
+            $table->paginationPageOptions([5, 10, 25, 50]);
+        });
+
         Action::configureUsing(modifyUsing: function (Action $action) {
             $action->closeModalByClickingAway(condition: false);
         });
