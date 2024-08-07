@@ -53,6 +53,7 @@ class AdminPanelProvider extends PanelProvider
             ->colors(colors: [
                 'primary' => Color::Amber,
             ])
+            ->viteTheme(theme: 'resources/css/filament/admin/theme.css')
             ->plugin(
                 SpatieLaravelTranslatablePlugin::make()
                     ->defaultLocales(defaultLocales: array_keys(config('laravellocalization.supportedLocales')))
