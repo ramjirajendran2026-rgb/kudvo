@@ -142,9 +142,10 @@ class AppServiceProvider extends ServiceProvider
         Field::macro(
             name: 'charCounter',
             macro: function (int $count = 60) {
-                $this->helperText(
-                    text: function (CanBeLengthConstrained $component) use ($count) {
+                $this->hint(
+                    hint: function (CanBeLengthConstrained $component) use ($count) {
                         $liveCount = '$wire.' . $component->getStatePath();
+                        $liveCount = preg_replace('/\.(\d+)/', '[$1]', $liveCount);
 
                         return new HtmlString(
                             html: <<<HTML
@@ -167,6 +168,10 @@ HTML
         Table::$defaultDateTimeDisplayFormat = 'M j, Y h:i:s A';
         Table::$defaultDateDisplayFormat = 'M j, Y';
         Table::$defaultTimeDisplayFormat = 'h:i A';
+
+        Table::configureUsing(modifyUsing: function (Table $table) {
+            $table->paginationPageOptions([5, 10, 25, 50]);
+        });
 
         Action::configureUsing(modifyUsing: function (Action $action) {
             $action->closeModalByClickingAway(condition: false);

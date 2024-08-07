@@ -4,22 +4,27 @@
     "name": "_commonjsHelpers"
   },
   "resources/css/app.css": {
-    "file": "assets/app-B7lbGKlu.css",
+    "file": "assets/app-Cie4yeGj.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
+  "resources/css/filament/admin/theme.css": {
+    "file": "assets/theme-DOatohEo.css",
+    "src": "resources/css/filament/admin/theme.css",
+    "isEntry": true
+  },
   "resources/css/filament/election/theme.css": {
-    "file": "assets/theme-Cs2fKz_2.css",
+    "file": "assets/theme-CeofytlI.css",
     "src": "resources/css/filament/election/theme.css",
     "isEntry": true
   },
   "resources/css/filament/nomination/theme.css": {
-    "file": "assets/theme-B8uw0GFs.css",
+    "file": "assets/theme-BhXcWDmb.css",
     "src": "resources/css/filament/nomination/theme.css",
     "isEntry": true
   },
   "resources/css/filament/user/theme.css": {
-    "file": "assets/theme-BjrBIyRk.css",
+    "file": "assets/theme-CawcJnoE.css",
     "src": "resources/css/filament/user/theme.css",
     "isEntry": true
   },

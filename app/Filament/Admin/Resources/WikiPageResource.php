@@ -7,8 +7,10 @@ use App\Models\WikiPage;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Support\Enums\MaxWidth;
 use Filament\Tables;
 use Filament\Tables\Table;
+use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Auth\Access\AuthorizationException;
 
 use function Filament\authorize;
@@ -17,68 +19,122 @@ class WikiPageResource extends Resource
 {
     protected static ?string $model = WikiPage::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-    protected static ?string $slug = 'wiki';
+    protected static ?string $activeNavigationIcon = 'heroicon-s-document-text';
+
+    protected static ?string $navigationGroup = 'Wiki';
+
+    protected static ?string $navigationLabel = 'Pages';
+
+    protected static ?int $navigationSort = 501;
 
     public static function form(Form $form): Form
     {
         return $form
             ->columns(columns: null)
             ->schema([
-                Forms\Components\Section::make()
-                    ->schema(components: [
-                        Forms\Components\TextInput::make(name: 'title')
-                            ->afterStateUpdated(callback: function (?string $state, Forms\Get $get, Forms\Set $set, ?string $old) {
-                                if ($old == $get('seo.title')) {
-                                    $set('seo.title', $state);
-                                }
-                            })
-                            ->live(onBlur: true)
-                            ->maxLength(length: 255)
-                            ->required(),
+                Forms\Components\Group::make([
+                    Forms\Components\Section::make()
+                        ->columnSpan(3)
+                        ->schema(components: [
+                            Forms\Components\TextInput::make(name: 'title')
+                                ->afterStateUpdated(callback: function (?string $state, Forms\Get $get, Forms\Set $set, ?string $old) {
+                                    if ($old == $get('seo.title')) {
+                                        $set('seo.title', $state);
+                                    }
+                                })
+                                ->live(onBlur: true)
+                                ->maxLength(length: 255)
+                                ->required(),
 
-                        Forms\Components\SpatieMediaLibraryFileUpload::make(name: 'cover')
-                            ->collection(collection: WikiPage::MEDIA_COLLECTION_COVER)
-                            ->image()
-                            ->imageCropAspectRatio(ratio: '16:9')
-                            ->imageEditor()
-                            ->imageEditorAspectRatios(ratios: ['16:9', '1:1']),
+                            Forms\Components\SpatieMediaLibraryFileUpload::make(name: 'cover')
+                                ->collection(collection: WikiPage::MEDIA_COLLECTION_COVER)
+                                ->image()
+                                ->imageCropAspectRatio(ratio: '16:9')
+                                ->imageEditor()
+                                ->imageEditorAspectRatios(ratios: ['16:9', '1:1']),
 
-                        Forms\Components\Textarea::make(name: 'summary')
-                            ->afterStateUpdated(callback: function (?string $state, Forms\Get $get, Forms\Set $set, ?string $old) {
-                                if ($old == $get('seo.description')) {
-                                    $set('seo.description', $state);
-                                }
-                            })
-                            ->live(onBlur: true),
+                            Forms\Components\Textarea::make(name: 'summary')
+                                ->afterStateUpdated(callback: function (?string $state, Forms\Get $get, Forms\Set $set, ?string $old) {
+                                    if ($old == $get('seo.description')) {
+                                        $set('seo.description', $state);
+                                    }
+                                })
+                                ->live(onBlur: true),
 
-                        Forms\Components\RichEditor::make(name: 'content'),
+                            TiptapEditor::make(name: 'content'),
+                        ]),
+
+                    Forms\Components\Group::make([
+                        Forms\Components\Section::make()
+                            ->schema(components: [
+                                Forms\Components\Select::make('category')
+                                    ->createOptionAction(
+                                        fn (Forms\Components\Actions\Action $action) => $action
+                                            ->modalHeading('Create category')
+                                            ->modalWidth(MaxWidth::Medium)
+                                    )
+                                    ->createOptionForm(fn (Form $form) => WikiCategoryResource::form($form))
+                                    ->preload()
+                                    ->relationship(titleAttribute: 'name')
+                                    ->required()
+                                    ->searchable(),
+
+                                Forms\Components\Select::make('tags')
+                                    ->createOptionAction(
+                                        fn (Forms\Components\Actions\Action $action) => $action
+                                            ->modalHeading('Create tag')
+                                            ->modalWidth(MaxWidth::Medium)
+                                    )
+                                    ->createOptionForm(fn (Form $form) => WikiTagResource::form($form))
+                                    ->multiple()
+                                    ->preload()
+                                    ->relationship(titleAttribute: 'name')
+                                    ->searchable(),
+                            ]),
+
+                        Forms\Components\Section::make(heading: 'SEO')
+                            ->relationship(name: 'seo')
+                            ->schema(components: [
+                                Forms\Components\TextInput::make(name: 'title')
+                                    ->charCounter(60)
+                                    ->maxLength(length: 255),
+
+                                Forms\Components\Textarea::make(name: 'description')
+                                    ->charCounter(count: 160)
+                                    ->maxLength(length: 255),
+                            ]),
                     ]),
-
-                Forms\Components\Section::make(heading: 'SEO')
-                    ->relationship(name: 'seo')
-                    ->schema(components: [
-                        Forms\Components\TextInput::make(name: 'title')
-                            ->charCounter()
-                            ->maxLength(length: 255),
-
-                        Forms\Components\Textarea::make(name: 'description')
-                            ->charCounter(count: 160)
-                            ->maxLength(length: 255),
-                    ]),
+                ])
+                    ->columns(4),
             ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
-            ->columns([
-                Tables\Columns\TextColumn::make(name: 'title')
-                    ->wrap(),
+            ->contentGrid([
+                'sm' => 2,
             ])
-            ->filters([
-                //
+            ->columns([
+                Tables\Columns\Layout\Stack::make([
+                    Tables\Columns\Layout\Split::make([
+                        Tables\Columns\TextColumn::make(name: 'category.name')
+                            ->badge()
+                            ->color('primary')
+                            ->grow(false)
+                            ->wrap(),
+
+                        Tables\Columns\TextColumn::make(name: 'tags.name')
+                            ->badge()
+                            ->color('info')
+                            ->wrap(),
+                    ]),
+
+                    Tables\Columns\TextColumn::make(name: 'title')
+                        ->wrap(),
+                ])->space(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
@@ -88,10 +144,16 @@ class WikiPageResource extends Resource
                 Tables\Actions\RestoreAction::make()
                     ->iconButton(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+            ->filters([
+                Tables\Filters\SelectFilter::make('category')
+                    ->preload()
+                    ->relationship(name: 'category', titleAttribute: 'name')
+                    ->searchable(),
+
+                Tables\Filters\SelectFilter::make('tags')
+                    ->preload()
+                    ->relationship(name: 'tags', titleAttribute: 'name')
+                    ->searchable(),
             ]);
     }
 

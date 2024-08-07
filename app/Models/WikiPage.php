@@ -3,7 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
@@ -12,6 +15,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 class WikiPage extends Model implements HasMedia
 {
+    use HasFactory;
     use HasSEO;
     use InteractsWithMedia;
     use SoftDeletes;
@@ -24,11 +28,23 @@ class WikiPage extends Model implements HasMedia
         'summary',
         'content',
         'published_at',
+        'category_id',
     ];
 
     protected $casts = [
         'published_at' => 'datetime',
+        'category_id' => 'int',
     ];
+
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(WikiCategory::class);
+    }
+
+    public function tags(): BelongsToMany
+    {
+        return $this->belongsToMany(WikiTag::class);
+    }
 
     public function resolveRouteBindingQuery($query, $value, $field = null)
     {
