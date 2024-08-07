@@ -142,8 +142,8 @@ class AppServiceProvider extends ServiceProvider
         Field::macro(
             name: 'charCounter',
             macro: function (int $count = 60) {
-                $this->helperText(
-                    text: function (CanBeLengthConstrained $component) use ($count) {
+                $this->hint(
+                    hint: function (CanBeLengthConstrained $component) use ($count) {
                         $liveCount = '$wire.' . $component->getStatePath();
 
                         return new HtmlString(
