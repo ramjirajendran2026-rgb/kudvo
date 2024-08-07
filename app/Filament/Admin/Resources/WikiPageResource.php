@@ -10,6 +10,7 @@ use Filament\Resources\Resource;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Tables;
 use Filament\Tables\Table;
+use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Auth\Access\AuthorizationException;
 
 use function Filament\authorize;
@@ -62,7 +63,7 @@ class WikiPageResource extends Resource
                                 })
                                 ->live(onBlur: true),
 
-                            Forms\Components\RichEditor::make(name: 'content'),
+                            TiptapEditor::make(name: 'content'),
                         ]),
 
                     Forms\Components\Group::make([
