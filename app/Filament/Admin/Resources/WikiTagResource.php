@@ -1,0 +1,107 @@
+<?php
+
+namespace App\Filament\Admin\Resources;
+
+use App\Filament\Admin\Resources\WikiTagResource\Pages;
+use App\Models\WikiTag;
+use Filament\Forms;
+use Filament\Forms\Form;
+use Filament\Resources\Resource;
+use Filament\Support\Enums\MaxWidth;
+use Filament\Tables;
+use Filament\Tables\Table;
+use Illuminate\Support\HtmlString;
+use Illuminate\Support\Str;
+
+class WikiTagResource extends Resource
+{
+    protected static ?string $model = WikiTag::class;
+
+    protected static ?string $navigationIcon = 'heroicon-o-tag';
+
+    protected static ?string $activeNavigationIcon = 'heroicon-s-tag';
+
+    protected static ?string $navigationGroup = 'Wiki';
+
+    protected static ?string $navigationLabel = 'Tags';
+
+    protected static ?int $navigationSort = 503;
+
+    public static function form(Form $form): Form
+    {
+        return $form
+            ->columns(null)
+            ->schema([
+                Forms\Components\TextInput::make('name')
+                    ->afterStateUpdated(function (string $state, ?string $old, Forms\Get $get, Forms\Set $set) {
+                        $hasTitleSlug = $get('slug') == Str::slug($old ?? '');
+
+                        if (! $hasTitleSlug) {
+                            return;
+                        }
+
+                        $set('slug', Str::slug($state ?? ''));
+                    })
+                    ->live(onBlur: true)
+                    ->maxLength(80)
+                    ->required()
+                    ->unique(ignoreRecord: true),
+
+                Forms\Components\TextInput::make('slug')
+                    ->hint(function (Forms\Components\TextInput $component) {
+                        $statePath = $component->generateRelativeStatePath('name');
+
+                        return new HtmlString(
+                            <<<HTML
+<span wire:loading wire:target="$statePath">Generating...</span>
+HTML
+                        );
+                    })
+                    ->maxLength(80)
+                    ->required()
+                    ->unique(ignoreRecord: true),
+            ]);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                Tables\Columns\TextColumn::make(name: 'name')
+                    ->wrap(),
+
+                Tables\Columns\TextColumn::make(name: 'slug')
+                    ->wrap(),
+
+                Tables\Columns\TextColumn::make('pages_count')
+                    ->alignCenter()
+                    ->color('info')
+                    ->counts('pages')
+                    ->label('Pages')
+                    ->url(fn (WikiTag $record) => WikiPageResource::getUrl(parameters: ['tableFilters' => ['tags' => ['value' => $record->getKey()]]])),
+            ])
+            ->actions([
+                Tables\Actions\EditAction::make()
+                    ->iconButton()
+                    ->modalWidth(MaxWidth::Medium),
+
+                Tables\Actions\DeleteAction::make()
+                    ->iconButton(),
+
+                Tables\Actions\RestoreAction::make()
+                    ->iconButton(),
+            ])
+            ->bulkActions([
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
+                ]),
+            ]);
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => Pages\ManageWikiTags::route('/'),
+        ];
+    }
+}
