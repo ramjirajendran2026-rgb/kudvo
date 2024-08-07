@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Events\NomineeNominated;
+use App\Listeners\Auth\AssignRoleToRegisteredUser;
 use App\Listeners\Auth\NotifyEmailVerified;
 use App\Listeners\DestroyBrowserSession;
 use App\Listeners\Election\AssociateCandidateImportToElection;
@@ -20,6 +21,7 @@ use App\Services\TwentyFourSevenSms\SmsMessageSent;
 use Filament\Actions\Imports\Events\ImportChunkProcessed;
 use Filament\Actions\Imports\Events\ImportCompleted;
 use Filament\Actions\Imports\Events\ImportStarted;
+use Filament\Events\Auth\Registered as FilamentAuthRegistered;
 use Illuminate\Auth\Events\CurrentDeviceLogout;
 use Illuminate\Auth\Events\Logout;
 use Illuminate\Auth\Events\Registered;
@@ -48,6 +50,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         Registered::class => [
             SendEmailVerificationNotification::class,
+        ],
+        FilamentAuthRegistered::class => [
+            AssignRoleToRegisteredUser::class,
         ],
         NotificationSent::class => [
             LogSentNotification::class,
