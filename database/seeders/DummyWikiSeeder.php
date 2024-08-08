@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App\Models\WikiCategory;
 use App\Models\WikiPage;
 use App\Models\WikiTag;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;

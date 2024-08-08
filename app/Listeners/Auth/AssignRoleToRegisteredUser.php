@@ -8,10 +8,11 @@ use Filament\Events\Auth\Registered;
 
 class AssignRoleToRegisteredUser
 {
-    public function handle(Registered $event): void {
+    public function handle(Registered $event): void
+    {
         $user = $event->getUser();
 
-        if (!($user instanceof User)) {
+        if (! ($user instanceof User)) {
             return;
         }
 
