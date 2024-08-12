@@ -12,6 +12,9 @@ export default {
         './app/Forms/**/*.php',
         './resources/views/forms/**/*.blade.php',
 
+        './app/Tables/**/*.php',
+        './resources/views/tables/**/*.blade.php',
+
         './vendor/filament/**/*.blade.php',
 
         './vendor/awcodes/filament-tiptap-editor/resources/**/*.blade.php',

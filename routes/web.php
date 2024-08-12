@@ -7,6 +7,8 @@ use App\Livewire\Pages\Home;
 use App\Livewire\Pages\PrivacyPolicy;
 use App\Livewire\Pages\Products\Election\Home as ElectionHome;
 use App\Livewire\Pages\Products\Election\HowItWorks;
+use App\Livewire\Pages\Wiki\Index as WikiIndex;
+use App\Livewire\Pages\Wiki\Show as WikiDetails;
 use App\Models\Election;
 use App\Models\Elector;
 use App\Services\Clicksend\Http\Controllers\WebhookController as ClicksendWebhookController;
@@ -58,6 +60,12 @@ Route::group(
                             ->name(name: 'how-it-works');
                     });
             });
+
+        Route::get('wiki', WikiIndex::class)
+            ->name('wiki.index');
+
+        Route::get('wiki/{page}', WikiDetails::class)
+            ->name('wiki.show');
 
         Route::get(uri: 'privacy-policy', action: PrivacyPolicy::class)
             ->name(name: 'privacy-policy');

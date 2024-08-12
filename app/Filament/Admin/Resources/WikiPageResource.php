@@ -53,7 +53,8 @@ class WikiPageResource extends Resource
                                 ->image()
                                 ->imageCropAspectRatio(ratio: '16:9')
                                 ->imageEditor()
-                                ->imageEditorAspectRatios(ratios: ['16:9', '1:1']),
+                                ->imageEditorAspectRatios(ratios: ['16:9'])
+                                ->responsiveImages(),
 
                             Forms\Components\Textarea::make(name: 'summary')
                                 ->afterStateUpdated(callback: function (?string $state, Forms\Get $get, Forms\Set $set, ?string $old) {
@@ -114,14 +115,22 @@ class WikiPageResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->contentGrid([
-                'sm' => 2,
+            ->actions([
+                Tables\Actions\EditAction::make()
+                    ->iconButton(),
+                Tables\Actions\DeleteAction::make()
+                    ->iconButton(),
+                Tables\Actions\RestoreAction::make()
+                    ->iconButton(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                     Tables\Actions\RestoreBulkAction::make(),
                 ]),
+            ])
+            ->contentGrid([
+                'sm' => 2,
             ])
             ->columns([
                 Tables\Columns\Layout\Stack::make([
@@ -142,14 +151,7 @@ class WikiPageResource extends Resource
                         ->wrap(),
                 ])->space(),
             ])
-            ->actions([
-                Tables\Actions\EditAction::make()
-                    ->iconButton(),
-                Tables\Actions\DeleteAction::make()
-                    ->iconButton(),
-                Tables\Actions\RestoreAction::make()
-                    ->iconButton(),
-            ])
+            ->defaultSort('id', 'desc')
             ->filters([
                 Tables\Filters\SelectFilter::make('category')
                     ->preload()

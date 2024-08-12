@@ -152,7 +152,7 @@ return [
                 ],
             ],
         ],
-        'blog' => [
+        'wiki' => [
             'label' => 'ब्लॉग',
         ],
         'contact' => [

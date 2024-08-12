@@ -5,8 +5,11 @@ const defaultTheme = require('tailwindcss/defaultTheme')
 export default {
     presets: [preset],
     content: [
-        './app/Filament/**/*.php',
-        './resources/views/filament/**/*.blade.php',
+        './app/Forms/**/*.php',
+        './resources/views/forms/**/*.blade.php',
+
+        './app/Tables/**/*.php',
+        './resources/views/tables/**/*.blade.php',
 
         './resources/views/components/**/*.blade.php',
 

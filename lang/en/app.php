@@ -155,8 +155,8 @@ return [
                 ],
             ],
         ],
-        'blog' => [
-            'label' => 'Blog',
+        'wiki' => [
+            'label' => 'Wiki',
         ],
         'contact' => [
             'label' => 'Contact',

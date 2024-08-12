@@ -164,11 +164,9 @@
                         {{ __('app.nav.clientele.label') }}
                     </x-filament-panels::topbar.item>
 
-                    {{--
-                        <x-filament-panels::topbar.item url="#">
-                        {{ __('app.nav.blog.label') }}
-                        </x-filament-panels::topbar.item>
-                    --}}
+                    <x-filament-panels::topbar.item :url="route('wiki.index')">
+                        {{ __('app.nav.wiki.label') }}
+                    </x-filament-panels::topbar.item>
 
                     <x-filament-panels::topbar.item
                         :url="route('home') . '#contact'"
@@ -253,11 +251,11 @@
                             {{ __('app.nav.clientele.label') }}
                         </x-filament-panels::topbar.item>
 
-                        {{--
-                            <x-filament-panels::topbar.item url="#">
-                            {{ __('app.nav.blog.label') }}
-                            </x-filament-panels::topbar.item>
-                        --}}
+                        <x-filament-panels::topbar.item
+                            :url="route('wiki.index')"
+                        >
+                            {{ __('app.nav.wiki.label') }}
+                        </x-filament-panels::topbar.item>
 
                         <x-filament-panels::topbar.item
                             :url="route('home') . '#contact'"
@@ -336,6 +334,11 @@
                         <li>
                             <a href="{{ route('home') }}#contact">
                                 {{ __('app.nav.contact.label') }}
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('wiki.index') }}">
+                                {{ __('app.nav.wiki.label') }}
                             </a>
                         </li>
                         <li>
