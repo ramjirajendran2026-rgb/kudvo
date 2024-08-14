@@ -30,6 +30,10 @@
 
     & .fi-in-repeatable-item {
         @apply rounded-none border-gray-200 bg-inherit shadow-none ring-0 dark:border-white/10 dark:bg-inherit;
+
+        .fi-in-affixes {
+            @apply flex flex-col md:flex-row;
+        }
     }
 }
 
