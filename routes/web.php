@@ -44,7 +44,8 @@ Route::group(
             ])
             ->group(function () {
                 Livewire::setUpdateRoute(function ($handle) {
-                    return Route::post('livewire/update', $handle);
+                    return Route::post('livewire/update', $handle)
+                        ->name('i18n.livewire.update');
                 });
 
                 Route::get(uri: '/', action: Home::class)
