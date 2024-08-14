@@ -2,6 +2,7 @@
 
 namespace App\Filament\Nomination\Http\Middleware;
 
+use App\Facades\Kudvo;
 use App\Filament\Nomination\Pages\Mfa\Notice;
 use App\Models\Elector;
 use Closure;
@@ -20,6 +21,7 @@ class EnsureMfaCompleted
 
         if (
             ! Str::startsWith(haystack: $request->url(), needles: Filament::getLogoutUrl()) &&
+            Kudvo::getNomination()?->isMfaRequired() &&
             ! Session::has(key: Notice::getMfaCompletedSessionKey(elector: $elector))
         ) {
             return Redirect::guest(path: Notice::getUrl());

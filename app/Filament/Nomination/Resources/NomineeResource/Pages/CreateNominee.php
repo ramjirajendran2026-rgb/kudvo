@@ -12,6 +12,7 @@ use App\Filament\Nomination\Resources\NomineeResource;
 use App\Forms\NominatorForm;
 use App\Forms\NomineeForm;
 use App\Models\Nominee;
+use App\Models\Position;
 use Filament\Actions;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Actions\Action as FormAction;
@@ -91,6 +92,7 @@ class CreateNominee extends CreateRecord implements HasElector, HasNomination
                 ->description(description: $isSelfNomination ? 'You' : null)
                 ->schema(components: [
                     NomineeForm::positionIdComponent()
+                        ->getOptionLabelFromRecordUsing(fn(Position $record) => $record->name)
                         ->hiddenLabel(condition: false)
                         ->relationship(
                             name: 'position',

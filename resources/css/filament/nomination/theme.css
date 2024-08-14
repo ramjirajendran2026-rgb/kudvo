@@ -25,6 +25,54 @@
     @apply max-w-full;
 }
 
+.fi-topbar {
+    @apply relative mx-auto w-full lg:px-8;
+
+    nav {
+        @apply h-auto min-h-16 py-4 md:px-4 lg:rounded-b-xl;
+
+        > div {
+            @apply flex;
+        }
+    }
+}
+
+.fi-layout {
+    .fi-logo {
+        @apply flex h-auto items-center justify-center gap-x-4;
+
+        & img {
+            @apply h-10 w-auto rounded-lg lg:h-16;
+        }
+
+        & div {
+            @apply text-center lg:text-4xl print:text-lg;
+        }
+    }
+}
+
+.fi-simple-layout {
+    .fi-logo {
+        @apply flex h-auto flex-col items-center justify-center gap-4;
+
+        & img {
+            @apply h-20 w-auto rounded-lg md:h-32;
+        }
+
+        & div {
+            @apply lg:text-5xl print:text-2xl;
+        }
+    }
+
+    .fi-simple-main {
+        @apply sm:max-w-full;
+
+        form {
+            @apply mx-auto w-full max-w-screen-sm;
+        }
+    }
+}
+
 .fi-footer {
     @apply mx-auto w-full max-w-5xl lg:px-8;
 

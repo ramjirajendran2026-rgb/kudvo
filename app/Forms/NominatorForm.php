@@ -2,6 +2,7 @@
 
 namespace App\Forms;
 
+use App\Filament\Base\Contracts\HasElection;
 use App\Filament\Base\Contracts\HasElector;
 use App\Filament\Base\Contracts\HasNomination;
 use App\Models\Elector;
@@ -54,10 +55,10 @@ readonly class NominatorForm
     public static function membershipNumberComponent(): TextInput
     {
         return TextInput::make(name: 'membership_number')
-            ->afterStateUpdated(callback: function (Set $set, ?string $state): void {
+            ->afterStateUpdated(callback: function (Set $set, ?string $state, HasNomination $livewire): void {
                 $elector = blank(value: $state) ?
                     null :
-                    Elector::firstWhere('membership_number', $state);
+                    Elector::whereMorphedTo('event', $livewire->getNomination())->firstWhere('membership_number', $state);
 
                 $set(path: 'elector_id', state: $elector?->getKey());
                 $set(path: 'first_name', state: $elector?->first_name);
