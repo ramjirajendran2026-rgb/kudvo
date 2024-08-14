@@ -37,21 +37,18 @@ class Preference extends NominationPage
         return $form
             ->disabled(condition: ! $this->canSave())
             ->schema(components: [
-                Group::make()
-                    ->relationship(name: 'preference')
-                    ->schema(components: [
-                        Section::make(heading: 'MFA Code Delivery')
-                            ->description(description: 'Multi-Factor Authentication code for each voters will be sent through this medium')
-                            ->columns(columns: 3)
-                            ->columnSpan(span: 1)
-                            ->schema([
-                                Toggle::make(name: 'mfa_mail')
-                                    ->label(label: 'Email')
-                                    ->default(state: true),
+                Section::make(heading: 'MFA Code Delivery')
+                    ->description(description: 'Multi-Factor Authentication code for each voters will be sent through this medium')
+                    ->columns(columns: 3)
+                    ->columnSpan(span: 1)
+                    ->statePath('preference')
+                    ->schema([
+                        Toggle::make(name: 'mfa_mail')
+                            ->label(label: 'Email')
+                            ->default(state: true),
 
-                                Toggle::make(name: 'mfa_sms')
-                                    ->label(label: 'SMS'),
-                            ]),
+                        Toggle::make(name: 'mfa_sms')
+                            ->label(label: 'SMS'),
                     ]),
             ]);
     }

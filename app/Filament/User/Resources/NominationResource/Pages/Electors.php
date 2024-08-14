@@ -33,11 +33,6 @@ class Electors extends NominationPage implements HasTable
         return $this->getNomination();
     }
 
-    public function form(Form $form): Form
-    {
-        return ElectorResource::form(form: $form);
-    }
-
     public function table(Table $table): Table
     {
         return ElectorResource::table(table: $table)
@@ -61,7 +56,7 @@ class Electors extends NominationPage implements HasTable
         return ElectorResource::getTableImportAction()
             ->options(options: fn (self $livewire): array => [
                 'event_type' => Nomination::class,
-                'event_id' => $livewire->getElection()->getKey(),
+                'event_id' => $livewire->getNomination()->getKey(),
             ])
             ->visible(condition: $this->canImport());
     }
