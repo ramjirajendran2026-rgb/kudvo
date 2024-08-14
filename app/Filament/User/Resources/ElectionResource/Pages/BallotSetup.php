@@ -116,7 +116,7 @@ class BallotSetup extends ElectionPage
                                                 ->defaultImageUrl(url: fn (Candidate $record): ?string => $record->photo_url)
                                                 ->grow(condition: false)
                                                 ->hiddenLabel()
-                                                ->size(size: 80)
+                                                ->size(size: 'auto')
                                                 ->visible(condition: $this->getElection()->preference?->candidate_photo),
 
                                             TextEntry::make(name: 'display_name')
@@ -149,7 +149,7 @@ class BallotSetup extends ElectionPage
                                                 ->extraImgAttributes(attributes: ['class' => 'rounded-xl bg-black'])
                                                 ->grow(condition: false)
                                                 ->hiddenLabel()
-                                                ->size(size: 80)
+                                                ->size(size: 'auto')
                                                 ->visible(condition: $this->getElection()->preference?->candidate_symbol),
                                         ]),
                                     ]),
