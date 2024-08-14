@@ -15303,16 +15303,16 @@
         },
         {
             "name": "ysfkaya/filament-phone-input",
-            "version": "v2.3.6",
+            "version": "v2.3.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ysfkaya/filament-phone-input.git",
-                "reference": "32f877bff25b9f99d7c6c29bac633f802fb7ee8e"
+                "reference": "86eb648fd316b9b167a0f4d3f87ff2359ecf1d68"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ysfkaya/filament-phone-input/zipball/32f877bff25b9f99d7c6c29bac633f802fb7ee8e",
-                "reference": "32f877bff25b9f99d7c6c29bac633f802fb7ee8e",
+                "url": "https://api.github.com/repos/ysfkaya/filament-phone-input/zipball/86eb648fd316b9b167a0f4d3f87ff2359ecf1d68",
+                "reference": "86eb648fd316b9b167a0f4d3f87ff2359ecf1d68",
                 "shasum": ""
             },
             "require": {
@@ -15361,9 +15361,9 @@
             ],
             "support": {
                 "issues": "https://github.com/ysfkaya/filament-phone-input/issues",
-                "source": "https://github.com/ysfkaya/filament-phone-input/tree/v2.3.6"
+                "source": "https://github.com/ysfkaya/filament-phone-input/tree/v2.3.7"
             },
-            "time": "2024-05-24T07:14:05+00:00"
+            "time": "2024-08-14T11:44:05+00:00"
         }
     ],
     "packages-dev": [
