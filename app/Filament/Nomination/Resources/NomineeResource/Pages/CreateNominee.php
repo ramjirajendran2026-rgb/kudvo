@@ -92,7 +92,7 @@ class CreateNominee extends CreateRecord implements HasElector, HasNomination
                 ->description(description: $isSelfNomination ? 'You' : null)
                 ->schema(components: [
                     NomineeForm::positionIdComponent()
-                        ->getOptionLabelFromRecordUsing(fn(Position $record) => $record->name)
+                        ->getOptionLabelFromRecordUsing(fn (Position $record) => $record->name)
                         ->hiddenLabel(condition: false)
                         ->relationship(
                             name: 'position',
