@@ -4,7 +4,6 @@ namespace App\Filament\User\Resources\NominationResource\Pages;
 
 use App\Filament\User\Resources\ElectorResource;
 use App\Models\Nomination;
-use Filament\Forms\Form;
 use Filament\Resources\Concerns\InteractsWithRelationshipTable;
 use Filament\Tables\Actions\CreateAction as TableCreateAction;
 use Filament\Tables\Actions\DeleteAction as TableDeleteAction;

@@ -4,7 +4,6 @@ namespace App\Filament\User\Resources\NominationResource\Pages;
 
 use App\Models\Nomination;
 use Filament\Actions\Action;
-use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;

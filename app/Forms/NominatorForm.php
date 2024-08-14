@@ -2,7 +2,6 @@
 
 namespace App\Forms;
 
-use App\Filament\Base\Contracts\HasElection;
 use App\Filament\Base\Contracts\HasElector;
 use App\Filament\Base\Contracts\HasNomination;
 use App\Models\Elector;
