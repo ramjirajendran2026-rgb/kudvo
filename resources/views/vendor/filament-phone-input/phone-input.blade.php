@@ -1,5 +1,3 @@
-{{ // TODO: Remove this file after issue fixed in dependency  }}
-
 @php
     use Filament\Support\Facades\FilamentView;
 
