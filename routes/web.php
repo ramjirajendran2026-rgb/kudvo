@@ -7,6 +7,7 @@ use App\Livewire\Pages\Home;
 use App\Livewire\Pages\PrivacyPolicy;
 use App\Livewire\Pages\Products\Election\Home as ElectionHome;
 use App\Livewire\Pages\Products\Election\HowItWorks;
+use App\Livewire\Pages\Products\Phygital\Home as PhygitalHome;
 use App\Livewire\Pages\Wiki\Index as WikiIndex;
 use App\Livewire\Pages\Wiki\Show as WikiDetails;
 use App\Models\Election;
@@ -59,6 +60,13 @@ Route::group(
 
                         Route::get(uri: 'how-it-works', action: HowItWorks::class)
                             ->name(name: 'how-it-works');
+                    });
+
+                Route::prefix('products/phygital')
+                    ->name('products.phygital.')
+                    ->group(function (): void {
+                        Route::get(uri: '/', action: PhygitalHome::class)
+                            ->name(name: 'home');
                     });
             });
 
