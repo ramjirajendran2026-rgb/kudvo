@@ -5,11 +5,11 @@ namespace App\Livewire\Pages\Wiki;
 use App\Models\WikiCategory;
 use App\Models\WikiPage;
 use App\Models\WikiTag;
-use App\Tables\Columns\WikiPageCoverColumn;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Resources\Concerns\HasTabs;
 use Filament\Tables\Columns\Layout\Stack;
+use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
@@ -95,8 +95,9 @@ class Index extends Component implements HasForms, HasTable
             ])
             ->columns([
                 Stack::make([
-                    WikiPageCoverColumn::make('cover')
-                        ->collection(WikiPage::MEDIA_COLLECTION_COVER),
+                    SpatieMediaLibraryImageColumn::make('cover')
+                        ->collection(WikiPage::MEDIA_COLLECTION_COVER)
+                        ->view('tables.columns.wiki-page-cover-column'),
 
                     TextColumn::make('category.name')
                         ->badge()
