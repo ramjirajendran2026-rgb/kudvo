@@ -28,9 +28,11 @@
             :outlined="true"
             color="primary"
             class="w-full !rounded-full"
+            :disabled="blank($data->cta_url)"
+            tag="a"
             href="{{ $data->cta_url }}"
         >
             {{ $data->cta_label }}
-        </x-filament::button>
+        </x-filament:x-filament::link>
     </div>
 </div>

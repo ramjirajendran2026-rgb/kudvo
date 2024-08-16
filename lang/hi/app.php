@@ -17,6 +17,9 @@ return [
             'published' => [
                 'label' => 'प्रकाशित',
             ],
+            'open' => [
+                'label' => 'मतदान प्रगति पर है',
+            ],
             'completed' => [
                 'label' => 'पूर्ण',
             ],
