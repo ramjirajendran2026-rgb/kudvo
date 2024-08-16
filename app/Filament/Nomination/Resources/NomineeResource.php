@@ -16,6 +16,7 @@ use Filament\Support\Enums\FontWeight;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn\TextColumnSize;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\HtmlString;
 
@@ -48,6 +49,25 @@ class NomineeResource extends Resource
             ])
             ->heading(heading: static::getPluralModelLabel())
             ->paginated(condition: false)
+            ->query(
+                fn() => Nominee::query()
+                    ->whereHas(
+                        'position',
+                        fn(Builder $query) => $query->whereMorphedTo('event', Kudvo::getNomination())
+                    )
+                    ->where(
+                        fn(Builder $query) => $query
+                            ->whereBelongsTo(auth()->user(), 'elector')
+                            ->orWhereHas(
+                                'proposer',
+                                fn(Builder $query) => $query->where('elector_id', auth()->id())
+                            )
+                            ->orWhereHas(
+                                'nominators',
+                                fn(Builder $query) => $query->where('elector_id', auth()->id())
+                            )
+                    )
+            )
             ->columns([
                 Tables\Columns\TextColumn::make(name: '#')
                     ->rowIndex(),

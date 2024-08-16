@@ -2,15 +2,23 @@
 
 namespace App\Notifications\Nomination;
 
+use App\Enums\MailMessagePurpose;
+use App\Enums\SmsMessagePurpose;
 use App\Models\Nomination;
 use App\Models\OneTimePassword;
+use App\Notifications\Concerns\HasSmsChannel;
+use App\Notifications\Contracts\HasMailMessagePurpose;
+use App\Notifications\Contracts\HasSmsMessagePurpose;
 use App\Settings\SmsTemplates;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
-class MfaCodeNotification extends Notification
+class MfaCodeNotification extends Notification implements HasMailMessagePurpose, HasSmsMessagePurpose
 {
+    use HasSmsChannel;
+
     public const VAR_CODE = '{#CODE#}';
 
     public const VAR_APP_DOMAIN = '{#APP_DOMAIN#}';
@@ -22,7 +30,12 @@ class MfaCodeNotification extends Notification
 
     public function via($notifiable): array
     {
-        return ['mail'];
+        $preference = $this->nomination->preference;
+
+        return [
+            ...Arr::wrap(value: $preference->mfa_mail ? 'mail' : null),
+            ...Arr::wrap(value: $preference->mfa_sms ? $this->getSmsChannel(notifiable: $notifiable) : null),
+        ];
     }
 
     public function toMail($notifiable): MailMessage
@@ -37,12 +50,22 @@ class MfaCodeNotification extends Notification
 
     public function toSms(object $notifiable): string
     {
-        return $this->formatTemplate(template: app(abstract: SmsTemplates::class)->nomination_mfa);
+        return $this->formatTemplate(template: app(abstract: SmsTemplates::class)->elector_nomination_mfa);
     }
 
     public function toArray($notifiable): array
     {
         return [];
+    }
+
+    public function getMailMessagePurpose(object $notifiable): MailMessagePurpose
+    {
+        return MailMessagePurpose::NominationMfaCode;
+    }
+
+    public function getSmsMessagePurpose(object $notifiable): SmsMessagePurpose
+    {
+        return SmsMessagePurpose::NominationMfaCode;
     }
 
     protected function formatTemplate(string $template): string

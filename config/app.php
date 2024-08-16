@@ -231,6 +231,8 @@ return [
     ],
 
     'nomination' => [
+        'enabled' => env('APP_NOMINATION_ENABLED', false),
+
         'code' => [
             'prefix' => 'NO',
             'length' => 8,

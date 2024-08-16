@@ -95,7 +95,7 @@ class Preference extends NominationPage
     {
         abort_unless(boolean: $this->canSave(), code: 403);
 
-        $this->form->getState();
+        $this->getNomination()->update($this->form->getState());
 
         $this->redirect(url: Dashboard::getUrl(parameters: [$this->getNomination()]));
     }
