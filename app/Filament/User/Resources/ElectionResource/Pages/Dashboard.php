@@ -28,33 +28,30 @@ class Dashboard extends ElectionPage
 
     public function mount(int | string $record): void
     {
+        static::authorizeResourceAccess();
+
         parent::mount($record);
 
         $this->resolveState();
 
-        $currentStep = $this->getPendingStep();
+        $redirectUrl = match ($this->getPendingStep()) {
+            ElectionSetupStep::Preference,
+            ElectionSetupStep::Electors,
+            ElectionSetupStep::Ballot => $this->getPendingStep()?->getUrl([$this->getElection()]),
+            default => null,
+        };
 
-        if ($currentStep === ElectionSetupStep::Preference) {
-            $this->notifyUnauthorized();
+        if ($redirectUrl) {
+            if (filled(request()->query('step'))) {
+                $this->notifyUnauthorized();
+            }
 
-            $this->redirect(Preference::getUrl(parameters: [$this->getElection()]));
-
-            return;
+            $this->redirect($redirectUrl, Filament::getPanel()->hasSpaMode());
         }
+    }
 
-        if ($currentStep === ElectionSetupStep::Electors) {
-            $this->notifyUnauthorized();
-
-            $this->redirect(Electors::getUrl(parameters: [$this->getElection()]));
-
-            return;
-        }
-
-        if ($currentStep === ElectionSetupStep::Ballot) {
-            $this->notifyUnauthorized();
-
-            $this->redirect(BallotSetup::getUrl(parameters: [$this->getElection()]));
-        }
+    public function authorizeAccess(): void
+    {
     }
 
     public static function getNavigationLabel(): string

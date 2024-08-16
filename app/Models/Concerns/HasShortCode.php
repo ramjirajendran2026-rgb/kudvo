@@ -16,8 +16,12 @@ trait HasShortCode
         );
     }
 
-    public function generateShortCode(): string
+    public function generateShortCode(bool $force = false): string
     {
+        if (! $force && filled($shortCode = ($this->getAttributes()['short_code'] ?? null))) {
+            return $shortCode;
+        }
+
         do {
             try {
                 $this->forceFill(attributes: ['short_code' => Str::random(length: 6)]);

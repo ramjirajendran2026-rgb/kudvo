@@ -152,7 +152,7 @@ abstract class ElectionPage extends Page implements HasElection, HasElectorGroup
         if (! static::canAccessPage(election: $this->election)) {
             $this->notifyUnauthorized();
 
-            $this->redirect(Dashboard::getUrl(parameters: [$this->election]));
+            $this->redirect(Dashboard::getUrl(parameters: [$this->election]), Filament::getPanel()->hasSpaMode());
         }
     }
 
