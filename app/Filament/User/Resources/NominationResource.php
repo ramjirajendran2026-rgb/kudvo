@@ -36,7 +36,10 @@ class NominationResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    protected static bool $shouldRegisterNavigation = false;
+    public static function isShouldRegisterNavigation(): bool
+    {
+        return config('app.nomination.enabled');
+    }
 
     public static function form(Form $form): Form
     {

@@ -202,7 +202,7 @@ class Nomination extends Model
 
     public function isMfaRequired(): bool
     {
-        return false;
+        return $this->preference?->mfa_mail || $this->preference?->mfa_sms;
     }
 
     public function getElectorGroups(): array

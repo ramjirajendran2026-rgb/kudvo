@@ -229,6 +229,8 @@ HTML,
     protected function getHeaderActions(): array
     {
         return [
+            ...parent::getHeaderActions(),
+
             $this->getReorderPositionAction(),
 
             $this->getCreatePositionAction(),
