@@ -4,13 +4,17 @@
             @foreach ($supportedCurrencies as $supportedCurrency)
                 <x-filament::tabs.item
                     :active="$supportedCurrency === $currency"
-                    wire:click="setCurrency('{{ $supportedCurrency }}')"
+                    wire:target="currency"
+                    wire:loading.attr="disabled"
+                    wire:loading.class="opacity-50 cursor-wait"
+                    x-on:click="$wire.set('currency', '{{ $supportedCurrency }}')"
                 >
                     {{ $supportedCurrency }}
                 </x-filament::tabs.item>
             @endforeach
         </x-filament::tabs>
     </div>
+
     @foreach ($this->plans as $plan)
         <div
             wire:key="plan-{{ $plan->id }}"
@@ -22,16 +26,26 @@
             <p class="text-gray-600">
                 {{ $plan->description }}
             </p>
-            <div class="space-y-1 py-6">
-                <div class="flex items-end justify-center gap-1">
-                    <span class="font-mono text-3xl font-bold md:text-4xl">
-                        @money($plan->elector_fee, $plan->currency)
-                    </span>
-                    <span>/elector</span>
-                </div>
-                <div class="font-mono">
-                    +
-                    @money($plan->base_fee, $plan->currency)
+            <div class="py-6">
+                <span wire:loading wire:target="currency">
+                    Calculating...
+                </span>
+
+                <div
+                    wire:loading.class="hidden"
+                    wire:target="currency"
+                    class="space-y-1"
+                >
+                    <div class="flex items-end justify-center gap-1">
+                        <span class="font-mono text-3xl font-bold text-primary-600 dark:text-primary-500 md:text-4xl">
+                            @money($plan->elector_fee, $plan->currency)
+                        </span>
+                        <span>/elector</span>
+                    </div>
+                    <div class="font-mono text-primary-600 dark:text-primary-500">
+                        +
+                        @money($plan->base_fee, $plan->currency)
+                    </div>
                 </div>
             </div>
             <ul x-data="{ showAddOns: false }" class="space-y-2 text-start">

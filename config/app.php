@@ -215,13 +215,13 @@ return [
         'prefix' => env('APP_ADMIN_PANEL_PREFIX', 'admin'),
     ],
 
-    'default_currency' => 'INR',
+    'default_currency' => 'USD',
 
     'supported_currencies' => ['USD', 'INR'],
 
     'default_phone_country' => 'IN',
 
-    'ballot_locales' => ['en', 'hi', 'ta'],
+    'ballot_locales' => ['en', 'hi'],
 
     'organisation' => [
         'code' => [

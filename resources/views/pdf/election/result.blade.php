@@ -1,8 +1,7 @@
 @php
+    use Illuminate\Support\Arr;
     use Illuminate\Support\Collection;
-@endphp
 
-@php
     use App\Models\Election;
 
     /** @var Election $election */
@@ -159,8 +158,6 @@
                                     <div>{{ $candidate->full_name }}</div>
                                     <div>
                                         @php
-                                            use Illuminate\Support\Arr;
-
                                             $contacts = Arr::where(
                                                 $candidate->only(['membership_number', 'phone', 'email']),
                                                 fn ($item) => filled($item),
