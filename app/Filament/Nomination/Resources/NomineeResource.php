@@ -50,21 +50,21 @@ class NomineeResource extends Resource
             ->heading(heading: static::getPluralModelLabel())
             ->paginated(condition: false)
             ->query(
-                fn() => Nominee::query()
+                fn () => Nominee::query()
                     ->whereHas(
                         'position',
-                        fn(Builder $query) => $query->whereMorphedTo('event', Kudvo::getNomination())
+                        fn (Builder $query) => $query->whereMorphedTo('event', Kudvo::getNomination())
                     )
                     ->where(
-                        fn(Builder $query) => $query
+                        fn (Builder $query) => $query
                             ->whereBelongsTo(auth()->user(), 'elector')
                             ->orWhereHas(
                                 'proposer',
-                                fn(Builder $query) => $query->where('elector_id', auth()->id())
+                                fn (Builder $query) => $query->where('elector_id', auth()->id())
                             )
                             ->orWhereHas(
                                 'nominators',
-                                fn(Builder $query) => $query->where('elector_id', auth()->id())
+                                fn (Builder $query) => $query->where('elector_id', auth()->id())
                             )
                     )
             )

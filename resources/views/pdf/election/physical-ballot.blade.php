@@ -1,10 +1,9 @@
 @php
+    use App\Models\Election;
     use Illuminate\Support\Arr;
 
-    use App\Models\Election;
-
     /** @var Election $election */
-    @endphp
+@endphp
 
 <!DOCTYPE html>
 <html lang="en">

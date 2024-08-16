@@ -10,9 +10,7 @@
         </p>
     </div>
 
-    <div
-        class="flex items-center justify-center gap-4"
-    >
+    <div class="flex items-center justify-center gap-4">
         <x-filament::input.wrapper
             :inline-prefix="true"
             :inline-suffix="true"
@@ -50,7 +48,7 @@
                         Calculating...
                     </span>
 
-                    @if(is_int($totalElectors) && $totalElectors > 0)
+                    @if (is_int($totalElectors) && $totalElectors > 0)
                         <div class="flex items-end justify-center gap-1">
                             <span
                                 wire:loading.class="hidden"
@@ -66,12 +64,16 @@
                             wire:target="totalElectors,currency"
                         >
                             <div class="flex items-end justify-center gap-1">
-                                <span class="font-mono text-3xl font-bold text-primary-600 dark:text-primary-500 md:text-4xl">
+                                <span
+                                    class="font-mono text-3xl font-bold text-primary-600 dark:text-primary-500 md:text-4xl"
+                                >
                                     @money($plan->elector_fee, $plan->currency)
                                 </span>
                                 <span>/elector</span>
                             </div>
-                            <div class="font-mono text-primary-600 dark:text-primary-500">
+                            <div
+                                class="font-mono text-primary-600 dark:text-primary-500"
+                            >
                                 +
                                 @money($plan->base_fee, $plan->currency)
                             </div>

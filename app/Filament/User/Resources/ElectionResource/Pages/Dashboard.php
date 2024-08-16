@@ -50,9 +50,7 @@ class Dashboard extends ElectionPage
         }
     }
 
-    public function authorizeAccess(): void
-    {
-    }
+    public function authorizeAccess(): void {}
 
     public static function getNavigationLabel(): string
     {

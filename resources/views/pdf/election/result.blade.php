@@ -1,8 +1,7 @@
 @php
+    use App\Models\Election;
     use Illuminate\Support\Arr;
     use Illuminate\Support\Collection;
-
-    use App\Models\Election;
 
     /** @var Election $election */
 @endphp
