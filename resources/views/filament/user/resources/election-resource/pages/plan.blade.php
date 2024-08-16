@@ -11,15 +11,6 @@
     </div>
 
     <div
-        x-data="{
-            totalElectors: $wire.entangle('totalElectors').live,
-            validateInput() {
-                const value = parseInt(this.totalElectors, 10)
-                if (isNaN(value) || value < 1 || value > 999999) {
-                    this.totalElectors = 500
-                }
-            },
-        }"
         class="flex items-center justify-center gap-4"
     >
         <x-filament::input.wrapper
@@ -34,8 +25,7 @@
                 min="1"
                 max="999999"
                 step="1"
-                x-model="totalElectors"
-                @input="validateInput"
+                wire:model.live.debounce.500ms="totalElectors"
                 class="text-center font-mono font-semibold"
             />
         </x-filament::input.wrapper>
@@ -60,15 +50,33 @@
                         Calculating...
                     </span>
 
-                    <div class="flex items-end justify-center gap-1">
-                        <span
+                    @if(is_int($totalElectors) && $totalElectors > 0)
+                        <div class="flex items-end justify-center gap-1">
+                            <span
+                                wire:loading.class="hidden"
+                                wire:target="totalElectors,currency"
+                                class="font-mono text-3xl font-bold text-primary-600 dark:text-primary-500 md:text-4xl"
+                            >
+                                @money($plan->elector_fee * $totalElectors + $plan->base_fee, $plan->currency)
+                            </span>
+                        </div>
+                    @else
+                        <div
                             wire:loading.class="hidden"
                             wire:target="totalElectors,currency"
-                            class="font-mono text-xl font-bold text-primary-600 dark:text-primary-500 md:text-2xl"
                         >
-                            @money($plan->elector_fee * $totalElectors + $plan->base_fee, $plan->currency)
-                        </span>
-                    </div>
+                            <div class="flex items-end justify-center gap-1">
+                                <span class="font-mono text-3xl font-bold text-primary-600 dark:text-primary-500 md:text-4xl">
+                                    @money($plan->elector_fee, $plan->currency)
+                                </span>
+                                <span>/elector</span>
+                            </div>
+                            <div class="font-mono text-primary-600 dark:text-primary-500">
+                                +
+                                @money($plan->base_fee, $plan->currency)
+                            </div>
+                        </div>
+                    @endif
                 </div>
                 <ul
                     x-data="{ showAddOns: false }"

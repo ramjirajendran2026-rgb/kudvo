@@ -16,7 +16,7 @@ class Plan extends ElectionPage
 
     public string $currency = 'USD';
 
-    public int $totalElectors = 500;
+    public ?int $totalElectors = 500;
 
     public ?int $activePlanId = null;
 
