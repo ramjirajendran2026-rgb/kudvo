@@ -54,7 +54,7 @@ enum ElectionSetupStep: string implements HasDescription, HasIcon, HasLabel
             self::Ballot => BallotSetup::getUrl($parameters),
             self::Timing,
             self::Payment,
-            self::Publish => Dashboard::getUrl($parameters),
+            self::Publish => Dashboard::getUrl([...$parameters, 'step' => $this->value]),
         };
     }
 }
