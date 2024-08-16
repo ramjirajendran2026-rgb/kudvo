@@ -193,7 +193,7 @@
         <h2
             class="underline-offset-3 text-center text-2xl font-semibold text-black underline decoration-primary-600 decoration-8 md:text-4xl"
         >
-            Explore Our Features
+            {{ __('pages/home.content.features.title') }}
         </h2>
         <div class="grid gap-4 md:grid-cols-3 md:gap-8">
             @foreach ($featureItems as $feature)
@@ -253,9 +253,9 @@
         </div>
     </section>
 
-    <section class="h-20 rounded-t-[100%] bg-white"></section>
+    <section id="contact" class="h-20 rounded-t-[100%] bg-white"></section>
 
-    <section id="contact" class="!mt-0 bg-white pb-16">
+    <section class="!mt-0 bg-white pb-16">
         <div
             class="container flex flex-col items-center justify-between gap-6 md:flex-row md:gap-12"
         >
@@ -283,12 +283,12 @@
                             class="h-6 w-6"
                         />
                         <div class="text-lg">
-                            Call / Whatsapp
+                            <span class="hidden sm:inline">{{ __('app.contact.phone.label') }}</span>
                             <a
-                                href="tel:+1-631-731-3526"
-                                class="cursor-pointer text-nowrap"
+                                href="tel:{{ __('app.contact.phone.number') }}"
+                                class="cursor-pointer text-nowrap hover:underline hover:text-primary-700"
                             >
-                                +1-631-731-3526
+                                {{ __('app.contact.phone.number') }}
                             </a>
                         </div>
                     </div>
@@ -298,10 +298,10 @@
                             class="h-6 w-6"
                         />
                         <a
-                            href="mailto://support@kudvo.com"
-                            class="cursor-pointer text-lg"
+                            href="mailto://{{ __('app.contact.email.address') }}"
+                            class="cursor-pointer text-lg hover:underline hover:text-primary-700"
                         >
-                            support@kudvo.com
+                            {{ __('app.contact.email.address') }}
                         </a>
                     </div>
                 </div>
