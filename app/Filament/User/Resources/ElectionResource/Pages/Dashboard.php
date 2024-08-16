@@ -175,11 +175,11 @@ class Dashboard extends ElectionPage
     protected function getHeaderActions(): array
     {
         return [
+            ...parent::getHeaderActions(),
+
             $this->getPreviewBallotAction(),
 
             ActionGroup::make(actions: [
-                ElectionResource::getEditAction(),
-
                 ElectionResource::getEditTimingAction()
                     ->after(callback: fn (self $livewire) => $livewire->resolveState())
                     ->modalHeading(heading: fn (self $livewire) => $livewire->getRecordTitle()),

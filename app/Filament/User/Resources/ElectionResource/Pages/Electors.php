@@ -137,6 +137,8 @@ class Electors extends ElectionPage implements HasTable
     protected function getHeaderActions(): array
     {
         return [
+            ...parent::getHeaderActions(),
+
             $this->getNextPageAction(),
 
             \Filament\Actions\ActionGroup::make(actions: [
