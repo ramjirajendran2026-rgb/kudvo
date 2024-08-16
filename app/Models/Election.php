@@ -399,6 +399,8 @@ class Election extends Model
         });
 
         static::created(callback: function (Election $election) {
+            $election->generateShortCode();
+
             $election->collaborators()->attach(
                 $election->owner,
                 [
