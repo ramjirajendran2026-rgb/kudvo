@@ -27,9 +27,7 @@
                 {{ $plan->description }}
             </p>
             <div class="py-6">
-                <span wire:loading wire:target="currency">
-                    Calculating...
-                </span>
+                <span wire:loading wire:target="currency">Calculating...</span>
 
                 <div
                     wire:loading.class="hidden"
@@ -37,12 +35,16 @@
                     class="space-y-1"
                 >
                     <div class="flex items-end justify-center gap-1">
-                        <span class="font-mono text-3xl font-bold text-primary-600 dark:text-primary-500 md:text-4xl">
+                        <span
+                            class="font-mono text-3xl font-bold text-primary-600 dark:text-primary-500 md:text-4xl"
+                        >
                             @money($plan->elector_fee, $plan->currency)
                         </span>
                         <span>/elector</span>
                     </div>
-                    <div class="font-mono text-primary-600 dark:text-primary-500">
+                    <div
+                        class="font-mono text-primary-600 dark:text-primary-500"
+                    >
                         +
                         @money($plan->base_fee, $plan->currency)
                     </div>
