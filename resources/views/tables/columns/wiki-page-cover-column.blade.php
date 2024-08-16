@@ -33,14 +33,12 @@
 @endphp
 
 <div
-    {{
-        $attributes
+    {{ $attributes
             ->merge($getExtraAttributes(), escape: false)
             ->class([
                 'fi-ta-image w-full',
                 'px-3 py-4' => ! $isInline(),
-            ])
-    }}
+            ]) }}
 >
     @if ($limitedStateCount)
         @php
