@@ -22,7 +22,7 @@
     :width="$isFlagsOnly ? 'flags-only' : 'fls-dropdown-width'"
     @class([
         'fi-dropdown fi-user-menu',
-        'hidden' => !$languageSwitch->isVisibleInsidePanels()
+        'hidden' => ! $languageSwitch->isVisibleInsidePanels(),
     ])
 >
     <x-slot name="trigger">
