@@ -7,6 +7,9 @@ use App\Livewire\Pages\Home;
 use App\Livewire\Pages\PrivacyPolicy;
 use App\Livewire\Pages\Products\Election\Home as ElectionHome;
 use App\Livewire\Pages\Products\Election\HowItWorks;
+use App\Livewire\Pages\Products\Phygital\Home as PhygitalHome;
+use App\Livewire\Pages\Wiki\Index as WikiIndex;
+use App\Livewire\Pages\Wiki\Show as WikiDetails;
 use App\Models\Election;
 use App\Models\Elector;
 use App\Services\Clicksend\Http\Controllers\WebhookController as ClicksendWebhookController;
@@ -42,7 +45,8 @@ Route::group(
             ])
             ->group(function () {
                 Livewire::setUpdateRoute(function ($handle) {
-                    return Route::post('livewire/update', $handle);
+                    return Route::post('livewire/update', $handle)
+                        ->name('i18n.livewire.update');
                 });
 
                 Route::get(uri: '/', action: Home::class)
@@ -57,7 +61,20 @@ Route::group(
                         Route::get(uri: 'how-it-works', action: HowItWorks::class)
                             ->name(name: 'how-it-works');
                     });
+
+                Route::prefix('products/phygital')
+                    ->name('products.phygital.')
+                    ->group(function (): void {
+                        Route::get(uri: '/', action: PhygitalHome::class)
+                            ->name(name: 'home');
+                    });
             });
+
+        Route::get('wiki', WikiIndex::class)
+            ->name('wiki.index');
+
+        Route::get('wiki/{page}', WikiDetails::class)
+            ->name('wiki.show');
 
         Route::get(uri: 'privacy-policy', action: PrivacyPolicy::class)
             ->name(name: 'privacy-policy');
@@ -81,11 +98,11 @@ Route::group(
             ->name(name: 'checkout.cancel');
 
         foreach (AwsSnsController::$routes as $routeKey => $route) {
-            $routeName = 'ses.notification.'.$routeKey;
+            $routeName = 'ses.notification.' . $routeKey;
 
             $controllerActionName = Str::camel($routeKey);
 
-            Route::post('ses/notification/'.$route, [AwsSnsController::class, $controllerActionName])->name($routeName);
+            Route::post('ses/notification/' . $route, [AwsSnsController::class, $controllerActionName])->name($routeName);
         }
     }
 );

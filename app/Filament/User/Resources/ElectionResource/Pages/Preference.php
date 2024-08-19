@@ -28,6 +28,7 @@ use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Notifications\Notification;
+use Filament\Pages\Concerns\HasUnsavedDataChangesAlert;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Support\Enums\Alignment;
 use Illuminate\Database\Eloquent\Collection;
@@ -38,6 +39,7 @@ use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class Preference extends ElectionPage
 {
+    use HasUnsavedDataChangesAlert;
     use InteractsWithFormActions;
 
     protected static string $view = 'filament.user.resources.election-resource.pages.preference';
@@ -46,7 +48,7 @@ class Preference extends ElectionPage
 
     protected static ?string $activeNavigationIcon = 'heroicon-s-cog-6-tooth';
 
-    public static string|Alignment $formActionsAlignment = Alignment::End;
+    public static string | Alignment $formActionsAlignment = Alignment::End;
 
     public ?array $data = [];
 
@@ -61,7 +63,7 @@ class Preference extends ElectionPage
         }
 
         $election = $this->getElection();
-        $election->preference ??= new PreferenceData();
+        $election->preference ??= new PreferenceData;
 
         $this->form->fill($election->attributesToArray());
     }
@@ -156,7 +158,7 @@ class Preference extends ElectionPage
                                     ->hidden(condition: ! $plan->hasFeature(feature: ElectionFeature::BallotAccessCommonLink))
                                     ->label(label: __('filament.user.election-resource.pages.preference.form.ballot_link_common.label'))
                                     ->rule(
-                                        rule: fn (Field $component) => 'accepted_if:'.$component->getContainer()->getStatePath().'.ballot_link_unique,false'
+                                        rule: fn (Field $component) => 'accepted_if:' . $component->getContainer()->getStatePath() . '.ballot_link_unique,false'
                                     )
                                     ->validationMessages(messages: [
                                         'accepted_if' => __('filament.user.election-resource.pages.preference.form.ballot_link_common.validation.accepted_if'),
@@ -697,7 +699,7 @@ class Preference extends ElectionPage
                                                             $set(path: 'type', state: $state->getMimeType());
 
                                                             $dimensions = $state->dimensions();
-                                                            $set(path: 'sizes', state: $dimensions[0].'x'.$dimensions[1]);
+                                                            $set(path: 'sizes', state: $dimensions[0] . 'x' . $dimensions[1]);
 
                                                             return;
                                                         }
@@ -714,7 +716,7 @@ class Preference extends ElectionPage
                                                     })
                                                     ->directory(directory: 'election/pwa-icons')
                                                     ->getUploadedFileNameForStorageUsing(
-                                                        callback: fn (TemporaryUploadedFile $file, self $livewire, Get $get): string => $livewire->getElection()->code.'-'.$get(path: 'sizes').'.'.$file->guessExtension()
+                                                        callback: fn (TemporaryUploadedFile $file, self $livewire, Get $get): string => $livewire->getElection()->code . '-' . $get(path: 'sizes') . '.' . $file->guessExtension()
                                                     )
                                                     ->image()
                                                     ->imageEditor()

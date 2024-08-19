@@ -2,8 +2,8 @@
 
 return [
     'seo' => [
-        'title' => 'Online Voting System',
-        'description' => 'Online Voting System',
+        'title' => 'Kudvo - Secure and Efficient Online Voting System',
+        'description' => 'Secure and Efficient Online Voting System for Clubs. Empower your club members with secure and efficient online voting. From board elections to event planning, streamline your decision-making process with our trusted system. Explore our products and pricing now!',
     ],
 
     'content' => [
@@ -13,63 +13,71 @@ return [
                     'title' => 'Enhance Homeowners Association Governance',
                     'description' => 'Manage condominium community decisions',
                     'image' => asset('img/home/hero/hoa-home-owner-asspciation-or-condominium-associations.webp'),
+                    'image_alt' => 'Aerial view of a suburban neighborhood with well-maintained houses and greenery, representing a homeowner association community.',
                     'cta_label' => 'Get Started',
                     'cta_url' => route('filament.user.auth.register'),
-                    'cta2_label' => 'Learn More',
+                    'cta2_label' => 'Explore',
                     'cta2_url' => route('products.election.home'),
                 ],
                 [
                     'title' => 'Secure and Efficient Online Voting System for Clubs',
                     'description' => 'Streamline your decision-making process with our trusted system.',
                     'image' => asset('img/home/hero/club.webp'),
+                    'image_alt' => 'Collage of sports and leisure activities including golf, tennis, soccer, and a marina with boats, showcasing a vibrant club environment.',
                     'cta_label' => 'Get Started',
                     'cta_url' => route('filament.user.auth.register'),
-                    'cta2_label' => 'Learn More',
+                    'cta2_label' => 'Explore',
                     'cta2_url' => route('products.election.home'),
                 ],
                 [
                     'title' => 'Corporate and Industry: Streamline Decision-Making Processes',
                     'description' => 'offers a convenient solution for board meetings, corporate resolutions.',
                     'image' => asset('img/home/hero/corparate-industry.webp'),
+                    'image_alt' => 'Industrial cityscape with a large chemical plant in the center, surrounded by skyscrapers and green spaces.',
                     'cta_label' => 'Get Started',
                     'cta_url' => route('filament.user.auth.register'),
-                    'cta2_label' => 'Learn More',
+                    'cta2_label' => 'Explore',
                     'cta2_url' => route('products.election.home'),
                 ],
                 [
                     'title' => 'Associations & Unions: Strengthen Membership Engagement',
                     'description' => 'Foster stronger engagement among your association or union members.',
                     'image' => asset('img/home/hero/associations-and-unions.webp'),
+                    'image_alt' => 'Diverse group of people connected by lines and circles, representing a network or collaboration.',
                     'cta_label' => 'Get Started',
                     'cta_url' => route('filament.user.auth.register'),
-                    'cta2_label' => 'Learn More',
+                    'cta2_label' => 'Explore',
                     'cta2_url' => route('products.election.home'),
                 ],
                 [
                     'title' => 'Trust & Educational Institutions: Promote Student and Staff Participation',
                     'description' => 'Encourage student and staff participation in institutional decisions.',
                     'image' => asset('img/home/hero/school-or-university.webp'),
+                    'image_alt' => 'Aerial view of a modern university campus with multiple buildings, landscaped grounds, and walking paths.',
                     'cta_label' => 'Get Started',
                     'cta_url' => route('filament.user.auth.register'),
-                    'cta2_label' => 'Learn More',
+                    'cta2_label' => 'Explore',
                     'cta2_url' => route('products.election.home'),
                 ],
                 [
                     'title' => 'Employee Associations: Empower Your Workforce',
                     'description' => 'Empower your workforce with a voice in organizational decisions.',
                     'image' => asset('img/home/hero/employer-associations.webp'),
+                    'image_alt' => 'The image shows a diverse group of professionals smiling. They are dressed in different work clothes, including business suits and safety gear, indicating various professions.',
                     'cta_label' => 'Get Started',
                     'cta_url' => route('filament.user.auth.register'),
-                    'cta2_label' => 'Learn More',
+                    'cta2_label' => 'Explore',
                     'cta2_url' => route('products.election.home'),
                 ],
             ],
         ],
         'features' => [
+            'title' => 'Explore Our Features',
             'items' => [
                 [
                     'title' => 'Secure and Convenient Ballot Access',
                     'image' => asset('img/home/features/ballot-link-delivery.webp'),
+                    'image_alt' => 'A person in a green shirt looks at a smartphone with a message: "your Ballot link is https://kudvo.com/b/SRThs to vote for elections" alongside SMS and email icons.',
                     'points' => [
                         'Simplify the voting process with quick and efficient access to the ballot.',
                         'Offer unique links or a common access point for eligible voters.',
@@ -79,6 +87,7 @@ return [
                 [
                     'title' => 'Enhanced Security with Multi-Factor Authentication',
                     'image' => asset('img/home/features/multi-factor-authentication-code-delivery.webp'),
+                    'image_alt' => 'Screenshot of an acknowledgment from Kudvo confirming Mr. Vikram T vote for iNodesys on Feb 21, 2024, at 05:02 PM (IST). The document serves as a ballot copy.',
                     'points' => [
                         'Prioritize the integrity of the voting process with enhanced security measures.',
                         'Implement multi-factor authentication (MFA) codes for voter verification.',
@@ -88,6 +97,7 @@ return [
                 [
                     'title' => 'Transparent Ballot Acknowledgement',
                     'image' => asset('img/home/features/ballot-acknowledgement.webp'),
+                    'image_alt' => 'An image showing a verification message with the code "715363" sent by "iNodesys" for OTP verification.',
                     'points' => [
                         'Provide voters with confirmation of their ballots to ensure transparency.',
                         'Verify the authenticity of votes and enhance voter satisfaction with the process.',
@@ -97,6 +107,7 @@ return [
                 [
                     'title' => 'Advanced Security Preferences',
                     'image' => asset('img/home/features/do-not-track-vote.webp'),
+                    'image_alt' => 'A man in a suit and face mask stands at a podium with a laptop, next to graphics emphasizing voter privacy and security.',
                     'points' => [
                         'Customize security preferences to track and prevent duplicate devices.',
                         'Implement advanced tracking and prevention features to protect against voting fraud.',
@@ -106,6 +117,7 @@ return [
                 [
                     'title' => 'Comprehensive Election Management',
                     'image' => asset('img/home/features/elector-update-after-publish.webp'),
+                    'image_alt' => 'A woman in business attire smiles while holding a laptop. A shaded panel behind her displays options for allowing elector updates with a \'Publish\' button below.',
                     'points' => [
                         'Keep elector details updated even after the election has been published.',
                         'Ensure the accuracy of voter information and election results.',
@@ -115,6 +127,7 @@ return [
                 [
                     'title' => 'Segmented Ballot for Enhanced Efficiency',
                     'image' => asset('img/home/features/segmented-voting-system.webp'),
+                    'image_alt' => 'Illustration of a tree with blue circular nodes connected by lines. Some nodes contain smaller orange and white circles. The background is a light teal color.',
                     'points' => [
                         'Divide the ballot based on elector details to make voting more efficient.',
                         'Offer targeted voting experiences and better engage voters with personalized ballots.',
@@ -129,44 +142,44 @@ return [
                 [
                     'title' => 'Online Election',
                     'description' => 'Host a variety of elections with ease using Kudvo\'s Online Election solution. Simplify board elections, committee votes, or organizational polls with adaptable voting methods.',
-                    'title_color' => '#49D8BE',
-                    'cta_label' => 'See Products & Pricing',
-                    'cta_url' => route('home'),
+                    'title_color' => '#008F78',
+                    'cta_label' => 'Pricing & more details',
+                    'cta_url' => route('products.election.home'),
                 ],
                 [
                     'title' => 'Resolution Voting',
                     'description' => 'Make informed decisions on crucial matters with Kudvo\'s Resolution Voting feature. Propose, debate, and vote on resolutions effectively to ensure clarity and transparency.',
-                    'title_color' => '#49D8BE',
-                    'cta_label' => 'See Products & Pricing',
-                    'cta_url' => route('home'),
+                    'title_color' => '#DD6400',
+                    'cta_label' => 'Coming soon...',
+                    'cta_url' => null,
                 ],
                 [
                     'title' => 'Survey',
                     'description' => 'Gather valuable insights and feedback from stakeholders with Kudvo\'s Survey tool. Conduct surveys on organizational performance, member satisfaction, and more to drive informed decision-making.',
-                    'title_color' => '#49D8BE',
-                    'cta_label' => 'See Products & Pricing',
-                    'cta_url' => route('home'),
+                    'title_color' => '#21A300',
+                    'cta_label' => 'Coming soon...',
+                    'cta_url' => null,
                 ],
                 [
                     'title' => 'AGM Meeting Voting',
                     'description' => 'Streamline Annual General Meetings (AGMs) with Kudvo\'s AGM Meeting Voting solution. Enable remote participation and voting for attendees while maintaining the integrity of the process.',
-                    'title_color' => '#49D8BE',
-                    'cta_label' => 'See Products & Pricing',
-                    'cta_url' => route('home'),
+                    'title_color' => '#E92E66',
+                    'cta_label' => 'Coming soon...',
+                    'cta_url' => null,
                 ],
                 [
                     'title' => 'Live Polling',
                     'description' => 'Engage your audience in real-time with Kudvo\'s Live Polling feature. Conduct interactive polls during events, webinars, or meetings to gather feedback and enhance audience interaction.',
-                    'title_color' => '#49D8BE',
-                    'cta_label' => 'See Products & Pricing',
-                    'cta_url' => route('home'),
+                    'title_color' => '#4285F7',
+                    'cta_label' => 'Coming soon...',
+                    'cta_url' => null,
                 ],
                 [
                     'title' => 'Meeting Voting',
                     'description' => 'Make meetings more productive and inclusive with Kudvo\'s Meeting Voting functionality. Enable attendees to vote on agenda items, proposals, or decisions, ensuring every voice is heard.',
-                    'title_color' => '#49D8BE',
-                    'cta_label' => 'See Products & Pricing',
-                    'cta_url' => route('home'),
+                    'title_color' => '#8C5A85',
+                    'cta_label' => 'Coming soon...',
+                    'cta_url' => null,
                 ],
             ],
         ],

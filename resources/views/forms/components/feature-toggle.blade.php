@@ -1,3 +1,5 @@
+@use(Filament\Support\Enums\VerticalAlignment)
+
 @php
     $offColor = $getOffColor() ?? 'gray';
     $onColor = $getOnColor() ?? 'primary';
@@ -11,7 +13,7 @@
         x-data="{}"
         size="sm"
         color="primary"
-        :x-tooltip="filled($addOnTooltip) ? '{ content: ' . \Illuminate\Support\Js::from($addOnTooltip) . ', theme: $store.theme }' : null"
+        :x-tooltip="filled($addOnTooltip) ? '{ content: ' . Js::from($addOnTooltip) . ', theme: $store.theme }' : null"
     >
         {{ __('app.add_on') }}
     </x-filament::badge>
@@ -21,7 +23,7 @@
     :component="$getFieldWrapperView()"
     :field="$field"
     :label-suffix="$isAddOn ? $labelSuffix() : null"
-    :inline-label-vertical-alignment="\Filament\Support\Enums\VerticalAlignment::Center"
+    :inline-label-vertical-alignment="VerticalAlignment::Center"
     class="[&_.fi-fo-field-wrp-hint]:font-mono"
 >
     @capture($content)
@@ -34,7 +36,7 @@
             x-bind:class="
                 state
                     ? '{{
-                        \Illuminate\Support\Arr::toCssClasses([
+                        Arr::toCssClasses([
                             match ($onColor) {
                                 'gray' => 'bg-gray-200 dark:bg-gray-700',
                                 default => 'fi-color-custom bg-custom-600',
@@ -43,7 +45,7 @@
                         ])
                     }}'
                     : '{{
-                        \Illuminate\Support\Arr::toCssClasses([
+                        Arr::toCssClasses([
                             match ($offColor) {
                                 'gray' => 'bg-gray-200 dark:bg-gray-700',
                                 default => 'fi-color-custom bg-custom-600',

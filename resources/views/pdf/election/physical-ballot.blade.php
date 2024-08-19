@@ -1,5 +1,8 @@
 @php
-    /** @var \App\Models\Election $election */
+    use App\Models\Election;
+    use Illuminate\Support\Arr;
+
+    /** @var Election $election */
 @endphp
 
 <!DOCTYPE html>
@@ -40,7 +43,16 @@
         </style>
     </head>
     <body>
-        <footer style="position: fixed; bottom: 0; left: 0; right: 0; text-align: center; padding: 6mm">
+        <footer
+            style="
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                text-align: center;
+                padding: 6mm;
+            "
+        >
             Powered by {{ config('app.name') }}
         </footer>
         <div class="page">
@@ -53,19 +65,27 @@
                                 alt="{{ 'Logo' }}"
                                 style="height: 20mm"
                             />
-                            <div style="vertical-align: middle; text-align: center; margin-top: 2mm">
+                            <div
+                                style="
+                                    vertical-align: middle;
+                                    text-align: center;
+                                    margin-top: 2mm;
+                                "
+                            >
                                 {{ $election->organisation->name }}
                             </div>
                         </th>
                         <th rowspan="2" style="width: 10mm">
                             <img
                                 alt="Ballot QR code"
-                                src="data:image/svg+xml;base64,{!! base64_encode(\SimpleSoftwareIO\QrCode\Facades\QrCode::size(100)->generate($election->code)) !!}"
+                                src="data:image/svg+xml;base64,{!! base64_encode(QrCode::size(100)->generate($election->code)) !!}"
                             />
                         </th>
                     </tr>
                     <tr>
-                        <th colspan="2" class="el-title">{{ $election->name }}</th>
+                        <th colspan="2" class="el-title">
+                            {{ $election->name }}
+                        </th>
                     </tr>
                 </thead>
             </table>
@@ -90,14 +110,18 @@
                                     <img
                                         src="{{ $candidate->photo_url }}"
                                         alt="{{ 'Candidate photo' }}"
-                                        style="border-radius: 100%; height: 15mm; width: 15mm"
+                                        style="
+                                            border-radius: 100%;
+                                            height: 15mm;
+                                            width: 15mm;
+                                        "
                                     />
                                 </td>
                                 <td>
                                     <div>{{ $candidate->full_name }}</div>
                                     <div>
                                         @php
-                                            $contacts = \Illuminate\Support\Arr::where(
+                                            $contacts = Arr::where(
                                                 $candidate->only(['membership_number', 'phone', 'email']),
                                                 fn ($item) => filled($item),
                                             );
@@ -110,14 +134,25 @@
                                     <img
                                         src="{{ $candidate->symbol_url }}"
                                         alt="{{ 'Candidate symbol' }}"
-                                        style="border-radius: 1mm; height: 15mm; width: 15mm"
+                                        style="
+                                            border-radius: 1mm;
+                                            height: 15mm;
+                                            width: 15mm;
+                                        "
                                     />
                                 </td>
                                 <td style="width: 20%; text-align: end"></td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="3" style="padding: 6mm; text-align: center; vertical-align: middle">
+                                <td
+                                    colspan="3"
+                                    style="
+                                        padding: 6mm;
+                                        text-align: center;
+                                        vertical-align: middle;
+                                    "
+                                >
                                     No candidates
                                 </td>
                             </tr>

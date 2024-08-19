@@ -26,7 +26,7 @@ return [
     |
     */
     'ses' => [
-        'key'    => env('AWS_ACCESS_KEY_ID'),
+        'key' => env('AWS_ACCESS_KEY_ID'),
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
         'region' => env('AWS_DEFAULT_REGION'),
     ],
@@ -41,7 +41,7 @@ return [
     |
     */
     'subscriber' => [
-        'http'  => false,
+        'http' => false,
         'https' => true,
     ],
 
@@ -83,16 +83,16 @@ return [
     |
     */
     'active' => [
-        'sends'              => true,
+        'sends' => true,
         'rendering_failures' => true,
-        'rejects'            => true,
-        'deliveries'         => true,
-        'bounces'            => true,
-        'complaints'         => true,
-        'delivery_delays'    => true,
-        'subscriptions'      => true,
-        'opens'              => true,
-        'clicks'             => true,
+        'rejects' => true,
+        'deliveries' => true,
+        'bounces' => true,
+        'complaints' => true,
+        'delivery_delays' => true,
+        'subscriptions' => true,
+        'opens' => true,
+        'clicks' => true,
     ],
 
     /*
@@ -123,16 +123,16 @@ return [
     |
     */
     'routes' => [
-        'sends'              => 'sends',
+        'sends' => 'sends',
         'rendering_failures' => 'rendering-failures',
-        'rejects'            => 'rejects',
-        'deliveries'         => 'deliveries',
-        'bounces'            => 'bounces',
-        'complaints'         => 'complaints',
-        'delivery_delays'    => 'delivery-delays',
-        'subscriptions'      => 'subscriptions',
-        'opens'              => 'opens',
-        'clicks'             => 'clicks',
+        'rejects' => 'rejects',
+        'deliveries' => 'deliveries',
+        'bounces' => 'bounces',
+        'complaints' => 'complaints',
+        'delivery_delays' => 'delivery-delays',
+        'subscriptions' => 'subscriptions',
+        'opens' => 'opens',
+        'clicks' => 'clicks',
     ],
 
     /*
@@ -170,16 +170,16 @@ return [
     |
     */
     'destination_names' => [
-        'sends'              => 'sns',
+        'sends' => 'sns',
         'rendering_failures' => 'sns',
-        'rejects'            => 'sns',
-        'deliveries'         => 'sns',
-        'bounces'            => 'sns',
-        'complaints'         => 'sns',
-        'delivery_delays'    => 'sns',
-        'subscriptions'      => 'sns',
-        'opens'              => 'sns',
-        'clicks'             => 'sns',
+        'rejects' => 'sns',
+        'deliveries' => 'sns',
+        'bounces' => 'sns',
+        'complaints' => 'sns',
+        'delivery_delays' => 'sns',
+        'subscriptions' => 'sns',
+        'opens' => 'sns',
+        'clicks' => 'sns',
     ],
 
     /*
@@ -375,7 +375,7 @@ return [
     |	Type: string|null
     |
     */
-    'topic_name_prefix' => str(env('APP_NAME', 'local').'-'.env('APP_ENV', 'local'))->kebab()->toString(),
+    'topic_name_prefix' => str(env('APP_NAME', 'local') . '-' . env('APP_ENV', 'local'))->kebab()->toString(),
 
     /*
     |--------------------------------------------------------------------------
@@ -389,16 +389,16 @@ return [
     |
     */
     'topic_names' => [
-        'sends'              => 'sends',
+        'sends' => 'sends',
         'rendering_failures' => 'rendering-failures',
-        'rejects'            => 'rejects',
-        'deliveries'         => 'deliveries',
-        'bounces'            => 'bounces',
-        'complaints'         => 'complaints',
-        'delivery_delays'    => 'delivery-delays',
-        'subscriptions'      => 'subscriptions',
-        'opens'              => 'opens',
-        'clicks'             => 'clicks',
+        'rejects' => 'rejects',
+        'deliveries' => 'deliveries',
+        'bounces' => 'bounces',
+        'complaints' => 'complaints',
+        'delivery_delays' => 'delivery-delays',
+        'subscriptions' => 'subscriptions',
+        'opens' => 'opens',
+        'clicks' => 'clicks',
     ],
 
     /*

@@ -31,7 +31,7 @@ class ElectionPanel extends Panel implements ResolvesElection
             ->resolveRouteBinding(value: $key, field: $field);
 
         if (blank($election)) {
-            throw (new ModelNotFoundException())->setModel(model: Election::class, ids: [$key]);
+            throw (new ModelNotFoundException)->setModel(model: Election::class, ids: [$key]);
         }
 
         return $election;
@@ -46,6 +46,6 @@ class ElectionPanel extends Panel implements ResolvesElection
 
     public function getPath(): string
     {
-        return parent::getPath().'/{election}';
+        return parent::getPath() . '/{election}';
     }
 }

@@ -2,7 +2,6 @@
 
 namespace App\Events\Auth;
 
-use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -13,16 +12,16 @@ use Illuminate\Queue\SerializesModels;
 
 class EmailVerified implements ShouldBroadcast
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
+    use Dispatchable;
+    use InteractsWithSockets;
+    use SerializesModels;
 
-    public function __construct(public Model & Authenticatable $user)
-    {
-    }
+    public function __construct(public Model & Authenticatable $user) {}
 
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel(name: 'App.Models.User.'.$this->user->getKey())
+            new PrivateChannel(name: 'App.Models.User.' . $this->user->getKey()),
         ];
     }
 }

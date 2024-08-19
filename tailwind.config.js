@@ -1,10 +1,15 @@
-import preset from './vendor/filament/support/tailwind.config.preset.js';
+import preset from './vendor/filament/support/tailwind.config.preset.js'
+
+const defaultTheme = require('tailwindcss/defaultTheme')
 
 export default {
     presets: [preset],
     content: [
-        './app/Filament/**/*.php',
-        './resources/views/filament/**/*.blade.php',
+        './app/Forms/**/*.php',
+        './resources/views/forms/**/*.blade.php',
+
+        './app/Tables/**/*.php',
+        './resources/views/tables/**/*.blade.php',
 
         './resources/views/components/**/*.blade.php',
 
@@ -26,6 +31,9 @@ export default {
             animation: {
                 'infinite-scroll': 'infinite-scroll 25s linear infinite',
             },
+            fontFamily: {
+                sans: ['Poppins', ...defaultTheme.fontFamily.sans],
+            },
         },
     },
     plugins: [
@@ -34,7 +42,7 @@ export default {
                 '.bg-var-url': {
                     'background-image': 'var(--bg-url)',
                 },
-            });
+            })
         },
     ],
-};
+}

@@ -37,8 +37,7 @@ class BallotLinkNotification extends Notification implements HasMailMessagePurpo
     public function __construct(
         protected Elector $elector,
         protected Election $election,
-    ) {
-    }
+    ) {}
 
     public function via(object $notifiable): array
     {
@@ -96,7 +95,7 @@ class BallotLinkNotification extends Notification implements HasMailMessagePurpo
             static::VAR_ELECTOR_NAME => $this->getElector()->display_name,
             static::VAR_ELECTOR_NAME_SHORT => $this->getElector()->display_name ?
                 Str::maxLimit(value: $this->getElector()->display_name, limit: 30) :
-                null,
+                'Member',
         ];
 
         return Str::replace(

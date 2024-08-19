@@ -11,13 +11,17 @@ trait HasShortCode
     protected function shortCode(): Attribute
     {
         return Attribute::make(
-            get: fn($value, array $attributes) => blank($value) ? $this->generateShortCode() : $value,
-            set: fn($value) => $value,
+            get: fn ($value, array $attributes) => blank($value) ? $this->generateShortCode() : $value,
+            set: fn ($value) => $value,
         );
     }
 
-    public function generateShortCode(): string
+    public function generateShortCode(bool $force = false): string
     {
+        if (! $force && filled($shortCode = ($this->getAttributes()['short_code'] ?? null))) {
+            return $shortCode;
+        }
+
         do {
             try {
                 $this->forceFill(attributes: ['short_code' => Str::random(length: 6)]);

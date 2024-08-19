@@ -26,36 +26,31 @@ class Dashboard extends ElectionPage
 
     public ElectionDashboardState $state;
 
-    public function mount(int|string $record): void
+    public function mount(int | string $record): void
     {
+        static::authorizeResourceAccess();
+
         parent::mount($record);
 
         $this->resolveState();
 
-        $currentStep = $this->getPendingStep();
+        $redirectUrl = match ($this->getPendingStep()) {
+            ElectionSetupStep::Preference,
+            ElectionSetupStep::Electors,
+            ElectionSetupStep::Ballot => $this->getPendingStep()?->getUrl([$this->getElection()]),
+            default => null,
+        };
 
-        if ($currentStep === ElectionSetupStep::Preference) {
-            $this->notifyUnauthorized();
+        if ($redirectUrl) {
+            if (filled(request()->query('step'))) {
+                $this->notifyUnauthorized();
+            }
 
-            $this->redirect(Preference::getUrl(parameters: [$this->getElection()]));
-
-            return;
-        }
-
-        if ($currentStep === ElectionSetupStep::Electors) {
-            $this->notifyUnauthorized();
-
-            $this->redirect(Electors::getUrl(parameters: [$this->getElection()]));
-
-            return;
-        }
-
-        if ($currentStep === ElectionSetupStep::Ballot) {
-            $this->notifyUnauthorized();
-
-            $this->redirect(BallotSetup::getUrl(parameters: [$this->getElection()]));
+            $this->redirect($redirectUrl, Filament::getPanel()->hasSpaMode());
         }
     }
+
+    public function authorizeAccess(): void {}
 
     public static function getNavigationLabel(): string
     {
@@ -105,7 +100,7 @@ class Dashboard extends ElectionPage
         return $this->state->getLabel(election: $this->getElection());
     }
 
-    public function getStateDescription(): string|HtmlString|null
+    public function getStateDescription(): string | HtmlString | null
     {
         return $this->state->getDescription(election: $this->getElection());
     }
@@ -178,11 +173,11 @@ class Dashboard extends ElectionPage
     protected function getHeaderActions(): array
     {
         return [
+            ...parent::getHeaderActions(),
+
             $this->getPreviewBallotAction(),
 
             ActionGroup::make(actions: [
-                ElectionResource::getEditAction(),
-
                 ElectionResource::getEditTimingAction()
                     ->after(callback: fn (self $livewire) => $livewire->resolveState())
                     ->modalHeading(heading: fn (self $livewire) => $livewire->getRecordTitle()),
@@ -191,8 +186,9 @@ class Dashboard extends ElectionPage
 
                 ElectionResource::getCancelAction(),
 
-                Action::make(name: 'download_invoice')
-                    ->url(url: fn (self $livewire) => $livewire->getElection()->stripe_invoice_data['invoice_pdf'])
+                Action::make(name: 'payment_receipt')
+                    ->icon(icon: 'heroicon-s-receipt-percent')
+                    ->url(url: fn (self $livewire) => (($charge = $livewire->getElection()->stripe_invoice_data['charge'] ?? null) && is_array($charge)) ? $charge['receipt_url'] : $livewire->getElection()->stripe_invoice_data['invoice_pdf'], shouldOpenInNewTab: true)
                     ->visible(condition: fn (self $livewire) => filled($livewire->getElection()->stripe_invoice_data)),
 
             ])->dropdownPlacement(placement: 'bottom-end'),
@@ -253,8 +249,6 @@ class Dashboard extends ElectionPage
         return Action::make(name: 'download_physical_ballot')
             ->action(action: function (self $livewire) {
                 $election = $livewire->getElection();
-
-                config(['app.name' => 'SecuredVoting']); // TODO: Remove this line after the issue is fixed
 
                 $pdf = Pdf::loadView(
                     'pdf.election.physical-ballot',

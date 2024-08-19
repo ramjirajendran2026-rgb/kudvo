@@ -16,6 +16,8 @@ enum SmsMessagePurpose: string implements HasLabel
 
     case VotedConfirmation = 'voted_confirmation';
 
+    case NominationMfaCode = 'nomination_mfa_code';
+
     public function getLabel(): ?string
     {
         return Str::headline($this->value);
@@ -38,6 +40,7 @@ enum SmsMessagePurpose: string implements HasLabel
             self::BallotLink => $query->where('purpose', self::BallotLink),
             self::BallotMfaCode => $query->where('purpose', self::BallotMfaCode),
             self::VotedConfirmation => $query->where('purpose', self::VotedConfirmation),
+            self::NominationMfaCode => $query->where('purpose', self::NominationMfaCode),
         };
     }
 }

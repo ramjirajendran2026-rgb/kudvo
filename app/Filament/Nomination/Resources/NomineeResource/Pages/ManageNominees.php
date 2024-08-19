@@ -16,7 +16,7 @@ class ManageNominees extends ManageRecords implements HasElector, HasNomination
 
     protected static string $resource = NomineeResource::class;
 
-    public function getHeading(): string|Htmlable
+    public function getHeading(): string | Htmlable
     {
         return Kudvo::getNomination()->name;
     }

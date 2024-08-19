@@ -17,7 +17,7 @@ class Dashboard extends \Filament\Pages\Dashboard
 {
     use InteractsWithNomination;
 
-//    protected static string $view = 'filament.nomination.pages.dashboard';
+    //    protected static string $view = 'filament.nomination.pages.dashboard';
 
     protected static bool $isDiscovered = false;
 

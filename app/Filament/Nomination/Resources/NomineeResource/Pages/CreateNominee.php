@@ -12,6 +12,7 @@ use App\Filament\Nomination\Resources\NomineeResource;
 use App\Forms\NominatorForm;
 use App\Forms\NomineeForm;
 use App\Models\Nominee;
+use App\Models\Position;
 use Filament\Actions;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Actions\Action as FormAction;
@@ -41,7 +42,7 @@ class CreateNominee extends CreateRecord implements HasElector, HasNomination
     {
         $electorData = [
             'elector_id' => $this->getElector()->getKey(),
-            ...$this->getElector()->only(attributes: ['membership_number', 'first_name', 'last_name', 'email', 'phone'])
+            ...$this->getElector()->only(attributes: ['membership_number', 'first_name', 'last_name', 'email', 'phone']),
         ];
 
         $data = [
@@ -56,7 +57,7 @@ class CreateNominee extends CreateRecord implements HasElector, HasNomination
 
                 ...$this->getNomination()->nominator_threshold > 1 ?
                     Arr::map(array: range(start: 2, end: $this->getNomination()->nominator_threshold), callback: fn () => []) :
-                    []
+                    [],
             ] :
                 [],
         ];
@@ -64,12 +65,12 @@ class CreateNominee extends CreateRecord implements HasElector, HasNomination
         $this->form->fill(state: $data);
     }
 
-    public function getHeading(): string|Htmlable
+    public function getHeading(): string | Htmlable
     {
         return Kudvo::getNomination()->name;
     }
 
-    public function getSubheading(): string|Htmlable|null
+    public function getSubheading(): string | Htmlable | null
     {
         return 'Nomination Form';
     }
@@ -91,6 +92,7 @@ class CreateNominee extends CreateRecord implements HasElector, HasNomination
                 ->description(description: $isSelfNomination ? 'You' : null)
                 ->schema(components: [
                     NomineeForm::positionIdComponent()
+                        ->getOptionLabelFromRecordUsing(fn (Position $record) => $record->name)
                         ->hiddenLabel(condition: false)
                         ->relationship(
                             name: 'position',
@@ -144,10 +146,10 @@ class CreateNominee extends CreateRecord implements HasElector, HasNomination
 
             Step::make(label: Str::plural(value: 'Nominator', count: $nominatorThreshold))
                 ->description(
-                    description: ($isSelfNomination ? 'Proposer' : 'You').
+                    description: ($isSelfNomination ? 'Proposer' : 'You') .
                     (
-                    $seconderThreshold ?
-                        (" and ".Str::plural(value: 'Seconder', count: $seconderThreshold)) :
+                        $seconderThreshold ?
+                        (' and ' . Str::plural(value: 'Seconder', count: $seconderThreshold)) :
                         ''
                     )
                 )
@@ -167,8 +169,8 @@ class CreateNominee extends CreateRecord implements HasElector, HasNomination
                                 $index = array_search(needle: $uuid, haystack: $uuids);
 
                                 return $index ?
-                                    'Seconder '.(count(value: $uuids) > 2 ? '#'.$index : '') :
-                                    'Proposer'.(!$livewire->getNomination()->self_nomination ? ' (You)' : '');
+                                    'Seconder ' . (count(value: $uuids) > 2 ? '#' . $index : '') :
+                                    'Proposer' . (! $livewire->getNomination()->self_nomination ? ' (You)' : '');
                             }
                         )
                         ->maxItems(count: $nominatorThreshold)

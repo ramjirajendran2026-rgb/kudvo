@@ -3,7 +3,11 @@
 namespace App\Providers;
 
 // use Illuminate\Support\Facades\Gate;
+use App\Models\User;
+use Filament\Facades\Filament;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Gate;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -21,6 +25,12 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Gate::before(callback: function (Authenticatable $user, string $ability): ?bool {
+            if (Filament::getCurrentPanel()?->getId() === 'admin' && $user instanceof User && $user->hasAdminRole()) {
+                return true;
+            }
+
+            return null;
+        });
     }
 }

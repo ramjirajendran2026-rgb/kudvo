@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\RolesEnum;
 use Filament\Facades\Filament;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
@@ -21,12 +22,14 @@ use Laravel\Cashier\Billable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements FilamentUser, HasAvatar, HasMedia, HasName, HasTenants, MustVerifyEmail
 {
     use Billable;
     use HasApiTokens;
     use HasFactory;
+    use HasRoles;
     use InteractsWithMedia;
     use Notifiable;
 
@@ -85,8 +88,8 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasMedia,
     public function canAccessPanel(Panel $panel): bool
     {
         return match ($panel->getId()) {
-            'user' => true,
-            'admin' => str($this->email)->endsWith(needles: '@inodesys.com') && $this->hasVerifiedEmail(),
+            'user' => $this->hasUserRole(),
+            'admin' => $this->hasAdminRole() || $this->hasStaffRole(),
             default => false,
         };
     }
@@ -100,7 +103,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasMedia,
         };
     }
 
-    public function getTenants(Panel $panel): array|Collection
+    public function getTenants(Panel $panel): array | Collection
     {
         return $this->organisations
             ->merge(
@@ -125,5 +128,25 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasMedia,
     public function getFilamentName(): string
     {
         return $this->name ?: (Filament::getTenant()?->name ?: 'Admin');
+    }
+
+    public function hasAdminRole(): bool
+    {
+        return $this->hasRole(RolesEnum::Admin);
+    }
+
+    public function hasStaffRole(): bool
+    {
+        return $this->hasRole(RolesEnum::Staff);
+    }
+
+    public function hasUserRole(): bool
+    {
+        return $this->hasRole(RolesEnum::User);
+    }
+
+    public function canImpersonate(): bool
+    {
+        return $this->hasAdminRole();
     }
 }

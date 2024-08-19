@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App\Enums\ElectionFeature;
 use App\Models\ElectionPlan;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Schema;
 
 class ElectionPlanSeeder extends Seeder
 {

@@ -4,7 +4,6 @@ namespace App\Filament\Exports;
 
 use App\Models\Elector;
 use Carbon\Carbon;
-use Carbon\CarbonImmutable;
 use Filament\Actions\Exports\ExportColumn;
 use Filament\Actions\Exports\Exporter;
 use Filament\Actions\Exports\Models\Export;

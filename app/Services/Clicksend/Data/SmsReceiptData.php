@@ -26,6 +26,5 @@ class SmsReceiptData extends Data
         public ?string $message_type = null,
         public ?string $status = null,
         public ?int $status_code = null,
-    ) {
-    }
+    ) {}
 }

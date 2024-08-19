@@ -21,14 +21,15 @@ enum MailMessagePurpose: string implements HasLabel
 
     case ElectionCollaboratorInvitation = 'election_collaborator_invitation';
 
+    case NominationMfaCode = 'nomination_mfa_code';
+
     public function getLabel(): ?string
     {
         return Str::headline($this->value);
     }
 
     /**
-     * @param array<UnitEnum>|null $cases
-     * @return array
+     * @param  array<UnitEnum>|null  $cases
      */
     public static function getTabs(?array $cases = null): array
     {
@@ -48,6 +49,8 @@ enum MailMessagePurpose: string implements HasLabel
             self::BallotMfaCode => $query->where('purpose', self::BallotMfaCode),
             self::VotedConfirmation => $query->where('purpose', self::VotedConfirmation),
             self::VotedBallotCopy => $query->where('purpose', self::VotedBallotCopy),
+            self::ElectionCollaboratorInvitation => $query->where('purpose', self::ElectionCollaboratorInvitation),
+            self::NominationMfaCode => $query->where('purpose', self::NominationMfaCode),
         };
     }
 }

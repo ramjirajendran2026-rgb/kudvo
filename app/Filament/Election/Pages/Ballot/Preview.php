@@ -18,6 +18,7 @@ use Filament\Pages\Page;
 use Filament\Panel;
 use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\Alignment;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -37,7 +38,12 @@ class Preview extends Page implements HasElection
 
     protected static bool $shouldRegisterNavigation = false;
 
-    public static function getWithoutRouteMiddleware(Panel $panel): string|array
+    public function getTitle(): string | Htmlable
+    {
+        return 'Ballot Preview - ' . $this->getElection()->name;
+    }
+
+    public static function getWithoutRouteMiddleware(Panel $panel): string | array
     {
         return [
             IdentifyBoothToken::class,
@@ -104,7 +110,7 @@ class Preview extends Page implements HasElection
                         ->hidden(condition: fn (self $livewire): bool => $livewire->flashVotes || ! $livewire->preview)
                         ->size(size: ActionSize::ExtraLarge),
                 ])
-                ->alignment(alignment: fn (self $livewire): Alignment => $livewire->preview ? Alignment::Between : Alignment::End),
+                    ->alignment(alignment: fn (self $livewire): Alignment => $livewire->preview ? Alignment::Between : Alignment::End),
             ]);
     }
 
@@ -137,6 +143,7 @@ class Preview extends Page implements HasElection
                 ->send();
 
             $this->dispatch(event: 'scroll-to-top');
+
             return;
         }
 

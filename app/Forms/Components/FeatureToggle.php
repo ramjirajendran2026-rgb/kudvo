@@ -9,19 +9,19 @@ class FeatureToggle extends Toggle
 {
     protected string $view = 'forms.components.feature-toggle';
 
-    protected bool|Closure $isAddOn = false;
+    protected bool | Closure $isAddOn = false;
 
-    protected string|Closure|null $addOnTooltip = null;
+    protected string | Closure | null $addOnTooltip = null;
 
-    protected int|Closure $featureFee = 0;
+    protected int | Closure $featureFee = 0;
 
-    protected int|Closure $electorFee = 0;
+    protected int | Closure $electorFee = 0;
 
-    protected string|Closure|null $feeCurrency = null;
+    protected string | Closure | null $feeCurrency = null;
 
-    protected bool|Closure $shouldHideAddOnPrice = false;
+    protected bool | Closure $shouldHideAddOnPrice = false;
 
-    public function addOn(bool|Closure $condition = true, int|Closure $featureFee = 0, int|Closure $electorFee = 0, string|Closure|null $feeCurrency = null, bool|Closure $hideAddOnPrice = false): static
+    public function addOn(bool | Closure $condition = true, int | Closure $featureFee = 0, int | Closure $electorFee = 0, string | Closure | null $feeCurrency = null, bool | Closure $hideAddOnPrice = false): static
     {
         $this->isAddOn = $condition;
         $this->addOnTooltip(tooltip: $condition ? 'This is an add-on feature. Additional charges may apply.' : null);
@@ -37,7 +37,7 @@ class FeatureToggle extends Toggle
                     return null;
                 }
 
-                return 'heroicon-o-banknotes';
+                return ($this->getElectorFee() || $this->getFeatureFee()) ? 'heroicon-o-banknotes' : null;
             },
             tooltip: function (self $component) {
                 if (! $component->isAddOn() || $component->shouldHideAddOnPrice()) {
@@ -45,8 +45,8 @@ class FeatureToggle extends Toggle
                 }
 
                 return collect(value: [
-                    $component->getElectorFee() ? money(amount: $component->getElectorFee(), currency: $component->getFeeCurrency()).'/elector' : null,
-                    $component->getFeatureFee() ? money(amount: $component->getFeatureFee(), currency: $component->getFeeCurrency()) : null,
+                    $component->getElectorFee() ? money(amount: $component->getElectorFee(), currency: $component->getFeeCurrency()) . '/elector' : null,
+                    $component->getFeatureFee() ? money(amount: $component->getFeatureFee(), currency: $component->getFeeCurrency()) . '' : null,
                 ])->filter(callback: fn ($fee): bool => filled(value: $fee))->implode(value: ' + ') ?: null;
             }
         );
@@ -54,35 +54,35 @@ class FeatureToggle extends Toggle
         return $this;
     }
 
-    public function addOnTooltip(string|Closure|null $tooltip): static
+    public function addOnTooltip(string | Closure | null $tooltip): static
     {
         $this->addOnTooltip = $tooltip;
 
         return $this;
     }
 
-    public function featureFee(int|Closure $fee): static
+    public function featureFee(int | Closure $fee): static
     {
         $this->featureFee = $fee;
 
         return $this;
     }
 
-    public function electorFee(int|Closure $fee): static
+    public function electorFee(int | Closure $fee): static
     {
         $this->electorFee = $fee;
 
         return $this;
     }
 
-    public function feeCurrency(string|Closure|null $currency): static
+    public function feeCurrency(string | Closure | null $currency): static
     {
         $this->feeCurrency = $currency;
 
         return $this;
     }
 
-    public function hideAddOnPrice(bool|Closure $condition = true): static
+    public function hideAddOnPrice(bool | Closure $condition = true): static
     {
         $this->shouldHideAddOnPrice = $condition;
 

@@ -43,14 +43,14 @@ return [
          * See https://developers.google.com/search/docs/advanced/robots/robots_meta_tag
          * Default: 'max-snippet:-1, max-image-preview:large, max-video-preview:-1'
          */
-        'default' => 'noindex, nofollow',
+        'default' => env('SEO_ROBOTS_DEFAULT', 'index, follow'),
 
         /**
          * Force set the robots `default` value and make it impossible to overwrite it. (e.g. via SEOData->robots)
          * Use case: You need to set `noindex, nofollow` for the entire website without exception.
          * Default: false
          */
-        'force_default' => true,
+        'force_default' => env('SEO_ROBOTS_FORCE_DEFAULT', false),
     ],
 
     /**
@@ -59,7 +59,7 @@ return [
      *
      * You can use the following filetypes: ico, png, gif, jpeg, svg.
      */
-    'favicon' => null,
+    'favicon' => 'favicon.ico',
 
     'title' => [
         /**
@@ -75,7 +75,7 @@ return [
          * Use this setting to provide a suffix that will be added after the title on each page.
          * If you don't want a suffix, you should specify an empty string.
          */
-        'suffix' => ' - '.env('APP_NAME'),
+        'suffix' => ' - ' . env('APP_NAME'),
 
         /**
          * Use this setting to provide a custom title for the homepage. We will not use the suffix on the homepage,

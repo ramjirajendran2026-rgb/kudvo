@@ -1,6 +1,9 @@
 <x-filament-panels::page>
     @foreach ($this->nominees as $nominee)
-        <x-filament::section :compact="true" :heading="$nominee->position->name">
+        <x-filament::section
+            :compact="true"
+            :heading="$nominee->position->name"
+        >
             <ol
                 @class([
                     'grid divide-y divide-gray-200 dark:divide-white/5',
@@ -9,13 +12,15 @@
             >
                 @foreach ($nominee->nominators as $nominator)
                     <li class="relative flex">
-                        <button class="flex h-full w-full items-center gap-x-4 px-6 py-4">
+                        <button
+                            class="flex h-full w-full items-center gap-x-4 px-6 py-4"
+                        >
                             <div
                                 @class([
                                     'flex h-10 w-10 shrink-0 items-center justify-center rounded-full',
                                     'bg-primary-600 dark:bg-primary-500' => $nominator->isAccepted(),
                                     'bg-danger-600 dark:bg-danger-500' => $nominator->isDeclined(),
-                                    'border-warning-600 dark:border-warning-500 border-2' => $nominator->isPending(),
+                                    'border-2 border-warning-600 dark:border-warning-500' => $nominator->isPending(),
                                 ])
                             >
                                 <x-filament::icon

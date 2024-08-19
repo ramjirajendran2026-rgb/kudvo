@@ -9,7 +9,7 @@ use Symfony\Component\Mime\RawMessage;
 
 class ParseMailMessageId
 {
-    public function execute(RawMessage|SentMessage $message): ?string
+    public function execute(RawMessage | SentMessage $message): ?string
     {
         if ($message instanceof SentMessage) {
             $message = $message->getOriginalMessage();

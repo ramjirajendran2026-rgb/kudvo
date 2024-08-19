@@ -54,10 +54,10 @@ readonly class NominatorForm
     public static function membershipNumberComponent(): TextInput
     {
         return TextInput::make(name: 'membership_number')
-            ->afterStateUpdated(callback: function (Set $set, ?string $state): void {
+            ->afterStateUpdated(callback: function (Set $set, ?string $state, HasNomination $livewire): void {
                 $elector = blank(value: $state) ?
                     null :
-                    Elector::firstWhere('membership_number', $state);
+                    Elector::whereMorphedTo('event', $livewire->getNomination())->firstWhere('membership_number', $state);
 
                 $set(path: 'elector_id', state: $elector?->getKey());
                 $set(path: 'first_name', state: $elector?->first_name);
@@ -76,7 +76,7 @@ readonly class NominatorForm
             ->in(
                 values: fn (HasElector $livewire): string => $livewire->getElector()->membership_number,
                 condition: fn (TextInput $component, HasNomination $livewire): bool => ! $livewire->getNomination()->self_nomination &&
-                    Arr::last(explode('.', $component->getStatePath()), fn($item) => $item != $component->getStatePath(isAbsolute: false)) == 0,
+                    Arr::last(explode('.', $component->getStatePath()), fn ($item) => $item != $component->getStatePath(isAbsolute: false)) == 0,
             )
             ->live(onBlur: true)
             ->label(label: 'Membership number')
@@ -84,11 +84,11 @@ readonly class NominatorForm
             ->notIn(values: fn (Get $get): string => $get(path: '../../membership_number'))
             ->readOnly(
                 condition: fn (TextInput $component, HasNomination $livewire): bool => ! $livewire->getNomination()->self_nomination &&
-                    Arr::last(explode('.', $component->getStatePath()), fn($item) => $item != $component->getStatePath(isAbsolute: false)) == 0
+                    Arr::last(explode('.', $component->getStatePath()), fn ($item) => $item != $component->getStatePath(isAbsolute: false)) == 0
             )
             ->required()
             ->validationMessages(messages: [
-                'not_in' => 'Nominee cannot be a nominator'
+                'not_in' => 'Nominee cannot be a nominator',
             ]);
     }
 

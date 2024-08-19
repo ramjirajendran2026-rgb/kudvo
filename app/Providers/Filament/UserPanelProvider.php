@@ -75,6 +75,9 @@ class UserPanelProvider extends PanelProvider
                     action: [ElectionUserInvitationController::class, 'accept']
                 )->name(name: 'election-collaborators.accept');
             })
+            ->brandLogo(logo: asset(path: 'img/nav-logo.webp'))
+            ->brandLogoHeight(height: '3rem')
+            ->brandName(name: config('app.name'))
             ->colors(colors: [
                 'primary' => Color::Teal,
             ])
@@ -86,6 +89,7 @@ class UserPanelProvider extends PanelProvider
             ->topNavigation()
             ->breadcrumbs(condition: false)
             ->spa()
+            ->unsavedChangesAlerts()
             ->renderHook(
                 name: PanelsRenderHook::PAGE_START,
                 hook: fn () => new HtmlString(html: '<span class="pg-election-list hidden"></span>'),

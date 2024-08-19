@@ -29,3 +29,35 @@ html {
 .animated-image {
     animation: fadeInScale 1s ease-in-out forwards;
 }
+
+.pg-wiki.pg-index {
+    .fi-ta-ctn {
+        @apply divide-y-0 bg-transparent shadow-none ring-0;
+
+        .fi-ta-content {
+            @apply pb-6;
+
+            .fi-ta-content-grid {
+                @apply gap-6 p-0;
+            }
+
+            .cell-category {
+                .fi-badge {
+                    @apply bg-custom-600 text-sm text-custom-50;
+                }
+            }
+
+            .cell-title {
+                .fi-ta-text-item-label {
+                    @apply text-xl font-bold hover:underline;
+                }
+            }
+
+            .cell-summary {
+                .fi-ta-text-item-label {
+                    @apply text-base;
+                }
+            }
+        }
+    }
+}

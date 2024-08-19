@@ -12,11 +12,10 @@ use Illuminate\Queue\SerializesModels;
 
 class ContactFormMail extends Mailable
 {
-    use Queueable, SerializesModels;
+    use Queueable;
+    use SerializesModels;
 
-    public function __construct(public ContactFormData $data)
-    {
-    }
+    public function __construct(public ContactFormData $data) {}
 
     public function envelope(): Envelope
     {

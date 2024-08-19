@@ -10,6 +10,5 @@ class ContactFormData extends Data
         public string $name,
         public string $email,
         public ?string $message = null,
-    ) {
-    }
+    ) {}
 }

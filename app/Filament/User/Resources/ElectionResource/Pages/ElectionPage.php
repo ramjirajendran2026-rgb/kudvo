@@ -11,16 +11,19 @@ use App\Forms\Components\VotePicker;
 use App\Models\Election;
 use App\Models\Position;
 use Filament\Actions\Action;
+use Filament\Actions\Imports\Models\Import;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
+use Filament\Notifications\Actions\Action as NotificationAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Pages\ViewRecord\Concerns\Translatable;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Markdown;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
@@ -44,7 +47,7 @@ abstract class ElectionPage extends Page implements HasElection, HasElectorGroup
     #[Locked]
     public array $electorGroups = [];
 
-    public function mount(int|string $record): void
+    public function mount(int | string $record): void
     {
         $this->election = $this->resolveElection(key: $record);
 
@@ -54,11 +57,9 @@ abstract class ElectionPage extends Page implements HasElection, HasElectorGroup
             ? $this->getElection()->getElectorGroups() : [];
     }
 
-    public function mountCanAuthorizeAccess(): void
-    {
-    }
+    public function mountCanAuthorizeAccess(): void {}
 
-    protected function resolveElection(int|string $key): Election
+    protected function resolveElection(int | string $key): Election
     {
         /** @var Election $nomination */
         $nomination = app(ElectionResource::getModel())
@@ -91,12 +92,12 @@ abstract class ElectionPage extends Page implements HasElection, HasElectorGroup
         return $this->electorGroups;
     }
 
-    public function getTitle(): string|Htmlable
+    public function getTitle(): string | Htmlable
     {
-        return static::getNavigationLabel().' - '.$this->getRecordTitle();
+        return static::getNavigationLabel() . ' - ' . $this->getRecordTitle();
     }
 
-    public function getRecordTitle(): string|Htmlable
+    public function getRecordTitle(): string | Htmlable
     {
         if (! ElectionResource::hasRecordTitle()) {
             return ElectionResource::getTitleCaseModelLabel();
@@ -105,12 +106,12 @@ abstract class ElectionPage extends Page implements HasElection, HasElectorGroup
         return ElectionResource::getRecordTitle($this->getElection());
     }
 
-    public function getHeading(): string|Htmlable
+    public function getHeading(): string | Htmlable
     {
         return $this->getRecordTitle();
     }
 
-    public function getSubheading(): string|Htmlable|null
+    public function getSubheading(): string | Htmlable | null
     {
         if (! $this->getElection()->isTimingConfigured()) {
             return null;
@@ -139,7 +140,7 @@ abstract class ElectionPage extends Page implements HasElection, HasElectorGroup
         ];
     }
 
-    protected function getMountedActionFormModel(): Model|string|null
+    protected function getMountedActionFormModel(): Model | string | null
     {
         return $this->getElection();
     }
@@ -151,7 +152,7 @@ abstract class ElectionPage extends Page implements HasElection, HasElectorGroup
         if (! static::canAccessPage(election: $this->election)) {
             $this->notifyUnauthorized();
 
-            $this->redirect(Dashboard::getUrl(parameters: [$this->election]));
+            $this->redirect(Dashboard::getUrl(parameters: [$this->election]), Filament::getPanel()->hasSpaMode());
         }
     }
 
@@ -161,6 +162,46 @@ abstract class ElectionPage extends Page implements HasElection, HasElectorGroup
             ->title(title: __('filament.user.election-resource.pages.base.access_denied.notification.title'))
             ->body(body: __('filament.user.election-resource.pages.base.access_denied.notification.body'))
             ->warning()
+            ->send();
+    }
+
+    public function notifyImportCompletion(array $event): void
+    {
+        $import = Import::with(relations: 'user')->find(id: $event['importId']);
+
+        if (! $import->user instanceof Authenticatable) {
+            return;
+        }
+
+        $failedRowsCount = $import->getFailedRowsCount();
+
+        Notification::make()
+            ->persistent()
+            ->title($import->importer::getCompletedNotificationTitle($import))
+            ->body($import->importer::getCompletedNotificationBody($import))
+            ->when(
+                ! $failedRowsCount,
+                fn (Notification $notification) => $notification->success(),
+            )
+            ->when(
+                $failedRowsCount && ($failedRowsCount < $import->total_rows),
+                fn (Notification $notification) => $notification->warning(),
+            )
+            ->when(
+                $failedRowsCount === $import->total_rows,
+                fn (Notification $notification) => $notification->danger(),
+            )
+            ->when(
+                $failedRowsCount,
+                fn (Notification $notification) => $notification->actions([
+                    NotificationAction::make('downloadFailedRowsCsv')
+                        ->label('Download failed rows')
+                        ->color('danger')
+                        ->icon(icon: 'heroicon-m-arrow-down-tray')
+                        ->url(route('filament.imports.failed-rows.download', ['import' => $import], absolute: false), shouldOpenInNewTab: true)
+                        ->markAsRead(),
+                ]),
+            )
             ->send();
     }
 

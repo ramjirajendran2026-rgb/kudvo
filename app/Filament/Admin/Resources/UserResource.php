@@ -3,9 +3,11 @@
 namespace App\Filament\Admin\Resources;
 
 use App\Filament\Admin\Resources\UserResource\Pages;
+use App\Filament\Admin\Resources\UserResource\RelationManagers\RolesRelationManager;
 use App\Models\User;
 use Exception;
 use Filament\Facades\Filament;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -33,13 +35,17 @@ class UserResource extends Resource
     {
         return $form
             ->schema(components: [
-                TextInput::make(name: 'name')
-                    ->maxLength(length: 255),
+                Section::make()
+                    ->columns()
+                    ->schema([
+                        TextInput::make(name: 'name')
+                            ->maxLength(length: 255),
 
-                TextInput::make(name: 'email')
-                    ->email()
-                    ->maxLength(length: 255)
-                    ->unique(ignoreRecord: true),
+                        TextInput::make(name: 'email')
+                            ->email()
+                            ->maxLength(length: 255)
+                            ->unique(ignoreRecord: true),
+                    ]),
             ]);
     }
 
@@ -51,7 +57,11 @@ class UserResource extends Resource
         return $table
             ->actions(actions: [
                 Impersonate::make()
-                    ->redirectTo(redirectTo: fn (User $record): string => Filament::getPanel(id: 'app')->getUrl()),
+                    ->redirectTo(redirectTo: fn (User $record): string => match (true) {
+                        $record->hasAdminRole(),
+                        $record->hasStaffRole() => Filament::getPanel(id: 'admin')->getUrl(),
+                        default => Filament::getPanel(id: 'app')->getUrl()
+                    }),
             ])
             ->columns(components: [
                 Tables\Columns\TextColumn::make(name: 'id')
@@ -63,6 +73,9 @@ class UserResource extends Resource
                     ->iconColor(color: 'primary')
                     ->iconPosition(iconPosition: IconPosition::After)
                     ->searchable(condition: ['email', 'name']),
+
+                Tables\Columns\TextColumn::make(name: 'roles.name')
+                    ->badge(),
 
                 Tables\Columns\TextColumn::make(name: 'created_at')
                     ->alignCenter()
@@ -80,8 +93,14 @@ class UserResource extends Resource
         return [
             'index' => Pages\ListUsers::route(path: '/'),
             'create' => Pages\CreateUser::route(path: '/create'),
-            'view' => Pages\ViewUser::route(path: '/{record}'),
             'edit' => Pages\EditUser::route(path: '/{record}/edit'),
+        ];
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            RolesRelationManager::class,
         ];
     }
 }

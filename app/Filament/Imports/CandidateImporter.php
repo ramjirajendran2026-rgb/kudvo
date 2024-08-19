@@ -21,7 +21,7 @@ class CandidateImporter extends Importer
                 ->example(example: 'President')
                 ->label(label: 'Position')
                 ->relationship(
-                    resolveUsing: fn (string $state, array $options) => Position::where('name->'.$options['locale'], $state)
+                    resolveUsing: fn (string $state, array $options) => Position::where('name->' . $options['locale'], $state)
                         ->where('event_type', Election::class)
                         ->where('event_id', $options['election_id'])
                         ->first(),
@@ -37,7 +37,7 @@ class CandidateImporter extends Importer
                     'max:100',
                     Rule::exists(table: 'electors', column: 'membership_number')
                         ->where(column: 'event_type', value: Election::class)
-                        ->where(column: 'event_id', value: $options['election_id'])
+                        ->where(column: 'event_id', value: $options['election_id']),
                 ]),
 
             ImportColumn::make(name: 'title')
@@ -65,7 +65,7 @@ class CandidateImporter extends Importer
         //     'email' => $this->data['email'],
         // ]);
 
-        return new Candidate();
+        return new Candidate;
     }
 
     public static function getCompletedNotificationBody(Import $import): string

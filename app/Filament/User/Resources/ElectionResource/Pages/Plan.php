@@ -16,7 +16,7 @@ class Plan extends ElectionPage
 
     public string $currency = 'USD';
 
-    public int $totalElectors = 500;
+    public ?int $totalElectors = 500;
 
     public ?int $activePlanId = null;
 
@@ -30,7 +30,7 @@ class Plan extends ElectionPage
         return [];
     }
 
-    public function mount(int|string $record): void
+    public function mount(int | string $record): void
     {
         parent::mount($record);
 
@@ -70,6 +70,12 @@ class Plan extends ElectionPage
 
             SelectAction::make(name: 'currency')
                 ->options(Arr::mapWithKeys(config('app.supported_currencies'), fn ($currency) => [$currency => $currency])),
+
+            Action::make(name: 'back')
+                ->color(color: 'gray')
+                ->icon(icon: 'heroicon-o-arrow-uturn-left')
+                ->url(url: Preference::getUrl(parameters: [$this->getElection()]))
+                ->visible(condition: fn (): bool => filled($this->getElection()->plan_id)),
         ];
     }
 

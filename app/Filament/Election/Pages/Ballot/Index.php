@@ -19,6 +19,7 @@ use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\Alignment;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cookie;
@@ -42,6 +43,11 @@ class Index extends BasePage
 
     #[Locked]
     public bool $isVoted = false;
+
+    public function getTitle(): string | Htmlable
+    {
+        return 'Ballot - ' . $this->getElection()->name;
+    }
 
     public function mountCanAuthorizeAccess(): void
     {
@@ -221,7 +227,7 @@ class Index extends BasePage
 
         $this->isVoted = true;
         Session::put(
-            key: 'elector_'.$this->getElector()->getKey().'_vote_ids'.($this->isMock() ? '_mock' : ''),
+            key: 'elector_' . $this->getElector()->getKey() . '_vote_ids' . ($this->isMock() ? '_mock' : ''),
             value: encrypt(value: $voteIds)
         );
 
@@ -255,11 +261,11 @@ class Index extends BasePage
         }
 
         Session::put(
-            key: 'elector_'.$this->getElector()->getKey().'_votes'.($this->isMock() ? '_mock' : ''),
+            key: 'elector_' . $this->getElector()->getKey() . '_votes' . ($this->isMock() ? '_mock' : ''),
             value: encrypt(value: $data)
         );
         Cookie::queue(Cookie::forever(
-            name: 'election_'.Kudvo::getElection()->getKey().'_ballot'.($this->isMock() ? '_mock' : ''),
+            name: 'election_' . Kudvo::getElection()->getKey() . '_ballot' . ($this->isMock() ? '_mock' : ''),
             value: $ballot->getKey()
         ));
 

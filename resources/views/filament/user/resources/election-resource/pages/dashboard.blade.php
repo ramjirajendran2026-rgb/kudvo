@@ -4,7 +4,10 @@
 
 <x-filament-panels::page class="space-y-6">
     @if (filled($pendingStep = $this->getPendingStep()))
-        <x-filament.election.setup-steps :pending-step="$pendingStep" :current-step="$this->getCurrentStep()" />
+        <x-filament.election.setup-steps
+            :pending-step="$pendingStep"
+            :current-step="$this->getCurrentStep()"
+        />
     @endif
 
     @if ($state = $this->getStateHeading())

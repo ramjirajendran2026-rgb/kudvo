@@ -17,5 +17,5 @@ class WebAppManifestData extends Data
         public ?string $start_url = null,
         public WebAppManifestDisplay $display = WebAppManifestDisplay::MinimalUi,
         public ?string $id = null,
-    ) { }
+    ) {}
 }

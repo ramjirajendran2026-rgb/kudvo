@@ -53,21 +53,21 @@ class Nomination extends Model
     protected function startsAtLocal(): Attribute
     {
         return Attribute::make(
-            get: fn($value, array $attributes) => $this->starts_at?->tz(value: $this->timezone ?? 'UTC'),
+            get: fn ($value, array $attributes) => $this->starts_at?->tz(value: $this->timezone ?? 'UTC'),
         );
     }
 
     protected function endsAtLocal(): Attribute
     {
         return Attribute::make(
-            get: fn($value, array $attributes) => $this->ends_at?->tz(value: $this->timezone ?? 'UTC'),
+            get: fn ($value, array $attributes) => $this->ends_at?->tz(value: $this->timezone ?? 'UTC'),
         );
     }
 
     protected function status(): Attribute
     {
         return Attribute::make(
-            get: fn($value, array $attributes) => match (true) {
+            get: fn ($value, array $attributes) => match (true) {
                 filled(value: $this->cancelled_at) => NominationStatus::CANCELLED,
                 filled(value: $this->scrutinised_at) => NominationStatus::SCRUTINISED,
                 filled(value: $this->closed_at) => NominationStatus::CLOSED,
@@ -80,35 +80,35 @@ class Nomination extends Model
     protected function isDraft(): Attribute
     {
         return Attribute::make(
-            get: fn($value, array $attributes) => $this->status === NominationStatus::DRAFT,
+            get: fn ($value, array $attributes) => $this->status === NominationStatus::DRAFT,
         );
     }
 
     protected function isPublished(): Attribute
     {
         return Attribute::make(
-            get: fn($value, array $attributes) => $this->status === NominationStatus::PUBLISHED,
+            get: fn ($value, array $attributes) => $this->status === NominationStatus::PUBLISHED,
         );
     }
 
     protected function isClosed(): Attribute
     {
         return Attribute::make(
-            get: fn($value, array $attributes) => $this->status === NominationStatus::CLOSED,
+            get: fn ($value, array $attributes) => $this->status === NominationStatus::CLOSED,
         );
     }
 
     protected function isScrutinised(): Attribute
     {
         return Attribute::make(
-            get: fn($value, array $attributes) => $this->status === NominationStatus::SCRUTINISED,
+            get: fn ($value, array $attributes) => $this->status === NominationStatus::SCRUTINISED,
         );
     }
 
     protected function isCancelled(): Attribute
     {
         return Attribute::make(
-            get: fn($value, array $attributes) => $this->status === NominationStatus::CANCELLED,
+            get: fn ($value, array $attributes) => $this->status === NominationStatus::CANCELLED,
         );
     }
 
@@ -189,7 +189,7 @@ class Nomination extends Model
 
     public static function generateCode(): string
     {
-        return config(key: 'app.nomination.code.prefix').
+        return config(key: 'app.nomination.code.prefix') .
             Str::upper(value: Str::random(length: config(key: 'app.nomination.code.length')));
     }
 
@@ -202,7 +202,7 @@ class Nomination extends Model
 
     public function isMfaRequired(): bool
     {
-        return false;
+        return $this->preference?->mfa_mail || $this->preference?->mfa_sms;
     }
 
     public function getElectorGroups(): array

@@ -4,7 +4,6 @@ namespace App\Forms;
 
 use App\Models\User;
 use Filament\Forms\Components\TextInput;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 
 readonly class UserForm

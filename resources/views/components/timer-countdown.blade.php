@@ -53,5 +53,8 @@
     }}
 >
     <span x-text="label" class="text-gray-500 dark:text-gray-400"></span>
-    <span x-html="remaining" class="font-mono text-xl font-semibold sm:text-3xl"></span>
+    <span
+        x-html="remaining"
+        class="font-mono text-xl font-semibold sm:text-3xl"
+    ></span>
 </div>

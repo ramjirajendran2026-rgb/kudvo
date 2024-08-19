@@ -11,7 +11,10 @@ use App\Data\Election\VoteSecretData;
 use App\Enums\ElectionSetupStep;
 use App\Enums\ElectionStatus;
 use App\Enums\InvoiceStatus;
+use App\Filament\Imports\CandidateImporter;
+use App\Filament\Imports\ElectorImporter;
 use App\Models\Concerns\HasShortCode;
+use Filament\Actions\Imports\Models\Import;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -314,6 +317,25 @@ class Election extends Model
             ->latestOfMany();
     }
 
+    public function imports(): BelongsToMany
+    {
+        return $this->belongsToMany(related: Import::class)
+            ->using(class: ElectionImport::class)
+            ->withPivot(columns: ['options', 'column_map']);
+    }
+
+    public function electorImports(): BelongsToMany
+    {
+        return $this->imports()
+            ->where('importer', ElectorImporter::class);
+    }
+
+    public function candidateImports(): BelongsToMany
+    {
+        return $this->imports()
+            ->where('importer', CandidateImporter::class);
+    }
+
     public function scopeCancelled(Builder $query): Builder
     {
         return $query->whereNotNull(columns: 'cancelled_at');
@@ -342,10 +364,11 @@ class Election extends Model
     public function scopeCompleted(Builder $query): Builder
     {
         return $query
-            ->where(column: fn (Builder $query) => $query
-                ->whereNotNull(columns: 'cancelled_at')
-                ->orWhereNotNull(column: 'closed_at')
-                ->orWhereNotNull(column: 'completed_at')
+            ->where(
+                column: fn (Builder $query) => $query
+                    ->whereNotNull(columns: 'cancelled_at')
+                    ->orWhereNotNull(column: 'closed_at')
+                    ->orWhereNotNull(column: 'completed_at')
             );
     }
 
@@ -376,6 +399,8 @@ class Election extends Model
         });
 
         static::created(callback: function (Election $election) {
+            $election->generateShortCode();
+
             $election->collaborators()->attach(
                 $election->owner,
                 [
@@ -407,7 +432,7 @@ class Election extends Model
 
     public static function generateCode(): string
     {
-        return config(key: 'app.election.code.prefix').
+        return config(key: 'app.election.code.prefix') .
             Str::upper(value: Str::random(length: config(key: 'app.election.code.length')));
     }
 
@@ -454,7 +479,7 @@ class Election extends Model
         return blank($this->paid_at);
     }
 
-    public function isOwner(User|Authenticatable $user): bool
+    public function isOwner(User | Authenticatable $user): bool
     {
         return $this->owner_id === $user->getKey();
     }
@@ -753,8 +778,8 @@ class Election extends Model
             ->checkout(
                 items: $items->toArray(),
                 sessionOptions: [
-                    'success_url' => route(name: 'checkout.success').'?session_id={CHECKOUT_SESSION_ID}',
-                    'cancel_url' => route(name: 'checkout.cancel').'?session_id={CHECKOUT_SESSION_ID}',
+                    'success_url' => route(name: 'checkout.success') . '?session_id={CHECKOUT_SESSION_ID}',
+                    'cancel_url' => route(name: 'checkout.cancel') . '?session_id={CHECKOUT_SESSION_ID}',
                     'automatic_tax' => [
                         'enabled' => true,
                     ],

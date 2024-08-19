@@ -6,6 +6,7 @@ use App\Enums\ElectionStatus;
 use App\Filament\Base\Contracts\HasElection;
 use App\Filament\User\Resources\ElectionResource\Pages;
 use App\Filament\User\Resources\ElectionResource\Widgets\ElectionStatsOverview;
+use App\Filament\User\Resources\ElectionResource\Widgets\ElectorDataImportProgress;
 use App\Filament\User\Resources\ElectionResource\Widgets\VotedBallots;
 use App\Forms\Components\TimezonePicker;
 use App\Forms\ElectionForm;
@@ -217,6 +218,7 @@ class ElectionResource extends Resource
         return [
             ElectionStatsOverview::class,
             VotedBallots::class,
+            ElectorDataImportProgress::class,
         ];
     }
 

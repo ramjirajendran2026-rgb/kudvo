@@ -3,15 +3,25 @@
 namespace App\Providers;
 
 use App\Events\NomineeNominated;
+use App\Listeners\Auth\AssignRoleToRegisteredUser;
 use App\Listeners\Auth\NotifyEmailVerified;
 use App\Listeners\DestroyBrowserSession;
+use App\Listeners\Election\AssociateCandidateImportToElection;
+use App\Listeners\Election\AssociateElectorImportToElection;
+use App\Listeners\Election\NotifyCandidateImportCompletion;
+use App\Listeners\Election\NotifyElectionDataImportProgress;
+use App\Listeners\Election\NotifyElectorImportCompletion;
 use App\Listeners\LogClicksendSentSms;
-use App\Listeners\LogSentNotification;
 use App\Listeners\LogSentMail;
+use App\Listeners\LogSentNotification;
 use App\Listeners\LogTwentyFourSevenSmsSentMessage;
 use App\Listeners\SendNomineeNominatedNotifications;
 use App\Services\Clicksend\SmsSent;
 use App\Services\TwentyFourSevenSms\SmsMessageSent;
+use Filament\Actions\Imports\Events\ImportChunkProcessed;
+use Filament\Actions\Imports\Events\ImportCompleted;
+use Filament\Actions\Imports\Events\ImportStarted;
+use Filament\Events\Auth\Registered as FilamentAuthRegistered;
 use Illuminate\Auth\Events\CurrentDeviceLogout;
 use Illuminate\Auth\Events\Logout;
 use Illuminate\Auth\Events\Registered;
@@ -41,6 +51,9 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
+        FilamentAuthRegistered::class => [
+            AssignRoleToRegisteredUser::class,
+        ],
         NotificationSent::class => [
             LogSentNotification::class,
         ],
@@ -55,6 +68,17 @@ class EventServiceProvider extends ServiceProvider
         ],
         Verified::class => [
             NotifyEmailVerified::class,
+        ],
+        ImportStarted::class => [
+            AssociateElectorImportToElection::class,
+            AssociateCandidateImportToElection::class,
+        ],
+        ImportCompleted::class => [
+            NotifyElectorImportCompletion::class,
+            NotifyCandidateImportCompletion::class,
+        ],
+        ImportChunkProcessed::class => [
+            NotifyElectionDataImportProgress::class,
         ],
     ];
 

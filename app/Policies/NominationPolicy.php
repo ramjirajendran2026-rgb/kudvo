@@ -2,9 +2,7 @@
 
 namespace App\Policies;
 
-use App\Models\Elector;
 use App\Models\Nomination;
-use App\Models\Position;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 

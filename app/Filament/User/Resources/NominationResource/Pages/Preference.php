@@ -4,7 +4,6 @@ namespace App\Filament\User\Resources\NominationResource\Pages;
 
 use App\Models\Nomination;
 use Filament\Actions\Action;
-use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
@@ -25,7 +24,7 @@ class Preference extends NominationPage
 
     public ?array $data = [];
 
-    public function mount(int|string $record): void
+    public function mount(int | string $record): void
     {
         parent::mount($record);
 
@@ -35,23 +34,20 @@ class Preference extends NominationPage
     public function form(Form $form): Form
     {
         return $form
-            ->disabled(condition: !$this->canSave())
+            ->disabled(condition: ! $this->canSave())
             ->schema(components: [
-                Group::make()
-                    ->relationship(name: 'preference')
-                    ->schema(components: [
-                        Section::make(heading: 'MFA Code Delivery')
-                            ->description(description: 'Multi-Factor Authentication code for each voters will be sent through this medium')
-                            ->columns(columns: 3)
-                            ->columnSpan(span: 1)
-                            ->schema([
-                                Toggle::make(name: 'mfa_mail')
-                                    ->label(label: 'Email')
-                                    ->default(state: true),
+                Section::make(heading: 'MFA Code Delivery')
+                    ->description(description: 'Multi-Factor Authentication code for each voters will be sent through this medium')
+                    ->columns(columns: 3)
+                    ->columnSpan(span: 1)
+                    ->statePath('preference')
+                    ->schema([
+                        Toggle::make(name: 'mfa_mail')
+                            ->label(label: 'Email')
+                            ->default(state: true),
 
-                                Toggle::make(name: 'mfa_sms')
-                                    ->label(label: 'SMS'),
-                            ]),
+                        Toggle::make(name: 'mfa_sms')
+                            ->label(label: 'SMS'),
                     ]),
             ]);
     }
@@ -99,7 +95,7 @@ class Preference extends NominationPage
     {
         abort_unless(boolean: $this->canSave(), code: 403);
 
-        $this->form->getState();
+        $this->getNomination()->update($this->form->getState());
 
         $this->redirect(url: Dashboard::getUrl(parameters: [$this->getNomination()]));
     }

@@ -57,4 +57,9 @@ class CountryMapping extends SettingsPage
                     ]),
             ]);
     }
+
+    public static function canAccess(): bool
+    {
+        return SmsSettingsCluster::canAccess();
+    }
 }

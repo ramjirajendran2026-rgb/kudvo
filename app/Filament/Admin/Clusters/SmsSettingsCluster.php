@@ -2,7 +2,9 @@
 
 namespace App\Filament\Admin\Clusters;
 
+use App\Models\User;
 use Filament\Clusters\Cluster;
+use Filament\Facades\Filament;
 
 class SmsSettingsCluster extends Cluster
 {
@@ -13,5 +15,13 @@ class SmsSettingsCluster extends Cluster
     public static function getNavigationGroup(): ?string
     {
         return 'Settings';
+    }
+
+    public static function canAccess(): bool
+    {
+        /** @var User $user */
+        $user = Filament::auth()->user();
+
+        return $user->hasAdminRole();
     }
 }

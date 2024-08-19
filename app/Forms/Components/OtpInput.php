@@ -3,13 +3,12 @@
 namespace App\Forms\Components;
 
 use Closure;
+use Filament\Forms\Components\Concerns;
 use Filament\Forms\Components\Contracts\CanHaveNumericState;
 use Filament\Forms\Components\Field;
-use Filament\Forms\Components\Contracts;
-use Filament\Forms\Components\Concerns;
 use Jenssegers\Agent\Agent;
 
-class OtpInput extends Field implements Contracts\CanHaveNumericState
+class OtpInput extends Field implements CanHaveNumericState
 {
     use Concerns\CanBeAutocapitalized;
     use Concerns\CanBeAutocompleted;
@@ -76,7 +75,7 @@ class OtpInput extends Field implements Contracts\CanHaveNumericState
         return (bool) $this->evaluate($this->isNumeric);
     }
 
-    public function ios(bool|Closure $condition = true): static
+    public function ios(bool | Closure $condition = true): static
     {
         $this->ios = $condition;
 
@@ -92,7 +91,7 @@ class OtpInput extends Field implements Contracts\CanHaveNumericState
         return $this->evaluate(fn (Agent $agent): bool => $agent->isiOS());
     }
 
-    public function autoFillOnly(bool|Closure $condition = true): static
+    public function autoFillOnly(bool | Closure $condition = true): static
     {
         $this->autoFillOnly = $condition;
 

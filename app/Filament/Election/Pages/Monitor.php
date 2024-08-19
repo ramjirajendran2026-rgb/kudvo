@@ -11,6 +11,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Filament\Actions\Action;
 use Filament\Pages\Page;
 use Filament\Panel;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
 use Jenssegers\Agent\Agent;
@@ -36,7 +37,7 @@ class Monitor extends Page
 
         abort_if(
             boolean: $token->isActivated() &&
-                Cookie::get(key: 'election_'.$this->getElection()->getKey().'_monitor_token') != $token->key,
+                Cookie::get(key: 'election_' . $this->getElection()->getKey() . '_monitor_token') != $token->key,
             code: Response::HTTP_UNAUTHORIZED
         );
 
@@ -46,16 +47,16 @@ class Monitor extends Page
             $token->touch(attribute: 'activated_at');
 
             Cookie::queue(
-                Cookie::forever(name: 'election_'.$this->getElection()->getKey().'_monitor_token', value: $token->key)
+                Cookie::forever(name: 'election_' . $this->getElection()->getKey() . '_monitor_token', value: $token->key)
             );
         }
     }
 
-    public static function getWithoutRouteMiddleware(Panel $panel): string|array
+    public static function getWithoutRouteMiddleware(Panel $panel): string | array
     {
         return [
             EnsureStateIsAllowed::class,
-            ...$panel->getAuthMiddleware()
+            ...$panel->getAuthMiddleware(),
         ];
     }
 
@@ -63,7 +64,7 @@ class Monitor extends Page
     {
         return [
             ElectionStatsOverview::class,
-//            ElectionVotingSummary::class,
+            //            ElectionVotingSummary::class,
             VotedBallots::class,
             NonVotedElectors::class,
         ];
@@ -74,6 +75,11 @@ class Monitor extends Page
         return [
             $this->getDownloadAction(),
         ];
+    }
+
+    public function getTitle(): string | Htmlable
+    {
+        return 'Monitor - ' . $this->getElection()->name;
     }
 
     protected function getDownloadAction(): Action

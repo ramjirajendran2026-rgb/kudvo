@@ -1,5 +1,8 @@
 <?php
 
+use App\Models\Elector;
+use App\Models\User;
+
 return [
 
     /*
@@ -67,12 +70,12 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => App\Models\User::class,
+            'model' => User::class,
         ],
 
         'electors' => [
             'driver' => 'eloquent',
-            'model' => App\Models\Elector::class,
+            'model' => Elector::class,
         ],
 
         // 'users' => [

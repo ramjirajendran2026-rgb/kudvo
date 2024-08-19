@@ -49,8 +49,8 @@ class VotedConfirmationNotification extends Notification implements HasMailMessa
     public function toMail($notifiable): MailMessage
     {
         return (new MailMessage)
-            ->greeting(greeting: $this->formatTemplate(template: 'Dear '.static::VAR_ELECTOR_NAME.',', notifiable: $notifiable))
-            ->line(line: $this->formatTemplate(template: 'You have successfully cast your vote for **'.static::VAR_ELECTION_NAME.'** on **'.static::VAR_VOTED_AT.'**.', notifiable: $notifiable));
+            ->greeting(greeting: $this->formatTemplate(template: 'Dear ' . static::VAR_ELECTOR_NAME . ',', notifiable: $notifiable))
+            ->line(line: $this->formatTemplate(template: 'You have successfully cast your vote for **' . static::VAR_ELECTION_NAME . '** on **' . static::VAR_VOTED_AT . '**.', notifiable: $notifiable));
     }
 
     public function toSms(object $notifiable): string

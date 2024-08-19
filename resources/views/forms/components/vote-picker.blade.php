@@ -1,5 +1,5 @@
 @php
-    $gridDirection = $getGridDirection() ?? "column";
+    $gridDirection = $getGridDirection() ?? 'column';
     $isBulkToggleable = $isBulkToggleable();
     $isDisabled = $isDisabled();
     $isSearchable = $isSearchable();
@@ -154,13 +154,16 @@
         :heading="$getHeading()"
         :description="$getSectionDescription()"
         @class([
-            "fi-vote-picker",
-            "fi-invalid [&_.fi-fo-field-wrp-error-message]:hidden" => $errors->has(
+            'fi-vote-picker',
+            'fi-invalid [&_.fi-fo-field-wrp-error-message]:hidden' => $errors->has(
                 $statePath,
             ),
         ])
     >
-        <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
+        <x-dynamic-component
+            :component="$getFieldWrapperView()"
+            :field="$field"
+        >
             <div class="space-y-4">
                 @if ($hasCandidateGroup())
                     <div
@@ -172,8 +175,8 @@
                                 type="button"
                                 @click="selectCandidateGroup('{{ $key }}')"
                                 @class([
-                                    "fi-badge flex items-center justify-center gap-x-1 rounded-md text-xs font-medium ring-1 ring-inset",
-                                    "min-w-[theme(spacing.6)] px-2 py-1",
+                                    'fi-badge flex items-center justify-center gap-x-1 rounded-md text-xs font-medium ring-1 ring-inset',
+                                    'min-w-[theme(spacing.6)] px-2 py-1',
                                 ])
                                 :class="{
                                 'bg-success-50 text-success-600 ring-success-600/10 dark:bg-success-400/10 dark:text-success-400 dark:ring-success-400/30': group === '{{ $key }}',
@@ -199,7 +202,7 @@
                                 type="search"
                                 :attributes="
                                     \Filament\Support\prepare_inherited_attributes(
-                                        new \Illuminate\View\ComponentAttributeBag([
+                                        new ComponentAttributeBag([
                                             'x-model.debounce.' . $getSearchDebounce() => 'search',
                                         ])
                                     )
@@ -222,7 +225,7 @@
                                 x-on:click="toggleAllCheckboxes()"
                                 wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.actions.select_all"
                             >
-                                {{ $getAction("selectAll") }}
+                                {{ $getAction('selectAll') }}
                             </span>
 
                             <span
@@ -230,7 +233,7 @@
                                 x-on:click="toggleAllCheckboxes()"
                                 wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.actions.deselect_all"
                             >
-                                {{ $getAction("deselectAll") }}
+                                {{ $getAction('deselectAll') }}
                             </span>
                         </div>
                     @endif
@@ -270,14 +273,14 @@
                                 "
                             @endif
                             @class([
-                                "fi-vote-picker-item break-inside-avoid border-gray-200 dark:border-white/10",
-                                "cursor-pointer lg:hover:bg-gray-100 dark:lg:hover:bg-white/5" => ! $isDisabled,
+                                'fi-vote-picker-item break-inside-avoid border-gray-200 dark:border-white/10',
+                                'cursor-pointer lg:hover:bg-gray-100 dark:lg:hover:bg-white/5' => ! $isDisabled,
                             ])
                         >
                             <label
                                 data-candidate-group="{{ $getCandidateGroupId($value) }}"
                                 @class([
-                                    "fi-fo-checkbox-list-option-label group flex items-center gap-x-3 p-2 lg:p-4",
+                                    'fi-fo-checkbox-list-option-label group flex items-center gap-x-3 p-2 lg:p-4',
                                 ])
                             >
                                 @if (! $isUnopposed)
@@ -310,13 +313,19 @@
                                 @endif
 
                                 @if ($hasSymbol())
-                                    <div class="relative size-8 max-w-none rounded md:size-12 lg:size-16">
+                                    <div
+                                        class="relative size-8 max-w-none rounded md:size-12 lg:size-16"
+                                    >
                                         <svg
                                             class="absolute inset-0 rounded"
                                             viewBox="0 0 100 100"
                                             xmlns="http://www.w3.org/2000/svg"
                                         >
-                                            <rect width="100" height="100" fill="#000000" />
+                                            <rect
+                                                width="100"
+                                                height="100"
+                                                fill="#000000"
+                                            />
                                         </svg>
 
                                         <img
@@ -337,7 +346,7 @@
 
                                 <div class="grid flex-1 text-sm leading-6">
                                     <span
-                                        class="fi-fo-checkbox-list-option-label text-lg print:text-base font-medium text-gray-950 dark:text-white"
+                                        class="fi-fo-checkbox-list-option-label text-lg font-medium text-gray-950 dark:text-white print:text-base"
                                     >
                                         {{ $label }}
                                     </span>

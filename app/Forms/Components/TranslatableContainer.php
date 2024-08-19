@@ -9,9 +9,9 @@ use Mvenghaus\FilamentPluginTranslatableInline\Forms\Components\TranslatableCont
 
 class TranslatableContainer extends BaseComponent
 {
-    protected array|Closure|null $translatableLocales = null;
+    protected array | Closure | null $translatableLocales = null;
 
-    public function translatableLocales(array|Closure|null $locales): static
+    public function translatableLocales(array | Closure | null $locales): static
     {
         $this->translatableLocales = $locales;
 

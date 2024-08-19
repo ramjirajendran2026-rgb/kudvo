@@ -3,7 +3,6 @@
 namespace App\Enums;
 
 use Filament\Support\Contracts\HasLabel;
-use Illuminate\Support\Str;
 
 enum CandidateSort: string implements HasLabel
 {

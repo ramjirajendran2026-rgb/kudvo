@@ -22,8 +22,10 @@ use Filament\Forms\Components\Textarea;
 use Filament\Http\Responses\Auth\Contracts\LogoutResponse as LogoutResponseContract;
 use Filament\Infolists\Components\Actions\Action as InfolistAction;
 use Filament\Notifications\Livewire\Notifications;
+use Filament\Support\Colors\Color;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\VerticalAlignment;
+use Filament\Support\Facades\FilamentColor;
 use Filament\Tables\Actions\Action as TableAction;
 use Filament\Tables\Actions\CreateAction as TableCreateAction;
 use Filament\Tables\Columns\Column;
@@ -47,7 +49,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(abstract: 'kudvo', concrete: function (): KudvoManager {
-            return new KudvoManager();
+            return new KudvoManager;
         });
 
         $this->app->bind(LogoutResponseContract::class, LogoutResponse::class);
@@ -86,7 +88,7 @@ class AppServiceProvider extends ServiceProvider
 
             $lastItem = array_pop($array);
 
-            return implode(separator: $separator, array: $array).' and '.$lastItem;
+            return implode(separator: $separator, array: $array) . ' and ' . $lastItem;
         });
 
         Notification::resolved(
@@ -110,7 +112,7 @@ class AppServiceProvider extends ServiceProvider
                 $serviceConfig = app(abstract: ServiceConfig::class);
 
                 return new SMSApi(
-                    client: new Client(),
+                    client: new Client,
                     config: Configuration::getDefaultConfiguration()
                         ->setUsername($serviceConfig->clicksend->username)
                         ->setPassword($serviceConfig->clicksend->api_key)
@@ -126,6 +128,10 @@ class AppServiceProvider extends ServiceProvider
             });
         }
 
+        FilamentColor::register(colors: [
+            'primary' => Color::Indigo,
+        ]);
+
         Notifications::alignment(alignment: Alignment::Center);
         Notifications::verticalAlignment(alignment: VerticalAlignment::Start);
 
@@ -136,9 +142,10 @@ class AppServiceProvider extends ServiceProvider
         Field::macro(
             name: 'charCounter',
             macro: function (int $count = 60) {
-                $this->helperText(
-                    text: function (CanBeLengthConstrained $component) use ($count) {
-                        $liveCount = '$wire.'.$component->getStatePath();
+                $this->hint(
+                    hint: function (CanBeLengthConstrained $component) use ($count) {
+                        $liveCount = '$wire.' . $component->getStatePath();
+                        $liveCount = preg_replace('/\.(\d+)/', '[$1]', $liveCount);
 
                         return new HtmlString(
                             html: <<<HTML
@@ -161,6 +168,10 @@ HTML
         Table::$defaultDateTimeDisplayFormat = 'M j, Y h:i:s A';
         Table::$defaultDateDisplayFormat = 'M j, Y';
         Table::$defaultTimeDisplayFormat = 'h:i A';
+
+        Table::configureUsing(modifyUsing: function (Table $table) {
+            $table->paginationPageOptions([5, 10, 25, 50]);
+        });
 
         Action::configureUsing(modifyUsing: function (Action $action) {
             $action->closeModalByClickingAway(condition: false);

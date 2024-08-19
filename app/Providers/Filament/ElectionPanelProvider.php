@@ -93,7 +93,8 @@ class ElectionPanelProvider extends PanelProvider
                         Login::doLogin(elector: $elector, panel: Filament::getCurrentPanel(), request: $request);
 
                         return app(abstract: LoginResponse::class);
-                    })
+                    }
+                )
                     ->middleware(middleware: 'signed')
                     ->withoutMiddleware(middleware: EnsureStateIsAllowed::class)
                     ->name(name: 'eul');
@@ -117,12 +118,12 @@ class ElectionPanelProvider extends PanelProvider
             ->renderHook(
                 name: PanelsRenderHook::HEAD_START,
                 hook: fn (Request $request) => Kudvo::getElection()?->isPwaEnabled() ?
-                    '<link rel="manifest" href="'.Filament::getCurrentPanel()->route(name: 'web-app-manifest').'">' :
+                    '<link rel="manifest" href="' . Filament::getCurrentPanel()->route(name: 'web-app-manifest') . '">' :
                     null,
             )
             ->renderHook(
                 name: PanelsRenderHook::FOOTER,
-                hook: fn () => Blade::render(string: '<x-filament.nomination.footer data-booth-self-logout="'.((! Kudvo::isBoothDevice() || Kudvo::getElection()->booth_preference?->logout_by_self) ? 'true' : 'false').'" />')
+                hook: fn () => Blade::render(string: '<x-filament.nomination.footer data-booth-self-logout="' . ((! Kudvo::isBoothDevice() || Kudvo::getElection()->booth_preference?->logout_by_self) ? 'true' : 'false') . '" />')
             );
     }
 

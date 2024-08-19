@@ -2,14 +2,15 @@
 
 return [
     'seo' => [
-        'title' => 'Online Election',
-        'description' => 'Online Election',
+        'title' => 'Secure Online Voting with Kudvo - Empower Your Community ',
+        'description' => 'Empower your community with Kudvo\'s seamless and secure online voting platform. Boost participation, get faster results, and ensure enhanced security for your elections with our intuitive 3-step process.',
     ],
     'content' => [
         'hero' => [
             'title' => 'Secure Online Voting with Kudvo',
             'description' => 'Empower your community with a seamless and secure online voting experience.',
             'image' => asset('img/products/election/online-voting-system.webp'),
+            'image_alt' => 'A cartoon businessman with a tablet stands next to a large smartphone screen displaying "KUDVO," checkmark and cross icons, and a green checkbox.',
             'cta' => [
                 'label' => 'Get Started',
                 'url' => route('filament.user.auth.register'),
@@ -88,6 +89,7 @@ return [
                 'title' => 'Secure and Reliable',
                 'description' => 'Kudvo\'s online voting platform is built with the highest standards of security and data privacy in mind. Our advanced encryption algorithms, multi-factor authentication, and secure data storage ensure the integrity of your elections.',
                 'image' => asset('img/products/election/secure-and-reliable-online-voting-platform.webp'),
+                'image_alt' => 'Illustration of a black square with four security-related icons: a checklist, a blue padlock, a shield with a check mark, and an orange padlock with a keyhole.',
                 'items' => [
                     [
                         'value' => 'End-to-end encryption',
@@ -121,7 +123,8 @@ return [
             [
                 'title' => 'KUDVO Online Voting Manager',
                 'description' => 'Kudvo\'s intuitive Online Voting Manager makes it easy to set up and manage your online elections. With a user-friendly interface and step-by-step guidance, you can create, customize, and launch your voting process in no time.',
-                'image' => asset('img/products/election/online-voting-system.webp'),
+                'image' => asset('img/products/election/intuitive-online-voting-manager.webp'),
+                'image_alt' => '3D illustration of a digital dashboard with user profiles, tasks, and checkmarks, surrounded by icons and topped with three stars.',
                 'items' => [
                     [
                         'value' => 'Easily create and customize your election',
@@ -152,6 +155,7 @@ return [
                 'title' => 'Expert Guidance and Support',
                 'description' => 'Kudvo\'s team of voting experts is here to support you throughout the entire online voting process. From initial consultation to post-election analysis, we\'ll provide personalized guidance to ensure your election is a success.',
                 'image' => asset('img/products/election/expert-guidance-and-support.webp'),
+                'image_alt' => 'Animated man in a suit holding a laptop with three profile pictures of diverse individuals in bubbles around him, suggesting a networking or communication concept.',
                 'items' => [
                     [
                         'value' => 'Dedicated support team',

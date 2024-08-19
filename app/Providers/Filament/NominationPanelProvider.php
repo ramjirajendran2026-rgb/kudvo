@@ -12,6 +12,7 @@ use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Panel;
 use Filament\PanelProvider;
+use Filament\SpatieLaravelTranslatablePlugin;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -21,6 +22,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\HtmlString;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class NominationPanelProvider extends PanelProvider
@@ -61,10 +63,36 @@ class NominationPanelProvider extends PanelProvider
             ->breadcrumbs(condition: false)
             ->maxContentWidth(maxContentWidth: MaxWidth::FiveExtraLarge)
             ->brandName(name: fn (): string => Kudvo::getOrganisation()?->name)
-            ->brandLogo(logo: fn (): string => Kudvo::getOrganisation()?->getFilamentAvatarUrl())
+            ->brandLogo(logo: fn (): HtmlString => $this->getBrandLogo())
+            ->brandLogoHeight(height: 'auto')
             ->renderHook(
                 name: 'panels::footer',
                 hook: fn () => Blade::render('<x-filament.nomination.footer />')
-            );
+            )
+            ->plugins(plugins: [
+                SpatieLaravelTranslatablePlugin::make()
+                    ->defaultLocales(defaultLocales: array_keys(config('laravellocalization.supportedLocales'))),
+            ]);
+    }
+
+    protected function getBrandLogo(): HtmlString
+    {
+        $organisation = Kudvo::getOrganisation();
+        $logoUrl = $organisation->logo_url;
+
+        return new HtmlString(
+            html: <<<HTML
+<img
+    alt="$organisation->name\'s logo"
+    src="$logoUrl"
+    class="rounded-xl"
+/>
+<div
+    class="text-xl font-bold leading-5 tracking-tight text-gray-950 dark:text-white"
+>
+    $organisation->name
+</div>
+HTML
+        );
     }
 }

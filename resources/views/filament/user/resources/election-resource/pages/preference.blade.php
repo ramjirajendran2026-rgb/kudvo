@@ -1,6 +1,9 @@
 <x-filament-panels::page>
     @if (filled($pendingStep = $this->getPendingStep()))
-        <x-filament.election.setup-steps :pending-step="$pendingStep" :current-step="$this->getCurrentStep()" />
+        <x-filament.election.setup-steps
+            :pending-step="$pendingStep"
+            :current-step="$this->getCurrentStep()"
+        />
     @endif
 
     @if ($this->hasReadAccess())
@@ -15,7 +18,9 @@
                             {{ $plan->description }}
                         </p>
                         <p class="mt-6">
-                            <span class="text-4xl font-bold">{{ money($plan->elector_fee, $plan->currency) }}</span>
+                            <span class="text-4xl font-bold">
+                                {{ money($plan->elector_fee, $plan->currency) }}
+                            </span>
                             <span class="text-sm">/elector</span>
                         </p>
                         <div class="mt-6 flex justify-center">
@@ -24,16 +29,24 @@
                         <ul role="list" class="mt-6 space-y-2">
                             @foreach ($plan->selfFeatures() as $feature)
                                 <li class="flex items-start space-x-2">
-                                    <x-heroicon-o-check-circle class="text-primary-500 h-5 w-5" />
-                                    <span class="flex-1">{{ $feature->feature->getLabel() }}</span>
+                                    <x-heroicon-o-check-circle
+                                        class="h-5 w-5 text-primary-500"
+                                    />
+                                    <span class="flex-1">
+                                        {{ $feature->feature->getLabel() }}
+                                    </span>
                                 </li>
                             @endforeach
                         </ul>
                         <ul role="list" class="mt-6">
                             @foreach ($plan->addOnFeatures() as $feature)
                                 <li class="flex items-center space-x-2">
-                                    <x-heroicon-o-check-circle class="text-primary-500 h-5 w-5" />
-                                    <span>{{ $feature->feature->getLabel() }}</span>
+                                    <x-heroicon-o-check-circle
+                                        class="h-5 w-5 text-primary-500"
+                                    />
+                                    <span>
+                                        {{ $feature->feature->getLabel() }}
+                                    </span>
                                 </li>
                             @endforeach
                         </ul>
@@ -44,7 +57,9 @@
             <x-filament-panels::form wire:submit="save">
                 {{ $this->form }}
 
-                <x-filament-panels::form.actions :actions="$this->getCachedFormActions()" />
+                <x-filament-panels::form.actions
+                    :actions="$this->getCachedFormActions()"
+                />
             </x-filament-panels::form>
         @endif
     @else
@@ -56,4 +71,6 @@
             />
         </x-filament::section>
     @endif
+
+    <x-filament-panels::page.unsaved-data-changes-alert />
 </x-filament-panels::page>

@@ -18,7 +18,7 @@ readonly class PositionForm
     public static function groupsComponent(): Select
     {
         return Select::make(name: 'elector_groups')
-            ->label(label:__('filament.user.position-resource.form.elector_groups.label'))
+            ->label(label: __('filament.user.position-resource.form.elector_groups.label'))
             ->multiple();
     }
 
@@ -56,7 +56,7 @@ readonly class PositionForm
             ->minValue(value: 0)
             ->numeric()
             ->required()
-            ->rule(rule: fn (Get $get): string => 'max:'.(($get(path: 'quota') ?? 1) - 1))
+            ->rule(rule: fn (Get $get): string => 'max:' . (($get(path: 'quota') ?? 1) - 1))
             ->visible(condition: fn (Get $get): bool => $get(path: 'abstain') ?? false);
     }
 

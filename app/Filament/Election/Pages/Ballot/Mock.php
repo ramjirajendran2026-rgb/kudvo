@@ -2,7 +2,6 @@
 
 namespace App\Filament\Election\Pages\Ballot;
 
-use App\Filament\Election\Pages\Ballot\Index;
 use Illuminate\Contracts\Support\Htmlable;
 
 class Mock extends Index
@@ -14,8 +13,8 @@ class Mock extends Index
         return true;
     }
 
-    public function getHeading(): string|Htmlable
+    public function getHeading(): string | Htmlable
     {
-        return '[MOCK] '.parent::getHeading();
+        return '[MOCK] ' . parent::getHeading();
     }
 }

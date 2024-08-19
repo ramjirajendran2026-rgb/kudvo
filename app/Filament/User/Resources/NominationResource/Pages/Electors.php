@@ -4,7 +4,6 @@ namespace App\Filament\User\Resources\NominationResource\Pages;
 
 use App\Filament\User\Resources\ElectorResource;
 use App\Models\Nomination;
-use Filament\Forms\Form;
 use Filament\Resources\Concerns\InteractsWithRelationshipTable;
 use Filament\Tables\Actions\CreateAction as TableCreateAction;
 use Filament\Tables\Actions\DeleteAction as TableDeleteAction;
@@ -33,11 +32,6 @@ class Electors extends NominationPage implements HasTable
         return $this->getNomination();
     }
 
-    public function form(Form $form): Form
-    {
-        return ElectorResource::form(form: $form);
-    }
-
     public function table(Table $table): Table
     {
         return ElectorResource::table(table: $table)
@@ -61,7 +55,7 @@ class Electors extends NominationPage implements HasTable
         return ElectorResource::getTableImportAction()
             ->options(options: fn (self $livewire): array => [
                 'event_type' => Nomination::class,
-                'event_id' => $livewire->getElection()->getKey(),
+                'event_id' => $livewire->getNomination()->getKey(),
             ])
             ->visible(condition: $this->canImport());
     }
@@ -81,7 +75,7 @@ class Electors extends NominationPage implements HasTable
     protected function getDeleteAction(): TableDeleteAction
     {
         return ElectorResource::getTableDeleteAction()
-            ->visible(condition:$this->canDelete());
+            ->visible(condition: $this->canDelete());
     }
 
     public static function canAccessPage(Nomination $nomination): bool

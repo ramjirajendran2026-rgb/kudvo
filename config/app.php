@@ -1,7 +1,19 @@
 <?php
 
+use App\Providers\AppServiceProvider;
+use App\Providers\AuthServiceProvider;
+use App\Providers\BroadcastServiceProvider;
+use App\Providers\EventServiceProvider;
+use App\Providers\Filament\AdminPanelProvider;
+use App\Providers\Filament\ElectionPanelProvider;
+use App\Providers\Filament\NominationPanelProvider;
+use App\Providers\Filament\UserPanelProvider;
+use App\Providers\HorizonServiceProvider;
+use App\Providers\RouteServiceProvider;
+use App\Providers\TelescopeServiceProvider;
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\ServiceProvider;
+use PeterColes\Countries\CountriesFacade;
 
 return [
 
@@ -163,17 +175,17 @@ return [
         /*
          * Application Service Providers...
          */
-        App\Providers\AppServiceProvider::class,
-        App\Providers\AuthServiceProvider::class,
-        App\Providers\BroadcastServiceProvider::class,
-        App\Providers\EventServiceProvider::class,
-        App\Providers\HorizonServiceProvider::class,
-        App\Providers\Filament\UserPanelProvider::class,
-        App\Providers\Filament\NominationPanelProvider::class,
-        App\Providers\Filament\ElectionPanelProvider::class,
-        App\Providers\Filament\AdminPanelProvider::class,
-        App\Providers\RouteServiceProvider::class,
-        App\Providers\TelescopeServiceProvider::class,
+        AppServiceProvider::class,
+        AuthServiceProvider::class,
+        BroadcastServiceProvider::class,
+        EventServiceProvider::class,
+        HorizonServiceProvider::class,
+        UserPanelProvider::class,
+        NominationPanelProvider::class,
+        ElectionPanelProvider::class,
+        AdminPanelProvider::class,
+        RouteServiceProvider::class,
+        TelescopeServiceProvider::class,
     ])->toArray(),
 
     /*
@@ -188,7 +200,7 @@ return [
     */
 
     'aliases' => Facade::defaultAliases()->merge([
-        'Countries' => PeterColes\Countries\CountriesFacade::class,
+        'Countries' => CountriesFacade::class,
     ])->toArray(),
 
     'main_domain' => env('APP_MAIN_DOMAIN'),
@@ -203,13 +215,13 @@ return [
         'prefix' => env('APP_ADMIN_PANEL_PREFIX', 'admin'),
     ],
 
-    'default_currency' => 'INR',
+    'default_currency' => 'USD',
 
     'supported_currencies' => ['USD', 'INR'],
 
     'default_phone_country' => 'IN',
 
-    'ballot_locales' => ['en', 'hi', 'ta'],
+    'ballot_locales' => ['en', 'hi'],
 
     'organisation' => [
         'code' => [
@@ -219,6 +231,8 @@ return [
     ],
 
     'nomination' => [
+        'enabled' => env('APP_NOMINATION_ENABLED', false),
+
         'code' => [
             'prefix' => 'NO',
             'length' => 8,

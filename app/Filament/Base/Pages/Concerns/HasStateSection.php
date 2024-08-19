@@ -33,6 +33,7 @@ trait HasStateSection
             }
 
             $this->cacheAction($action);
+
             return $action;
         }, $actions);
     }

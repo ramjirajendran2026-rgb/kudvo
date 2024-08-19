@@ -4,15 +4,12 @@ namespace App\Filament\Election\Pages\Concerns;
 
 use App\Facades\Kudvo;
 use App\Models\Election;
-use App\Models\Elector;
-use App\Models\Nomination;
-use Filament\Facades\Filament;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\HtmlString;
-use Jenssegers\Agent\Agent;
 use Livewire\Attributes\Locked;
+
 use function Filament\authorize;
 
 trait InteractsWithElection
@@ -50,17 +47,16 @@ trait InteractsWithElection
     {
         return array_merge(
             parent::getWidgetData(),
-
             ['election' => $this->getElection()],
         );
     }
 
-    public function getHeading(): string|Htmlable
+    public function getHeading(): string | Htmlable
     {
         return $this->getElection()->name;
     }
 
-    public function getSubheading(): string|Htmlable|null
+    public function getSubheading(): string | Htmlable | null
     {
         if (! $this->getElection()->isTimingConfigured()) {
             return null;
@@ -74,6 +70,7 @@ trait InteractsWithElection
         }
 
         $to = __('filament.election.pages.concerns.interacts_with_election.subheading.to');
+
         return new HtmlString(
             html: <<<HTML
 <span class="flex justify-center items-center gap-4">

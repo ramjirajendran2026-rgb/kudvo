@@ -37,7 +37,7 @@ readonly class ElectorForm
     public static function groupsComponent(): TagsInput
     {
         return TagsInput::make(name: 'groups')
-            ->label(label:__('filament.user.elector-resource.form.groups.label'))
+            ->label(label: __('filament.user.elector-resource.form.groups.label'))
             ->separator();
     }
 
@@ -56,7 +56,7 @@ readonly class ElectorForm
             ->required()
             ->unique(
                 ignoreRecord: true,
-                modifyRuleUsing: fn (HasElection|HasNomination $livewire, Unique $rule): Unique => $rule
+                modifyRuleUsing: fn (HasElection | HasNomination $livewire, Unique $rule): Unique => $rule
                     ->when(
                         value: $livewire instanceof HasElection,
                         callback: fn (Unique $rule): Unique => $rule

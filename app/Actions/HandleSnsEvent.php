@@ -25,7 +25,7 @@ class HandleSnsEvent
         ];
 
         if (in_array($message->eventType, $eventTypes, true)) {
-            $this->{'handle'.Str::studly($message->eventType).'Event'}($message);
+            $this->{'handle' . Str::studly($message->eventType) . 'Event'}($message);
         }
     }
 
