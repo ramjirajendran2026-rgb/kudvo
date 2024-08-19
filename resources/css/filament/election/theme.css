@@ -57,7 +57,7 @@
 .fi-layout {
     .fi-user-menu {
         .fi-avatar {
-            @apply size-16;
+            @apply size-10 md:size-16;
         }
     }
 

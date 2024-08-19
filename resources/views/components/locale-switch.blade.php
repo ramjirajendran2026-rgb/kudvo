@@ -20,7 +20,10 @@
     :teleport="true"
     :placement="$placement"
     :width="$isFlagsOnly ? 'flags-only' : 'fls-dropdown-width'"
-    class="fi-dropdown fi-user-menu"
+    @class([
+        'fi-dropdown fi-user-menu',
+        'hidden' => !$languageSwitch->isVisibleInsidePanels()
+    ])
 >
     <x-slot name="trigger">
         <div

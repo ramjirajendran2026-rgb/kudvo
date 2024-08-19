@@ -15,6 +15,7 @@ use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Group;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Http\Responses\Auth\Contracts\LoginResponse;
 use Filament\Notifications\Notification;
@@ -80,7 +81,7 @@ class Login extends BasePage
         $data = $this->form->getState();
 
         $elector = Kudvo::getElection()->electors()
-            ->firstWhere('phone', $data['phone']);
+            ->firstWhere('membership_number', $data['membership_number']);
 
         if (blank(value: $elector)) {
             $this->throwFailureValidationException();
@@ -153,7 +154,7 @@ class Login extends BasePage
     protected function getCredentialsFromFormData(array $data): array
     {
         return [
-            'phone' => $data['phone'],
+            'membership_number' => $data['membership_number'],
             'event_type' => Election::class,
             'event_id' => Kudvo::getElection()?->getKey(),
         ];
@@ -162,7 +163,7 @@ class Login extends BasePage
     protected function throwFailureValidationException(): never
     {
         throw ValidationException::withMessages([
-            'data.phone' => __('filament-panels::pages/auth/login.messages.failed'),
+            'data.membership_number' => __('filament-panels::pages/auth/login.messages.failed'),
         ]);
     }
 
@@ -185,8 +186,7 @@ class Login extends BasePage
                 components: [
                     Group::make()
                         ->schema(components: [
-                            $this->getPhoneComponent()
-                                ->initialCountry(value: Kudvo::getOrganisation()?->country),
+                            $this->getMembershipNumberComponent(),
 
                             $this->getMfaConsentComponent(),
                         ])
@@ -198,9 +198,17 @@ class Login extends BasePage
     protected function getPhoneComponent()
     {
         return PhoneInput::make(name: 'phone')
+            ->initialCountry(value: Kudvo::getOrganisation()?->country)
             ->label(label: __('filament.election.pages.auth.login.form.phone.label'))
             ->required()
             ->validateFor();
+    }
+
+    protected function getMembershipNumberComponent()
+    {
+        return TextInput::make(name: 'membership_number')
+            ->label(label: 'Your membership number')
+            ->required();
     }
 
     protected function getMfaConsentComponent()
