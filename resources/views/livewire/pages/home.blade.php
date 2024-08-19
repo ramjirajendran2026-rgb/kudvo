@@ -283,10 +283,12 @@
                             class="h-6 w-6"
                         />
                         <div class="text-lg">
-                            <span class="hidden sm:inline">{{ __('app.contact.phone.label') }}</span>
+                            <span class="hidden sm:inline">
+                                {{ __('app.contact.phone.label') }}
+                            </span>
                             <a
                                 href="tel:{{ __('app.contact.phone.number') }}"
-                                class="cursor-pointer text-nowrap hover:underline hover:text-primary-700"
+                                class="cursor-pointer text-nowrap hover:text-primary-700 hover:underline"
                             >
                                 {{ __('app.contact.phone.number') }}
                             </a>
@@ -299,7 +301,7 @@
                         />
                         <a
                             href="mailto://{{ __('app.contact.email.address') }}"
-                            class="cursor-pointer text-lg hover:underline hover:text-primary-700"
+                            class="cursor-pointer text-lg hover:text-primary-700 hover:underline"
                         >
                             {{ __('app.contact.email.address') }}
                         </a>
