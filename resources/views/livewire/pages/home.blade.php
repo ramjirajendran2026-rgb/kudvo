@@ -300,7 +300,7 @@
                             class="h-6 w-6"
                         />
                         <a
-                            href="mailto://{{ __('app.contact.email.address') }}"
+                            href="mailto:{{ __('app.contact.email.address') }}"
                             class="cursor-pointer text-lg hover:text-primary-700 hover:underline"
                         >
                             {{ __('app.contact.email.address') }}
