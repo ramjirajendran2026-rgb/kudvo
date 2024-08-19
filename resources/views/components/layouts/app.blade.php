@@ -318,12 +318,11 @@
                             </a>
                         </li>
                         <li>
-                            <a
-                                href="#"
+                            <span
                                 class="hover:cursor-not-allowed hover:text-primary-700 hover:line-through"
                             >
                                 {{ __('app.nav.products.items.resolution_voting.label') }}
-                            </a>
+                            </span>
                         </li>
                     </ul>
                 </div>
@@ -398,7 +397,7 @@
                             class="h-6 w-6"
                         />
                         <a
-                            href="mailto://{{ __('app.contact.email.address') }}"
+                            href="mailto:{{ __('app.contact.email.address') }}"
                             class="cursor-pointer text-lg hover:text-primary-700 hover:underline"
                             title="Kudvo Email"
                         >
