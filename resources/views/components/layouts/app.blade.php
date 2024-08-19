@@ -310,12 +310,18 @@
                     </h3>
                     <ul class="list-none space-y-2">
                         <li>
-                            <a href="{{ route('products.election.home') }}" class="hover:underline hover:text-primary-700">
+                            <a
+                                href="{{ route('products.election.home') }}"
+                                class="hover:text-primary-700 hover:underline"
+                            >
                                 {{ __('app.nav.products.items.election.label') }}
                             </a>
                         </li>
                         <li>
-                            <a href="#" class="hover:line-through hover:text-primary-700 hover:cursor-not-allowed">
+                            <a
+                                href="#"
+                                class="hover:cursor-not-allowed hover:text-primary-700 hover:line-through"
+                            >
                                 {{ __('app.nav.products.items.resolution_voting.label') }}
                             </a>
                         </li>
@@ -327,22 +333,34 @@
                     </h3>
                     <ul class="list-none space-y-2">
                         <li>
-                            <a href="{{ route('home') }}" class="hover:underline hover:text-primary-700">
+                            <a
+                                href="{{ route('home') }}"
+                                class="hover:text-primary-700 hover:underline"
+                            >
                                 {{ __('app.nav.home.label') }}
                             </a>
                         </li>
                         <li>
-                            <a href="{{ route('home') }}#contact" class="hover:underline hover:text-primary-700">
+                            <a
+                                href="{{ route('home') }}#contact"
+                                class="hover:text-primary-700 hover:underline"
+                            >
                                 {{ __('app.nav.contact.label') }}
                             </a>
                         </li>
                         <li>
-                            <a href="{{ route('wiki.index') }}" class="hover:underline hover:text-primary-700">
+                            <a
+                                href="{{ route('wiki.index') }}"
+                                class="hover:text-primary-700 hover:underline"
+                            >
                                 {{ __('app.nav.wiki.label') }}
                             </a>
                         </li>
                         <li>
-                            <a href="{{ route('privacy-policy') }}" class="hover:underline hover:text-primary-700">
+                            <a
+                                href="{{ route('privacy-policy') }}"
+                                class="hover:text-primary-700 hover:underline"
+                            >
                                 {{ __('app.nav.privacy_policy.label') }}
                             </a>
                         </li>
@@ -360,10 +378,12 @@
                             class="h-6 w-6"
                         />
                         <div class="text-lg">
-                            <span class="hidden sm:inline">{{ __('app.contact.phone.label') }}</span>
+                            <span class="hidden sm:inline">
+                                {{ __('app.contact.phone.label') }}
+                            </span>
                             <a
                                 href="tel:{{ __('app.contact.phone.number') }}"
-                                class="cursor-pointer text-nowrap hover:underline hover:text-primary-700"
+                                class="cursor-pointer text-nowrap hover:text-primary-700 hover:underline"
                                 title="Kudvo Phone Number"
                             >
                                 {{ __('app.contact.phone.number') }}
@@ -379,7 +399,7 @@
                         />
                         <a
                             href="mailto://{{ __('app.contact.email.address') }}"
-                            class="cursor-pointer text-lg hover:underline hover:text-primary-700"
+                            class="cursor-pointer text-lg hover:text-primary-700 hover:underline"
                             title="Kudvo Email"
                         >
                             {{ __('app.contact.email.address') }}
