@@ -34,7 +34,7 @@
     </head>
 
     <body
-        class="min-h-[110vh] bg-gray-50 font-normal text-gray-950 antialiased dark:bg-gray-950 dark:text-white"
+        class="flex min-h-screen flex-col bg-gray-50 font-normal text-gray-950 antialiased dark:bg-gray-950 dark:text-white"
     >
         {!! $googleTagManager->getBodyScript() !!}
 
