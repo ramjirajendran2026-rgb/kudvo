@@ -82,7 +82,10 @@ class UserPanelProvider extends PanelProvider
                 'primary' => Color::Teal,
             ])
             ->font(family: 'Poppins')
-            ->viteTheme(theme: 'resources/css/filament/user/theme.css')
+            ->viteTheme(theme: [
+                'resources/css/filament/user/theme.css',
+                'resources/js/swal.js',
+            ])
             ->databaseNotifications()
             ->databaseNotificationsPolling(interval: null)
             ->globalSearch(provider: false)

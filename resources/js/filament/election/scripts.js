@@ -1,6 +1,4 @@
-import Swal from 'sweetalert2'
-
-window.Swal = Swal
+import '../../swal.js'
 
 window.tts = function (text) {
     // Check if the browser supports speech synthesis
