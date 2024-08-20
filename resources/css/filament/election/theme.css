@@ -101,7 +101,7 @@
 }
 
 .fi-header {
-    > div:first-child:last-child {
+    > div:first-child {
         @apply text-center sm:flex-grow;
     }
 }
