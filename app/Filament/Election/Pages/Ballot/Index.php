@@ -111,6 +111,7 @@ class Index extends BasePage
                             ->candidateGroup(condition: $this->getElection()->preference->candidate_group)
                             ->photo(condition: $this->getElection()->preference->candidate_photo)
                             ->preview(condition: fn (self $livewire): bool => $livewire->preview)
+                            ->sort(sort: $this->getElection()->preference->candidate_sort)
                             ->symbol(condition: $this->getElection()->preference->candidate_symbol),
                     )
                     ->toArray(),

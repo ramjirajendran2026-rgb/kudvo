@@ -268,6 +268,7 @@ abstract class ElectionPage extends Page implements HasElection, HasElectorGroup
                                         ->disabled(condition: fn (Get $get): bool => $get(path: '../preview'))
                                         ->photo(condition: $this->getElection()->preference->candidate_photo)
                                         ->preview(condition: fn (Get $get): bool => $get(path: '../preview'))
+                                        ->sort(sort: $this->getElection()->preference->candidate_sort)
                                         ->symbol(condition: $this->getElection()->preference->candidate_symbol),
                                 )
                                 ->toArray(),

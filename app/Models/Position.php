@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use App\Enums\CandidateSort;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -73,6 +75,20 @@ class Position extends Model implements Sortable
     {
         return $this->hasMany(related: Candidate::class)
             ->oldest(column: 'sort');
+    }
+
+    public function getOrderedCandidates(?CandidateSort $sort = null)
+    {
+        return $this->candidates
+            ->when(
+                $sort ?? $this->event?->preference?->candidate_sort,
+                fn (Collection $collection, CandidateSort $sort) => match ($sort) {
+                    CandidateSort::ASCENDING => $collection->sortBy('full_name'),
+                    CandidateSort::DESCENDING => $collection->sortBy('full_name', 'desc'),
+                    CandidateSort::RANDOM => $collection->shuffle(),
+                    default => $collection,
+                }
+            );
     }
 
     public function allCandidates(): HasMany

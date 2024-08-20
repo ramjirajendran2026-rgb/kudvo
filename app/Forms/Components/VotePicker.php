@@ -3,6 +3,7 @@
 namespace App\Forms\Components;
 
 use App\Data\Election\VoteSecretData;
+use App\Enums\CandidateSort;
 use App\Models\Candidate;
 use App\Models\CandidateGroup;
 use App\Models\Position;
@@ -28,6 +29,8 @@ class VotePicker extends CheckboxList
     protected string $view = 'forms.components.vote-picker';
 
     protected string | Htmlable | Closure | null $description = null;
+
+    protected CandidateSort | Closure | null $sort = CandidateSort::MANUAL;
 
     protected bool | Closure $preview = false;
 
@@ -117,6 +120,23 @@ class VotePicker extends CheckboxList
         return (bool) $this->evaluate(value: $this->unopposed);
     }
 
+    public function sort(CandidateSort | Closure | null $sort): static
+    {
+        $this->sort = $sort;
+
+        return $this;
+    }
+
+    public function getSort(): ?CandidateSort
+    {
+        return $this->evaluate($this->sort);
+    }
+
+    public function getCandidates()
+    {
+        return $this->position->getOrderedCandidates($this->getSort());
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -149,8 +169,7 @@ class VotePicker extends CheckboxList
         );
 
         $this->options(
-            options: fn (string $operation, array $state, self $component) => $position
-                ->candidates
+            options: fn (string $operation, array $state, self $component) => $this->getCandidates()
                 ->when(
                     value: $component->isPreview(),
                     callback: fn (Collection $collection) => $collection->whereIn(
@@ -162,8 +181,7 @@ class VotePicker extends CheckboxList
         );
         $this->disableOptionWhen(callback: fn () => $this->isUnopposed());
         $this->descriptions(
-            descriptions: fn (string $operation, array $state, self $component) => $position
-                ->candidates
+            descriptions: fn (string $operation, array $state, self $component) => $this->getCandidates()
                 ->when(
                     value: $component->isPreview(),
                     callback: fn (Collection $collection) => $collection->whereIn(
