@@ -11,6 +11,7 @@ use App\Filament\User\Pages\Organisation\EditOrganisationProfile;
 use App\Filament\User\Pages\Organisation\Register as RegisterOrganisation;
 use App\Filament\User\Resources\ElectionResource\Pages\ManageElections;
 use App\Models\Organisation;
+use App\Settings\GoogleTagManagerSettings;
 use Exception;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -93,6 +94,14 @@ class UserPanelProvider extends PanelProvider
             ->breadcrumbs(condition: false)
             ->spa()
             ->unsavedChangesAlerts()
+            ->renderHook(
+                name: PanelsRenderHook::HEAD_START,
+                hook: fn (GoogleTagManagerSettings $gtm) => new HtmlString(html: $gtm->getHeadScript())
+            )
+            ->renderHook(
+                name: PanelsRenderHook::BODY_START,
+                hook: fn (GoogleTagManagerSettings $gtm) => new HtmlString(html: $gtm->getBodyScript())
+            )
             ->renderHook(
                 name: PanelsRenderHook::PAGE_START,
                 hook: fn () => new HtmlString(html: '<span class="pg-election-list hidden"></span>'),

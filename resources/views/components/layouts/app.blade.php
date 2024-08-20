@@ -1,6 +1,9 @@
 @php
+    use App\Settings\GoogleTagManagerSettings;
     use Filament\FontProviders\BunnyFontProvider;
     use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
+
+    $googleTagManager = app(GoogleTagManagerSettings::class);
 @endphp
 
 <!DOCTYPE html>
@@ -11,6 +14,8 @@
         <meta name="application-name" content="{{ config('app.name') }}" />
         <meta name="csrf-token" content="{{ csrf_token() }}" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        {!! $googleTagManager->getHeadScript() !!}
 
         {!! seo($seoData ?? null) !!}
 
@@ -31,6 +36,8 @@
     <body
         class="min-h-[110vh] bg-gray-50 font-normal text-gray-950 antialiased dark:bg-gray-950 dark:text-white"
     >
+        {!! $googleTagManager->getBodyScript() !!}
+
         <header
             x-data="{ isSticky: false }"
             x-bind:class="{

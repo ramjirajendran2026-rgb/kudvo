@@ -15,6 +15,7 @@ use App\Filament\Election\Http\Middleware\IdentifyPanelState;
 use App\Filament\Election\Pages\Auth\Login;
 use App\Filament\Election\Pages\Index;
 use App\Models\Elector;
+use App\Settings\GoogleTagManagerSettings;
 use Filament\Facades\Filament;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -120,6 +121,14 @@ class ElectionPanelProvider extends PanelProvider
                 hook: fn (Request $request) => Kudvo::getElection()?->isPwaEnabled() ?
                     '<link rel="manifest" href="' . Filament::getCurrentPanel()->route(name: 'web-app-manifest') . '">' :
                     null,
+            )
+            ->renderHook(
+                name: PanelsRenderHook::HEAD_START,
+                hook: fn (GoogleTagManagerSettings $gtm) => new HtmlString(html: $gtm->getHeadScript())
+            )
+            ->renderHook(
+                name: PanelsRenderHook::BODY_START,
+                hook: fn (GoogleTagManagerSettings $gtm) => new HtmlString(html: $gtm->getBodyScript())
             )
             ->renderHook(
                 name: PanelsRenderHook::FOOTER,

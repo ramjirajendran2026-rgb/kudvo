@@ -7,6 +7,7 @@ use App\Filament\Base\Http\Middleware\IdentifyNomination;
 use App\Filament\Nomination\Http\Middleware\EnsureMfaCompleted;
 use App\Filament\Nomination\NominationPanel;
 use App\Filament\Nomination\Pages\Auth\Login;
+use App\Settings\GoogleTagManagerSettings;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -15,6 +16,7 @@ use Filament\PanelProvider;
 use Filament\SpatieLaravelTranslatablePlugin;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\MaxWidth;
+use Filament\View\PanelsRenderHook;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -65,6 +67,14 @@ class NominationPanelProvider extends PanelProvider
             ->brandName(name: fn (): string => Kudvo::getOrganisation()?->name)
             ->brandLogo(logo: fn (): HtmlString => $this->getBrandLogo())
             ->brandLogoHeight(height: 'auto')
+            ->renderHook(
+                name: PanelsRenderHook::HEAD_START,
+                hook: fn (GoogleTagManagerSettings $gtm) => new HtmlString(html: $gtm->getHeadScript())
+            )
+            ->renderHook(
+                name: PanelsRenderHook::BODY_START,
+                hook: fn (GoogleTagManagerSettings $gtm) => new HtmlString(html: $gtm->getBodyScript())
+            )
             ->renderHook(
                 name: 'panels::footer',
                 hook: fn () => Blade::render('<x-filament.nomination.footer />')
