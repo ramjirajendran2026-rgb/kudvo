@@ -146,6 +146,14 @@
                                 </x-filament::dropdown.list.item>
 
                                 <x-filament::dropdown.list.item
+                                    :href="route('products.phygital.home')"
+                                    icon="heroicon-o-archive-box"
+                                    tag="a"
+                                >
+                                    {{ __('app.nav.products.items.phygital.label') }}
+                                </x-filament::dropdown.list.item>
+
+                                <x-filament::dropdown.list.item
                                     :disabled="true"
                                     icon="heroicon-o-scale"
                                     tag="a"
@@ -310,14 +318,21 @@
                     </h3>
                     <ul class="list-none space-y-2">
                         <li>
-                            <a href="{{ route('products.election.home') }}">
+                            <a
+                                href="{{ route('products.election.home') }}"
+                                class="hover:text-primary-700 hover:underline"
+                            >
                                 {{ __('app.nav.products.items.election.label') }}
                             </a>
                         </li>
                         <li>
-                            <a href="#">
-                                {{ __('app.nav.products.items.resolution_voting.label') }}
-                            </a>
+                            <span
+                                class="hover:cursor-not-allowed hover:text-primary-700 hover:line-through"
+                            >
+                                <a href="#">
+                                    {{ __('app.nav.products.items.resolution_voting.label') }}
+                                </a>
+                            </span>
                         </li>
                     </ul>
                 </div>
@@ -327,22 +342,34 @@
                     </h3>
                     <ul class="list-none space-y-2">
                         <li>
-                            <a href="{{ route('home') }}">
+                            <a
+                                href="{{ route('home') }}"
+                                class="hover:text-primary-700 hover:underline"
+                            >
                                 {{ __('app.nav.home.label') }}
                             </a>
                         </li>
                         <li>
-                            <a href="{{ route('home') }}#contact">
+                            <a
+                                href="{{ route('home') }}#contact"
+                                class="hover:text-primary-700 hover:underline"
+                            >
                                 {{ __('app.nav.contact.label') }}
                             </a>
                         </li>
                         <li>
-                            <a href="{{ route('wiki.index') }}">
+                            <a
+                                href="{{ route('wiki.index') }}"
+                                class="hover:text-primary-700 hover:underline"
+                            >
                                 {{ __('app.nav.wiki.label') }}
                             </a>
                         </li>
                         <li>
-                            <a href="{{ route('privacy-policy') }}">
+                            <a
+                                href="{{ route('privacy-policy') }}"
+                                class="hover:text-primary-700 hover:underline"
+                            >
                                 {{ __('app.nav.privacy_policy.label') }}
                             </a>
                         </li>
@@ -360,12 +387,12 @@
                             class="h-6 w-6"
                         />
                         <div class="text-lg">
-                            <span class="hidden md:inline-block">
+                            <span class="hidden sm:inline-block">
                                 {{ __('app.contact.phone.label') }}
                             </span>
                             <a
                                 href="tel:{{ __('app.contact.phone.number') }}"
-                                class="cursor-pointer text-nowrap"
+                                class="cursor-pointer text-nowrap hover:text-primary-700 hover:underline"
                                 title="Kudvo Phone Number"
                             >
                                 {{ __('app.contact.phone.number') }}
@@ -381,7 +408,7 @@
                         />
                         <a
                             href="mailto://{{ __('app.contact.email.address') }}"
-                            class="cursor-pointer text-lg"
+                            class="cursor-pointer text-lg hover:text-primary-700 hover:underline"
                             title="Kudvo Email"
                         >
                             {{ __('app.contact.email.address') }}

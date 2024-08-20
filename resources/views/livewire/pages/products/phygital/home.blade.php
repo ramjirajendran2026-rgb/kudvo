@@ -68,7 +68,7 @@
                 <img
                     class="mx-auto size-80 object-contain"
                     src="{{ asset('img/products/phygital/ballot-box-booth.webp') }}"
-                    alt="kudvo ballot booth and ballot box image it is in yellow color with kudvo logo"
+                    alt="A yellow ballot booth and ballot box featuring the Kudvo logo"
                     title="ballot box nad ballot booth image"
                 />
             </div>
@@ -205,7 +205,7 @@
                             >
                                 <img
                                     class="rounded-3xl shadow-2xl transition-shadow duration-300 ease-in-out"
-                                    src="{{ asset('img/products/phygital/how we do phygital voting.webp') }}"
+                                    src="{{ asset('img/products/phygital/how-we-do-phygital-voting.webp') }}"
                                     width="768"
                                     height="432"
                                     alt="phygital voting video thumbnail"
@@ -278,7 +278,8 @@
                                             controls
                                         >
                                             <source
-                                                src="{{ asset('video/products/phygital/PhyGital Voting.mp4') }}"
+                                                loading="lazy"
+                                                src="{{ asset('video/products/phygital/phygital-voting.mp4') }}"
                                                 type="video/mp4"
                                             />
                                             Your browser does not support the
@@ -295,11 +296,13 @@
             </main>
         </div>
     </section>
-    <p
-        class="container mx-auto w-full max-w-screen-md py-16 text-center md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed"
-    >
-        With Kudvo’s Phygital voting system, experience 200% security through
-        the perfect synergy of 100% physical and 100% digital voting
-        technologies.
-    </p>
+    <section class="container">
+        <p
+            class="mx-auto w-full max-w-screen-md py-16 text-center md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed"
+        >
+            With Kudvo’s Phygital voting system, experience 200% security
+            through the perfect synergy of 100% physical and 100% digital voting
+            technologies.
+        </p>
+    </section>
 </main>
