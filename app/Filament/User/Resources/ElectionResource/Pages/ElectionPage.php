@@ -22,6 +22,7 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Pages\ViewRecord\Concerns\Translatable;
 use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\MaxWidth;
 use Filament\Support\Markdown;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Support\Htmlable;
@@ -280,6 +281,7 @@ abstract class ElectionPage extends Page implements HasElection, HasElectorGroup
             ->modalFooterActionsAlignment(alignment: Alignment::Center)
             ->modalHeading(heading: $this->getHeading())
             ->modalSubmitActionLabel(label: fn (array $data): string => ($data['preview'] ?? false) ? 'Confirm' : 'Continue')
+            ->modalWidth(MaxWidth::Full)
             ->slideOver();
     }
 
