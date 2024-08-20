@@ -360,7 +360,9 @@
                             class="h-6 w-6"
                         />
                         <div class="text-lg">
-                            <span class="hidden md:inline-block">{{ __('app.contact.phone.label') }}</span>
+                            <span class="hidden md:inline-block">
+                                {{ __('app.contact.phone.label') }}
+                            </span>
                             <a
                                 href="tel:{{ __('app.contact.phone.number') }}"
                                 class="cursor-pointer text-nowrap"
