@@ -13,8 +13,10 @@ use Illuminate\Support\Str;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\Sitemap\Contracts\Sitemapable;
+use Spatie\Sitemap\Tags\Url;
 
-class WikiPage extends Model implements HasMedia
+class WikiPage extends Model implements HasMedia, Sitemapable
 {
     use HasFactory;
     use HasSEO;
@@ -102,5 +104,13 @@ class WikiPage extends Model implements HasMedia
             ->singleFile()
             ->useFallbackUrl(secure_asset('img/default-cover.webp'))
             ->useFallbackPath(asset('img/default-cover.webp'));
+    }
+
+    public function toSitemapTag(): Url | string | array
+    {
+        return Url::create(route('wiki.show', $this))
+            ->setLastModificationDate($this->updated_at)
+            ->setChangeFrequency(Url::CHANGE_FREQUENCY_YEARLY)
+            ->setPriority(0.1);
     }
 }
