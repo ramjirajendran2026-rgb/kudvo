@@ -153,6 +153,9 @@ return [
                 'resolution_voting' => [
                     'label' => 'संकल्प वोटिंग',
                 ],
+                'phygital' => [
+                    'label' => 'Phygital मतदान',
+                ],
             ],
         ],
         'wiki' => [

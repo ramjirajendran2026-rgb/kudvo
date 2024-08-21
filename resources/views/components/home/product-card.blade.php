@@ -9,6 +9,7 @@
 ])
 
 <div
+    data-aos="flip-right"
     class="transform rounded-2xl border border-gray-200 bg-[#FAF9F6] shadow hover:-translate-y-1 hover:shadow-lg"
 >
     <div class="flex h-full flex-col justify-between p-4 md:space-y-6 md:p-8">
