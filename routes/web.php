@@ -52,16 +52,6 @@ Route::group(
                 Route::get(uri: '/', action: Home::class)
                     ->name(name: 'home');
 
-                Route::prefix('products/election')
-                    ->name('products.election.')
-                    ->group(function (): void {
-                        Route::get(uri: '/', action: ElectionHome::class)
-                            ->name(name: 'home');
-
-                        Route::get(uri: 'how-it-works', action: HowItWorks::class)
-                            ->name(name: 'how-it-works');
-                    });
-
                 Route::prefix('products')
                     ->name('products.')
                     ->group(function (): void {
