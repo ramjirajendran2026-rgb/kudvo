@@ -153,6 +153,9 @@ return [
                 'resolution_voting' => [
                     'label' => 'Resolution Voting',
                 ],
+                'phygital' => [
+                    'label' => 'Phygital Voting',
+                ],
             ],
         ],
         'wiki' => [

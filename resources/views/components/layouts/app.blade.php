@@ -153,6 +153,14 @@
                                 </x-filament::dropdown.list.item>
 
                                 <x-filament::dropdown.list.item
+                                    :href="route('products.phygital.home')"
+                                    icon="heroicon-o-archive-box"
+                                    tag="a"
+                                >
+                                    {{ __('app.nav.products.items.phygital.label') }}
+                                </x-filament::dropdown.list.item>
+
+                                <x-filament::dropdown.list.item
                                     :disabled="true"
                                     icon="heroicon-o-scale"
                                     tag="a"
@@ -237,6 +245,14 @@
                                     tag="a"
                                 >
                                     {{ __('app.nav.products.items.election.label') }}
+                                </x-filament::dropdown.list.item>
+
+                                <x-filament::dropdown.list.item
+                                    :href="route('products.phygital.home')"
+                                    icon="heroicon-o-archive-box"
+                                    tag="a"
+                                >
+                                    {{ __('app.nav.products.items.phygital.label') }}
                                 </x-filament::dropdown.list.item>
 
                                 <x-filament::dropdown.list.item
@@ -328,7 +344,9 @@
                             <span
                                 class="hover:cursor-not-allowed hover:text-primary-700 hover:line-through"
                             >
-                                {{ __('app.nav.products.items.resolution_voting.label') }}
+                                <a href="#">
+                                    {{ __('app.nav.products.items.resolution_voting.label') }}
+                                </a>
                             </span>
                         </li>
                     </ul>
@@ -384,7 +402,7 @@
                             class="h-6 w-6"
                         />
                         <div class="text-lg">
-                            <span class="hidden sm:inline">
+                            <span class="hidden sm:inline-block">
                                 {{ __('app.contact.phone.label') }}
                             </span>
                             <a
