@@ -69,7 +69,7 @@
                     class="mx-auto size-80 object-contain"
                     src="{{ asset('img/products/phygital/ballot-box-booth.webp') }}"
                     alt="A yellow ballot booth and ballot box featuring the Kudvo logo"
-                    title="ballot box nad ballot booth image"
+                    title="ballot box and ballot booth image"
                 />
             </div>
             <div data-aos="fade-right" class="w-full md:w-1/2">

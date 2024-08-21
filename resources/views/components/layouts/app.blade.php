@@ -241,6 +241,14 @@
                                 </x-filament::dropdown.list.item>
 
                                 <x-filament::dropdown.list.item
+                                    :href="route('products.phygital.home')"
+                                    icon="heroicon-o-archive-box"
+                                    tag="a"
+                                >
+                                    {{ __('app.nav.products.items.phygital.label') }}
+                                </x-filament::dropdown.list.item>
+
+                                <x-filament::dropdown.list.item
                                     :disabled="true"
                                     icon="heroicon-o-scale"
                                     tag="a"
@@ -407,7 +415,7 @@
                             class="h-6 w-6"
                         />
                         <a
-                            href="mailto://{{ __('app.contact.email.address') }}"
+                            href="mailto:{{ __('app.contact.email.address') }}"
                             class="cursor-pointer text-lg hover:text-primary-700 hover:underline"
                             title="Kudvo Email"
                         >
