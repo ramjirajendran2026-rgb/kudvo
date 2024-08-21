@@ -62,11 +62,21 @@ Route::group(
                             ->name(name: 'how-it-works');
                     });
 
-                Route::prefix('products/phygital')
-                    ->name('products.phygital.')
+                Route::prefix('products')
+                    ->name('products.')
                     ->group(function (): void {
-                        Route::get(uri: '/', action: PhygitalHome::class)
-                            ->name(name: 'home');
+                        Route::prefix('online-voting')
+                            ->name('election.')
+                            ->group(function (): void {
+                                Route::get(uri: '/', action: ElectionHome::class)
+                                    ->name(name: 'home');
+
+                                Route::get(uri: 'how-it-works', action: HowItWorks::class)
+                                    ->name(name: 'how-it-works');
+                            });
+
+                        Route::get(uri: 'phygital-voting', action: PhygitalHome::class)
+                            ->name(name: 'phygital.home');
                     });
             });
 
