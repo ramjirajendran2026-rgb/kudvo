@@ -140,11 +140,6 @@ class WikiPageResource extends Resource
                             ->color('primary')
                             ->grow(false)
                             ->wrap(),
-
-                        Tables\Columns\TextColumn::make(name: 'tags.name')
-                            ->badge()
-                            ->color('info')
-                            ->wrap(),
                     ]),
 
                     Tables\Columns\TextColumn::make(name: 'title')
