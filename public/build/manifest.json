@@ -4,7 +4,7 @@
     "name": "_commonjsHelpers"
   },
   "resources/css/app.css": {
-    "file": "assets/app-QrRXUon2.css",
+    "file": "assets/app-C07tPZ9Z.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
@@ -29,15 +29,12 @@
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-B_6R-zIc.js",
+    "file": "assets/app-BxBHWhun.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
     "imports": [
       "__commonjsHelpers-Cpj98o6Y.js"
-    ],
-    "css": [
-      "assets/app-Bxn43R6l.css"
     ]
   },
   "resources/js/filament/election/scripts.js": {
