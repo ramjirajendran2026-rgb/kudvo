@@ -9,8 +9,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use RalphJSmit\Laravel\SEO\Schema\ArticleSchema;
+use RalphJSmit\Laravel\SEO\SchemaCollection;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
+use RalphJSmit\Laravel\SEO\Support\SEOData;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Sitemap\Contracts\Sitemapable;
@@ -104,6 +108,48 @@ class WikiPage extends Model implements HasMedia, Sitemapable
             ->singleFile()
             ->useFallbackUrl(secure_asset('img/default-cover.webp'))
             ->useFallbackPath(asset('img/default-cover.webp'));
+    }
+
+    public function getDynamicSEOData(): SEOData
+    {
+        return new SEOData(
+            image: $this->coverUrl,
+            schema: SchemaCollection::make()
+                ->addArticle(
+                    fn (ArticleSchema $schema, SEOData $data): ArticleSchema => $schema
+                        ->markup(
+                            fn (Collection $markup): Collection => $markup
+                                ->put('author', [
+                                    '@type' => 'Organization',
+                                    'name' => config('app.name'),
+                                    'url' => config('app.url'),
+                                ])
+                        )
+                )
+                ->add(fn (SEOData $data): array => [
+                    '@context' => 'https://schema.org',
+                    '@type' => 'BreadcrumbList',
+                    'itemListElement' => [
+                        [
+                            '@type' => 'ListItem',
+                            'position' => 1,
+                            'name' => 'Home',
+                            'item' => config('app.url'),
+                        ],
+                        [
+                            '@type' => 'ListItem',
+                            'position' => 2,
+                            'name' => 'Wiki',
+                            'item' => route('wiki.index'),
+                        ],
+                        [
+                            '@type' => 'ListItem',
+                            'position' => 3,
+                            'name' => $this->seo?->title ?? $this->title,
+                        ],
+                    ],
+                ])
+        );
     }
 
     public function toSitemapTag(): Url | string | array

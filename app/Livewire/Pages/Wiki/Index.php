@@ -20,6 +20,8 @@ use Illuminate\Database\Eloquent\Collection;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Url;
 use Livewire\Component;
+use RalphJSmit\Laravel\SEO\Schema\BreadcrumbListSchema;
+use RalphJSmit\Laravel\SEO\SchemaCollection;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
 class Index extends Component implements HasForms, HasTable
@@ -40,6 +42,13 @@ class Index extends Component implements HasForms, HasTable
             ->layoutData([
                 'seoData' => new SEOData(
                     title: 'Wiki Articles',
+                    schema: SchemaCollection::make()
+                        ->addBreadcrumbs(
+                            fn (BreadcrumbListSchema $schema, SEOData $data): BreadcrumbListSchema => $schema
+                                ->prependBreadcrumbs([
+                                    'Home' => route('home'),
+                                ])
+                        ),
                 ),
             ]);
     }
