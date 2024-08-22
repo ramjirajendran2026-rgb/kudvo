@@ -3,7 +3,7 @@
 return [
     'seo' => [
         'title' => 'Kudvo - Secure and Efficient Online Voting System',
-        'description' => 'Secure and Efficient Online Voting System for Clubs. Empower your club members with secure and efficient online voting. From board elections to event planning, streamline your decision-making process with our trusted system. Explore our products and pricing now!',
+        'description' => 'Empower your organization with a secure and efficient online voting system. Streamline decision-making for board elections, event planning, and more. Explore our trusted products and pricing today!',
     ],
 
     'content' => [
