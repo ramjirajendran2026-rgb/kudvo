@@ -269,15 +269,19 @@
                 <livewire:contact-form />
             </div>
 
-            <div
-                class="flex aspect-video w-full flex-1 items-center justify-center bg-cover bg-no-repeat p-4 md:rounded-3xl"
-                style="background-image: url({{ url('img/contact-bg.webp') }})"
-            >
-                <div class="space-y-4 rounded-xl bg-white p-4 md:p-6">
+            <div class="relative flex aspect-video w-full flex-1 items-center justify-center">
+                <img
+                    loading="lazy"
+                    src="{{ url('img/contact-bg.webp') }}"
+                    alt="An abstract geometric pattern with repeating blue and light purple shapes, including circles, semi-circles, and triangles, creating a mosaic-like design."
+                    title="Contact Us"
+                    class="absolute inset-0 h-full w-full object-cover md:rounded-3xl"
+                />
+                <div class="relative space-y-4 rounded-xl bg-white p-4 md:p-6">
                     <h4 class="text-center text-2xl font-semibold md:text-4xl">
                         {{ config('app.name') }}
                     </h4>
-                    <div class="flex items-center gap-4">
+                    <div class="flex items-center justify-center gap-4">
                         <x-filament::icon
                             icon="heroicon-o-phone"
                             class="h-6 w-6"
@@ -294,7 +298,7 @@
                             </a>
                         </div>
                     </div>
-                    <div class="flex items-center gap-4">
+                    <div class="flex items-center justify-center gap-4">
                         <x-filament::icon
                             icon="heroicon-o-envelope"
                             class="h-6 w-6"
@@ -308,6 +312,7 @@
                     </div>
                 </div>
             </div>
+
         </div>
     </section>
 </main>
