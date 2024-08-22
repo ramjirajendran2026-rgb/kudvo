@@ -269,7 +269,9 @@
                 <livewire:contact-form />
             </div>
 
-            <div class="relative flex aspect-video w-full flex-1 items-center justify-center">
+            <div
+                class="relative flex aspect-video w-full flex-1 items-center justify-center"
+            >
                 <img
                     loading="lazy"
                     src="{{ url('img/contact-bg.webp') }}"
@@ -312,7 +314,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
     </section>
 </main>
