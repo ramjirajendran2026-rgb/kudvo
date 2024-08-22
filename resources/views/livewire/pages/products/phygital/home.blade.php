@@ -8,21 +8,18 @@
                 class="flex-1 space-y-6 text-center lg:space-y-8 lg:text-start"
             >
                 <h1 class="text-3xl font-bold sm:text-4xl">
-                    Secure and Transparent Voting with Kudvo's Phygital Solution
+                    @lang('pages/products/phygital/home.content.hero.title')
                 </h1>
                 <p class="text-base text-gray-700 md:text-lg">
-                    Kudvo’s Phygital is a cutting-edge voting system that
-                    seamlessly blends physical presence with digital technology,
-                    offering a Voter-Verifiable Paper Audit Trail (VVPAT) for
-                    enhanced security and transparency.
+                    @lang('pages/products/phygital/home.content.hero.description')
                 </p>
                 <x-filament::button
                     size="xl"
                     color="primary"
                     tag="a"
-                    href="#PhygitalVideo"
+                    :href="__('pages/products/phygital/home.content.hero.cta.url')"
                 >
-                    Watch Video
+                    @lang('pages/products/phygital/home.content.hero.cta.label')
                 </x-filament::button>
             </div>
             <div
@@ -31,14 +28,14 @@
             >
                 <img
                     class="w-full object-contain"
-                    src="{{ asset('img/products/phygital/phygital-voting-system-hero.webp') }}"
-                    alt="phygital voting"
-                    title="phygital voting system by Kudvo"
+                    src="@lang('pages/products/phygital/home.content.hero.image')"
+                    alt="@lang('pages/products/phygital/home.content.hero.image_alt')"
+                    title="@lang('pages/products/phygital/home.content.hero.title')"
                 />
             </div>
         </div>
     </section>
-    <section class="container mx-auto w-full py-16">
+    <section id="key-features" class="container w-full py-16">
         <div
             data-aos="zoom-out-up"
             class="mx-auto flex flex-col items-center justify-center gap-4"
@@ -46,73 +43,49 @@
             <div
                 class="rounded-lg border-[1px] border-primary-400 bg-primary-100 px-3 py-1 text-sm text-primary-600"
             >
-                Key Features
+                @lang('pages/products/phygital/home.content.key_features.label')
             </div>
             <h2
                 class="text-center text-3xl font-bold tracking-tighter sm:text-4xl"
             >
-                Why Choose Kudvo’s Phygital Voting System?
+                @lang('pages/products/phygital/home.content.key_features.title')
             </h2>
             <p
                 class="max-w-screen-lg text-center md:text-lg/relaxed lg:text-lg/relaxed"
             >
-                Kudvo’s Phygital provides a secure and transparent voting
-                experience with advanced features that ensure the integrity of
-                the electoral process.
+                @lang('pages/products/phygital/home.content.key_features.description')
             </p>
         </div>
         <div
-            class="mx-auto mt-8 flex w-full flex-col items-center justify-center md:flex-row"
+            class="mt-8 flex w-full flex-col items-center justify-center md:flex-row"
         >
             <div data-aos="fade-left" class="w-full md:w-1/2">
                 <img
                     class="mx-auto size-80 object-contain"
-                    src="{{ asset('img/products/phygital/ballot-box-booth.webp') }}"
-                    alt="A yellow ballot booth and ballot box featuring the Kudvo logo"
-                    title="ballot box and ballot booth image"
+                    src="@lang('pages/products/phygital/home.content.key_features.image')"
+                    alt="@lang('pages/products/phygital/home.content.key_features.image_alt')"
+                    title="@lang('pages/products/phygital/home.content.key_features.title')"
                 />
             </div>
             <div data-aos="fade-right" class="w-full md:w-1/2">
                 <ul class="grid gap-6">
-                    <li>
-                        <div class="grid gap-1">
-                            <h3 class="text-xl font-bold">
-                                Voter-Verifiable Paper Audit Trail (VVPAT):
-                            </h3>
-                            <p>
-                                Voters can confirm their votes on a printed
-                                paper record, ensuring transparency and
-                                accountability.
-                            </p>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="grid gap-1">
-                            <h3 class="text-xl font-bold">
-                                Tamper-Evident Design
-                            </h3>
-                            <p>
-                                Kudvo’s Phygital system utilizes secure hardware
-                                and software to prevent unauthorized access,
-                                ensuring the integrity of every vote.
-                            </p>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="grid gap-1">
-                            <h3 class="text-xl font-bold">Accessibility</h3>
-                            <p>
-                                Designed with inclusivity in mind, Kudvo’s
-                                Phygital voting system is accessible to all
-                                voters, including those with disabilities.
-                            </p>
-                        </div>
-                    </li>
+                    @foreach (__('pages/products/phygital/home.content.key_features.items') as $item)
+                        <li>
+                            <div class="grid gap-1">
+                                <h3 class="text-xl font-bold">
+                                    {{ $item['title'] }}
+                                </h3>
+                                <p>
+                                    {{ $item['description'] }}
+                                </p>
+                            </div>
+                        </li>
+                    @endforeach
                 </ul>
             </div>
         </div>
     </section>
-    <section class="container mx-auto w-full py-16">
+    <section id="vvpat-printing" class="container w-full py-16">
         <div
             data-aos="zoom-out-up"
             class="mx-auto flex flex-col items-center justify-center gap-4"
@@ -120,70 +93,49 @@
             <div
                 class="rounded-lg border-[1px] border-primary-400 bg-primary-100 px-3 py-1 text-sm text-primary-600"
             >
-                VVPAT Printing
+                @lang('pages/products/phygital/home.content.vvpat_printing.label')
             </div>
             <h2
                 class="text-center text-3xl font-bold tracking-tighter sm:text-4xl"
             >
-                Phygital System Features
+                @lang('pages/products/phygital/home.content.vvpat_printing.title')
             </h2>
             <p
                 class="max-w-screen-lg text-center md:text-lg/relaxed lg:text-lg/relaxed"
             >
-                Kudvo’s Phygital solution allows voters to verify their votes
-                through a physical paper record, adding an extra layer of
-                security and transparency.
+                @lang('pages/products/phygital/home.content.vvpat_printing.description')
             </p>
         </div>
         <div
-            class="mx-auto mt-8 flex w-full flex-col items-center justify-center md:flex-row"
+            class="mt-8 flex w-full flex-col items-center justify-center md:flex-row"
         >
             <div data-aos="fade-left" class="w-full md:w-1/2">
                 <img
                     class="mx-auto size-80 object-contain"
-                    src="{{ asset('img/products/phygital/images-of-phygital-voting-system.webp') }}"
-                    alt="Man voting using kudvo phygital voting system using VVPAT system."
-                    title="Phygital System features"
+                    src="@lang('pages/products/phygital/home.content.vvpat_printing.image')"
+                    alt="@lang('pages/products/phygital/home.content.vvpat_printing.image_alt')"
+                    title="@lang('pages/products/phygital/home.content.vvpat_printing.title')"
                 />
             </div>
             <div data-aos="fade-right" class="w-full md:w-1/2">
                 <ul class="grid gap-6">
-                    <li>
-                        <div class="grid gap-1">
-                            <h3 class="text-xl font-bold">Secure Printing</h3>
-                            <p>
-                                The VVPAT printing process is tamper-evident and
-                                secure, safeguarding the integrity of all
-                                printed records.
-                            </p>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="grid gap-1">
-                            <h3 class="text-xl font-bold">
-                                Voter Verification
-                            </h3>
-                            <p>
-                                Voters can visually inspect the printed record
-                                to ensure their votes are accurately recorded.
-                            </p>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="grid gap-1">
-                            <h3 class="text-xl font-bold">Audit Trail</h3>
-                            <p>
-                                The VVPAT records create a physical audit trail,
-                                allowing for the verification of election
-                                results to maintain trust and integrity.
-                            </p>
-                        </div>
-                    </li>
+                    @foreach (__('pages/products/phygital/home.content.vvpat_printing.items') as $item)
+                        <li>
+                            <div class="grid gap-1">
+                                <h3 class="text-xl font-bold">
+                                    {{ $item['title'] }}
+                                </h3>
+                                <p>
+                                    {{ $item['description'] }}
+                                </p>
+                            </div>
+                        </li>
+                    @endforeach
                 </ul>
             </div>
         </div>
     </section>
-    <section class="container mx-auto w-full" id="PhygitalVideo">
+    <section id="how-we-do" class="container mx-auto w-full">
         <div class="relative">
             <main
                 class="relative flex flex-col justify-center overflow-hidden bg-slate-50"
@@ -205,10 +157,10 @@
                             >
                                 <img
                                     class="rounded-3xl shadow-2xl transition-shadow duration-300 ease-in-out"
-                                    src="{{ asset('img/products/phygital/how-we-do-phygital-voting.webp') }}"
+                                    src="@lang('pages/products/phygital/home.content.how_we_do.video.thumbnail.src')"
                                     width="768"
                                     height="432"
-                                    alt="phygital voting video thumbnail"
+                                    alt="@lang('pages/products/phygital/home.content.how_we_do.video.thumbnail.alt')"
                                 />
                                 <!-- Play icon -->
                                 <svg
@@ -279,7 +231,7 @@
                                         >
                                             <source
                                                 loading="lazy"
-                                                src="{{ asset('video/products/phygital/phygital-voting.mp4') }}"
+                                                src="@lang('pages/products/phygital/home.content.how_we_do.video.src')"
                                                 type="video/mp4"
                                             />
                                             Your browser does not support the
@@ -300,9 +252,7 @@
         <p
             class="mx-auto w-full max-w-screen-md py-16 text-center md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed"
         >
-            With Kudvo’s Phygital voting system, experience 200% security
-            through the perfect synergy of 100% physical and 100% digital voting
-            technologies.
+            @lang('pages/products/phygital/home.content.footer.description')
         </p>
     </section>
 </main>
