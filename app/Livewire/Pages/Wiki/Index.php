@@ -83,7 +83,8 @@ class Index extends Component implements HasForms, HasTable
     #[Computed]
     public function tags(): Collection
     {
-        return WikiTag::orderBy('name')
+        return WikiTag::inRandomOrder()
+            ->limit(15)
             ->get();
     }
 
@@ -125,9 +126,6 @@ class Index extends Component implements HasForms, HasTable
                             'class' => 'cell-summary',
                         ])
                         ->lineClamp(3),
-
-                    TextColumn::make('tags.name')
-                        ->badge(),
                 ])
                     ->space(2),
             ])

@@ -43,7 +43,8 @@ class Show extends Component
     #[Computed]
     public function tags(): Collection
     {
-        return WikiTag::orderBy('name')
+        return WikiTag::inRandomOrder()
+            ->limit(15)
             ->get();
     }
 }

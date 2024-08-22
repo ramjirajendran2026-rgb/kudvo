@@ -31,6 +31,7 @@
                     {{ $img }}
                 @else
                     <img
+                        loading="lazy"
                         src="{{ $latestPage->getDefaultCoverUrl() }}"
                         alt="{{ $latestPage->title }}"
                         class="aspect-video rounded-lg object-cover w-full"

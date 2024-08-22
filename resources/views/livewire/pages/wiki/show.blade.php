@@ -5,8 +5,8 @@
                 <span class="inline-block rounded-lg bg-blue-800 px-3 py-1 text-sm text-white">
                     {{ $page->category?->name }}
                 </span>
-                <h1 class="text-3xl hover:underline cursor-pointer font-bold tracking-tighter sm:text-4xl md:text-5xl">
-                    <a href="{{ route('wiki.show', [$page]) }}">{{ $page->title }}</a>
+                <h1 class="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
+                    {{ $page->title }}
                 </h1>
 
                 <p class="md:text-xl/relaxed line-clamp-5">
@@ -26,6 +26,7 @@
                 {{ $img }}
             @else
                 <img
+                    loading="lazy"
                     src="{{ $page->getDefaultCoverUrl() }}"
                     alt="{{ $page->title }}"
                     class="aspect-video rounded-lg object-cover w-full"
