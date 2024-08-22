@@ -3,10 +3,11 @@
 return [
     'seo' => [
         'title' => 'Kudvo - Secure and Efficient Online Voting System',
-        'description' => 'Empower your organization with a secure and efficient online voting system. Streamline decision-making for board elections, event planning, and more. Explore our trusted products and pricing today!',
+        'description' => 'Empower your organization with a secure online voting system. Simplify board elections, event planning, and more. Check out our products and pricing today!',
     ],
 
     'content' => [
+        'headline' => 'Secure and Efficient Online Voting Solutions for Your Organization',
         'hero' => [
             'items' => [
                 [

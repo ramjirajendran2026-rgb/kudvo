@@ -179,13 +179,7 @@
         <h1
             class="mx-auto max-w-screen-lg text-center text-xl font-bold text-gray-900 sm:text-2xl md:text-4xl"
         >
-            Secure
-            <span
-                class="bg-gradient-to-tr from-primary-600 to-primary-500 bg-clip-text text-transparent"
-            >
-                Online Voting System
-            </span>
-            for Seamless Election Management Anytime, Anywhere
+            @lang('pages/home.content.headline')
         </h1>
     </section>
 

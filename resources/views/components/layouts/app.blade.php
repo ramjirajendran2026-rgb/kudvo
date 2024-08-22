@@ -19,6 +19,24 @@
 
         {!! seo($seoData ?? null) !!}
 
+        <link
+            rel="apple-touch-icon"
+            sizes="180x180"
+            href="{{ asset('apple-touch-icon.png') }}"
+        />
+        <link
+            rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="{{ asset('favicon-32x32.png') }}"
+        />
+        <link
+            rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="{{ asset('favicon-16x16.png') }}"
+        />
+
         <style>
             [x-cloak] {
                 display: none !important;
@@ -165,7 +183,7 @@
                                     icon="heroicon-o-scale"
                                     tag="a"
                                     href="#"
-                                    badge="coming"
+                                    badge="soon"
                                 >
                                     {{ __('app.nav.products.items.resolution_voting.label') }}
                                 </x-filament::dropdown.list.item>
@@ -324,120 +342,20 @@
         {{ $slot }}
 
         <footer class="border-t bg-white">
-            <div
-                class="container grid grid-cols-2 gap-4 px-4 py-8 md:grid-cols-4 md:gap-8 md:px-6 lg:px-8"
-            >
-                <div class="space-y-4">
-                    <h3 class="text-xl font-semibold">
-                        {{ __('app.nav.products.label') }}
-                    </h3>
-                    <ul class="list-none space-y-2">
-                        <li>
-                            <a
-                                href="{{ route('products.election.home') }}"
-                                class="hover:text-primary-700 hover:underline"
-                            >
-                                {{ __('app.nav.products.items.election.label') }}
-                            </a>
-                        </li>
-                        <li>
-                            <span
-                                class="hover:cursor-not-allowed hover:text-primary-700 hover:line-through"
-                            >
-                                <a href="#">
-                                    {{ __('app.nav.products.items.resolution_voting.label') }}
-                                </a>
-                            </span>
-                        </li>
-                    </ul>
-                </div>
-                <div class="space-y-4">
-                    <h3 class="text-xl font-semibold">
-                        {{ __('app.footer.quick_links.label') }}
-                    </h3>
-                    <ul class="list-none space-y-2">
-                        <li>
-                            <a
-                                href="{{ route('home') }}"
-                                class="hover:text-primary-700 hover:underline"
-                            >
-                                {{ __('app.nav.home.label') }}
-                            </a>
-                        </li>
-                        <li>
-                            <a
-                                href="{{ route('home') }}#contact"
-                                class="hover:text-primary-700 hover:underline"
-                            >
-                                {{ __('app.nav.contact.label') }}
-                            </a>
-                        </li>
-                        <li>
-                            <a
-                                href="{{ route('wiki.index') }}"
-                                class="hover:text-primary-700 hover:underline"
-                            >
-                                {{ __('app.nav.wiki.label') }}
-                            </a>
-                        </li>
-                        <li>
-                            <a
-                                href="{{ route('privacy-policy') }}"
-                                class="hover:text-primary-700 hover:underline"
-                            >
-                                {{ __('app.nav.privacy_policy.label') }}
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-                <div
-                    class="col-span-full space-y-4 text-center md:col-span-2 md:text-start"
-                >
-                    <p>{{ __('app.footer.description') }}</p>
-                    <div
-                        class="flex items-center justify-center gap-4 md:justify-start"
-                    >
-                        <x-filament::icon
-                            icon="heroicon-o-phone"
-                            class="h-6 w-6"
-                        />
-                        <div class="text-lg">
-                            <span class="hidden sm:inline-block">
-                                {{ __('app.contact.phone.label') }}
-                            </span>
-                            <a
-                                href="tel:{{ __('app.contact.phone.number') }}"
-                                class="cursor-pointer text-nowrap hover:text-primary-700 hover:underline"
-                                title="Kudvo Phone Number"
-                            >
-                                {{ __('app.contact.phone.number') }}
-                            </a>
-                        </div>
-                    </div>
-                    <div
-                        class="flex items-center justify-center gap-4 md:justify-start"
-                    >
-                        <x-filament::icon
-                            icon="heroicon-o-envelope"
-                            class="h-6 w-6"
-                        />
-                        <a
-                            href="mailto:{{ __('app.contact.email.address') }}"
-                            class="cursor-pointer text-lg hover:text-primary-700 hover:underline"
-                            title="Kudvo Email"
-                        >
-                            {{ __('app.contact.email.address') }}
-                        </a>
-                    </div>
-                </div>
-            </div>
             <div class="bg-primary-800 text-white md:flex-row">
                 <div
-                    class="container flex flex-col items-center justify-center px-4 py-4 md:flex-row lg:px-8"
+                    class="container flex flex-col items-center justify-center px-4 py-4 sm:flex-row sm:gap-4 lg:px-8"
                 >
                     <span>
                         &copy; {{ date('Y ') . ' - ' . config('app.name') }}
                     </span>
+                    <span class="hidden sm:inline">•</span>
+                    <a
+                        href="{{ route('privacy-policy') }}"
+                        class="hover:underline"
+                    >
+                        {{ __('app.nav.privacy_policy.label') }}
+                    </a>
                 </div>
             </div>
         </footer>

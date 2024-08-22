@@ -190,12 +190,6 @@ return [
             'label' => 'Sign Up',
         ],
     ],
-    'footer' => [
-        'quick_links' => [
-            'label' => 'Quick Links',
-        ],
-        'description' => 'Get in touch with us to learn how we can run next election for your organization together.',
-    ],
     'contact' => [
         'phone' => [
             'label' => 'Call / Whatsapp',
