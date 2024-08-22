@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Admin\Pages\Auth\Login;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -44,7 +45,7 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware(middleware: [
                 Authenticate::class,
             ])
-            ->login()
+            ->login(action: Login::class)
             ->unsavedChangesAlerts()
             ->navigationGroups(groups: [
                 NavigationGroup::make()
