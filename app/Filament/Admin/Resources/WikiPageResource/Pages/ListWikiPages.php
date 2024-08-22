@@ -2,8 +2,11 @@
 
 namespace App\Filament\Admin\Resources\WikiPageResource\Pages;
 
+use App\Actions\GenerateSitemap;
 use App\Filament\Admin\Resources\WikiPageResource;
 use Filament\Actions;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Builder;
@@ -16,6 +19,18 @@ class ListWikiPages extends ListRecords
     {
         return [
             Actions\CreateAction::make(),
+
+            ActionGroup::make([
+                Action::make('generateSitemap')
+                    ->action(function (Action $action): void {
+                        GenerateSitemap::execute();
+
+                        $action->success();
+                    })
+                    ->label('Generate Sitemap')
+                    ->requiresConfirmation()
+                    ->successNotificationTitle('Generated successfully'),
+            ]),
         ];
     }
 
