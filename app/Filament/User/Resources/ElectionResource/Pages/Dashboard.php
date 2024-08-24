@@ -7,11 +7,13 @@ use App\Enums\ElectionDashboardState;
 use App\Enums\ElectionSetupStep;
 use App\Filament\Base\Pages\Concerns\HasStateSection;
 use App\Filament\User\Resources\ElectionResource;
+use App\Models\Election;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Facades\Filament;
 use Illuminate\Support\HtmlString;
+use Illuminate\Support\Js;
 use Livewire\Attributes\On;
 
 class Dashboard extends ElectionPage
@@ -178,6 +180,8 @@ class Dashboard extends ElectionPage
             $this->getPreviewBallotAction(),
 
             ActionGroup::make(actions: [
+                $this->getCopyBallotLinkAction(),
+
                 ElectionResource::getEditTimingAction()
                     ->after(callback: fn (self $livewire) => $livewire->resolveState())
                     ->modalHeading(heading: fn (self $livewire) => $livewire->getRecordTitle()),
@@ -270,6 +274,28 @@ class Dashboard extends ElectionPage
             ->authorize(abilities: 'downloadPhysicalBallot')
             ->hidden()
             ->label(label: 'Download Physical Ballot');
+    }
+
+    protected function getCopyBallotLinkAction(): Action
+    {
+        return Action::make('copyBallotLink')
+            ->alpineClickHandler(function () {
+                $ballotLink = Js::from(route('short_link.election', $this->getElection()))->toHtml();
+
+                return <<<JS
+window.navigator.clipboard.writeText($ballotLink)
+\$tooltip('Copied', {
+    theme: \$store.theme,
+    timeout: 3000,
+})
+JS;
+            })
+            ->icon('heroicon-m-clipboard-document')
+            ->visible(
+                condition: fn (Election $election) => $election->preference?->ballot_link_common &&
+                    ! $election->is_draft &&
+                    ! $election->is_cancelled
+            );
     }
 
     protected function hasPendingPreferenceSetup(): bool
