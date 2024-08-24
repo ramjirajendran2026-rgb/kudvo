@@ -93,13 +93,13 @@ class BallotSetup extends ElectionPage
                             ])
                             ->footerActionsAlignment(alignment: Alignment::Center)
                             ->headerActions(actions: [
+                                $this->getGenerateDummyCandidatesAction(),
+
                                 $this->getReorderCandidateAction(),
 
                                 $this->getEditPositionAction(),
 
                                 $this->getDeletePositionAction(),
-
-                                $this->getGenerateDummyCandidatesAction(),
                             ])
                             ->schema(components: [
                                 RepeatableEntry::make(name: 'allCandidates')
@@ -112,6 +112,15 @@ class BallotSetup extends ElectionPage
                                     ))
                                     ->schema(components: [
                                         Split::make(schema: [
+                                            SpatieMediaLibraryImageEntry::make(name: 'symbol')
+                                                ->collection(collection: Candidate::MEDIA_COLLECTION_SYMBOL)
+                                                ->defaultImageUrl(url: fn (Candidate $record): ?string => $record->symbol_url)
+                                                ->extraImgAttributes(attributes: ['class' => 'rounded-xl bg-black aspect-square max-w-12 md:!max-w-20'])
+                                                ->grow(condition: false)
+                                                ->hiddenLabel()
+                                                ->size(size: 'auto')
+                                                ->visible(condition: $this->getElection()->preference?->candidate_symbol),
+
                                             SpatieMediaLibraryImageEntry::make(name: 'photo')
                                                 ->circular()
                                                 ->collection(collection: Candidate::MEDIA_COLLECTION_PHOTO)
@@ -136,24 +145,15 @@ class BallotSetup extends ElectionPage
                                                 ->hiddenLabel()
                                                 ->size(size: TextEntry\TextEntrySize::Large)
                                                 ->suffixActions(actions: [
-                                                    $this->getEditCandidateAction(),
-
                                                     $this->getDisableCandidateAction(),
 
                                                     $this->getEnableCandidateAction(),
 
+                                                    $this->getEditCandidateAction(),
+
                                                     $this->getDeleteCandidateAction(),
                                                 ])
                                                 ->weight(weight: FontWeight::Medium),
-
-                                            SpatieMediaLibraryImageEntry::make(name: 'symbol')
-                                                ->collection(collection: Candidate::MEDIA_COLLECTION_SYMBOL)
-                                                ->defaultImageUrl(url: fn (Candidate $record): ?string => $record->symbol_url)
-                                                ->extraImgAttributes(attributes: ['class' => 'rounded-xl bg-black aspect-square max-w-12 md:!max-w-20'])
-                                                ->grow(condition: false)
-                                                ->hiddenLabel()
-                                                ->size(size: 'auto')
-                                                ->visible(condition: $this->getElection()->preference?->candidate_symbol),
                                         ]),
                                     ]),
                             ]),
