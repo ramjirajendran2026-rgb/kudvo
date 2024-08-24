@@ -98,6 +98,8 @@ class BallotSetup extends ElectionPage
                                 $this->getEditPositionAction(),
 
                                 $this->getDeletePositionAction(),
+
+                                $this->getGenerateDummyCandidatesAction(),
                             ])
                             ->schema(components: [
                                 RepeatableEntry::make(name: 'allCandidates')
@@ -370,6 +372,31 @@ HTML,
             ->modalHeading(heading: fn (Position $record): string => "Delete $record->name")
             ->successNotificationTitle(title: __('filament.user.election-resource.pages.ballot_setup.actions.delete_position.success_notification.title'))
             ->visible(condition: $this->hasFullAccess());
+    }
+
+    protected function getGenerateDummyCandidatesAction(): InfolistAction
+    {
+        return InfolistAction::make('generateDummyCandidates')
+            ->requiresConfirmation()
+            ->authorize(auth()->user()->hasAdminRole())
+            ->action(function (InfolistAction $action, Position $record, array $data) {
+                Candidate::factory($data['count'])
+                    ->for($record)
+                    ->create();
+
+                $action->success();
+            })
+            ->form([
+                TextInput::make('count')
+                    ->default(4)
+                    ->integer()
+                    ->maxValue(200)
+                    ->minValue(1)
+                    ->required(),
+            ])
+            ->icon(icon: 'heroicon-m-sparkles')
+            ->iconButton()
+            ->successNotificationTitle('Generated successfully');
     }
 
     protected function getReorderCandidateAction(): InfolistAction

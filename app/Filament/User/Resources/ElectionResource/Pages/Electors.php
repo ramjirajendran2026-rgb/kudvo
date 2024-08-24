@@ -11,9 +11,12 @@ use App\Filament\User\Resources\ElectionResource\Widgets\ElectorDataImportProgre
 use App\Filament\User\Resources\ElectorResource;
 use App\Models\Election;
 use App\Models\Elector;
+use Database\Factories\ElectorFactory;
 use Filament\Actions\Action;
 use Filament\Actions\Imports\Models\Import;
 use Filament\Facades\Filament;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
 use Filament\Resources\Concerns\InteractsWithRelationshipTable;
 use Filament\Tables\Actions\Action as TableAction;
@@ -107,6 +110,8 @@ class Electors extends ElectionPage implements HasTable
 
                 ActionGroup::make(actions: [
                     $this->getGenerateShortCodesAction(),
+
+                    $this->getGenerateDummyElectorsAction(),
                 ]),
             ]);
     }
@@ -289,6 +294,41 @@ class Electors extends ElectionPage implements HasTable
                 $this->getElection()->electors()->whereNull('short_code')->count() &&
                 $this->hasFullAccess()
             );
+    }
+
+    public function getGenerateDummyElectorsAction(): TableAction
+    {
+        return TableAction::make('generateDummyElectors')
+            ->authorize(auth()->user()->hasAdminRole())
+            ->requiresConfirmation()
+            ->action(function (self $livewire, TableAction $action, array $data) {
+                Elector::factory($data['count'])
+                    ->for($livewire->getElection(), 'event')
+                    ->when($data['with_name'], fn (ElectorFactory $factory) => $factory->withName())
+                    ->when($data['with_email'], fn (ElectorFactory $factory) => $factory->withEmail())
+                    ->when($data['with_phone'], fn (ElectorFactory $factory) => $factory->withPhone())
+                    ->create();
+
+                $action->success();
+            })
+            ->form([
+                TextInput::make('count')
+                    ->default(10)
+                    ->integer()
+                    ->maxValue(99999)
+                    ->minValue(1)
+                    ->required(),
+
+                Toggle::make('with_name')
+                    ->default(true),
+
+                Toggle::make('with_email')
+                    ->default(true),
+
+                Toggle::make('with_phone')
+                    ->default(true),
+            ])
+            ->successNotificationTitle('Generated successfully');
     }
 
     public static function canAccessPage(Election $election): bool
