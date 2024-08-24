@@ -594,7 +594,7 @@ class Preference extends ElectionPage
                                         feeCurrency: $plan->currency,
                                         hideAddOnPrice: ! $this->canSave(),
                                     )
-                                    ->hidden(condition: ! $plan->hasFeature(feature: ElectionFeature::CandidateTeam) || true)
+                                    ->hidden(condition: ! $plan->hasFeature(feature: ElectionFeature::CandidateTeam))
                                     ->label(label: __('filament.user.election-resource.pages.preference.form.candidate_group.label')),
                             ]),
 

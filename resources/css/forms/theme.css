@@ -15,7 +15,7 @@
         @apply sticky top-0 z-10 rounded-t-xl border-b border-gray-200 bg-inherit py-2 text-center dark:border-white/10;
 
         .fi-section-header-heading {
-            @apply text-xl;
+            @apply text-2xl text-primary-600 dark:text-primary-400 md:text-3xl;
         }
 
         .fi-section-header-description {
@@ -32,7 +32,7 @@
             .fi-vote-picker-item {
                 @apply border has-[:checked]:bg-primary-200 dark:has-[:checked]:bg-primary-400;
 
-                .fi-fo-checkbox-list-option-label {
+                .fi-fo-checkbox-list-option-item {
                     @apply has-[.fi-checkbox-input:enabled]:cursor-pointer;
 
                     .fi-checkbox-input {
@@ -74,7 +74,7 @@
                     .fi-vote-picker-item {
                         @apply border-t border-black;
 
-                        .fi-fo-checkbox-list-option-label {
+                        .fi-fo-checkbox-list-option-item {
                             @apply text-black;
 
                             .checkbox-ctn {

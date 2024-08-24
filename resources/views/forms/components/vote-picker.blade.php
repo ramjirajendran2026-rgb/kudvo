@@ -1,3 +1,5 @@
+@use(Illuminate\View\ComponentAttributeBag)
+
 @php
     $gridDirection = $getGridDirection() ?? 'column';
     $isBulkToggleable = $isBulkToggleable();
@@ -22,8 +24,24 @@
 
         areAllCheckboxesChecked: false,
 
+        canShow: function (el) {
+            return (
+                (this.group === 'all' ||
+                    this.group === el.dataset.candidateGroup ||
+                    (this.group === 'independent' && ! el.dataset.candidateGroup)) &&
+                (el
+                    .querySelector('.fi-fo-checkbox-list-option-label')
+                    ?.innerText.toLowerCase()
+                    .includes(this.search.toLowerCase()) ||
+                    el
+                        .querySelector('.fi-fo-checkbox-list-option-description')
+                        ?.innerText.toLowerCase()
+                        .includes(this.search.toLowerCase()))
+            )
+        },
+
         checkboxListOptions: Array.from(
-            $root.querySelectorAll('.fi-fo-checkbox-list-option-label'),
+            $root.querySelectorAll('.fi-fo-checkbox-list-option-item'),
         ),
 
         search: '',
@@ -61,10 +79,10 @@
         },
 
         toggleAllCheckboxes: function () {
-            state = ! this.areAllCheckboxesChecked
+            let state = ! this.areAllCheckboxesChecked
 
             this.visibleCheckboxListOptions.forEach((checkboxLabel) => {
-                checkbox = checkboxLabel.querySelector('input[type=checkbox]')
+                let checkbox = checkboxLabel.querySelector('input[type=checkbox]')
 
                 checkbox.checked = state
                 checkbox.dispatchEvent(new Event('change'))
@@ -133,7 +151,7 @@
                     }
 
                     checkboxListOptions = Array.from(
-                        $root.querySelectorAll('.fi-fo-checkbox-list-option-label'),
+                        $root.querySelectorAll('.fi-fo-checkbox-list-option-item'),
                     )
 
                     updateVisibleCheckboxListOptions()
@@ -175,7 +193,7 @@
                                 type="button"
                                 @click="selectCandidateGroup('{{ $key }}')"
                                 @class([
-                                    'fi-badge flex items-center justify-center gap-x-1 rounded-md text-xs font-medium ring-1 ring-inset',
+                                    'flex items-center justify-center gap-x-1 rounded-md font-mono font-semibold ring-1 ring-inset',
                                     'min-w-[theme(spacing.6)] px-2 py-1',
                                 ])
                                 :class="{
@@ -260,17 +278,8 @@
                     @foreach ($options as $value => $label)
                         <div
                             wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.options.{{ $value }}"
-                            @if ($isSearchable)
-                                x-show="
-                                    $el
-                                        .querySelector('.fi-fo-checkbox-list-option-label')
-                                        ?.innerText.toLowerCase()
-                                        .includes(search.toLowerCase()) ||
-                                        $el
-                                            .querySelector('.fi-fo-checkbox-list-option-description')
-                                            ?.innerText.toLowerCase()
-                                            .includes(search.toLowerCase())
-                                "
+                            @if (! $isPreview)
+                                x-show="canShow($el.querySelector('.fi-fo-checkbox-list-option-item'))"
                             @endif
                             @class([
                                 'fi-vote-picker-item break-inside-avoid border-gray-200 dark:border-white/10',
@@ -280,7 +289,7 @@
                             <label
                                 data-candidate-group="{{ $getCandidateGroupId($value) }}"
                                 @class([
-                                    'fi-fo-checkbox-list-option-label group flex items-center gap-x-3 p-2 lg:p-4',
+                                    'fi-fo-checkbox-list-option-item group flex items-center gap-x-3 p-2 lg:p-4',
                                 ])
                             >
                                 @if (! $isUnopposed)
