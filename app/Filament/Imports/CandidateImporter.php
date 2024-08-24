@@ -24,7 +24,12 @@ class CandidateImporter extends Importer
                     resolveUsing: fn (string $state, array $options) => Position::where('name->' . $options['locale'], $state)
                         ->where('event_type', Election::class)
                         ->where('event_id', $options['election_id'])
-                        ->first(),
+                        ->firstOrCreate([
+                            'event_type' => Election::class,
+                            'event_id' => $options['election_id'],
+                            'name' => [$options['locale'] => $state],
+                            'quota' => 1,
+                        ]),
                 )
                 ->requiredMapping()
                 ->rules(rules: ['max:100']),

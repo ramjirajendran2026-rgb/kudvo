@@ -451,12 +451,13 @@ HTML,
     {
         return ImportAction::make(name: 'importCandidate')
             ->authorize(abilities: 'importCandidate')
-            ->chunkSize(size: 25)
+            ->chunkSize(size: 250)
             ->icon(icon: 'heroicon-m-arrow-up-tray')
-            ->importer(importer: match ($this->getElection()->preference?->candidate_group) {
-                true => GroupCandidateImporter::class,
-                default => CandidateImporter::class,
-            })
+            ->importer(
+                importer: $this->getElection()->preference?->candidate_group ?
+                GroupCandidateImporter::class :
+                CandidateImporter::class
+            )
             ->label(label: __('filament.user.election-resource.pages.ballot_setup.actions.import_candidate.label'))
             ->modalWidth(width: MaxWidth::ExtraLarge)
             ->options(options: [
