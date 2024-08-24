@@ -15,7 +15,7 @@
         @apply sticky top-0 z-10 rounded-t-xl border-b border-gray-200 bg-inherit py-2 text-center dark:border-white/10;
 
         .fi-section-header-heading {
-            @apply text-2xl text-primary-600 dark:text-primary-400 md:text-3xl;
+            @apply text-2xl text-primary-600 dark:text-primary-400 md:text-3xl print:text-inherit;
         }
 
         .fi-section-header-description {

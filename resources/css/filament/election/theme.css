@@ -8,6 +8,10 @@
     margin: 0;
 }
 
+img {
+    @apply print:grayscale;
+}
+
 .fi-simple-header {
     @apply gap-4;
 }
