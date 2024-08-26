@@ -16,6 +16,7 @@ class GenerateSitemap
 
         $localizedRouteNames = [
             'home',
+            'vote-now',
 
             'products.election.home',
             'products.election.how-it-works',

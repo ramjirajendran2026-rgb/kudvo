@@ -211,9 +211,18 @@
                 <div class="ms-auto hidden gap-x-4 lg:flex lg:items-center">
                     <x-locale-switch />
 
+                    <x-filament::button
+                        :href="route('vote-now')"
+                        color="success"
+                        tag="a"
+                    >
+                        {{ __('app.nav.vote_now.label') }}
+                    </x-filament::button>
+
                     @auth
                         <x-filament::button
-                            :href="route('filament.user.auth.login')"
+                            :href="filament()->getPanel('user')->getUrl()"
+                            rel="nofollow"
                             tag="a"
                         >
                             {{ __('app.nav.dashboard.label') }}
@@ -308,9 +317,19 @@
                     <div class="flex gap-x-4">
                         <x-locale-switch />
 
+                        <x-filament::button
+                            :href="route('vote-now')"
+                            color="success"
+                            tag="a"
+                            class="flex-1"
+                        >
+                            {{ __('app.nav.vote_now.label') }}
+                        </x-filament::button>
+
                         @auth
                             <x-filament::button
-                                :href="route('filament.user.auth.login')"
+                                :href="filament()->getPanel('user')->getUrl()"
+                                rel="nofollow"
                                 tag="a"
                                 class="flex-1"
                             >

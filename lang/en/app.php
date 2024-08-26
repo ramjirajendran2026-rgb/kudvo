@@ -180,6 +180,9 @@ return [
             ],
             'how_it_works' => 'How it Works',
         ],
+        'vote_now' => [
+            'label' => 'Vote Now',
+        ],
         'sign_in' => [
             'label' => 'Sign In',
         ],

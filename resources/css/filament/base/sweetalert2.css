@@ -1,6 +1,4 @@
 .swal2-icon {
-    @apply size-8;
-
     .swal2-icon-content {
         @apply text-2xl font-bold;
     }

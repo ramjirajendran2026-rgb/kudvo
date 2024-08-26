@@ -1,4 +1,5 @@
 import './bootstrap'
+import './swal.js'
 
 import AOS from 'aos'
 

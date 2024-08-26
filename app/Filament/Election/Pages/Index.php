@@ -10,6 +10,7 @@ use App\Filament\Base\Pages\Concerns\HasStateSection;
 use App\Filament\Election\Http\Middleware\EnsureStateIsAllowed;
 use App\Filament\Election\Pages\Concerns\InteractsWithElection;
 use App\Forms\Components\VotePicker;
+use App\Models\Election;
 use App\Models\Elector;
 use App\Models\Position;
 use App\Models\Vote;
@@ -17,6 +18,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Dompdf\Dompdf;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Http\Responses\Auth\Contracts\LogoutResponse;
 use Filament\Pages\Page;
@@ -27,6 +29,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Validation\Rules\Exists;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 
@@ -180,6 +183,41 @@ class Index extends Page
     protected function getStateActions(): array
     {
         return match ($this->getState()) {
+            ElectionPanelState::CommonLinkRestricted => [
+                Action::make('request_voting_link')
+                    ->requiresConfirmation()
+                    ->modalDescription('Voting link will be sent to only non-voted members only. Are you sure you would like to do this?')
+                    ->action(function (array $data) {
+                        $elector = $this->getElection()
+                            ->electors()
+                            ->firstWhere('membership_number', $data['membership_number']);
+
+                        if (! $elector->ballot?->isVoted()) {
+                            $elector->sendBallotLink();
+                        }
+
+                        $this->js(
+                            <<<'JS'
+Swal.fire({
+    title: 'Request submitted',
+    text: 'An unique voting link has been sent to your registered Email address / Phone number.',
+    icon: 'success'
+})
+JS
+                        );
+                    })
+                    ->form([
+                        TextInput::make('membership_number')
+                            ->exists(
+                                'electors',
+                                'membership_number',
+                                fn (Exists $rule) => $rule->where('event_type', Election::class)
+                                    ->where('event_id', $this->getElection()->getKey())
+                            )
+                            ->placeholder('Enter your membership number')
+                            ->required(),
+                    ]),
+            ],
             ElectionPanelState::Voted => [
                 Action::make(name: 'downloadMyBallot')
                     ->action(

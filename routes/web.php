@@ -8,6 +8,7 @@ use App\Livewire\Pages\PrivacyPolicy;
 use App\Livewire\Pages\Products\Election\Home as ElectionHome;
 use App\Livewire\Pages\Products\Election\HowItWorks;
 use App\Livewire\Pages\Products\Phygital\Home as PhygitalHome;
+use App\Livewire\Pages\VoteNow;
 use App\Livewire\Pages\Wiki\Index as WikiIndex;
 use App\Livewire\Pages\Wiki\Show as WikiDetails;
 use App\Models\Election;
@@ -51,6 +52,9 @@ Route::group(
 
                 Route::get(uri: '/', action: Home::class)
                     ->name(name: 'home');
+
+                Route::get(uri: 'vote-now', action: VoteNow::class)
+                    ->name(name: 'vote-now');
 
                 Route::prefix('products')
                     ->name('products.')
