@@ -5,6 +5,7 @@ use App\Http\Controllers\AwsSnsController;
 use App\Http\Controllers\CheckoutController;
 use App\Livewire\Pages\Home;
 use App\Livewire\Pages\PrivacyPolicy;
+use App\Livewire\Pages\Products\Election\BallotDemo;
 use App\Livewire\Pages\Products\Election\Home as ElectionHome;
 use App\Livewire\Pages\Products\Election\HowItWorks;
 use App\Livewire\Pages\Products\Phygital\Home as PhygitalHome;
@@ -67,6 +68,9 @@ Route::group(
 
                                 Route::get(uri: 'how-it-works', action: HowItWorks::class)
                                     ->name(name: 'how-it-works');
+
+                                Route::get(uri: 'ballot-demo', action: BallotDemo::class)
+                                    ->name(name: 'ballot-demo');
                             });
 
                         Route::get(uri: 'phygital-voting', action: PhygitalHome::class)

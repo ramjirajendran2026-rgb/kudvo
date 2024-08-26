@@ -187,8 +187,8 @@ return [
         'cta_section' => [
             'title' => 'Ready to take your election to the next level?',
             'description' => 'Try Kudvo and see if it works for your election.',
-            'cta_label' => 'Sign Up',
-            'cta_url' => route('filament.user.auth.register'),
+            'cta_label' => 'Try Demo Voting',
+            'cta_url' => route('products.election.ballot-demo'),
         ],
     ],
 ];

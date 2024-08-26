@@ -244,6 +244,8 @@ return [
             'prefix' => 'EL',
             'length' => 8,
         ],
+
+        'demo_election_code' => env('APP_DEMO_ELECTION_CODE'),
     ],
 
 ];

@@ -187,8 +187,8 @@ return [
         'cta_section' => [
             'title' => 'क्या आप अपने चुनाव को अगले स्तर पर ले जाने के लिए तैयार हैं?',
             'description' => 'कुडवो को आजमाएं और देखें कि यह आपके चुनाव के लिए काम करता है।',
-            'cta_label' => 'साइन अप करें',
-            'cta_url' => route('filament.user.auth.register'),
+            'cta_label' => 'डेमो वोटिंग का प्रयास करें',
+            'cta_url' => route('products.election.ballot-demo'),
         ],
     ],
 ];
