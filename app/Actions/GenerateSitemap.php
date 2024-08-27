@@ -20,6 +20,7 @@ class GenerateSitemap
 
             'products.election.home',
             'products.election.how-it-works',
+            'products.election.ballot-demo',
 
             'products.phygital.home',
         ];
