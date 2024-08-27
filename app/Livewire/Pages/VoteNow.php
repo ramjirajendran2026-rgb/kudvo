@@ -93,12 +93,7 @@ class VoteNow extends Component implements HasForms
                         Select::make('organisation_id')
                             ->getOptionLabelUsing(fn ($value): ?string => Organisation::find($value)?->name)
                             ->getSearchResultsUsing(
-                                fn (string $search): array => Organisation::query()
-                                    ->where(
-                                        'name->' . app()->currentLocale(),
-                                        'like',
-                                        '%' . $search . '%'
-                                    )
+                                fn (string $search): array => Organisation::search($search)
                                     ->pluck('name', 'id')
                                     ->toArray()
                             )

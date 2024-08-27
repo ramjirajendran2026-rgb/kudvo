@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Support\Facades\FilamentColor;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -67,6 +68,19 @@ class Organisation extends Model implements HasAvatar, HasMedia
             if (blank($organisation->code)) {
                 $organisation->code = static::generateCode();
             }
+        });
+    }
+
+    public function scopeSearch(Builder $query, string $value, ?string $locale = null): Builder
+    {
+        $locale ??= app()->currentLocale();
+
+        return $query->where(function (Builder $query) use ($value, $locale) {
+            $query->where('code', $value)
+                ->orWhereRaw(
+                    'lower(json_unquote(json_extract(`name`, \'$."' . $locale . '"\'))) like lower(?)',
+                    ['%' . $value . '%'],
+                );
         });
     }
 
