@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Arr;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
+use Spatie\MediaLibrary\MediaCollections\HtmlableMedia;
 
 class VotePicker extends CheckboxList
 {
@@ -41,6 +42,10 @@ class VotePicker extends CheckboxList
     protected bool | Closure $candidateGroup = false;
 
     protected bool | Closure $unopposed = false;
+
+    protected string | array | Closure $photoClasses = [];
+
+    protected string | array | Closure $symbolClasses = [];
 
     public static function makeFor(Position $position): static
     {
@@ -132,6 +137,30 @@ class VotePicker extends CheckboxList
         return $this->evaluate($this->sort);
     }
 
+    public function photoClasses(string | array | Closure $classes): static
+    {
+        $this->photoClasses = $classes;
+
+        return $this;
+    }
+
+    public function getPhotoClasses(): string | array
+    {
+        return $this->evaluate(value: $this->photoClasses);
+    }
+
+    public function symbolClasses(string | array | Closure $classes): static
+    {
+        $this->symbolClasses = $classes;
+
+        return $this;
+    }
+
+    public function getSymbolClasses(): string | array
+    {
+        return $this->evaluate(value: $this->symbolClasses);
+    }
+
     public function getCandidates()
     {
         return $this->position->getOrderedCandidates($this->getSort());
@@ -219,6 +248,14 @@ class VotePicker extends CheckboxList
         $this->unopposed(condition: $position->isUnopposed());
 
         $this->hidden(condition: fn (self $component) => $component->isPreview() && $component->isUnopposed());
+
+        $this->photoClasses([
+            'size-8 rounded-full object-cover object-center md:size-12 lg:size-16 print:hidden',
+        ]);
+
+        $this->symbolClasses([
+            'img-symbol size-full rounded absolute group-has-[:checked]:!bg-success-600 print:group-has-[:checked]:!bg-transparent',
+        ]);
     }
 
     public function description(string | Htmlable | Closure | null $description = null): static
@@ -238,14 +275,43 @@ class VotePicker extends CheckboxList
         return $this->position->candidates->firstWhere('uuid', $uuid);
     }
 
+    public function getPhoto(string $uuid): ?HtmlableMedia
+    {
+        $candidate = $this->getCandidate(uuid: $uuid);
+
+        return $candidate
+            ->getFirstMedia(Candidate::MEDIA_COLLECTION_PHOTO)
+            ?->img(extraAttributes: [
+                'alt' => $candidate->display_name . '\'s photo',
+                'class' => $this->getPhotoClasses(),
+            ]);
+    }
+
     public function getPhotoUrl(string $uuid): ?string
     {
         return $this->getCandidate(uuid: $uuid)->photo_url;
     }
 
+    public function getSymbol(string $uuid): ?HtmlableMedia
+    {
+        $candidate = $this->getCandidate(uuid: $uuid);
+
+        return $candidate
+            ->getFirstMedia(Candidate::MEDIA_COLLECTION_SYMBOL)
+            ?->img(extraAttributes: [
+                'alt' => $candidate->display_name . '\'s symbol',
+                'class' => $this->getSymbolClasses(),
+            ]);
+    }
+
     public function getSymbolUrl(string $uuid): ?string
     {
         return $this->getCandidate(uuid: $uuid)->symbol_url;
+    }
+
+    public function getDisplayOrder(string $uuid): int
+    {
+        return $this->getCandidate(uuid: $uuid)->sort;
     }
 
     public function getDescriptionHint(): string

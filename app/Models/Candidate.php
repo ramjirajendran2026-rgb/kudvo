@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Cache;
+use LasseRafn\InitialAvatarGenerator\InitialAvatar;
 use Spatie\Color\Rgb;
 use Spatie\EloquentSortable\Sortable;
 use Spatie\EloquentSortable\SortableTrait;
@@ -91,12 +93,19 @@ class Candidate extends Model implements HasAvatar, HasMedia, HasName, Sortable
     {
         return Attribute::make(
             get: fn ($value, array $attributes) => $this->getFirstMediaUrl(collectionName: static::MEDIA_COLLECTION_PHOTO) ?:
-                'https://ui-avatars.com/api/?name=' .
-                $this->full_name .
-                '&color=FFFFFF&background=' .
-                str(Rgb::fromString('rgb(' . FilamentColor::getColors()['primary'][800] . ')')->toHex())
-                    ->after('#') .
-                '&uuid=' . $this->uuid,
+                Cache::rememberForever(
+                    'candidate-photo-' . str($this->full_name)->squish()->kebab()->toString(),
+                    fn () => 'data:image/svg+xml;base64,' .
+                        base64_encode(
+                            app(InitialAvatar::class)
+                                ->background(Rgb::fromString('rgb(' . FilamentColor::getColors()['info'][600] . ')')->toHex())
+                                ->name($this->full_name)
+                                ->color('#FFFFFF')
+                                ->rounded()
+                                ->generateSvg()
+                                ->toXMLString()
+                        )
+                ),
         );
     }
 
@@ -104,11 +113,19 @@ class Candidate extends Model implements HasAvatar, HasMedia, HasName, Sortable
     {
         return Attribute::make(
             get: fn ($value, array $attributes) => $this->getFirstMediaUrl(collectionName: static::MEDIA_COLLECTION_SYMBOL) ?:
-                'https://ui-avatars.com/api/?name=' .
-                $this->sort .
-                '&background=FFFFFF00&color=FFFFFF' .
-                '&font-size=0.8&bold=true' .
-                '&uuid=' . $this->uuid,
+                Cache::rememberForever(
+                    'candidate-symbol-' . str($this->sort)->squish()->kebab()->toString(),
+                    fn () => 'data:image/svg+xml;base64,' .
+                        base64_encode(
+                            app(InitialAvatar::class)
+                                ->background('#00000000')
+                                ->color('#FFFFFF')
+                                ->fontSize(0.7)
+                                ->name($this->sort)
+                                ->generateSvg()
+                                ->toXMLString()
+                        )
+                ),
         );
     }
 
@@ -164,5 +181,18 @@ class Candidate extends Model implements HasAvatar, HasMedia, HasName, Sortable
     public function getFallbackLocale()
     {
         return $this->locales()[0] ?? config('app.locale');
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this
+            ->addMediaCollection(name: static::MEDIA_COLLECTION_PHOTO)
+            ->singleFile()
+            ->withResponsiveImages();
+
+        $this
+            ->addMediaCollection(name: static::MEDIA_COLLECTION_SYMBOL)
+            ->singleFile()
+            ->withResponsiveImages();
     }
 }

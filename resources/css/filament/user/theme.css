@@ -55,3 +55,9 @@
         }
     }
 }
+
+.candidate-repeatable-entry {
+    .fi-in-split {
+        @apply gap-2 sm:gap-4 md:gap-6;
+    }
+}

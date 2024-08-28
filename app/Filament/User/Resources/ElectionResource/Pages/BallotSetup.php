@@ -116,20 +116,20 @@ class BallotSetup extends ElectionPage
                                             SpatieMediaLibraryImageEntry::make(name: 'symbol')
                                                 ->collection(collection: Candidate::MEDIA_COLLECTION_SYMBOL)
                                                 ->defaultImageUrl(url: fn (Candidate $record): ?string => $record->symbol_url)
-                                                ->extraImgAttributes(attributes: ['class' => 'rounded-xl bg-black aspect-square max-w-12 md:!max-w-20'])
+                                                ->extraImgAttributes(attributes: ['class' => 'rounded aspect-square size-8 md:size-12 lg:size-16'])
                                                 ->grow(condition: false)
+                                                ->size('')
                                                 ->hiddenLabel()
-                                                ->size(size: 'auto')
                                                 ->visible(condition: $this->getElection()->preference?->candidate_symbol),
 
                                             SpatieMediaLibraryImageEntry::make(name: 'photo')
                                                 ->circular()
                                                 ->collection(collection: Candidate::MEDIA_COLLECTION_PHOTO)
                                                 ->defaultImageUrl(url: fn (Candidate $record): ?string => $record->photo_url)
-                                                ->extraImgAttributes(['class' => 'aspect-square max-w-12 md:!max-w-20'])
+                                                ->extraImgAttributes(['class' => 'aspect-square size-8 md:size-12 lg:size-16'])
                                                 ->grow(condition: false)
+                                                ->height('')
                                                 ->hiddenLabel()
-                                                ->size(size: 'auto')
                                                 ->visible(condition: $this->getElection()->preference?->candidate_photo),
 
                                             TextEntry::make(name: 'display_name')
@@ -144,7 +144,7 @@ class BallotSetup extends ElectionPage
                                                         ->implode(value: ' • ')
                                                 )
                                                 ->hiddenLabel()
-                                                ->size(size: TextEntry\TextEntrySize::Large)
+                                                ->size(size: TextEntry\TextEntrySize::Medium)
                                                 ->suffixActions(actions: [
                                                     $this->getDisableCandidateAction(),
 
@@ -455,8 +455,8 @@ HTML,
             ->icon(icon: 'heroicon-m-arrow-up-tray')
             ->importer(
                 importer: $this->getElection()->preference?->candidate_group ?
-                GroupCandidateImporter::class :
-                CandidateImporter::class
+                    GroupCandidateImporter::class :
+                    CandidateImporter::class
             )
             ->label(label: __('filament.user.election-resource.pages.ballot_setup.actions.import_candidate.label'))
             ->modalWidth(width: MaxWidth::ExtraLarge)
