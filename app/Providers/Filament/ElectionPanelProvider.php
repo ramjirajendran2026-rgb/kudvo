@@ -14,6 +14,7 @@ use App\Filament\Election\Http\Middleware\IdentifyBoothToken;
 use App\Filament\Election\Http\Middleware\IdentifyPanelState;
 use App\Filament\Election\Pages\Auth\Login;
 use App\Filament\Election\Pages\Index;
+use App\Filament\LocalAvatarProvider;
 use App\Models\Elector;
 use App\Settings\GoogleTagManagerSettings;
 use Filament\Facades\Filament;
@@ -108,6 +109,7 @@ class ElectionPanelProvider extends PanelProvider
                 'resources/css/filament/election/theme.css',
                 'resources/js/filament/election/scripts.js',
             ])
+            ->defaultAvatarProvider(LocalAvatarProvider::class)
             ->navigation(builder: false)
             ->databaseNotifications(condition: false)
             ->breadcrumbs(condition: false)

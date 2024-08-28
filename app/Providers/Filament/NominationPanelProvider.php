@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Facades\Kudvo;
 use App\Filament\Base\Http\Middleware\IdentifyNomination;
+use App\Filament\LocalAvatarProvider;
 use App\Filament\Nomination\Http\Middleware\EnsureMfaCompleted;
 use App\Filament\Nomination\NominationPanel;
 use App\Filament\Nomination\Pages\Auth\Login;
@@ -60,6 +61,7 @@ class NominationPanelProvider extends PanelProvider
             ])
             ->font(family: 'Poppins')
             ->viteTheme(theme: 'resources/css/filament/nomination/theme.css')
+            ->defaultAvatarProvider(LocalAvatarProvider::class)
             ->navigation(builder: false)
             ->databaseNotifications(condition: false)
             ->breadcrumbs(condition: false)
