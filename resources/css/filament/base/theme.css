@@ -1,5 +1,6 @@
 @import '/vendor/filament/filament/resources/css/theme.css';
 @import '../../forms/theme.css';
+@import '../../poppins-font.css';
 
 /* Hide the spinners for all number input fields */
 input[type='number']::-webkit-outer-spin-button,

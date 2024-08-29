@@ -18,6 +18,7 @@ use App\Filament\LocalAvatarProvider;
 use App\Models\Elector;
 use App\Settings\GoogleTagManagerSettings;
 use Filament\Facades\Filament;
+use Filament\FontProviders\LocalFontProvider;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -104,7 +105,10 @@ class ElectionPanelProvider extends PanelProvider
             ->colors(colors: [
                 'primary' => Color::Green,
             ])
-            ->font(family: 'Poppins')
+            ->font(
+                family: 'Poppins',
+                provider: LocalFontProvider::class,
+            )
             ->viteTheme(theme: [
                 'resources/css/filament/election/theme.css',
                 'resources/js/filament/election/scripts.js',

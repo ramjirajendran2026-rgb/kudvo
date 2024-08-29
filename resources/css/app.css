@@ -1,5 +1,6 @@
 @import 'aos/dist/aos.css';
 @import 'filament/base/sweetalert2.css';
+@import 'poppins-font.css';
 
 @tailwind base;
 @tailwind components;

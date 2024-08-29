@@ -1,6 +1,6 @@
 @php
     use App\Settings\GoogleTagManagerSettings;
-    use Filament\FontProviders\BunnyFontProvider;
+    use Filament\FontProviders\LocalFontProvider;
     use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 
     $googleTagManager = app(GoogleTagManagerSettings::class);
@@ -15,7 +15,9 @@
         <meta name="csrf-token" content="{{ csrf_token() }}" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-        {!! $googleTagManager->getHeadScript() !!}
+        @if (app()->isProduction())
+            {!! $googleTagManager->getHeadScript() !!}
+        @endif
 
         {!! seo($seoData ?? null) !!}
 
@@ -46,7 +48,7 @@
         @filamentStyles
         @vite('resources/css/app.css')
 
-        {{ app(BunnyFontProvider::class)->getHtml(family: 'Poppins') }}
+        {{ app(LocalFontProvider::class)->getHtml(family: 'Poppins') }}
 
         @stack('styles')
     </head>
