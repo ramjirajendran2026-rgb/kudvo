@@ -184,12 +184,10 @@
     </section>
 
     <section id="features" class="container pt-16">
-        <h2
-            class="underline-offset-3 text-center text-2xl font-semibold text-black underline decoration-primary-600 decoration-8 md:text-4xl"
-        >
+        <h2 class="text-center text-2xl font-semibold text-black md:text-4xl">
             {{ __('pages/home.content.features.title') }}
         </h2>
-        <div class="grid gap-4 md:grid-cols-3 md:gap-8">
+        <div class="mt-5 grid gap-4 md:grid-cols-3 md:gap-8">
             @foreach ($featureItems as $feature)
                 <x-home.feature-card :data="$feature" />
             @endforeach

@@ -1,51 +1,67 @@
 {
+  "_swal-CRPL9X4o.js": {
+    "file": "assets/swal-CRPL9X4o.js",
+    "name": "swal",
+    "imports": [
+      "_sweetalert2.all-NiTm4cAv.js"
+    ]
+  },
+  "_sweetalert2.all-NiTm4cAv.js": {
+    "file": "assets/sweetalert2.all-NiTm4cAv.js",
+    "name": "sweetalert2.all"
+  },
   "resources/css/app.css": {
-    "file": "assets/app-C04QG_yR.css",
+    "file": "assets/app-BzRReVJF.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
   "resources/css/filament/admin/theme.css": {
-    "file": "assets/theme-Cz8U2hyx.css",
+    "file": "assets/theme-B2cSFX8K.css",
     "src": "resources/css/filament/admin/theme.css",
     "isEntry": true
   },
   "resources/css/filament/election/theme.css": {
-    "file": "assets/theme-96J-hel_.css",
+    "file": "assets/theme-ClM_UXpD.css",
     "src": "resources/css/filament/election/theme.css",
     "isEntry": true
   },
   "resources/css/filament/nomination/theme.css": {
-    "file": "assets/theme-BW_ST5D1.css",
+    "file": "assets/theme-Bz8OOgFP.css",
     "src": "resources/css/filament/nomination/theme.css",
     "isEntry": true
   },
   "resources/css/filament/user/theme.css": {
-    "file": "assets/theme-CHODj9m9.css",
+    "file": "assets/theme-DSFWMZMg.css",
     "src": "resources/css/filament/user/theme.css",
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-r2AxIFS6.js",
+    "file": "assets/app-B8p-JzvJ.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
     "imports": [
-      "resources/js/swal.js"
+      "_swal-CRPL9X4o.js",
+      "_sweetalert2.all-NiTm4cAv.js"
     ]
   },
   "resources/js/filament/election/scripts.js": {
-    "file": "assets/scripts-BDhunPYC.js",
+    "file": "assets/scripts-Dz1KwWQI.js",
     "name": "scripts",
     "src": "resources/js/filament/election/scripts.js",
     "isEntry": true,
     "imports": [
-      "resources/js/swal.js"
+      "_swal-CRPL9X4o.js",
+      "_sweetalert2.all-NiTm4cAv.js"
     ]
   },
   "resources/js/swal.js": {
-    "file": "assets/swal-C5aiYeaI.js",
+    "file": "assets/swal-BaCswk76.js",
     "name": "swal",
     "src": "resources/js/swal.js",
-    "isEntry": true
+    "isEntry": true,
+    "imports": [
+      "_sweetalert2.all-NiTm4cAv.js"
+    ]
   }
 }
