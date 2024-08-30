@@ -18,7 +18,6 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Livewire\Attributes\Computed;
-use Livewire\Attributes\Url;
 use Livewire\Component;
 use RalphJSmit\Laravel\SEO\Schema\BreadcrumbListSchema;
 use RalphJSmit\Laravel\SEO\SchemaCollection;
@@ -30,26 +29,28 @@ class Index extends Component implements HasForms, HasTable
     use InteractsWithForms;
     use InteractsWithTable;
 
-    #[Url]
-    public ?string $activeCategory = null;
+    public ?WikiCategory $category = null;
 
-    #[Url]
-    public ?string $activeTag = null;
+    public ?WikiTag $tag = null;
 
     public function render(): View
     {
         return view('livewire.pages.wiki.index')
             ->layoutData([
-                'seoData' => new SEOData(
-                    title: 'Wiki Articles',
-                    schema: SchemaCollection::make()
-                        ->addBreadcrumbs(
-                            fn (BreadcrumbListSchema $schema, SEOData $data): BreadcrumbListSchema => $schema
-                                ->prependBreadcrumbs([
-                                    'Home' => route('home'),
-                                ])
+                'seoData' => $this->category ??
+                        $this->tag ??
+                        new SEOData(
+                            title: 'Kudvo Wiki: Comprehensive Guides on Secure Online Voting & Electoral Systems',
+                            description: 'Explore the Kudvo Wiki for expert insights on online voting systems, secure election technologies, and voter engagement strategies. Learn about electoral processes across the globe.',
+                            enableTitleSuffix: false,
+                            schema: SchemaCollection::make()
+                                ->addBreadcrumbs(
+                                    fn (BreadcrumbListSchema $schema, SEOData $data): BreadcrumbListSchema => $schema
+                                        ->prependBreadcrumbs([
+                                            'Home' => route('home'),
+                                        ])
+                                ),
                         ),
-                ),
             ]);
     }
 
@@ -63,6 +64,19 @@ class Index extends Component implements HasForms, HasTable
     public function latestPage(): ?WikiPage
     {
         return WikiPage::with(['category', 'tags'])
+            ->when(
+                $this->category,
+                fn (Builder $query, WikiCategory $value) => $query
+                    ->whereBelongsTo($value, 'category')
+            )
+            ->when(
+                $this->tag,
+                fn (Builder $query, WikiTag $value) => $query
+                    ->whereHas(
+                        'tags',
+                        fn (Builder $query) => $query->whereKey($value)
+                    )
+            )
             ->latest()
             ->first();
     }
@@ -91,8 +105,8 @@ class Index extends Component implements HasForms, HasTable
     public function updated(string $property): void
     {
         match ($property) {
-            'activeCategory',
-            'activeTag' => $this->resetPage(),
+            'category',
+            'tag' => $this->resetPage(),
             default => null,
         };
     }
@@ -133,16 +147,16 @@ class Index extends Component implements HasForms, HasTable
             ->modifyQueryUsing(
                 fn (Builder $query) => $query
                     ->when(
-                        $this->activeCategory,
-                        fn (Builder $query, string $value) => $query
-                            ->whereBelongsTo($this->categories->firstWhere('slug', $value), 'category')
+                        $this->category,
+                        fn (Builder $query, WikiCategory $value) => $query
+                            ->whereBelongsTo($value, 'category')
                     )
                     ->when(
-                        $this->activeTag,
-                        fn (Builder $query, string $value) => $query
+                        $this->tag,
+                        fn (Builder $query, WikiTag $value) => $query
                             ->whereHas(
                                 'tags',
-                                fn (Builder $query) => $query->where('slug', $value)
+                                fn (Builder $query) => $query->whereKey($value)
                             )
                     )
             )

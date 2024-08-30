@@ -209,9 +209,8 @@
                     @foreach($page->tags as $tag)
                         <x-filament::badge
                             color="gray"
+                            :href="route('wiki.tags.show', $tag)"
                             tag="a"
-                            :href="route('wiki.index', ['activeTag' => $tag->slug])"
-                            class="cursor-pointer"
                         >
                             {{ $tag->name }}
                         </x-filament::badge>
@@ -229,7 +228,7 @@
                         <div class="flex flex-col divide-y">
                             @foreach($this->categories as $category)
                                 <a
-                                    href="{{ route('wiki.index', ['activeCategory' => $category->slug]) }}"
+                                    href="{{ route('wiki.categories.show', $category) }}"
                                     class="text-md font-medium px-6 py-2 hover:bg-primary-50 last:rounded-b-xl cursor-pointer"
                                 >
                                     {{ $category->name }}
@@ -249,9 +248,8 @@
                             @foreach($this->tags as $tag)
                                 <x-filament::badge
                                     color="gray"
+                                    :href="route('wiki.tags.show', $tag)"
                                     tag="a"
-                                    :href="route('wiki.index', ['activeTag' => $tag->slug])"
-                                    class="cursor-pointer"
                                 >
                                     {{ $tag->name }}
                                 </x-filament::badge>

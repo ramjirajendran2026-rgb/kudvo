@@ -165,29 +165,30 @@
                         class="bg-white shadow-sm ring-1 rounded-xl ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
                         <h3 class="text-lg font-semibold leading-6 text-primary-600 px-6 py-4 border-b flex justify-between items-center">
                             <span>Categories</span>
-                            @if($activeCategory)
-                                <span x-on:click="$wire.set('activeCategory', null)"
-                                      class="text-xs text-gray-900 cursor-pointer hover:underline"
-                                      title="Clear category filter"
-                                      role="button"
-                                      aria-label="Clear category filter"
-                                      tabindex="0"
+                            @if($category)
+                                <a
+                                    href="{{ route('wiki.index') }}"
+                                    class="text-xs text-gray-900 cursor-pointer hover:underline"
+                                    title="Clear category filter"
+                                    role="button"
+                                    aria-label="Clear category filter"
+                                    tabindex="0"
                                 >
                                     Clear
-                                </span>
+                                </a>
                             @endif
                         </h3>
                         <div class="flex flex-col divide-y">
-                            @foreach($this->categories as $category)
-                                <span
-                                    x-on:click="$wire.set('activeCategory', @js($category->slug))"
-                                    class="text-md font-medium px-6 py-2 hover:bg-primary-50 last:rounded-b-xl cursor-pointer"
-                                    x-bind:class="{
-                                    'bg-primary-50 text-primary-600': @js($activeCategory) === @js($category->slug)
-                                }"
+                            @foreach($this->categories as $categoryItem)
+                                <a
+                                    href="{{ route('wiki.categories.show', $categoryItem) }}"
+                                    @class([
+                                        'text-md cursor-pointer px-6 py-2 font-medium last:rounded-b-xl hover:bg-primary-50',
+                                        'bg-primary-50 text-primary-600' => $categoryItem->is($category)
+                                    ])
                                 >
-                                {{ $category->name }}
-                            </span>
+                                {{ $categoryItem->name }}
+                            </a>
                             @endforeach
                         </div>
                     </section>
@@ -198,26 +199,27 @@
                         class="bg-white shadow-sm ring-1 rounded-xl ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
                         <h3 class="text-lg font-semibold leading-6 text-primary-600 dark:text-white px-6 py-4 border-b flex justify-between items-center">
                             <span>Tags</span>
-                            @if($activeTag)
-                                <span x-on:click="$wire.set('activeTag', null)"
-                                      class="text-xs text-gray-900 cursor-pointer hover:underline"
-                                      title="Clear tag filter"
-                                      role="button"
-                                      aria-label="Clear tag filter"
-                                      tabindex="0"
+                            @if($tag)
+                                <a
+                                    href="{{ route('wiki.index') }}"
+                                    class="text-xs text-gray-900 cursor-pointer hover:underline"
+                                    title="Clear tag filter"
+                                    role="button"
+                                    aria-label="Clear tag filter"
+                                    tabindex="0"
                                 >
                                 Clear
-                            </span>
+                            </a>
                             @endif
                         </h3>
                         <div class="flex flex-wrap gap-2 py-4 px-6">
-                            @foreach($this->tags as $tag)
+                            @foreach($this->tags as $tagItem)
                                 <x-filament::badge
-                                    :color="$activeTag == $tag->slug ? 'primary' : 'gray'"
-                                    x-on:click="$wire.set('activeTag', {{ \Illuminate\Support\Js::from($tag->slug) }})"
-                                    class="cursor-pointer"
+                                    :color="$tagItem->is($tag) ? 'primary' : 'gray'"
+                                    :href="route('wiki.tags.show', $tagItem)"
+                                    tag="a"
                                 >
-                                    {{ $tag->name }}
+                                    {{ $tagItem->name }}
                                 </x-filament::badge>
                             @endforeach
                         </div>
