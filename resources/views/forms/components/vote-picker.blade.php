@@ -12,6 +12,9 @@
     $maxItems = $getMaxItems();
     $isPreview = $isPreview();
     $isUnopposed = $isUnopposed();
+
+    $photoClasses = $getPhotoClasses();
+    $symbolClasses = $getSymbolClasses();
 @endphp
 
 <div
@@ -336,21 +339,28 @@
                                                 fill="#000000"
                                             />
                                         </svg>
-
-                                        <img
-                                            src="{{ $getSymbolUrl($value) }}"
-                                            alt="{{ $label }}'s symbol"
-                                            class="img-symbol absolute group-has-[:checked]:!bg-primary-600 print:group-has-[:checked]:!bg-transparent"
-                                        />
+                                        @if ($symbol = $getSymbol($value))
+                                            {{ $symbol }}
+                                        @else
+                                            <img
+                                                src="{{ $getSymbolUrl($value) }}"
+                                                alt="{{ $label }}'s symbol"
+                                                @class($symbolClasses)
+                                            />
+                                        @endif
                                     </div>
                                 @endif
 
                                 @if ($hasPhoto())
-                                    <img
-                                        src="{{ $getPhotoUrl($value) }}"
-                                        alt="{{ $label }}'s photo"
-                                        class="size-8 max-w-none rounded-full object-cover object-center md:size-12 lg:size-16 print:hidden"
-                                    />
+                                    @if ($photo = $getPhoto($value))
+                                        {{ $photo }}
+                                    @else
+                                        <img
+                                            src="{{ $getPhotoUrl($value) }}"
+                                            alt="{{ $label }}'s photo"
+                                            @class($photoClasses)
+                                        />
+                                    @endif
                                 @endif
 
                                 <div class="grid flex-1 text-sm leading-6">

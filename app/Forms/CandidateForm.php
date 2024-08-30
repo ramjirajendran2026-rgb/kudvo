@@ -182,7 +182,7 @@ readonly class CandidateForm
             ->extraAttributes(attributes: ['class' => 'candidate-photo'])
             ->imageEditor()
             ->label(label: __('filament.user.candidate-resource.form.photo.label'))
-            ->maxSize(size: 300)
+            ->maxSize(size: 1024)
             ->panelAspectRatio(ratio: '1:1')
             ->panelLayout(layout: 'compact')
             ->placeholder(placeholder: __('filament.user.candidate-resource.form.photo.placeholder'));
@@ -206,7 +206,7 @@ readonly class CandidateForm
             ->extraAttributes(attributes: ['class' => 'candidate-symbol'])
             ->imageEditor()
             ->label(label: __('filament.user.candidate-resource.form.symbol.label'))
-            ->maxSize(size: 300)
+            ->maxSize(size: 1024)
             ->panelAspectRatio(ratio: '1:1')
             ->panelLayout(layout: 'compact')
             ->placeholder(placeholder: __('filament.user.candidate-resource.form.symbol.placeholder'));

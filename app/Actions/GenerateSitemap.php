@@ -2,7 +2,9 @@
 
 namespace App\Actions;
 
+use App\Models\WikiCategory;
 use App\Models\WikiPage;
+use App\Models\WikiTag;
 use Illuminate\Database\Eloquent\Collection;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 use Spatie\Sitemap\Sitemap;
@@ -41,6 +43,17 @@ class GenerateSitemap
         $sitemap->add(route('privacy-policy'));
 
         $sitemap->add(route('wiki.index'));
+
+        WikiCategory::query()
+            ->chunkById(50, function (Collection $pages) use ($sitemap) {
+                $sitemap->add($pages);
+            });
+
+        WikiTag::query()
+            ->chunkById(50, function (Collection $pages) use ($sitemap) {
+                $sitemap->add($pages);
+            });
+
         WikiPage::query()
             ->chunkById(50, function (Collection $pages) use ($sitemap) {
                 $sitemap->add($pages);

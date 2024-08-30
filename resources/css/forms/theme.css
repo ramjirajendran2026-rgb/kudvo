@@ -27,7 +27,7 @@
         @apply border-none;
 
         .fi-section-content {
-            @apply p-4;
+            @apply p-0 sm:p-4;
 
             .fi-vote-picker-item {
                 @apply border has-[:checked]:bg-primary-200 dark:has-[:checked]:bg-primary-400;
@@ -37,10 +37,6 @@
 
                     .fi-checkbox-input {
                         @apply h-4 w-4 rotate-45 transform ring-primary-600 checked:bg-none hover:ring-primary-600 disabled:checked:text-primary-400 dark:ring-primary-500 dark:hover:ring-primary-500 dark:disabled:checked:bg-primary-600;
-                    }
-
-                    .img-symbol {
-                        @apply size-full rounded bg-info-600 object-cover object-center;
                     }
                 }
             }

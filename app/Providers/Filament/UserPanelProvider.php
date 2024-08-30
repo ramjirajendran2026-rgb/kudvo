@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\LocalAvatarProvider;
 use App\Filament\User\Http\Controllers\ElectionUserInvitationController;
 use App\Filament\User\Pages\Auth\EditProfile;
 use App\Filament\User\Pages\Auth\EmailVerification\EmailVerificationPrompt;
@@ -87,6 +88,7 @@ class UserPanelProvider extends PanelProvider
                 'resources/css/filament/user/theme.css',
                 'resources/js/swal.js',
             ])
+            ->defaultAvatarProvider(LocalAvatarProvider::class)
             ->databaseNotifications()
             ->databaseNotificationsPolling(interval: null)
             ->globalSearch(provider: false)

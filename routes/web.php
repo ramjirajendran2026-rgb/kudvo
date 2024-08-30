@@ -78,11 +78,21 @@ Route::group(
                     });
             });
 
-        Route::get('wiki', WikiIndex::class)
-            ->name('wiki.index');
+        Route::prefix('wiki')
+            ->name('wiki.')
+            ->group(function () {
+                Route::get(uri: '/', action: WikiIndex::class)
+                    ->name(name: 'index');
 
-        Route::get('wiki/{page}', WikiDetails::class)
-            ->name('wiki.show');
+                Route::get(uri: '/categories/{category}', action: WikiIndex::class)
+                    ->name(name: 'categories.show');
+
+                Route::get(uri: '/tags/{tag}', action: WikiIndex::class)
+                    ->name(name: 'tags.show');
+
+                Route::get('{page}', action: WikiDetails::class)
+                    ->name('show');
+            });
 
         Route::get(uri: 'privacy-policy', action: PrivacyPolicy::class)
             ->name(name: 'privacy-policy');

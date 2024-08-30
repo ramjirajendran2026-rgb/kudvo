@@ -11,27 +11,37 @@
     "name": "sweetalert2.all"
   },
   "resources/css/app.css": {
+
     "file": "assets/app-BzRReVJF.css",
+
     "src": "resources/css/app.css",
     "isEntry": true
   },
   "resources/css/filament/admin/theme.css": {
+
     "file": "assets/theme-B2cSFX8K.css",
+
     "src": "resources/css/filament/admin/theme.css",
     "isEntry": true
   },
   "resources/css/filament/election/theme.css": {
+
     "file": "assets/theme-ClM_UXpD.css",
+
     "src": "resources/css/filament/election/theme.css",
     "isEntry": true
   },
   "resources/css/filament/nomination/theme.css": {
+
     "file": "assets/theme-Bz8OOgFP.css",
+
     "src": "resources/css/filament/nomination/theme.css",
     "isEntry": true
   },
   "resources/css/filament/user/theme.css": {
+
     "file": "assets/theme-DSFWMZMg.css",
+
     "src": "resources/css/filament/user/theme.css",
     "isEntry": true
   },
