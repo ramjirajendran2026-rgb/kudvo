@@ -87,6 +87,13 @@
                     @apply hover:bg-success-200 has-[:disabled]:hidden dark:hover:bg-success-800;
                 }
 
+                &:has(:checked) {
+                    .votes-picker-option-label,
+                    .votes-picker-option-description {
+                        @apply text-white;
+                    }
+                }
+
                 @media print {
                     @apply rounded-none border-black ring-0;
                 }
@@ -96,13 +103,11 @@
                 }
 
                 .votes-picker-option-label {
-                    @apply overflow-hidden break-words text-lg font-medium text-gray-950 group-has-[:checked]:text-white dark:text-white;
-                    @apply print:text-black;
+                    @apply overflow-hidden break-words text-lg font-medium text-gray-950 dark:text-white;
                 }
 
                 .votes-picker-option-description {
-                    @apply text-gray-500 group-has-[:checked]:text-white dark:text-gray-400;
-                    @apply print:text-black;
+                    @apply text-gray-500 dark:text-gray-400;
                 }
             }
         }
