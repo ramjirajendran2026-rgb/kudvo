@@ -9,7 +9,7 @@ use App\Facades\Kudvo;
 use App\Filament\Base\Pages\Concerns\HasStateSection;
 use App\Filament\Election\Http\Middleware\EnsureStateIsAllowed;
 use App\Filament\Election\Pages\Concerns\InteractsWithElection;
-use App\Forms\Components\VotePicker;
+use App\Forms\Components\VotesPicker;
 use App\Models\Election;
 use App\Models\Elector;
 use App\Models\Position;
@@ -295,12 +295,10 @@ JS
                             )
                     )
                     ->map(
-                        callback: fn (Position $position) => VotePicker::makeFor(position: $position)
-                            ->candidateGroup(condition: $this->getElection()->preference->candidate_group)
-                            ->photo(condition: $this->getElection()->preference->candidate_photo)
-                            ->preview()
-                            ->sort(sort: $this->getElection()->preference->candidate_sort)
-                            ->symbol(condition: $this->getElection()->preference->candidate_symbol),
+                        callback: fn (Position $position) => VotesPicker::forPosition(
+                            uuid: $position->uuid,
+                            preference: $this->getElection()->preference,
+                        ),
                     )
                     ->toArray(),
             ]);

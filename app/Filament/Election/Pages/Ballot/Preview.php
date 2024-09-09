@@ -8,7 +8,7 @@ use App\Filament\Election\Http\Middleware\EnsureStateIsAllowed;
 use App\Filament\Election\Http\Middleware\IdentifyBoothToken;
 use App\Filament\Election\Http\Middleware\IdentifyPanelState;
 use App\Filament\Election\Pages\Concerns\InteractsWithElection;
-use App\Forms\Components\VotePicker;
+use App\Forms\Components\VotesPicker;
 use App\Models\Position;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Actions;
@@ -85,12 +85,10 @@ class Preview extends Page implements HasElection
 
                 ...$this->getElection()->positions
                     ->map(
-                        callback: fn (Position $position) => VotePicker::makeFor(position: $position)
-                            ->candidateGroup(condition: $this->getElection()->preference->candidate_group)
-                            ->photo(condition: $this->getElection()->preference->candidate_photo)
-                            ->preview(condition: fn (self $livewire): bool => $livewire->preview)
-                            ->sort(sort: $this->getElection()->preference->candidate_sort)
-                            ->symbol(condition: $this->getElection()->preference->candidate_symbol),
+                        callback: fn (Position $position) => VotesPicker::forPosition(
+                            uuid: $position->uuid,
+                            preference: $this->getElection()->preference,
+                        ),
                     )
                     ->toArray(),
 

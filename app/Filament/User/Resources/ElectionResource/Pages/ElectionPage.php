@@ -7,7 +7,7 @@ use App\Enums\ElectionSetupStep;
 use App\Filament\Base\Contracts\HasElection;
 use App\Filament\Base\Contracts\HasElectorGroups;
 use App\Filament\User\Resources\ElectionResource;
-use App\Forms\Components\VotePicker;
+use App\Forms\Components\VotesPicker;
 use App\Models\Election;
 use App\Models\Position;
 use Filament\Actions\Action;
@@ -263,13 +263,11 @@ abstract class ElectionPage extends Page implements HasElection, HasElectorGroup
                         ->schema(
                             components: $livewire->getElection()->positions
                                 ->map(
-                                    callback: fn (Position $position) => VotePicker::makeFor(position: $position)
-                                        ->candidateGroup(condition: $this->getElection()->preference->candidate_group)
-                                        ->disabled(condition: fn (Get $get): bool => $get(path: '../preview'))
-                                        ->photo(condition: $this->getElection()->preference->candidate_photo)
-                                        ->preview(condition: fn (Get $get): bool => $get(path: '../preview'))
-                                        ->sort(sort: $this->getElection()->preference->candidate_sort)
-                                        ->symbol(condition: $this->getElection()->preference->candidate_symbol),
+                                    callback: fn (Position $position) => VotesPicker::forPosition(
+                                        uuid: $position->uuid,
+                                        preference: $this->getElection()->preference,
+                                    )
+                                        ->disabled(condition: fn (Get $get): bool => $get(path: '../preview')),
                                 )
                                 ->toArray(),
                         ),

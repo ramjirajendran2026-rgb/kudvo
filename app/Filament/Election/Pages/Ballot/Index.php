@@ -6,7 +6,7 @@ use App\Enums\BallotType;
 use App\Events\ElectorCastedVoteInBoothEvent;
 use App\Facades\Kudvo;
 use App\Filament\Election\Pages\BasePage;
-use App\Forms\Components\VotePicker;
+use App\Forms\Components\VotesPicker;
 use App\Models\Ballot;
 use App\Models\Position;
 use App\Models\Vote;
@@ -107,12 +107,10 @@ class Index extends BasePage
                             )
                     )
                     ->map(
-                        callback: fn (Position $position) => VotePicker::makeFor(position: $position)
-                            ->candidateGroup(condition: $this->getElection()->preference->candidate_group)
-                            ->photo(condition: $this->getElection()->preference->candidate_photo)
-                            ->preview(condition: fn (self $livewire): bool => $livewire->preview)
-                            ->sort(sort: $this->getElection()->preference->candidate_sort)
-                            ->symbol(condition: $this->getElection()->preference->candidate_symbol),
+                        callback: fn (Position $position) => VotesPicker::forPosition(
+                            uuid: $position->uuid,
+                            preference: $this->getElection()->preference
+                        ),
                     )
                     ->toArray(),
 
@@ -123,7 +121,6 @@ class Index extends BasePage
                         ->label(label: __('filament.election.pages.ballot.index.form.actions.continue.label'))
                         ->action(action: 'submit')
                         ->size(size: ActionSize::ExtraLarge)
-                        ->submit(form: 'submit')
                         ->visible(condition: fn (self $livewire): bool => ! $livewire->preview),
 
                     Actions\Action::make(name: 'confirm')
