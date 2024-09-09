@@ -1,4 +1,6 @@
 @php
+    use Illuminate\View\ComponentAttributeBag;
+
     $gridDirection = $getGridDirection() ?? 'column';
     $isBulkToggleable = $isBulkToggleable();
     $isDisabled = $isDisabled();
