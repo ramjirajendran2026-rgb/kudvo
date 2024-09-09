@@ -2,6 +2,113 @@
     @apply ring-gray-950/50;
 }
 
+.fi-fo-field-wrp:has(.votes-picker) {
+    [data-validation-error] {
+        @apply hidden;
+    }
+}
+
+.votes-picker {
+    @apply rounded-t-xl border border-gray-200 bg-white font-mono shadow-sm dark:border-white/10 dark:bg-gray-900;
+
+    @media print {
+        @apply rounded-none border-black shadow-none;
+    }
+
+    &.invalid {
+        @apply border-danger-600 dark:border-danger-400;
+    }
+
+    .votes-picker-header {
+        @apply sticky top-0 space-y-2 rounded-t-xl border-b border-gray-200 bg-inherit p-3 dark:border-white/10;
+
+        &.sticked {
+            @apply rounded-t-none shadow;
+        }
+
+        @media print {
+            @apply border-black;
+        }
+
+        .votes-picker-heading {
+            @apply text-center text-lg font-semibold tracking-widest text-primary-600 dark:text-primary-400 md:text-2xl lg:text-3xl;
+
+            @media print {
+                @apply text-black;
+            }
+        }
+
+        .votes-picker-subheading {
+            @apply flex items-center justify-center gap-3 overflow-hidden break-words text-center text-xl text-gray-500 dark:text-gray-400;
+
+            @media print {
+                @apply hidden;
+            }
+
+            .votes-picker-subheading-text {
+            }
+
+            .votes-picker-subheading-counter {
+                @apply text-info-600 dark:text-info-400;
+            }
+        }
+
+        .votes-picker-error-text {
+            @apply text-center text-base text-danger-600 dark:text-danger-400;
+
+            @media print {
+                @apply hidden;
+            }
+        }
+    }
+
+    .votes-picker-ctn {
+        @apply space-y-3 p-3;
+
+        @media print {
+            @apply space-y-0 p-0;
+        }
+
+        .votes-picker-list {
+            @apply gap-1 md:gap-3;
+
+            @media print {
+                @apply divide-y;
+            }
+
+            .votes-picker-option {
+                @apply flex items-center gap-x-3 rounded-lg px-3 py-2 ring-1 ring-gray-200 has-[:checked]:bg-success-600 dark:ring-white/10;
+
+                &:not(:has(:disabled)) {
+                    @apply cursor-pointer;
+                }
+
+                &:not(:has(:checked)) {
+                    @apply hover:bg-success-200 has-[:disabled]:hidden dark:hover:bg-success-800;
+                }
+
+                @media print {
+                    @apply rounded-none border-black ring-0;
+                }
+
+                .votes-picker-option-cb {
+                    @apply mt-1 hidden;
+                }
+
+                .votes-picker-option-label {
+                    @apply overflow-hidden break-words text-lg font-medium text-gray-950 group-has-[:checked]:text-white dark:text-white;
+                    @apply print:text-black;
+                }
+
+                .votes-picker-option-description {
+                    @apply text-gray-500 group-has-[:checked]:text-white dark:text-gray-400;
+                    @apply print:text-black;
+                }
+            }
+        }
+    }
+}
+
 .fi-vote-picker {
     &.fi-invalid {
         @apply ring-danger-600;
