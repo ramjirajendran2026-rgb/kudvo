@@ -100,7 +100,7 @@ class Candidate extends Model implements HasAvatar, HasMedia, HasName, Sortable
                             app(InitialAvatar::class)
                                 ->background(Rgb::fromString('rgb(' . FilamentColor::getColors()['info'][600] . ')')->toHex())
                                 ->name($this->full_name)
-                                ->color('#FFFFFF')
+                                ->color('#FFF')
                                 ->rounded()
                                 ->generateSvg()
                                 ->toXMLString()
@@ -118,8 +118,8 @@ class Candidate extends Model implements HasAvatar, HasMedia, HasName, Sortable
                     fn () => 'data:image/svg+xml;base64,' .
                         base64_encode(
                             app(InitialAvatar::class)
-                                ->background('#00000000')
-                                ->color('#FFFFFF')
+                                ->background('#000')
+                                ->color('#FFF')
                                 ->fontSize(0.7)
                                 ->name($this->sort)
                                 ->generateSvg()
