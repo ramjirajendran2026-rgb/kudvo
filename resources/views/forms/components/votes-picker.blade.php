@@ -1,4 +1,5 @@
 @php
+    use Filament\Support\Enums\ActionSize;
     use Illuminate\View\ComponentAttributeBag;
 
     $gridDirection = $getGridDirection() ?? 'column';
@@ -8,6 +9,7 @@
     $statePath = $getStatePath();
 
     $hasError = $errors->has($statePath);
+    $hasGroups = $hasGroups();
 @endphp
 
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
@@ -21,9 +23,27 @@
 
             checkedOptionsCount: 0,
 
+            group: 'all',
+
             search: '',
 
             visibleCheckboxListOptions: [],
+
+            canShow: function (el) {
+                return (
+                    (el
+                        .querySelector('.votes-picker-option-label')
+                        ?.innerText.toLowerCase()
+                        .includes(this.search.toLowerCase()) ||
+                        el
+                            .querySelector('.votes-picker-option-description')
+                            ?.innerText.toLowerCase()
+                            .includes(this.search.toLowerCase())) &&
+                    (! el.hasAttribute('data-group') ||
+                        this.group === 'all' ||
+                        el.dataset.group === this.group)
+                )
+            },
 
             checkIfAllCheckboxesAreChecked: function (event) {
                 this.checkedOptionsCount = this.checkboxListOptions.filter(
@@ -79,19 +99,7 @@
             updateVisibleCheckboxListOptions: function () {
                 this.visibleCheckboxListOptions = this.checkboxListOptions.filter(
                     (checkboxListItem) => {
-                        if (
-                            checkboxListItem
-                                .querySelector('.votes-picker-option-label')
-                                ?.innerText.toLowerCase()
-                                .includes(this.search.toLowerCase())
-                        ) {
-                            return true
-                        }
-
-                        return checkboxListItem
-                            .querySelector('.votes-picker-option-description')
-                            ?.innerText.toLowerCase()
-                            .includes(this.search.toLowerCase())
+                        return this.canShow(checkboxListItem)
                     },
                 )
             },
@@ -122,6 +130,11 @@
             })
 
             $watch('search', () => {
+                updateVisibleCheckboxListOptions()
+                checkIfAllCheckboxesAreChecked()
+            })
+
+            $watch('group', () => {
                 updateVisibleCheckboxListOptions()
                 checkIfAllCheckboxesAreChecked()
             })
@@ -160,6 +173,21 @@
 
         <div class="votes-picker-ctn">
             @if (! $isDisabled)
+                @if ($hasGroups)
+                    <div class="flex items-center justify-center gap-2">
+                        @foreach ($getGroups() as $id => $label)
+                            <button
+                                type="button"
+                                class="votes-picker-group-button"
+                                x-on:click="group = '{{ $id }}'"
+                                x-bind:class="{ 'selected': group === '{{ $id }}' }"
+                            >
+                                {{ $label }}
+                            </button>
+                        @endforeach
+                    </div>
+                @endif
+
                 @if ($isSearchable)
                     <x-filament::input.wrapper
                         :inline-prefix="true"
@@ -226,17 +254,11 @@
                 @forelse ($getOptions() as $value => $label)
                     <label
                         wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.options.{{ $value }}"
-                        @if ($isSearchable && ! $isDisabled && ! $isOptionDisabled($value, $label))
-                            x-show="
-                                $el
-                                    .querySelector('.votes-picker-option-label')
-                                    ?.innerText.toLowerCase()
-                                    .includes(search.toLowerCase()) ||
-                                    $el
-                                        .querySelector('.votes-picker-option-description')
-                                        ?.innerText.toLowerCase()
-                                        .includes(search.toLowerCase())
-                            "
+                        @if ($hasGroups && ! $isDisabled && ! $isOptionDisabled($value, $label))
+                            data-group="{{ $getGroupId($value) ?? 'independent' }}"
+                        @endif
+                        @if (($isSearchable || $hasGroups) && ! $isDisabled && ! $isOptionDisabled($value, $label))
+                            x-show="canShow($el)"
                         @endif
                         @class([
                             'votes-picker-option group',
@@ -285,13 +307,23 @@
                 @endforelse
             </x-filament::grid>
 
-            @if ($isSearchable)
+            @if ($isSearchable || $hasGroups)
                 <div
                     x-cloak
-                    x-show="search && ! visibleCheckboxListOptions.length"
-                    class="votes-picker-no-search-results-message text-sm text-gray-500 dark:text-gray-400"
+                    x-show="! visibleCheckboxListOptions.length"
+                    class="votes-picker-no-search-results-message"
                 >
                     {{ $getNoSearchResultsMessage() }}
+
+                    <x-filament::link
+                        color="info"
+                        tag="button"
+                        x-cloak
+                        x-show="search !== '' || group !== 'all'"
+                        x-on:click="search = ''; group = 'all'"
+                    >
+                        Clear filters
+                    </x-filament::link>
                 </div>
             @endif
         </div>

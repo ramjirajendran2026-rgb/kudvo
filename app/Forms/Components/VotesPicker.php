@@ -8,8 +8,8 @@ use App\Models\Candidate;
 use App\Models\Position;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Concerns\CanLimitItemsLength;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
@@ -27,6 +27,8 @@ class VotesPicker extends CheckboxList
 
     #[Locked]
     public PreferenceData $preference;
+
+    protected ?array $groups = null;
 
     public static function forPosition(string $uuid, PreferenceData $preference): static
     {
@@ -50,6 +52,8 @@ class VotesPicker extends CheckboxList
             '2xl' => 4,
         ]);
 
+        $this->descriptions(fn () => $this->getCandidates()->mapWithKeys(fn (Candidate $candidate) => [$candidate->uuid => $candidate->candidateGroup?->short_name])->toArray());
+
         $this->gridDirection('row');
 
         $this->hiddenLabel();
@@ -59,6 +63,8 @@ class VotesPicker extends CheckboxList
         $this->minItems(fn (Position $position) => $position->threshold);
 
         $this->mutateDehydratedStateUsing(fn (array $state) => Arr::map($state, fn ($item) => new VoteSecretData($item, 1)));
+
+        $this->noSearchResultsMessage('No candidates match your search.');
 
         $this->options(fn () => $this->getCandidates()->pluck('display_name', 'uuid')->toArray());
 
@@ -97,21 +103,31 @@ class VotesPicker extends CheckboxList
     }
 
     /**
-     * @return Collection<int, Candidate>
+     * @return EloquentCollection<int, Candidate>
      */
-    public function getCandidates(): Collection
+    public function getCandidates(): EloquentCollection
     {
         return Cache::remember(
             key: $this->getCacheKeyPrefix() . 'candidates',
             ttl: 60 * 60 * 24,
             callback: fn () => $this->getPosition()
                 ->getOrderedCandidates(sort: $this->preference->candidate_sort)
+                ->loadMissing('media')
+                ->when(
+                    $this->hasGroups(),
+                    fn (EloquentCollection $collection) => $collection->loadMissing('candidateGroup'),
+                )
         );
     }
 
     public function getCandidate(string $uuid): ?Candidate
     {
         return $this->getCandidates()->firstWhere('uuid', $uuid);
+    }
+
+    public function getGroupId(string $uuid): ?int
+    {
+        return $this->getCandidate($uuid)?->candidate_group_id;
     }
 
     public function getAbstainHelperText(): string
@@ -199,6 +215,23 @@ BLADE
     public function getSymbolClasses(): array
     {
         return ['shrink-0 size-8 rounded object-cover object-center md:size-12 lg:size-16'];
+    }
+
+    public function groups(array $groups): static
+    {
+        $this->groups = $groups;
+
+        return $this;
+    }
+
+    public function getGroups(): ?array
+    {
+        return $this->groups;
+    }
+
+    public function hasGroups(): bool
+    {
+        return $this->getGroups() !== null;
     }
 
     protected function resolveDefaultClosureDependencyForEvaluationByType(string $parameterType): array

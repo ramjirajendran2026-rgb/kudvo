@@ -9,19 +9,25 @@ use App\Filament\Base\Contracts\HasElector;
 use App\Filament\Election\ElectionPanel;
 use App\Filament\Election\Pages\Concerns\InteractsWithElection;
 use App\Filament\Election\Pages\Concerns\InteractsWithElector;
+use App\Models\CandidateGroup;
 use App\Models\Election;
+use App\Models\Position;
 use Filament\Facades\Filament;
 use Filament\Forms\Form;
 use Filament\Http\Responses\Auth\Contracts\LogoutResponse;
 use Filament\Pages\Page;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 
 use function Filament\authorize;
 
 /**
  * @property Form $form
+ * @property array<int, string> $candidateGroups
+ * @property Collection<int, Position> $positions
  */
 abstract class BasePage extends Page implements HasElection, HasElector
 {
@@ -88,5 +94,24 @@ abstract class BasePage extends Page implements HasElection, HasElector
         $this->skipRender();
 
         return app(LogoutResponse::class);
+    }
+
+    #[Computed(persist: true)]
+    public function positions(): Collection
+    {
+        return Position::whereMorphedTo('event', $this->getElection())
+            ->oldest('sort')
+            ->get();
+    }
+
+    #[Computed(persist: true)]
+    public function candidateGroups(): array
+    {
+        return CandidateGroup::query()
+            ->whereBelongsTo(related: $this->getElection())
+            ->pluck(column: 'short_name', key: 'id')
+            ->put(key: 'independent', value: 'Independent')
+            ->prepend(value: 'All', key: 'all')
+            ->toArray();
     }
 }

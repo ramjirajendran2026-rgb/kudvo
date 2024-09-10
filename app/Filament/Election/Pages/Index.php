@@ -10,6 +10,7 @@ use App\Filament\Base\Pages\Concerns\HasStateSection;
 use App\Filament\Election\Http\Middleware\EnsureStateIsAllowed;
 use App\Filament\Election\Pages\Concerns\InteractsWithElection;
 use App\Forms\Components\VotesPicker;
+use App\Models\CandidateGroup;
 use App\Models\Election;
 use App\Models\Elector;
 use App\Models\Position;
@@ -30,11 +31,14 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\Rules\Exists;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 
 /**
  * @property Form $form
+ * @property array<int, string> $candidateGroups
+ * @property EloquentCollection<int, Position> $positions
  */
 class Index extends Page
 {
@@ -111,6 +115,25 @@ class Index extends Page
 
             $this->autoPrint = $this->canAutoPrintBallot();
         }
+    }
+
+    #[Computed(persist: true)]
+    public function positions(): EloquentCollection
+    {
+        return Position::whereMorphedTo('event', $this->getElection())
+            ->oldest('sort')
+            ->get();
+    }
+
+    #[Computed(persist: true)]
+    public function candidateGroups(): array
+    {
+        return CandidateGroup::query()
+            ->whereBelongsTo(related: $this->getElection())
+            ->pluck(column: 'short_name', key: 'id')
+            ->put(key: 'independent', value: 'Independent')
+            ->prepend(value: 'All', key: 'all')
+            ->toArray();
     }
 
     protected function canSelfPrintBallot(): bool
@@ -284,7 +307,7 @@ JS
             ->operation(operation: 'preview')
             ->statePath(path: 'data')
             ->schema(components: [
-                ...$this->getElection()->positions
+                ...$this->positions
                     ->when(
                         value: $this->getElection()->preference->segmented_ballot,
                         callback: fn (EloquentCollection $query) => $query
@@ -298,7 +321,12 @@ JS
                         callback: fn (Position $position) => VotesPicker::forPosition(
                             uuid: $position->uuid,
                             preference: $this->getElection()->preference,
-                        ),
+                        )
+                            ->when(
+                                $this->getElection()->preference->candidate_group,
+                                callback: fn (VotesPicker $picker) => $picker
+                                    ->groups($this->candidateGroups)
+                            ),
                     )
                     ->toArray(),
             ]);

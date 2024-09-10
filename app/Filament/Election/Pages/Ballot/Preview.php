@@ -9,6 +9,7 @@ use App\Filament\Election\Http\Middleware\IdentifyBoothToken;
 use App\Filament\Election\Http\Middleware\IdentifyPanelState;
 use App\Filament\Election\Pages\Concerns\InteractsWithElection;
 use App\Forms\Components\VotesPicker;
+use App\Models\CandidateGroup;
 use App\Models\Position;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Actions;
@@ -19,9 +20,16 @@ use Filament\Panel;
 use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\Alignment;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\Computed;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * @property array<int, string> $candidateGroups
+ * @property EloquentCollection<int, Position> $positions
+ */
 class Preview extends Page implements HasElection
 {
     use InteractsWithElection;
@@ -83,12 +91,17 @@ class Preview extends Page implements HasElection
                     $this->getBackAction(),
                 ]),
 
-                ...$this->getElection()->positions
+                ...$this->positions
                     ->map(
                         callback: fn (Position $position) => VotesPicker::forPosition(
                             uuid: $position->uuid,
                             preference: $this->getElection()->preference,
-                        ),
+                        )
+                            ->when(
+                                $this->getElection()->preference->candidate_group,
+                                callback: fn (VotesPicker $picker) => $picker
+                                    ->groups($this->candidateGroups)
+                            ),
                     )
                     ->toArray(),
 
@@ -111,6 +124,25 @@ class Preview extends Page implements HasElection
                 ])
                     ->alignment(alignment: fn (self $livewire): Alignment => $livewire->preview ? Alignment::Between : Alignment::End),
             ]);
+    }
+
+    #[Computed(persist: true)]
+    public function positions(): Collection
+    {
+        return Position::whereMorphedTo('event', $this->getElection())
+            ->oldest('sort')
+            ->get();
+    }
+
+    #[Computed(persist: true)]
+    public function candidateGroups(): array
+    {
+        return CandidateGroup::query()
+            ->whereBelongsTo(related: $this->getElection())
+            ->pluck(column: 'short_name', key: 'id')
+            ->put(key: 'independent', value: 'Independent')
+            ->prepend(value: 'All', key: 'all')
+            ->toArray();
     }
 
     protected function getBackAction()

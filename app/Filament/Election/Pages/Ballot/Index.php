@@ -96,7 +96,7 @@ class Index extends BasePage
                     ->hiddenLabel()
                     ->visible(condition: fn (self $livewire): bool => $this->preview && ! $this->isVoted),
 
-                ...$this->getElection()->positions
+                ...$this->positions
                     ->when(
                         value: $this->getElection()->preference->segmented_ballot,
                         callback: fn (Collection $query) => $query
@@ -110,7 +110,12 @@ class Index extends BasePage
                         callback: fn (Position $position) => VotesPicker::forPosition(
                             uuid: $position->uuid,
                             preference: $this->getElection()->preference
-                        ),
+                        )
+                            ->when(
+                                $this->getElection()->preference->candidate_group,
+                                callback: fn (VotesPicker $picker) => $picker
+                                    ->groups($this->candidateGroups)
+                            ),
                     )
                     ->toArray(),
 
