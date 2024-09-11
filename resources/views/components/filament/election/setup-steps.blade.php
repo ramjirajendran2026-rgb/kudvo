@@ -10,48 +10,49 @@
 <ol
     role="list"
     @class([
-        'grid divide-y divide-gray-200 dark:divide-white/5 md:grid-flow-col md:divide-y-0',
-        'border-b border-gray-200 dark:border-white/10' => false,
-        'rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10' => true,
+        'fi-fo-wizard-header grid divide-y divide-gray-200 dark:divide-white/5 md:grid-flow-col md:divide-y-0 md:overflow-x-auto',
+        'rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10',
     ])
 >
     @foreach (ElectionSetupStep::cases() as $step)
-        <li class="relative flex">
+        <li class="fi-fo-wizard-header-step relative flex">
             <a
                 {{ \Filament\Support\generate_href_html($step->getUrl($this->getSubNavigationParameters()) ?? '#') }}
-                class="flex h-full items-center gap-x-4 px-6 py-4 text-start"
+                @if ($pendingStep->getIndex() > $step->getIndex())
+                    disabled="disabled"
+                @endif
+                class="fi-fo-wizard-header-step-button flex h-full items-center gap-x-4 px-6 py-4 text-start"
             >
                 <div
                     @class([
-                        'flex h-10 w-10 shrink-0 items-center justify-center rounded-full',
-                        'bg-primary-600 dark:bg-primary-500' => $pendingStep->getIndex() > $step->getIndex() &&
-                        $currentStep->getIndex() > $step->getIndex(),
-                        'border-2' => $pendingStep->getIndex() <= $step->getIndex() || true,
-                        'border-primary-600 dark:border-primary-500' => $currentStep->getIndex() >= $step->getIndex(),
-                        'border-gray-300 dark:border-gray-600' => $pendingStep->getIndex() < $step->getIndex(),
+                        'fi-fo-wizard-header-step-icon-ctn flex h-10 w-10 shrink-0 items-center justify-center rounded-full',
+                        'bg-primary-600 dark:bg-primary-500' => $currentStep->getIndex() > $step->getIndex(),
+                        'border-2' => $currentStep->getIndex() <= $step->getIndex(),
+                        'border-primary-600 bg-primary-600/20 dark:border-primary-500 dark:bg-primary-500/20' => $currentStep->getIndex() === $step->getIndex(),
+                        'border-gray-300 dark:border-gray-600' => $currentStep->getIndex() < $step->getIndex(),
                     ])
                 >
-                    @if ($pendingStep->getIndex() > $step->getIndex() && (blank($currentStep) || $currentStep->getIndex() > $step->getIndex()))
+                    @if ($currentStep->getIndex() > $step->getIndex())
                         <x-filament::icon
-                            alias="forms::components.wizard.completed-step"
-                            icon="heroicon-o-check"
-                            class="h-6 w-6 text-white"
+                            :alias="'forms::components.wizard.completed-step'"
+                            :icon="'heroicon-o-check'"
+                            class="fi-fo-wizard-header-step-icon h-6 w-6 text-white"
                         />
                     @elseif (filled($icon = $step->getIcon()))
                         <x-filament::icon
                             :icon="$icon"
-                            class="h-6 w-6"
                             @class([
-                                'text-gray-500 dark:text-gray-400' => $pendingStep->getIndex() !== $step->getIndex(),
-                                'text-primary-600 dark:text-primary-500' => $pendingStep->getIndex() === $step->getIndex(),
+                                'fi-fo-wizard-header-step-icon h-6 w-6',
+                                'text-gray-500 dark:text-gray-400' => $currentStep->getIndex() !== $step->getIndex(),
+                                'text-primary-600 dark:text-primary-500' => $currentStep->getIndex() === $step->getIndex(),
                             ])
                         />
                     @else
                         <span
                             @class([
-                                'text-sm font-medium',
-                                'text-gray-500 dark:text-gray-400' => $pendingStep->getIndex() !== $step->getIndex(),
-                                'text-primary-600 dark:text-primary-500' => $pendingStep->getIndex() === $step->getIndex(),
+                                'fi-fo-wizard-header-step-indicator text-sm font-medium',
+                                'text-gray-500 dark:text-gray-400' => $currentStep->getIndex() !== $step->getIndex(),
+                                'text-primary-600 dark:text-primary-500' => $currentStep->getIndex() === $step->getIndex(),
                             ])
                         >
                             {{ $step->getIndex() }}
@@ -59,13 +60,13 @@
                     @endif
                 </div>
 
-                <div class="grid justify-items-start">
+                <div class="grid justify-items-start md:w-max md:max-w-60">
                     <span
                         @class([
-                            'text-sm font-medium',
-                            'text-gray-500 dark:text-gray-400' => false,
-                            'text-primary-600 dark:text-primary-500' => true,
-                            'text-gray-950 dark:text-white' => false,
+                            'fi-fo-wizard-header-step-label text-sm font-medium',
+                            'text-gray-500 dark:text-gray-400' => $currentStep->getIndex() < $step->getIndex(),
+                            'text-primary-600 dark:text-primary-400' => $currentStep->getIndex() === $step->getIndex(),
+                            'text-gray-950 dark:text-white' => $currentStep->getIndex() > $step->getIndex(),
                         ])
                     >
                         {{ $step->getLabel() }}
@@ -73,7 +74,7 @@
 
                     @if (filled($description = $step->getDescription()))
                         <span
-                            class="text-wrap text-start text-sm text-gray-500 dark:text-gray-400"
+                            class="fi-fo-wizard-header-step-description text-start text-sm text-gray-500 dark:text-gray-400"
                         >
                             {{ $description }}
                         </span>
@@ -84,7 +85,7 @@
             @if (! $loop->last)
                 <div
                     aria-hidden="true"
-                    class="absolute end-0 hidden h-full w-5 md:block"
+                    class="fi-fo-wizard-header-step-separator absolute end-0 hidden h-full w-5 md:block"
                 >
                     <svg
                         fill="none"
