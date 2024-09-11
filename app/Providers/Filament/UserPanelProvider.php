@@ -81,7 +81,7 @@ class UserPanelProvider extends PanelProvider
             ->brandLogoHeight(height: '3rem')
             ->brandName(name: config('app.name'))
             ->colors(colors: [
-                'primary' => Color::Teal,
+                'primary' => Color::Indigo,
             ])
             ->font(family: 'Poppins')
             ->viteTheme(theme: [
