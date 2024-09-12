@@ -9,6 +9,7 @@ use App\Livewire\Pages\Products\Election\BallotDemo;
 use App\Livewire\Pages\Products\Election\Home as ElectionHome;
 use App\Livewire\Pages\Products\Election\HowItWorks;
 use App\Livewire\Pages\Products\Phygital\Home as PhygitalHome;
+use App\Livewire\Pages\QsyssMeetingRegistration;
 use App\Livewire\Pages\VoteNow;
 use App\Livewire\Pages\Wiki\Index as WikiIndex;
 use App\Livewire\Pages\Wiki\Show as WikiDetails;
@@ -106,6 +107,8 @@ Route::group(
             uri: 'b/{elector:short_code}',
             action: fn (Request $request, Elector $elector) => redirect(to: URL::signedRoute(name: 'filament.election.eul', parameters: ['election' => $elector->event, 'elector' => $elector]))
         )->name(name: 'short_link.ballot');
+
+        Route::get('meeting', QsyssMeetingRegistration::class);
 
         Route::post(uri: 'clicksend/webhook', action: ClicksendWebhookController::class);
 
