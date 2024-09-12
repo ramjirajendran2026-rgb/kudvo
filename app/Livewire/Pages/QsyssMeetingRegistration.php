@@ -119,8 +119,7 @@ class QsyssMeetingRegistration extends Component implements HasForms
                                 ->visible(fn () => filled($this->otpHashed)),
 
                             Actions\Action::make('submit')
-                                ->action('submit')
-                                ->hidden(fn () => filled($this->otpHashed)),
+                                ->action('submit'),
                         ])->alignCenter(),
                     ]),
             ])
