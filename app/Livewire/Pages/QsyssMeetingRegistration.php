@@ -97,7 +97,6 @@ class QsyssMeetingRegistration extends Component implements HasForms
                             ->required(),
 
                         OtpInput::make(name: 'otp')
-                            ->afterStateUpdated(callback: fn (?string $state, self $livewire) => $livewire->submit())
                             ->hiddenLabel(false)
                             ->length(length: 6)
                             ->required()
