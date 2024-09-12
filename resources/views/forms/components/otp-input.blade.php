@@ -54,6 +54,8 @@
                                 this.$refs[(i+1)].value = code[i] || '';
                             });
 
+                            this.state = code;
+
                             $dispatch('otp-received', {code: code});
                         }).catch(err => {
                             console.log(err);
