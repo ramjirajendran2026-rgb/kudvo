@@ -48,7 +48,10 @@ class QsyssMeetingRegistration extends Component implements HasForms
         return view('livewire.pages.qsyss-meeting-registration')
             ->layoutData([
                 'title' => 'Meeting Registration 29 Sep, 2024',
-                'seoData' => (new SEOData)->markAsNoindex(),
+                'seoData' => (new SEOData(
+                    title: 'Meeting Registration 29 Sep, 2024',
+                    enableTitleSuffix: false,
+                ))->markAsNoindex(),
             ]);
     }
 
