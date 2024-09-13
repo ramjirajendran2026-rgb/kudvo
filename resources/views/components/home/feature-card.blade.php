@@ -10,7 +10,7 @@
 
 <div
     data-aos="zoom-out-up"
-    class="rounded-xl bg-[#FAF9F6] p-2 shadow-sm dark:bg-gray-900"
+    class="rounded-xl bg-[#FAF9F6] p-2 ring-1 dark:bg-gray-900"
 >
     <div class="p-4">
         <img
