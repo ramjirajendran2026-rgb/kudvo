@@ -63,12 +63,12 @@ class QsyssMeetingRegistration extends Component implements HasForms
                 Section::make('Meeting Registration 29 Sep, 2024')
                     ->schema([
                         TextInput::make('name')
-                            ->disabled(fn () => filled($this->otpHashed))
+//                            ->disabled(fn () => filled($this->otpHashed))
                             ->maxLength(100)
                             ->required(),
 
                         PhoneInput::make('phone')
-                            ->hidden(fn () => filled($this->otpHashed))
+//                            ->hidden(fn () => filled($this->otpHashed))
                             ->disableIpLookUp()
                             ->disallowDropdown()
                             ->initialCountry('IN')
@@ -89,12 +89,12 @@ class QsyssMeetingRegistration extends Component implements HasForms
                             ->validateFor('IN'),
 
                         Textarea::make('address')
-                            ->disabled(fn () => filled($this->otpHashed))
+//                            ->disabled(fn () => filled($this->otpHashed))
                             ->maxLength(1000)
                             ->required(),
 
                         TextInput::make('postal_code')
-                            ->disabled(fn () => filled($this->otpHashed))
+//                            ->disabled(fn () => filled($this->otpHashed))
                             ->label('Zip / Pin code')
                             ->maxLength(100)
                             ->required(),
@@ -143,8 +143,9 @@ class QsyssMeetingRegistration extends Component implements HasForms
         }
 
         $data = $this->form->getState();
+        $this->lockedData = $data;
 
-        if (filled($this->otpHashed)) {
+        if (blank($this->otpHashed)) {
             \App\Models\QsyssMeetingRegistration::create($this->lockedData);
 
             Notification::make()
