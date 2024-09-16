@@ -158,7 +158,7 @@
                 <div class="votes-picker-subheading-text">
                     {{ $getSubheading() }}
                 </div>
-                <div>•</div>
+                <div class="votes-picker-subheading-divider">•</div>
                 <div class="votes-picker-subheading-counter">
                     <span x-text="checkedOptionsCount"></span>
                     <span>selected</span>

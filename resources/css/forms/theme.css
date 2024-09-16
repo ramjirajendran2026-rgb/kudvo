@@ -39,13 +39,17 @@
         }
 
         .votes-picker-subheading {
-            @apply flex items-center justify-center gap-3 overflow-hidden break-words text-center text-xl text-gray-500 dark:text-gray-400;
+            @apply flex flex-col items-center justify-center gap-3 overflow-hidden break-words text-center text-xl text-gray-500 dark:text-gray-400 md:flex-row;
 
             @media print {
                 @apply hidden;
             }
 
             .votes-picker-subheading-text {
+            }
+
+            .votes-picker-subheading-divider {
+                @apply hidden md:inline-block;
             }
 
             .votes-picker-subheading-counter {
@@ -93,13 +97,13 @@
                 }
 
                 &:not(:has(:checked)) {
-                    @apply hover:bg-success-200 has-[:disabled]:hidden dark:hover:bg-success-800;
+                    @apply has-[:disabled]:hidden;
                 }
 
                 &:has(:checked) {
                     .votes-picker-option-label,
                     .votes-picker-option-description {
-                        @apply text-white;
+                        @apply text-white print:text-black;
                     }
                 }
 

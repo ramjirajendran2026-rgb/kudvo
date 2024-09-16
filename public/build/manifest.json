@@ -1,26 +1,26 @@
 {
   "resources/css/app.css": {
-    "file": "assets/app-BgfWSWmH.css",
+    "file": "assets/app-Dyj4Duxo.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
   "resources/css/filament/admin/theme.css": {
-    "file": "assets/theme-B-YRnFyO.css",
+    "file": "assets/theme-BJ4ZVuHt.css",
     "src": "resources/css/filament/admin/theme.css",
     "isEntry": true
   },
   "resources/css/filament/election/theme.css": {
-    "file": "assets/theme-CVLiOOEg.css",
+    "file": "assets/theme-D__nRZY4.css",
     "src": "resources/css/filament/election/theme.css",
     "isEntry": true
   },
   "resources/css/filament/nomination/theme.css": {
-    "file": "assets/theme-D_JQ9d8v.css",
+    "file": "assets/theme-DyFyStnq.css",
     "src": "resources/css/filament/nomination/theme.css",
     "isEntry": true
   },
   "resources/css/filament/user/theme.css": {
-    "file": "assets/theme-DFGM0rCB.css",
+    "file": "assets/theme-Cpf6Y_gt.css",
     "src": "resources/css/filament/user/theme.css",
     "isEntry": true
   },
