@@ -26,6 +26,8 @@ class QsyssMeetingRegistrationResponses extends Component implements HasForms, H
     {
         return $table
             ->columns([
+                TextColumn::make('id'),
+
                 TextColumn::make('name')
                     ->searchable(),
 
