@@ -16,6 +16,7 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Title;
@@ -96,6 +97,7 @@ class QsyssMeetingRegistration extends Component implements HasForms
                         TextInput::make('postal_code')
 //                            ->disabled(fn () => filled($this->otpHashed))
                             ->label('Zip / Pin code')
+                            ->mask('999999')
                             ->maxLength(100)
                             ->required(),
 
@@ -148,13 +150,18 @@ class QsyssMeetingRegistration extends Component implements HasForms
         if (blank($this->otpHashed)) {
             \App\Models\QsyssMeetingRegistration::create($this->lockedData);
 
-            Notification::make()
-                ->title('Submitted successfully')
-                ->success()
-                ->send();
-
             $this->otpHashed = null;
             $this->form->fill();
+
+            $this->js(
+                <<<'JS'
+Swal.fire({
+    title: 'Thank you',
+    text: 'Your registration has been submitted successfully',
+    icon: 'success'
+})
+JS
+            );
 
             return;
         }
@@ -168,5 +175,27 @@ class QsyssMeetingRegistration extends Component implements HasForms
 
         \Illuminate\Support\Facades\Notification::route('sms', $data['phone'])
             ->notify($notification);
+    }
+
+    protected function onValidationError(ValidationException $exception): void
+    {
+        $failed = $exception->validator->failed();
+
+        if (isset($failed['data.phone']['Unique'])) {
+            $exception->validator->getMessageBag()
+                ->forget('data.phone');
+
+            $this->form->fill();
+
+            $this->js(
+                <<<'JS'
+Swal.fire({
+    title: 'Thank you',
+    text: 'This phone number has been already registered for this meeting',
+    icon: 'success'
+})
+JS
+            );
+        }
     }
 }
