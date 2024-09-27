@@ -15,6 +15,7 @@ use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Validation\Rules\Unique;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
+use Ysfkaya\FilamentPhoneInput\PhoneInputNumberType;
 
 readonly class ElectorForm
 {
@@ -75,6 +76,9 @@ readonly class ElectorForm
     public static function phoneComponent(): PhoneInput
     {
         return PhoneInput::make(name: 'phone')
+            ->displayNumberFormat(PhoneInputNumberType::E164)
+            ->focusNumberFormat(PhoneInputNumberType::E164)
+            ->inputNumberFormat(PhoneInputNumberType::E164)
             ->label(label: __('filament.user.elector-resource.form.phone.label'))
             ->validateFor();
     }

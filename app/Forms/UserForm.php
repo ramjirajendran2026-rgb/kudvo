@@ -33,6 +33,8 @@ readonly class UserForm
         return TextInput::make(name: 'password')
             ->label(label: __('filament.user.user-resource.form.password.label'))
             ->password()
+            ->revealable()
+            ->inlineSuffix()
             ->required()
             ->rule(rule: Password::default())
             ->same(statePath: 'passwordConfirmation');
@@ -44,6 +46,8 @@ readonly class UserForm
             ->dehydrated(condition: false)
             ->label(label: __('filament.user.user-resource.form.password_confirmation.label'))
             ->password()
+            ->revealable()
+            ->inlineSuffix()
             ->required();
     }
 }
