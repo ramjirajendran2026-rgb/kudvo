@@ -46,7 +46,7 @@ class QsyssMeetingRegistrationResponses extends Component implements HasForms, H
                 TextColumn::make('created_at')
                     ->alignCenter()
                     ->date()
-                    ->description(fn (QsyssMeetingRegistration $record) => $record->created_at->format('h:i A'))
+                    ->description(fn (QsyssMeetingRegistration $record) => $record->created_at->timezone('Asia/Kolkata')->format('h:i A'))
                     ->label('Registered on')
                     ->sortable()
                     ->timezone('Asia/Kolkata'),

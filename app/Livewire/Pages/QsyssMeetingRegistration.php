@@ -39,6 +39,9 @@ class QsyssMeetingRegistration extends Component implements HasForms
     #[Locked]
     public ?string $otpHashed = null;
 
+    #[Locked]
+    public bool $isClosed = false;
+
     public function mount(): void
     {
         $this->form->fill();
@@ -58,6 +61,10 @@ class QsyssMeetingRegistration extends Component implements HasForms
 
     public function form(Form $form): Form
     {
+        if ($this->isClosed) {
+            return $form;
+        }
+
         return $form
             ->model(\App\Models\QsyssMeetingRegistration::class)
             ->schema([
@@ -132,6 +139,18 @@ class QsyssMeetingRegistration extends Component implements HasForms
 
     public function submit(): void
     {
+        if ($this->isClosed) {
+            $this->js(
+                <<<'JS'
+Swal.fire({
+    title: 'Registration closed',
+    text: 'Sorry, registration for this meeting is closed.'
+})
+JS
+            );
+
+            return;
+        }
         try {
             $this->rateLimit(5);
         } catch (TooManyRequestsException $e) {
