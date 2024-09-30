@@ -22,7 +22,6 @@ use Livewire\Component;
 /**
  * @property Form $form
  */
-#[Lazy]
 class ContactForm extends Component implements HasForms
 {
     use InteractsWithForms;
