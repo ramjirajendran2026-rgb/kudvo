@@ -40,7 +40,7 @@ class QsyssMeetingRegistration extends Component implements HasForms
     public ?string $otpHashed = null;
 
     #[Locked]
-    public bool $isClosed = false;
+    public bool $isClosed = true;
 
     public function mount(): void
     {
