@@ -84,7 +84,7 @@ class Position extends Model implements Sortable
                 $sort ?? $this->event?->preference?->candidate_sort,
                 fn (Collection $collection, CandidateSort $sort) => match ($sort) {
                     CandidateSort::ASCENDING => $collection->sortBy('full_name'),
-                    CandidateSort::DESCENDING => $collection->sortBy('full_name', 'desc'),
+                    CandidateSort::DESCENDING => $collection->sortBy('full_name', descending: true),
                     CandidateSort::RANDOM => $collection->shuffle(),
                     default => $collection,
                 }
