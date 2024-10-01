@@ -4,6 +4,7 @@ namespace App\Forms\Components;
 
 use App\Data\Election\PreferenceData;
 use App\Data\Election\VoteSecretData;
+use App\Facades\Kudvo;
 use App\Models\Candidate;
 use App\Models\Position;
 use Filament\Forms\Components\CheckboxList;
@@ -28,6 +29,9 @@ class VotesPicker extends CheckboxList
     #[Locked]
     public PreferenceData $preference;
 
+    #[Locked]
+    public bool $isBoothDevice = false;
+
     protected ?array $groups = null;
 
     public static function forPosition(string $uuid, PreferenceData $preference): static
@@ -36,6 +40,8 @@ class VotesPicker extends CheckboxList
 
         $static->uuid = $uuid;
         $static->preference = $preference;
+
+        $static->isBoothDevice = Kudvo::isBoothDevice();
 
         $static->configure();
 
@@ -68,7 +74,7 @@ class VotesPicker extends CheckboxList
 
         $this->options(fn () => $this->getCandidates()->pluck('display_name', 'uuid')->toArray());
 
-        $this->searchable();
+        $this->searchable(fn () => ! $this->isBoothDevice && $this->getCandidates()->count() > 10);
 
         $this->validationMessages([
             'min' => fn (Position $position) => 'Choose at least ' . $position->threshold . ' ' . Str::plural('candidate', $position->threshold),
