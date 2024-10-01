@@ -151,6 +151,7 @@ JS
 
             return;
         }
+
         try {
             $this->rateLimit(5);
         } catch (TooManyRequestsException $e) {
