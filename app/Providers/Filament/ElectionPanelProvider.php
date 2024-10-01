@@ -93,7 +93,11 @@ class ElectionPanelProvider extends PanelProvider
                             return redirect(to: Index::getUrl());
                         }
 
-                        Login::doLogin(elector: $elector, panel: Filament::getCurrentPanel(), request: $request);
+                        $user = Filament::getCurrentPanel()->auth()->user();
+
+                        if (blank($user) || ! $elector->is($user)) {
+                            Login::doLogin(elector: $elector, panel: Filament::getCurrentPanel(), request: $request);
+                        }
 
                         return app(abstract: LoginResponse::class);
                     }
