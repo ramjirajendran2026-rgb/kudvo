@@ -681,12 +681,11 @@ class Election extends Model
                                     $candidate->getMedia(collectionName: Candidate::MEDIA_COLLECTION_PHOTO)
                                         ->each(
                                             callback: function (Media $media) use ($replicaCandidate) {
-                                                $replicaCandidate->addMedia(file: $media->getPath())
-                                                    ->preservingOriginal()
-                                                    ->toMediaCollection(
-                                                        collectionName: Candidate::MEDIA_COLLECTION_PHOTO,
-                                                        diskName: config('filament.default_filesystem_disk'),
-                                                    );
+                                                $media->copy(
+                                                    $replicaCandidate,
+                                                    Candidate::MEDIA_COLLECTION_PHOTO,
+                                                    config('filament.default_filesystem_disk')
+                                                );
                                             }
                                         );
                                 }
@@ -695,12 +694,11 @@ class Election extends Model
                                     $candidate->getMedia(collectionName: Candidate::MEDIA_COLLECTION_SYMBOL)
                                         ->each(
                                             callback: function (Media $media) use ($replicaCandidate) {
-                                                $replicaCandidate->addMedia(file: $media->getPath())
-                                                    ->preservingOriginal()
-                                                    ->toMediaCollection(
-                                                        collectionName: Candidate::MEDIA_COLLECTION_SYMBOL,
-                                                        diskName: config('filament.default_filesystem_disk'),
-                                                    );
+                                                $media->copy(
+                                                    $replicaCandidate,
+                                                    Candidate::MEDIA_COLLECTION_SYMBOL,
+                                                    config('filament.default_filesystem_disk')
+                                                );
                                             }
                                         );
                                 }
