@@ -1,11 +1,22 @@
 @php
     use App\Facades\Kudvo;
+    use Illuminate\Support\Js;
 @endphp
 
 <footer {{ $attributes->class(['fi-footer']) }}>
     <div>
         <div>
-            {{ Kudvo::isBoothDevice() ? 'Booth Voting by' : 'Powered by' }}
+            @if (Kudvo::isBoothDevice())
+                <span
+                    x-data
+                    x-tooltip="{{ Js::encode(['content' => Kudvo::getElectionBoothToken()->name]) }}"
+                >
+                    Booth
+                </span>
+                Voting by
+            @else
+                    Powered by
+            @endif
             <x-filament::link :href="filament()->getHomeUrl()">
                 {{ config('app.name') }}
             </x-filament::link>
