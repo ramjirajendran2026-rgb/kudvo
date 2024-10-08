@@ -2,6 +2,7 @@
 
 namespace App\Filament\User\Resources\ElectionResource\Pages;
 
+use App\Actions\Election\Booth\RevokeElectorFromBooth;
 use App\Enums\ElectionCollaboratorPermission;
 use App\Events\Election\Booth\Activated;
 use App\Events\Election\Booth\PrintBallot;
@@ -121,11 +122,10 @@ class BoothTokens extends ElectionPage implements HasTable
                 Action::make(name: 'revoke')
                     ->requiresConfirmation()
                     ->action(action: function (ElectionBoothToken $record, Action $action): void {
-                        $record->update(attributes: ['current_elector_id' => null]);
+                        RevokeElectorFromBooth::execute(booth: $record);
 
                         $action->success();
                     })
-                    ->after(callback: fn (ElectionBoothToken $record) => broadcast(new ElectorRevokedFromBoothEvent($record->getKey()))->toOthers())
                     ->icon(icon: 'heroicon-s-user-minus')
                     ->iconButton()
                     ->label(label: 'Revoke')
