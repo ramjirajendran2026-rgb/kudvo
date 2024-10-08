@@ -9,6 +9,10 @@ class RevokeElectorFromBooth
 {
     public static function execute(ElectionBoothToken $booth): void
     {
+        if (blank($booth->current_elector_id)) {
+            return;
+        }
+
         $booth->update(attributes: ['current_elector_id' => null]);
 
         broadcast(new ElectorRevokedFromBoothEvent($booth->getKey()));
