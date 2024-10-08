@@ -2,6 +2,7 @@
 
 namespace App\Filament\User\Resources\ElectionResource\Pages;
 
+use App\Actions\Election\Booth\AssignElectorToBooth;
 use App\Actions\Election\Booth\RevokeElectorFromBooth;
 use App\Enums\ElectionCollaboratorPermission;
 use App\Events\Election\Booth\Activated;
@@ -82,8 +83,12 @@ class BoothTokens extends ElectionPage implements HasTable
     {
         return $table
             ->actions(actions: [
-                EditAction::make('assign')
-                    ->after(callback: fn (ElectionBoothToken $record) => broadcast(new ElectorAssignedToBoothEvent($record->getKey(), $record->current_elector_id))->toOthers())
+                Action::make('assign')
+                    ->action(function (Action $action, ElectionBoothToken $record, array $data) {
+                        AssignElectorToBooth::execute(booth: $record, elector: $data['currentElector']);
+
+                        $action->success();
+                    })
                     ->form(form: [
                         Select::make(name: 'currentElector')
                             ->getOptionLabelFromRecordUsing(callback: fn (Elector $record) => "$record->membership_number - $record->display_name")
