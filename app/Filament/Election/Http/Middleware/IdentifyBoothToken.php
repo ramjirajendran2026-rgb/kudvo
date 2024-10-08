@@ -19,8 +19,7 @@ class IdentifyBoothToken
 
         if (
             filled($token) &&
-            filled($boothToken = $election->boothTokens()->firstWhere('key', $token)) &&
-            ($election->is_booth_upcoming || $election->is_booth_open)
+            filled($boothToken = $election->boothTokens()->firstWhere('key', $token))
         ) {
             Kudvo::setElectionBoothToken(token: $boothToken);
 
