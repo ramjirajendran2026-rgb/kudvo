@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Actions\Election\Booth\RevokeElectorFromBooth;
 use App\Data\Election\BoothPreferenceData;
 use App\Data\Election\CollaboratorPermissionsData;
 use App\Data\Election\PlanFeatureData;
@@ -532,6 +533,12 @@ class Election extends Model
 
     public function close(): bool
     {
+        if ($this->preference?->booth_voting) {
+            $this->boothTokens()
+                ->whereHas('currentElector')
+                ->eachById(fn (ElectionBoothToken $booth) => RevokeElectorFromBooth::execute($booth));
+        }
+
         return $this->touch(attribute: 'closed_at');
     }
 
