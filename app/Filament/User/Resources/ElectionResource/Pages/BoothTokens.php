@@ -100,6 +100,7 @@ class BoothTokens extends ElectionPage implements HasTable
                                         callback: fn (Builder $query): Builder => $query->scopes(scopes: 'voted')
                                     ),
                             )
+                            ->required()
                             ->searchable(condition: ['membership_number', 'full_name']),
                     ])
                     ->icon(icon: 'heroicon-s-user-plus')
