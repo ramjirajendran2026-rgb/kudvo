@@ -13,7 +13,7 @@ class RevokeElectorFromBooth
             return;
         }
 
-        $booth->update(attributes: ['current_elector_id' => null]);
+        $booth->currentElector()->dissociate()->save();
 
         broadcast(new ElectorRevokedFromBoothEvent($booth->getKey()));
     }
