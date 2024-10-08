@@ -115,6 +115,7 @@ class BoothTokens extends ElectionPage implements HasTable
                             && $record->isActivated()
                             && blank($record->current_elector_id)
                             && $this->getElection()->booth_preference?->login_by_admin
+                            && $this->getElection()->is_booth_open
                     ),
 
                 Action::make(name: 'revoke')
