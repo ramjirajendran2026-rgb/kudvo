@@ -24,32 +24,22 @@ class FeatureToggle extends Toggle
     public function addOn(bool | Closure $condition = true, int | Closure $featureFee = 0, int | Closure $electorFee = 0, string | Closure | null $feeCurrency = null, bool | Closure $hideAddOnPrice = false): static
     {
         $this->isAddOn = $condition;
-        $this->addOnTooltip(tooltip: $condition ? 'This is an add-on feature. Additional charges may apply.' : null);
+
         $this->featureFee(fee: $featureFee);
         $this->electorFee(fee: $electorFee);
         $this->feeCurrency(currency: $feeCurrency);
         $this->hideAddOnPrice(condition: $hideAddOnPrice);
 
-        $this->hintColor(color: 'primary');
-        $this->hintIcon(
-            icon: function (self $component) {
-                if (! $component->isAddOn() || $component->shouldHideAddOnPrice()) {
-                    return null;
-                }
-
-                return ($this->getElectorFee() || $this->getFeatureFee()) ? 'heroicon-o-banknotes' : null;
-            },
-            tooltip: function (self $component) {
-                if (! $component->isAddOn() || $component->shouldHideAddOnPrice()) {
-                    return null;
-                }
-
-                return collect(value: [
-                    $component->getElectorFee() ? money(amount: $component->getElectorFee(), currency: $component->getFeeCurrency()) . '/elector' : null,
-                    $component->getFeatureFee() ? money(amount: $component->getFeatureFee(), currency: $component->getFeeCurrency()) . '' : null,
-                ])->filter(callback: fn ($fee): bool => filled(value: $fee))->implode(value: ' + ') ?: null;
+        $this->addOnTooltip(tooltip: function (self $component) {
+            if (! $component->isAddOn() || $component->shouldHideAddOnPrice()) {
+                return null;
             }
-        );
+
+            return collect(value: [
+                $component->getElectorFee() ? money(amount: $component->getElectorFee(), currency: $component->getFeeCurrency()) . '/elector' : null,
+                $component->getFeatureFee() ? money(amount: $component->getFeatureFee(), currency: $component->getFeeCurrency()) . '' : null,
+            ])->filter(callback: fn ($fee): bool => filled(value: $fee))->implode(value: ' + ') ?: null;
+        });
 
         return $this;
     }
