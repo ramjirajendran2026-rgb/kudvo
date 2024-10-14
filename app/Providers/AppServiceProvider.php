@@ -12,21 +12,19 @@ use BezhanSalleh\FilamentLanguageSwitch\LanguageSwitch;
 use ClickSend\Api\SMSApi;
 use ClickSend\Configuration;
 use Coderflex\FilamentTurnstile\Forms\Components\Turnstile;
-use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
+use Filament\Actions\MountableAction;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\Actions\Action as FormsAction;
 use Filament\Forms\Components\Contracts\CanBeLengthConstrained;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Textarea;
 use Filament\Http\Responses\Auth\Contracts\LogoutResponse as LogoutResponseContract;
-use Filament\Infolists\Components\Actions\Action as InfolistAction;
 use Filament\Notifications\Livewire\Notifications;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\MaxWidth;
 use Filament\Support\Enums\VerticalAlignment;
 use Filament\Support\Facades\FilamentColor;
-use Filament\Tables\Actions\Action as TableAction;
 use Filament\Tables\Actions\CreateAction as TableCreateAction;
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Table;
@@ -173,21 +171,16 @@ HTML
             $table->paginationPageOptions([5, 10, 25, 50]);
         });
 
-        Action::configureUsing(modifyUsing: function (Action $action) {
-            $action->closeModalByClickingAway(condition: false);
-        });
-        FormsAction::configureUsing(modifyUsing: function (FormsAction $action) {
-            $action->closeModalByClickingAway(condition: false);
-        });
-        InfolistAction::configureUsing(modifyUsing: function (InfolistAction $action) {
-            $action->closeModalByClickingAway(condition: false);
-        });
-        TableAction::configureUsing(modifyUsing: function (TableAction $action) {
-            $action->closeModalByClickingAway(condition: false);
-        });
-
         Column::configureUsing(modifyUsing: function (Column $component) {
             $component->wrapHeader();
+        });
+
+        MountableAction::configureUsing(modifyUsing: function (MountableAction $action) {
+            $action
+                ->closeModalByClickingAway(condition: false)
+                ->modalAlignment(alignment: Alignment::Center)
+                ->modalFooterActionsAlignment(alignment: Alignment::Center)
+                ->modalWidth(width: MaxWidth::Medium);
         });
 
         CreateAction::configureUsing(modifyUsing: function (CreateAction $action) {

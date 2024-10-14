@@ -140,10 +140,10 @@ return [
                     'label' => 'Election name / title',
                 ],
                 'booth_starts_at' => [
-                    'label' => 'Booth starts at',
+                    'label' => 'Starts at',
                 ],
                 'booth_ends_at' => [
-                    'label' => 'Booth ends at',
+                    'label' => 'Ends at',
                 ],
                 'description' => 'Description',
                 'starts_at' => [

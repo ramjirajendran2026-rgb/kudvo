@@ -16,6 +16,7 @@ use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\EditAction;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Form;
@@ -23,7 +24,6 @@ use Filament\Forms\Get;
 use Filament\Resources\Concerns\Translatable;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
-use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\IconPosition;
 use Filament\Support\Enums\MaxWidth;
@@ -84,19 +84,24 @@ class ElectionResource extends Resource
         return [
             ElectionForm::timezoneComponent(),
 
-            ElectionForm::startsAtComponent()
-                ->timezone(fn (Get $get): ?string => $get(path: 'timezone')),
+            Fieldset::make(label: 'Online Voting')
+                ->schema(components: [
+                    ElectionForm::startsAtComponent()
+                        ->timezone(fn (Get $get): ?string => $get(path: 'timezone')),
 
-            ElectionForm::endsAtComponent()
-                ->timezone(fn (Get $get): ?string => $get(path: 'timezone')),
+                    ElectionForm::endsAtComponent()
+                        ->timezone(fn (Get $get): ?string => $get(path: 'timezone')),
+                ]),
 
-            ElectionForm::boothStartsAtComponent()
-                ->timezone(fn (Get $get): ?string => $get(path: 'timezone'))
-                ->visible(condition: fn (?Election $record): bool => $record?->isBoothVotingEnabled()),
+            Fieldset::make(label: 'Booth Voting')
+                ->visible(condition: fn (?Election $record): bool => $record?->isBoothVotingEnabled())
+                ->schema(components: [
+                    ElectionForm::boothStartsAtComponent()
+                        ->timezone(fn (Get $get): ?string => $get(path: 'timezone')),
 
-            ElectionForm::boothEndsAtComponent()
-                ->timezone(fn (Get $get): ?string => $get(path: 'timezone'))
-                ->visible(condition: fn (?Election $record): bool => $record?->isBoothVotingEnabled()),
+                    ElectionForm::boothEndsAtComponent()
+                        ->timezone(fn (Get $get): ?string => $get(path: 'timezone')),
+                ]),
         ];
     }
 
@@ -226,8 +231,6 @@ class ElectionResource extends Resource
     {
         return CreateTableAction::make()
             ->createAnother(condition: false)
-            ->modalFooterActionsAlignment(alignment: Alignment::End)
-            ->modalWidth(width: MaxWidth::ExtraLarge)
             ->mutateFormDataUsing(callback: function (array $data): array {
                 return array_merge($data, ['owner_id' => Filament::auth()->id()]);
             })
@@ -241,9 +244,7 @@ class ElectionResource extends Resource
             ->form(form: static::editFormSchema())
             ->icon(icon: 'heroicon-m-pencil-square')
             ->label(label: __('filament.user.election-resource.actions.edit.label'))
-            ->modalCancelAction(action: false)
-            ->modalFooterActionsAlignment(alignment: Alignment::Center)
-            ->modalWidth(width: MaxWidth::ExtraLarge);
+            ->modalCancelAction(action: false);
     }
 
     public static function getSetTimingAction(): EditAction
@@ -255,9 +256,8 @@ class ElectionResource extends Resource
             ->icon(icon: 'heroicon-m-clock')
             ->label(label: __('filament.user.election-resource.actions.set_timing.label'))
             ->modalCancelAction(action: false)
-            ->modalFooterActionsAlignment(alignment: Alignment::Center)
             ->modalHeading(heading: fn (HasElection $livewire): ?string => $livewire->getElection()->name)
-            ->modalWidth(width: MaxWidth::Medium)
+            ->modalWidth(width: MaxWidth::ExtraLarge)
             ->mutateRecordDataUsing(callback: function (array $data, HasElection $livewire): array {
                 $data['timezone'] ??= Filament::getTenant()?->timezone;
                 $data['starts_at'] ??= now(tz: $data['timezone'] ?? null)->addDays()->startOfDay()->addHours(value: 8);

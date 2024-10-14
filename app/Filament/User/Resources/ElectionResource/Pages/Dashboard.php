@@ -182,6 +182,8 @@ class Dashboard extends ElectionPage
             ActionGroup::make(actions: [
                 $this->getCopyBallotLinkAction(),
 
+                $this->getShareBallotLinkAction(),
+
                 ElectionResource::getEditTimingAction()
                     ->after(callback: fn (self $livewire) => $livewire->resolveState())
                     ->modalHeading(heading: fn (self $livewire) => $livewire->getRecordTitle()),
@@ -189,6 +191,8 @@ class Dashboard extends ElectionPage
                 $this->getDownloadPhysicalBallotAction(),
 
                 ElectionResource::getCancelAction(),
+
+                $this->getSkipPaymentAction(),
 
                 Action::make(name: 'payment_receipt')
                     ->icon(icon: 'heroicon-s-receipt-percent')
@@ -248,6 +252,21 @@ class Dashboard extends ElectionPage
             ->label(label: 'Proceed to Pay');
     }
 
+    protected function getSkipPaymentAction(): Action
+    {
+        return Action::make(name: 'skipPayment')
+            ->authorize('publish')
+            ->requiresConfirmation()
+            ->action(action: fn (self $livewire) => $livewire->getElection()->skipCheckout())
+            ->after(callback: fn (self $livewire) => $livewire->resolveState())
+            ->color('warning')
+            ->icon('heroicon-m-receipt-percent')
+            ->visible(
+                condition: fn (self $livewire) => $livewire->getElection()->isCheckoutRequired() &&
+                    Filament::auth()->user()->canAccessPanel(Filament::getPanel(id: 'admin'))
+            );
+    }
+
     protected function getDownloadPhysicalBallotAction()
     {
         return Action::make(name: 'download_physical_ballot')
@@ -291,6 +310,29 @@ window.navigator.clipboard.writeText($ballotLink)
 JS;
             })
             ->icon('heroicon-m-clipboard-document')
+            ->visible(
+                condition: fn (Election $election) => $election->preference?->ballot_link_common &&
+                    ! $election->is_draft &&
+                    ! $election->is_cancelled
+            );
+    }
+
+    protected function getShareBallotLinkAction(): Action
+    {
+        return Action::make('shareBallotLink')
+            ->alpineClickHandler(function () {
+                $election = $this->getElection();
+                $shareData = Js::encode([
+                    'title' => $election->name,
+                    'text' => 'Use this link to cast your vote',
+                    'url' => route('short_link.election', $election),
+                ]);
+
+                return <<<JS
+await navigator.share($shareData)
+JS;
+            })
+            ->icon('heroicon-m-share')
             ->visible(
                 condition: fn (Election $election) => $election->preference?->ballot_link_common &&
                     ! $election->is_draft &&

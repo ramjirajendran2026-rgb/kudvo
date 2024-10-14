@@ -273,8 +273,6 @@ HTML,
             ->modelLabel(label: __('filament.user.position-resource.label'))
             ->pluralModelLabel(label: __('filament.user.position-resource.plural_label'))
             ->model(model: Position::class)
-            ->modalFooterActionsAlignment(alignment: Alignment::End)
-            ->modalWidth(width: MaxWidth::Large)
             ->mutateFormDataUsing(callback: function (array $data): array {
                 $data['threshold'] = $data['abstain'] ? $data['threshold'] : $data['quota'];
 
@@ -307,7 +305,6 @@ HTML,
             ->icon(icon: 'heroicon-m-arrows-up-down')
             ->iconButton()
             ->modalHeading(heading: 'Reorder Positions')
-            ->modalWidth(width: MaxWidth::ExtraLarge)
             ->visible(condition: $this->hasFullAccess());
     }
 
@@ -339,10 +336,8 @@ HTML,
             )
             ->icon(icon: 'heroicon-m-pencil-square')
             ->iconButton()
-            ->modalFooterActionsAlignment(alignment: Alignment::End)
             ->modalHeading(heading: fn (Position $record): string => "Edit $record->name")
             ->modalSubmitActionLabel(label: 'Save changes')
-            ->modalWidth(width: MaxWidth::ExtraLarge)
             ->mutateFormDataUsing(callback: function (array $data): array {
                 $data['threshold'] = $data['abstain'] ? $data['threshold'] : $data['quota'];
 
@@ -442,7 +437,6 @@ HTML,
             ->iconButton()
             ->modalHeading(heading: fn (Position $record): string => __('filament.user.election-resource.pages.ballot_setup.actions.reorder_candidate.modal_heading', ['label' => $record->name]))
             ->modalSubmitActionLabel(label: __('filament.user.election-resource.pages.ballot_setup.actions.reorder_candidate.modal_actions.submit.label'))
-            ->modalWidth(width: MaxWidth::ExtraLarge)
             ->successNotificationTitle(title: __('filament.user.election-resource.pages.ballot_setup.actions.reorder_candidate.success_notification.title'))
             ->visible(condition: $this->hasFullAccess());
     }

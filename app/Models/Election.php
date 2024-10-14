@@ -715,6 +715,11 @@ class Election extends Model
             );
     }
 
+    public function skipCheckout(): bool
+    {
+        return $this->touch('paid_at');
+    }
+
     public function checkout(User $user): Checkout
     {
         $electorsCount = $this->electors()->count();
