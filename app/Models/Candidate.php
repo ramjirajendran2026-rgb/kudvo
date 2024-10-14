@@ -18,6 +18,7 @@ use Spatie\EloquentSortable\Sortable;
 use Spatie\EloquentSortable\SortableTrait;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Translatable\HasTranslations;
 
 class Candidate extends Model implements HasAvatar, HasMedia, HasName, Sortable
@@ -89,6 +90,13 @@ class Candidate extends Model implements HasAvatar, HasMedia, HasName, Sortable
         );
     }
 
+    protected function photo(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value, array $attributes): ?Media => $this->getFirstMedia(collectionName: static::MEDIA_COLLECTION_PHOTO),
+        );
+    }
+
     protected function photoUrl(): Attribute
     {
         return Attribute::make(
@@ -106,6 +114,13 @@ class Candidate extends Model implements HasAvatar, HasMedia, HasName, Sortable
                                 ->toXMLString()
                         )
                 ),
+        );
+    }
+
+    protected function symbol(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value, array $attributes): ?Media => $this->getFirstMedia(collectionName: static::MEDIA_COLLECTION_SYMBOL),
         );
     }
 

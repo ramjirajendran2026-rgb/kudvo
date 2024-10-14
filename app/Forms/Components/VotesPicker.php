@@ -163,7 +163,7 @@ class VotesPicker extends CheckboxList
     public function getPhotoImg(string $uuid): HtmlableMedia | HtmlString | null
     {
         $candidate = $this->getCandidate(uuid: $uuid);
-        $media = $candidate->getFirstMedia(Candidate::MEDIA_COLLECTION_PHOTO);
+        $media = $candidate->photo;
 
         if (! $media) {
             $src = $candidate->photo_url;
@@ -176,9 +176,8 @@ BLADE
             );
         }
 
-        return $candidate
-            ->getFirstMedia(Candidate::MEDIA_COLLECTION_PHOTO)
-            ?->img(extraAttributes: [
+        return $media
+            ->img(extraAttributes: [
                 'alt' => $candidate->display_name . '\'s photo',
                 'class' => $this->getPhotoClasses(),
             ]);
@@ -197,7 +196,7 @@ BLADE
     public function getSymbolImg(string $uuid): HtmlableMedia | HtmlString | null
     {
         $candidate = $this->getCandidate(uuid: $uuid);
-        $media = $candidate->getFirstMedia(Candidate::MEDIA_COLLECTION_SYMBOL);
+        $media = $candidate->symbol;
 
         if (! $media) {
             $src = $candidate->symbol_url;
@@ -210,9 +209,8 @@ BLADE
             );
         }
 
-        return $candidate
-            ->getFirstMedia(Candidate::MEDIA_COLLECTION_SYMBOL)
-            ?->img(extraAttributes: [
+        return $media
+            ->img(extraAttributes: [
                 'alt' => $candidate->display_name . '\'s symbol',
                 'class' => $this->getSymbolClasses(),
             ]);
