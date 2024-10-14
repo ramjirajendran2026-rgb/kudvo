@@ -3,6 +3,19 @@
     use Illuminate\Support\Arr;
 
     /** @var Election $election */
+    $preference = $election->preference;
+    $isCandidatePhotoEnabled = $preference->candidate_photo;
+    $isCandidateSymbolEnabled = $preference->candidate_symbol;
+
+    $columns = 1;
+
+    if ($isCandidatePhotoEnabled) {
+        $columns++;
+    }
+
+    if ($isCandidateSymbolEnabled) {
+        $columns++;
+    }
 @endphp
 
 <!DOCTYPE html>
@@ -103,7 +116,7 @@
                 <table class="pos-tbl">
                     <thead>
                         <tr>
-                            <th colspan="3">
+                            <th colspan="{{ $columns }}">
                                 {{ $position->name }}
                                 <br />
                                 <small>
@@ -113,23 +126,51 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($votes[$position->uuid] as $vote)
+                        @forelse ($votes[$position->uuid] ?? [] as $vote)
                             @php
                                 $candidate = $position->candidates->firstWhere('uuid', $vote->key);
                             @endphp
 
+                            @if (blank($candidate))
+                                @continue
+                            @endif
+
                             <tr>
-                                <td style="height: 16mm; width: 16mm">
-                                    <img
-                                        src="{{ $candidate->photo_url }}"
-                                        alt="{{ 'Candidate photo' }}"
-                                        style="
-                                            border-radius: 100%;
-                                            height: 15mm;
-                                            width: 15mm;
-                                        "
-                                    />
-                                </td>
+                                @if ($isCandidateSymbolEnabled)
+                                    <td style="height: 16mm; width: 16mm">
+                                        @if (filled($symbol = $candidate->symbol))
+                                            {{ $symbol->img(extraAttributes: ['style' => 'width: 15mm; height: 15mm;']) }}
+                                        @else
+                                            <img
+                                                alt="{{ $candidate->display_name }}'s symbol"
+                                                style="
+                                                    width: 15mm;
+                                                    height: 15mm;
+                                                "
+                                                src="{{ $candidate->symbol_url }}"
+                                            />
+                                        @endif
+                                    </td>
+                                @endif
+
+                                @if ($isCandidatePhotoEnabled)
+                                    <td style="height: 16mm; width: 16mm">
+                                        @if (filled($photo = $candidate->photo))
+                                            {{ $photo->img(extraAttributes: ['style' => 'width: 15mm; height: 15mm; border-radius: 100%;']) }}
+                                        @else
+                                            <img
+                                                alt="{{ $candidate->display_name }}'s photo"
+                                                style="
+                                                    width: 15mm;
+                                                    height: 15mm;
+                                                    border-radius: 100%;
+                                                "
+                                                src="{{ $candidate->photo_url }}"
+                                            />
+                                        @endif
+                                    </td>
+                                @endif
+
                                 <td>
                                     <div>{{ $candidate->full_name }}</div>
                                     <div>
@@ -143,22 +184,11 @@
                                         {{ implode(' • ', $contacts) }}
                                     </div>
                                 </td>
-                                <td style="height: 16mm; width: 16mm">
-                                    <img
-                                        src="{{ $candidate->symbol_url }}"
-                                        alt="{{ 'Candidate symbol' }}"
-                                        style="
-                                            border-radius: 1mm;
-                                            height: 15mm;
-                                            width: 15mm;
-                                        "
-                                    />
-                                </td>
                             </tr>
                         @empty
                             <tr>
                                 <td
-                                    colspan="3"
+                                    colspan="{{ $columns }}"
                                     style="
                                         padding: 6mm;
                                         text-align: center;
