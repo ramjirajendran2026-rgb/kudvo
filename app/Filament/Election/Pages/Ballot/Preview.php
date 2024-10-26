@@ -167,25 +167,51 @@ class Preview extends Page implements HasElection
         if (! $this->preview) {
             $this->preview = true;
 
-            Notification::make()
-                ->title(title: 'Confirmation')
-                ->body(body: 'Please review your selection and confirm')
-                ->info()
-                ->send();
+            $this->js(
+                <<<'JS'
+Swal.fire({
+    title: 'Confirmation',
+    text: 'Please review your selection and confirm',
+    icon: 'info'
+})
+JS
+            );
+
+//            Notification::make()
+//                ->title(title: 'Confirmation')
+//                ->body(body: 'Please review your selection and confirm')
+//                ->info()
+//                ->send();
 
             $this->dispatch(event: 'scroll-to-top');
 
             return;
         }
 
-        Notification::make()
-            ->title(title: 'Completed')
-            ->body(body: 'You have successfully completed the ballot preview')
-            ->success()
-            ->seconds(seconds: 30)
-            ->send();
+        $this->js(
+            <<<'JS'
+tts('Thank you. Your vote has been submitted successfully')
 
-        $this->redirect(url: self::getUrl());
+Swal.fire({
+    title: 'Completed',
+    text: 'You have successfully completed the ballot preview',
+    icon: 'success'
+}).then((result) => {
+  if (result.isConfirmed) {
+    location.reload();
+  }
+})
+JS
+        );
+
+//        Notification::make()
+//            ->title(title: 'Completed')
+//            ->body(body: 'You have successfully completed the ballot preview')
+//            ->success()
+//            ->seconds(seconds: 30)
+//            ->send();
+
+//        $this->redirect(url: self::getUrl());
     }
 
     public function getPanel(): ElectionPanel
