@@ -109,7 +109,7 @@ class Preview extends Page implements HasElection
                     $this->getBackAction(),
 
                     Actions\Action::make(name: 'continue')
-                        ->label(label: 'Continue')
+                        ->label(label: 'Continue to review')
                         ->action(action: 'submit')
                         ->hidden(condition: fn (self $livewire): bool => $livewire->flashVotes || $livewire->preview)
                         ->size(size: ActionSize::ExtraLarge)
@@ -118,7 +118,7 @@ class Preview extends Page implements HasElection
                     Actions\Action::make(name: 'confirm')
                         ->requiresConfirmation()
                         ->action(action: 'submit')
-                        ->label(label: 'Confirm')
+                        ->label(label: 'Confirm to vote')
                         ->hidden(condition: fn (self $livewire): bool => $livewire->flashVotes || ! $livewire->preview)
                         ->size(size: ActionSize::ExtraLarge),
                 ])
