@@ -188,6 +188,8 @@ JS
             return;
         }
 
+        $this->dispatch(event: 'scroll-to-top');
+
         $this->js(
             <<<'JS'
 tts('Thank you. Your vote has been submitted successfully')
