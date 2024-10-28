@@ -177,12 +177,6 @@ Swal.fire({
 JS
             );
 
-//            Notification::make()
-//                ->title(title: 'Confirmation')
-//                ->body(body: 'Please review your selection and confirm')
-//                ->info()
-//                ->send();
-
             $this->dispatch(event: 'scroll-to-top');
 
             return;
@@ -205,15 +199,6 @@ Swal.fire({
 })
 JS
         );
-
-//        Notification::make()
-//            ->title(title: 'Completed')
-//            ->body(body: 'You have successfully completed the ballot preview')
-//            ->success()
-//            ->seconds(seconds: 30)
-//            ->send();
-
-//        $this->redirect(url: self::getUrl());
     }
 
     public function getPanel(): ElectionPanel
