@@ -1,11 +1,33 @@
 <x-filament-panels::page
     :full-height="true"
     x-data="{
+        inactivityThreshold: 5 * 60 * 1000, // 5 minutes
+        inactivityTimeout: null,
         playBeep() {
             const audio = this.$refs.audio;
             audio.play();
+        },
+        resetInactivityTimeout() {
+            clearTimeout(this.inactivityTimeout)
+
+            this.inactivityTimeout = setTimeout(() => {
+                document.querySelector('main').scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start',
+                    inline: 'start',
+                }),
+
+                setTimeout(() => {
+                    location.reload()
+                }, 2000)
+            }, this.inactivityThreshold)
         }
     }"
+    x-on:mousemove.document="resetInactivityTimeout()"
+    x-on:touchstart.document="resetInactivityTimeout()"
+    x-on:keypress.document="resetInactivityTimeout()"
+    x-on:click.document="resetInactivityTimeout()"
+    x-on:scroll.document="resetInactivityTimeout()"
     x-on:flash-session-timeout="
         setTimeout(
             () => $dispatch('session-expired'),
