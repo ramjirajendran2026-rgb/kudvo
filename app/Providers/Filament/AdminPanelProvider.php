@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Admin\Pages\Auth\Login;
+use Filament\FontProviders\LocalFontProvider;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -54,6 +55,10 @@ class AdminPanelProvider extends PanelProvider
             ->colors(colors: [
                 'primary' => Color::Amber,
             ])
+            ->font(
+                family: 'Poppins',
+                provider: LocalFontProvider::class,
+            )
             ->viteTheme(theme: 'resources/css/filament/admin/theme.css')
             ->plugin(
                 SpatieLaravelTranslatablePlugin::make()

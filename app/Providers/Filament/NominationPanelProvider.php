@@ -9,6 +9,7 @@ use App\Filament\Nomination\Http\Middleware\EnsureMfaCompleted;
 use App\Filament\Nomination\NominationPanel;
 use App\Filament\Nomination\Pages\Auth\Login;
 use App\Settings\GoogleTagManagerSettings;
+use Filament\FontProviders\LocalFontProvider;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -59,7 +60,10 @@ class NominationPanelProvider extends PanelProvider
             ->colors(colors: [
                 'primary' => Color::hex(color: '#00adb5'),
             ])
-            ->font(family: 'Poppins')
+            ->font(
+                family: 'Poppins',
+                provider: LocalFontProvider::class,
+            )
             ->viteTheme(theme: 'resources/css/filament/nomination/theme.css')
             ->defaultAvatarProvider(LocalAvatarProvider::class)
             ->navigation(builder: false)

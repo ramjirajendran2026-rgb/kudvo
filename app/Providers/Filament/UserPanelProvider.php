@@ -14,6 +14,7 @@ use App\Filament\User\Resources\ElectionResource\Pages\ManageElections;
 use App\Models\Organisation;
 use App\Settings\GoogleTagManagerSettings;
 use Exception;
+use Filament\FontProviders\LocalFontProvider;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -83,7 +84,10 @@ class UserPanelProvider extends PanelProvider
             ->colors(colors: [
                 'primary' => Color::Indigo,
             ])
-            ->font(family: 'Poppins')
+            ->font(
+                family: 'Poppins',
+                provider: LocalFontProvider::class,
+            )
             ->viteTheme(theme: [
                 'resources/css/filament/user/theme.css',
                 'resources/js/swal.js',
