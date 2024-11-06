@@ -13,8 +13,10 @@ use App\Events\ElectorRevokedFromBoothEvent;
 use App\Models\Election;
 use App\Models\ElectionBoothToken;
 use App\Models\Elector;
+use Filament\Actions\StaticAction;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Concerns\InteractsWithRelationshipTable;
@@ -27,6 +29,7 @@ use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
@@ -172,14 +175,26 @@ class BoothTokens extends ElectionPage implements HasTable
                     ->visible(condition: fn (): bool => $this->hasFullAccess()),
 
                 ActionGroup::make(actions: [
-                    Action::make(name: 'copyActivationLink')
-                        ->alpineClickHandler(
-                            handler: fn (ElectionBoothToken $record): string => 'window.navigator.clipboard.writeText("' . $record->getLink() . '");
-                                $tooltip(\'Copied\', {theme: $store.theme,
-                                    timeout: 2000,
-                                })'
-                        )
+                    ViewAction::make('activationLink')
+                        ->fillForm(fn (ElectionBoothToken $record) => ['link' => $record->getLink()])
+                        ->form([
+                            Textarea::make(name: 'link')
+                                ->hiddenLabel(),
+                        ])
                         ->hidden(condition: fn (ElectionBoothToken $record): bool => $record->isActivated())
+                        ->label(label: 'Activation link')
+                        ->modalCancelAction(
+                            fn (StaticAction $action, ElectionBoothToken $record): StaticAction => $action
+                                ->alpineClickHandler(
+                                    handler: 'window.navigator.clipboard.writeText("' . $record->getLink() . '");
+                                        $tooltip(\'Copied\', {theme: $store.theme,
+                                            timeout: 2000,
+                                        })'
+                                )
+                                ->icon(icon: 'heroicon-s-clipboard-document')
+                                ->label(label: 'Copy to clipboard')
+                        )
+                        ->modalHeading(heading: 'Activation Link')
                         ->visible(condition: fn (): bool => $this->hasFullAccess()),
                 ]),
             ])
