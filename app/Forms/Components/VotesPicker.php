@@ -58,7 +58,16 @@ class VotesPicker extends CheckboxList
             '2xl' => 4,
         ]);
 
-        $this->descriptions(fn () => $this->getCandidates()->mapWithKeys(fn (Candidate $candidate) => [$candidate->uuid => $candidate->candidateGroup?->short_name])->toArray());
+        $this->descriptions(
+            fn () => $this->getCandidates()
+                ->mapWithKeys(fn (Candidate $candidate) => [
+                    $candidate->uuid => collect([
+                        $candidate->membership_number,
+                        $candidate->candidateGroup?->short_name,
+                    ])->filter(fn (?string $item): bool => filled($item))->implode(' • '),
+                ])
+                ->toArray()
+        );
 
         $this->gridDirection('row');
 
