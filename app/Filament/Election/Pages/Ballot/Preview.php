@@ -110,6 +110,9 @@ class Preview extends Page implements HasElection
                     Actions\Action::make(name: 'continue')
                         ->label(label: 'Continue to review')
                         ->action(action: 'submit')
+                        ->extraAttributes([
+                            'class' => 'lg:text-2xl',
+                        ])
                         ->hidden(condition: fn (self $livewire): bool => $livewire->flashVotes || $livewire->preview)
                         ->size(size: ActionSize::ExtraLarge)
                         ->submit(form: 'submit'),
@@ -117,6 +120,9 @@ class Preview extends Page implements HasElection
                     Actions\Action::make(name: 'confirm')
                         ->requiresConfirmation()
                         ->action(action: 'submit')
+                        ->extraAttributes([
+                            'class' => 'lg:text-2xl',
+                        ])
                         ->label(label: 'Confirm to vote')
                         ->hidden(condition: fn (self $livewire): bool => $livewire->flashVotes || ! $livewire->preview)
                         ->size(size: ActionSize::ExtraLarge),
@@ -152,7 +158,10 @@ class Preview extends Page implements HasElection
 
                 $livewire->dispatch(event: 'scroll-to-top');
             })
-            ->color(color: 'gray')
+            ->color(color: 'info')
+            ->extraAttributes([
+                'class' => 'lg:text-2xl',
+            ])
             ->hidden(condition: fn (self $livewire): bool => $livewire->flashVotes)
             ->icon(icon: 'heroicon-s-chevron-left')
             ->size(size: ActionSize::ExtraLarge)

@@ -107,7 +107,7 @@ class ElectionPanelProvider extends PanelProvider
                     ->name(name: 'eul');
             })
             ->colors(colors: [
-                'primary' => Color::Green,
+                'primary' => Color::Purple,
             ])
             ->font(
                 family: 'Poppins',

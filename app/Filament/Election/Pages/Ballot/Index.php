@@ -125,12 +125,18 @@ class Index extends BasePage
                     Actions\Action::make(name: 'continue')
                         ->label(label: __('filament.election.pages.ballot.index.form.actions.continue.label'))
                         ->action(action: 'submit')
+                        ->extraAttributes([
+                            'class' => 'lg:text-2xl',
+                        ])
                         ->size(size: ActionSize::ExtraLarge)
                         ->visible(condition: fn (self $livewire): bool => ! $livewire->preview),
 
                     Actions\Action::make(name: 'confirm')
                         ->requiresConfirmation()
                         ->action(action: 'submit')
+                        ->extraAttributes([
+                            'class' => 'lg:text-2xl',
+                        ])
                         ->label(label: __('filament.election.pages.ballot.index.form.actions.confirm.label'))
                         ->size(size: ActionSize::ExtraLarge)
                         ->visible(condition: fn (self $livewire): bool => $livewire->preview && ! $livewire->isVoted),
@@ -154,7 +160,10 @@ class Index extends BasePage
 
                 $livewire->dispatch(event: 'scroll-to-top');
             })
-            ->color(color: 'gray')
+            ->color(color: 'info')
+            ->extraAttributes([
+                'class' => 'lg:text-2xl',
+            ])
             ->icon(icon: 'heroicon-s-chevron-left')
             ->label(label: __('filament.election.pages.ballot.index.form.actions.back.label'))
             ->size(size: ActionSize::ExtraLarge)

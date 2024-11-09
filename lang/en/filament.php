@@ -111,13 +111,13 @@ return [
                     'form' => [
                         'actions' => [
                             'continue' => [
-                                'label' => 'Continue',
+                                'label' => 'Continue to review',
                             ],
                             'confirm' => [
-                                'label' => 'Confirm',
+                                'label' => 'Confirm to vote',
                             ],
                             'back' => [
-                                'label' => 'Back',
+                                'label' => 'Back to change',
                             ],
                             'submit' => [
                                 'booth_success_notification' => [

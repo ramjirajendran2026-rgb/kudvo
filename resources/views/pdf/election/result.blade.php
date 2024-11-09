@@ -59,11 +59,11 @@
                 <thead>
                     <tr>
                         <th colspan="2" class="og-title">
-                            <img
+                            <!--img
                                 src="{{ $election->organisation->logo_url }}"
                                 alt="{{ 'Logo' }}"
                                 style="height: 20mm"
-                            />
+                            /-->
                             <div
                                 style="
                                     vertical-align: middle;
@@ -105,7 +105,7 @@
                 <table class="pos-tbl">
                     <thead>
                         <tr>
-                            <th colspan="4">
+                            <th colspan="3">
                                 {{ $position->name }}
                                 <br />
                                 <small>
@@ -142,9 +142,9 @@
                                         {{ $candidate->sort }}
                                     </span>
                                 </td>
-                                <td style="height: 16mm; width: 16mm">
+                                <!--td style="height: 16mm; width: 16mm">
                                     <img
-                                        src="{{ $candidate->photo_url }}"
+                                        src="{{ $candidate->getFirstMediaUrl('photo') }}"
                                         alt="{{ 'Candidate photo' }}"
                                         style="
                                             border-radius: 100%;
@@ -152,7 +152,7 @@
                                             width: 15mm;
                                         "
                                     />
-                                </td>
+                                </td-->
                                 <td>
                                     <div>{{ $candidate->full_name }}</div>
                                     <div>
