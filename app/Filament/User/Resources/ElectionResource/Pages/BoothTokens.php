@@ -57,6 +57,11 @@ class BoothTokens extends ElectionPage implements HasTable
         return $listeners;
     }
 
+    public function getSubNavigation(): array
+    {
+        return [];
+    }
+
     public static function getRelationshipName(): string
     {
         return 'boothTokens';
@@ -70,6 +75,18 @@ class BoothTokens extends ElectionPage implements HasTable
     public static function getNavigationLabel(): string
     {
         return __('filament.user.election-resource.pages.booth_tokens.navigation_label');
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            ...parent::getHeaderActions(),
+
+            \Filament\Actions\Action::make(name: 'back')
+                ->color(color: 'gray')
+                ->icon(icon: 'heroicon-o-arrow-uturn-left')
+                ->url(url: Dashboard::getUrl(parameters: [$this->getElection()])),
+        ];
     }
 
     public function form(Form $form): Form
@@ -92,6 +109,8 @@ class BoothTokens extends ElectionPage implements HasTable
 
                         $action->success();
                     })
+                    ->button()
+                    ->color(color: 'success')
                     ->form(form: [
                         Select::make(name: 'currentElector')
                             ->getOptionLabelFromRecordUsing(callback: fn (Elector $record) => "$record->membership_number - $record->display_name")
@@ -113,8 +132,8 @@ class BoothTokens extends ElectionPage implements HasTable
                             ->searchable(condition: ['membership_number', 'full_name']),
                     ])
                     ->icon(icon: 'heroicon-s-user-plus')
-                    ->iconButton()
                     ->label(label: 'Assign')
+                    ->modalSubmitAction(fn (StaticAction $action) => $action->keyBindings(['command+enter', 'ctrl+enter']))
                     ->modalCancelAction(action: false)
                     ->modalFooterActionsAlignment(alignment: Alignment::Center)
                     ->modalHeading(heading: 'Assign Elector to Booth')
@@ -129,13 +148,16 @@ class BoothTokens extends ElectionPage implements HasTable
 
                 Action::make(name: 'revoke')
                     ->requiresConfirmation()
-                    ->action(action: function (ElectionBoothToken $record, Action $action): void {
+                    ->action(action: function (ElectionBoothToken $record, Action $action, array $arguments): void {
                         RevokeElectorFromBooth::execute(booth: $record);
+
+                        $this->replaceMountedTableAction('assign', arguments: $arguments);
 
                         $action->success();
                     })
+                    ->button()
+                    ->color(color: 'danger')
                     ->icon(icon: 'heroicon-s-user-minus')
-                    ->iconButton()
                     ->label(label: 'Revoke')
                     ->successNotificationTitle(title: 'Revoked')
                     ->visible(
@@ -232,7 +254,8 @@ class BoothTokens extends ElectionPage implements HasTable
                     ->visible(condition: fn (): bool => $this->hasFullAccess()),
             ])
             ->modelLabel(label: 'Booth')
-            ->recordTitleAttribute(attribute: 'name');
+            ->recordTitleAttribute(attribute: 'name')
+            ->recordClasses(fn (ElectionBoothToken $record) => $record->currentElector?->ballot?->isVoted() ? 'bg-success-100 dark:bg-success-400/10 hover:bg-success-100 dark:hover:bg-success-400/10' : null);
     }
 
     public static function canAccessPage(Election $election): bool
