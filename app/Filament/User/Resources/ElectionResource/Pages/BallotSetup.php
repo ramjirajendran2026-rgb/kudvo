@@ -84,7 +84,7 @@ class BallotSetup extends ElectionPage
                                     Str::plural(value: $state->quota . ' Post', count: $state->quota),
                                     ...($state->abstain ? [Str::plural(value: "Minimum $state->threshold selection", count: $state->threshold)] : []),
                                     ...($this->getElection()->preference?->segmented_ballot ? $state->segments()->pluck(column: 'name') : []),
-                                    ...($state->isUnopposed() ? ['Unopposed'] : []),
+                                    ...($this->getElection()->preference?->disable_unopposed_selection && $state->isUnopposed() ? ['Unopposed'] : []),
                                 ])->implode(value: ' • ')
                             )
                             ->footerActions(actions: [
@@ -138,7 +138,7 @@ class BallotSetup extends ElectionPage
                                                     text: fn (Candidate $record): ?string => collect(value: [
                                                         $record->membership_number,
                                                         $this->getElection()->preference->candidate_group ? $record->candidateGroup?->name : null,
-                                                        ! $record->disabled && $record->position?->isUnopposed() ? 'Unopposed' : null,
+                                                        ! $record->disabled && $this->getElection()->preference->disable_unopposed_selection && $record->position?->isUnopposed() ? 'Unopposed' : null,
                                                     ])
                                                         ->filter(callback: fn (?string $item): bool => filled($item))
                                                         ->implode(value: ' • ')

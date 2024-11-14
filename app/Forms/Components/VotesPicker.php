@@ -59,11 +59,12 @@ class VotesPicker extends CheckboxList
         ]);
 
         $this->descriptions(
-            fn () => $this->getCandidates()
+            fn (Position $position) => $this->getCandidates()
                 ->mapWithKeys(fn (Candidate $candidate) => [
                     $candidate->uuid => collect([
                         $candidate->membership_number,
-                        $candidate->candidateGroup?->short_name,
+                        $this->hasCandidateGroups() ? $candidate->candidateGroup?->short_name : null,
+                        $this->preference->disable_unopposed_selection && $position->isUnopposed() ? 'Unopposed' : null,
                     ])->filter(fn (?string $item): bool => filled($item))->implode(' • '),
                 ])
                 ->toArray()
@@ -162,6 +163,11 @@ class VotesPicker extends CheckboxList
             $this->getPosition()->quota,
             Str::plural('candidate', $this->getPosition()->quota)
         );
+    }
+
+    public function hasCandidateGroups(): bool
+    {
+        return $this->preference->candidate_group;
     }
 
     public function shouldShowPhoto(): bool

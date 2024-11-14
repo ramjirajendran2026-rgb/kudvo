@@ -167,7 +167,7 @@
                                     </div>
                                 </td>
                                 <td style="width: 20%; text-align: end">
-                                    @if ($position->isUnopposed())
+                                    @if ($election->preference->disable_unopposed_selection && $position->isUnopposed())
                                         Unopposed
                                     @else
                                         @php

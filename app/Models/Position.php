@@ -148,7 +148,6 @@ class Position extends Model implements Sortable
 
     public function isUnopposed(): bool
     {
-        return $this->event->preference?->disable_unopposed_selection
-            && $this->candidates()->count() <= $this->quota;
+        return $this->candidates()->count() <= $this->quota;
     }
 }

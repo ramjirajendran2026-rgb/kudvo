@@ -117,7 +117,7 @@ class Result extends ElectionPage
                                             ->formatStateUsing(callback: fn (int $state): string => Str::plural(value: "$state vote", count: $state))
                                             ->getStateUsing(callback: fn (Candidate $record) => $this->getCandidateVotes($record->uuid, $this->boothId))
                                             ->grow(condition: false)
-                                            ->hidden(condition: fn (Candidate $record): bool => $record->position->isUnopposed())
+                                            ->hidden(condition: fn (Candidate $record): bool => $this->getElection()->preference->disable_unopposed_selection && $record->position->isUnopposed())
                                             ->hiddenLabel()
                                             ->size(size: TextEntry\TextEntrySize::Large)
                                             ->weight(weight: FontWeight::Medium),
@@ -130,7 +130,7 @@ class Result extends ElectionPage
                                             ->grow(condition: false)
                                             ->hiddenLabel()
                                             ->size(size: TextEntry\TextEntrySize::Large)
-                                            ->visible(condition: fn (Candidate $record): bool => $record->position->isUnopposed())
+                                            ->visible(condition: fn (Candidate $record): bool => $this->getElection()->preference->disable_unopposed_selection && $record->position->isUnopposed())
                                             ->weight(weight: FontWeight::Medium),
                                     ]),
                             ]),
