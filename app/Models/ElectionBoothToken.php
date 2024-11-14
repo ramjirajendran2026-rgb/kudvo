@@ -23,6 +23,7 @@ class ElectionBoothToken extends Model implements Sortable
 
     protected $fillable = [
         'name',
+        'group',
         'sort',
         'key',
         'activated_at',

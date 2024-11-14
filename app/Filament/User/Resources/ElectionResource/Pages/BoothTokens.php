@@ -32,6 +32,7 @@ use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -96,6 +97,9 @@ class BoothTokens extends ElectionPage implements HasTable
                 TextInput::make(name: 'name')
                     ->default(state: ElectionBoothToken::make(['election_id' => $this->getElection()->getKey()])->getHighestOrderNumber() + 1)
                     ->maxLength(length: 30),
+
+                TextInput::make(name: 'group')
+                    ->maxLength(length: 50),
             ]);
     }
 
@@ -227,6 +231,11 @@ class BoothTokens extends ElectionPage implements HasTable
                     ->label(label: 'Booth')
                     ->size(size: TextColumn\TextColumnSize::Large),
 
+                TextColumn::make(name: 'group')
+                    ->alignCenter()
+                    ->label(label: 'Group')
+                    ->size(size: TextColumn\TextColumnSize::ExtraSmall),
+
                 TextColumn::make(name: 'ballots_count')
                     ->alignCenter()
                     ->color(color: 'primary')
@@ -246,6 +255,10 @@ class BoothTokens extends ElectionPage implements HasTable
                     ->wrap(),
             ])
             ->defaultSort(column: 'id', direction: 'desc')
+            ->filters(filters: [
+                SelectFilter::make(name: 'group')
+                    ->options(ElectionBoothToken::whereBelongsTo($this->getElection())->whereNotNull('group')->groupBy('group')->pluck('group', 'group')),
+            ])
             ->headerActions(actions: [
                 CreateAction::make()
                     ->form(form: fn (Form $form): Form => $this->form($form))
