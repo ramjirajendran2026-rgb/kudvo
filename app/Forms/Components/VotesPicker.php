@@ -64,7 +64,6 @@ class VotesPicker extends CheckboxList
                     $candidate->uuid => collect([
                         $candidate->membership_number,
                         $this->hasCandidateGroups() ? $candidate->candidateGroup?->short_name : null,
-                        $this->preference->disable_unopposed_selection && $position->isUnopposed() ? 'Unopposed' : null,
                     ])->filter(fn (?string $item): bool => filled($item))->implode(' • '),
                 ])
                 ->toArray()
