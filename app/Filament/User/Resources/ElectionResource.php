@@ -5,6 +5,7 @@ namespace App\Filament\User\Resources;
 use App\Enums\ElectionStatus;
 use App\Filament\Base\Contracts\HasElection;
 use App\Filament\User\Resources\ElectionResource\Pages;
+use App\Filament\User\Resources\ElectionResource\Widgets\CandidateVotesChart;
 use App\Filament\User\Resources\ElectionResource\Widgets\ElectionStatsOverview;
 use App\Filament\User\Resources\ElectionResource\Widgets\ElectorDataImportProgress;
 use App\Filament\User\Resources\ElectionResource\Widgets\VotedBallots;
@@ -224,6 +225,7 @@ class ElectionResource extends Resource
             ElectionStatsOverview::class,
             VotedBallots::class,
             ElectorDataImportProgress::class,
+            CandidateVotesChart::class,
         ];
     }
 

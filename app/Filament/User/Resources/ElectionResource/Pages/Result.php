@@ -2,13 +2,14 @@
 
 namespace App\Filament\User\Resources\ElectionResource\Pages;
 
+use App\Enums\ElectionResultSortBy;
+use App\Filament\User\Resources\ElectionResource\Widgets\CandidateVotesChart;
 use App\Models\Candidate;
 use App\Models\Election;
 use App\Models\Position;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Filament\Actions\Action;
 use Filament\Actions\SelectAction;
-use Filament\Infolists\Components\Group;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
@@ -29,7 +30,11 @@ class Result extends ElectionPage
 
     protected static ?string $activeNavigationIcon = 'heroicon-s-chart-pie';
 
+    public ?ElectionResultSortBy $sortBy = ElectionResultSortBy::HighestVotes;
+
     public ?int $boothId = null;
+
+    public bool $chartView = false;
 
     public static function canAccessPage(Election $election): bool
     {
@@ -40,6 +45,26 @@ class Result extends ElectionPage
     public static function getNavigationLabel(): string
     {
         return __('filament.user.election-resource.pages.result.navigation_label');
+    }
+
+    protected function getFooterWidgets(): array
+    {
+        if (! $this->chartView) {
+            return [];
+        }
+
+        return $this->getElection()->positions
+            ->mapWithKeys(fn (Position $position) => [Str::uuid()->toString() => CandidateVotesChart::make(['position' => $position])])
+            ->toArray();
+    }
+
+    public function getWidgetData(): array
+    {
+        return [
+            ...parent::getWidgetData(),
+            'sortBy' => $this->sortBy,
+            'boothId' => $this->boothId,
+        ];
     }
 
     public function infolist(Infolist $infolist): Infolist
@@ -57,11 +82,10 @@ class Result extends ElectionPage
                     ->schema(components: [
                         Section::make(heading: fn (Position $state): ?string => $state->name)
                             ->collapsed()
-                            ->collapsible()
                             ->compact()
                             ->description(description: fn (Position $state): ?string => $state->quota . Str::plural(value: ' Post', count: $state->quota))
                             ->schema(components: [
-                                RepeatableEntry::make(name: 'rankedCandidates')
+                                RepeatableEntry::make(name: 'candidates')
                                     ->extraAttributes(attributes: ['class' => 'candidate-repeatable-entry [&_.fi-fo-component-ctn]:gap-2'])
                                     ->hiddenLabel()
                                     ->placeholder(placeholder: $this->generateEmptyStatePlaceholder(
@@ -69,69 +93,82 @@ class Result extends ElectionPage
                                         description: 'Create new candidate',
                                         icon: 'heroicon-o-x-mark',
                                     ))
+                                    ->getStateUsing(
+                                        fn (Position $record) => $record
+                                            ->candidates
+                                            ->when(
+                                                $this->sortBy,
+                                                fn (\Illuminate\Database\Eloquent\Collection $collection, $sortBy) => $collection
+                                                    ->sortBy(
+                                                        fn (Candidate $candidate) => $this->getCandidateVotes($candidate->uuid, $this->boothId),
+                                                        descending: $sortBy === ElectionResultSortBy::HighestVotes
+                                                    )
+                                            )
+                                    )
                                     ->schema(components: [
-                                        Split::make(schema: [
-                                            SpatieMediaLibraryImageEntry::make(name: 'photo')
-                                                ->circular()
-                                                ->collection(collection: Candidate::MEDIA_COLLECTION_PHOTO)
-                                                ->defaultImageUrl(url: fn (Candidate $record): ?string => filament()->getUserAvatarUrl($record))
+                                        Split::make([
+                                            Split::make(schema: [
+                                                SpatieMediaLibraryImageEntry::make(name: 'symbol')
+                                                    ->collection(collection: Candidate::MEDIA_COLLECTION_SYMBOL)
+                                                    ->defaultImageUrl(url: fn (Candidate $record): ?string => $record->symbol_url)
+                                                    ->extraImgAttributes(attributes: ['class' => 'rounded aspect-square bg-black size-8 md:size-12 lg:size-16'])
+                                                    ->grow(condition: false)
+                                                    ->size('')
+                                                    ->hiddenLabel()
+                                                    ->visible(condition: $this->getElection()->preference?->candidate_symbol),
+
+                                                SpatieMediaLibraryImageEntry::make(name: 'photo')
+                                                    ->circular()
+                                                    ->collection(collection: Candidate::MEDIA_COLLECTION_PHOTO)
+                                                    ->defaultImageUrl(url: fn (Candidate $record): ?string => $record->photo_url)
+                                                    ->extraImgAttributes(['class' => 'aspect-square size-8 md:size-12 lg:size-16'])
+                                                    ->grow(condition: false)
+                                                    ->height('')
+                                                    ->hiddenLabel()
+                                                    ->visible(condition: $this->getElection()->preference?->candidate_photo),
+
+                                                TextEntry::make(name: 'display_name')
+                                                    ->extraAttributes(attributes: fn (Candidate $record): array => $record->disabled ? ['class' => 'line-through'] : [])
+                                                    ->helperText(
+                                                        text: fn (Candidate $record): ?string => collect(value: [
+                                                            $record->membership_number,
+                                                            $this->getElection()->preference->candidate_group ? $record->candidateGroup?->name : null,
+                                                        ])
+                                                            ->filter(callback: fn (?string $item): bool => filled($item))
+                                                            ->implode(value: ' • ')
+                                                    )
+                                                    ->hiddenLabel()
+                                                    ->size(size: TextEntry\TextEntrySize::Medium)
+                                                    ->weight(weight: FontWeight::Medium),
+                                            ]),
+
+                                            TextEntry::make(name: 'unopposed')
+                                                ->alignCenter()
+                                                ->badge()
+                                                ->color(color: 'primary')
+                                                ->extraAttributes(attributes: ['class' => '[&_.fi-badge]:text-xl [&_.fi-badge]:w-full [&_.w-max:has(.fi-badge)]:w-full'])
+                                                ->getStateUsing(callback: fn () => 'Unopposed')
                                                 ->grow(condition: false)
                                                 ->hiddenLabel()
-                                                ->size(size: 80)
-                                                ->visible(condition: $this->getElection()->preference?->candidate_photo),
+                                                ->size(size: TextEntry\TextEntrySize::Large)
+                                                ->visible(condition: fn (Candidate $record): bool => $this->getElection()->preference->disable_unopposed_selection && $record->position->isUnopposed())
+                                                ->weight(weight: FontWeight::Medium),
 
-                                            Group::make()
-                                                ->schema(components: [
-                                                    TextEntry::make(name: 'display_name')
-                                                        ->hiddenLabel()
-                                                        ->size(size: TextEntry\TextEntrySize::Large)
-                                                        ->weight(weight: FontWeight::Medium),
-
-                                                    TextEntry::make(name: 'membership_number')
-                                                        ->color(color: 'gray')
-                                                        ->getStateUsing(
-                                                            callback: fn (Candidate $record): ?string => collect(value: [
-                                                                $record->membership_number,
-                                                                $record->email,
-                                                                $record->phone,
-                                                            ])->filter(callback: fn (?string $item): bool => filled(value: $item))->implode(value: ' • ')
-                                                        )
-                                                        ->hiddenLabel()
-                                                        ->visible(condition: fn (?string $state): bool => filled($state)),
-                                                ]),
-
-                                            SpatieMediaLibraryImageEntry::make(name: 'symbol')
-                                                ->collection(collection: Candidate::MEDIA_COLLECTION_SYMBOL)
-                                                ->defaultImageUrl(url: fn (Candidate $record): ?string => $record->symbol_url)
-                                                ->extraImgAttributes(attributes: ['class' => 'rounded-xl bg-black'])
+                                            TextEntry::make(name: 'votes')
+                                                ->alignCenter()
+                                                ->badge()
+                                                ->color(color: 'success')
+                                                ->extraAttributes(attributes: ['class' => '[&_.fi-badge]:text-xl [&_.fi-badge]:w-full [&_.w-max:has(.fi-badge)]:w-full'])
+                                                ->formatStateUsing(callback: fn (int $state): string => Str::plural(value: "$state vote", count: $state))
+                                                ->getStateUsing(callback: fn (Candidate $record) => $this->getCandidateVotes($record->uuid, $this->boothId))
                                                 ->grow(condition: false)
+                                                ->hidden(condition: fn (Candidate $record): bool => $this->getElection()->preference->disable_unopposed_selection && $record->position->isUnopposed())
                                                 ->hiddenLabel()
-                                                ->size(size: 80)
-                                                ->visible(condition: $this->getElection()->preference?->candidate_symbol),
-                                        ]),
-
-                                        TextEntry::make(name: 'votes')
-                                            ->alignCenter()
-                                            ->color(color: 'primary')
-                                            ->extraAttributes(attributes: ['class' => 'bg-gray-50 dark:bg-white/5 rounded-lg py-2'])
-                                            ->formatStateUsing(callback: fn (int $state): string => Str::plural(value: "$state vote", count: $state))
-                                            ->getStateUsing(callback: fn (Candidate $record) => $this->getCandidateVotes($record->uuid, $this->boothId))
-                                            ->grow(condition: false)
-                                            ->hidden(condition: fn (Candidate $record): bool => $this->getElection()->preference->disable_unopposed_selection && $record->position->isUnopposed())
-                                            ->hiddenLabel()
-                                            ->size(size: TextEntry\TextEntrySize::Large)
-                                            ->weight(weight: FontWeight::Medium),
-
-                                        TextEntry::make(name: 'unopposed')
-                                            ->alignCenter()
-                                            ->color(color: 'primary')
-                                            ->extraAttributes(attributes: ['class' => 'bg-gray-50 dark:bg-white/5 rounded-lg py-2'])
-                                            ->getStateUsing(callback: fn () => 'Unopposed')
-                                            ->grow(condition: false)
-                                            ->hiddenLabel()
-                                            ->size(size: TextEntry\TextEntrySize::Large)
-                                            ->visible(condition: fn (Candidate $record): bool => $this->getElection()->preference->disable_unopposed_selection && $record->position->isUnopposed())
-                                            ->weight(weight: FontWeight::Medium),
+                                                ->size(size: TextEntry\TextEntrySize::Large)
+                                                ->weight(weight: FontWeight::SemiBold),
+                                        ])
+                                            ->verticallyAlignCenter()
+                                            ->from('lg'),
                                     ]),
                             ]),
                     ]),
@@ -183,6 +220,11 @@ HTML,
     protected function getHeaderActions(): array
     {
         return [
+            SelectAction::make(name: 'sortBy')
+                ->options(options: ElectionResultSortBy::getOptions())
+                ->placeholder(placeholder: 'Sort by')
+                ->label(label: fn () => $this->sortBy?->getLabel()),
+
             SelectAction::make(name: 'boothId')
                 ->options(options: $this->getElection()->boothTokens()->pluck('name', 'id'))
                 ->placeholder(placeholder: 'All Booths')
