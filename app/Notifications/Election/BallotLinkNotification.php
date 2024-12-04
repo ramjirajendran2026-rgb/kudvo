@@ -130,7 +130,7 @@ class BallotLinkNotification extends Notification implements HasMailMessagePurpo
     protected function getBallotLinkShort(): ?string
     {
         return $this->getPreference()->ballot_link_unique
-            ? route(name: 'short_link.ballot', parameters: ['elector' => $this->getElector()->short_code])
-            : route(name: 'short_link.election', parameters: ['election' => $this->getElection()->short_code]);
+            ? route(name: 'short_link.go', parameters: ['b' => $this->getElector()->short_code])
+            : route(name: 'short_link.go', parameters: ['e' => $this->getElection()->short_code]);
     }
 }

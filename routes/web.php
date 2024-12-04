@@ -24,6 +24,7 @@ use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 use Mcamara\LaravelLocalization\Middleware\LaravelLocalizationRedirectFilter;
 use Mcamara\LaravelLocalization\Middleware\LaravelLocalizationViewPath;
 use Mcamara\LaravelLocalization\Middleware\LocaleSessionRedirect;
+use Symfony\Component\HttpFoundation\Response;
 
 /*
 |--------------------------------------------------------------------------
@@ -108,6 +109,21 @@ Route::group(
             uri: 'b/{elector:short_code}',
             action: fn (Request $request, Elector $elector) => redirect(to: URL::signedRoute(name: 'filament.election.eul', parameters: ['election' => $elector->event, 'elector' => $elector]))
         )->name(name: 'short_link.ballot');
+
+        Route::get(
+            uri: 'g',
+            action: function (Request $request) {
+                if ($request->filled('b')) {
+                    return route('short_link.ballot', ['elector' => $request->get('b')]);
+                }
+
+                if ($request->filled('e')) {
+                    return route('short_link.election', ['election' => $request->get('e')]);
+                }
+
+                abort(Response::HTTP_NOT_FOUND);
+            },
+        )->name(name: 'short_link.go');
 
         Route::get('meeting', QsyssMeetingRegistration::class)
             ->name('qsyss-meeting.registration');
