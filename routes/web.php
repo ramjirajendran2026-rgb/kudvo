@@ -114,11 +114,11 @@ Route::group(
             uri: 'g',
             action: function (Request $request) {
                 if ($request->filled('b')) {
-                    return route('short_link.ballot', ['elector' => $request->get('b')]);
+                    return redirect()->route('short_link.ballot', ['elector' => $request->get('b')]);
                 }
 
                 if ($request->filled('e')) {
-                    return route('short_link.election', ['election' => $request->get('e')]);
+                    return redirect()->route('short_link.election', ['election' => $request->get('e')]);
                 }
 
                 abort(Response::HTTP_NOT_FOUND);
