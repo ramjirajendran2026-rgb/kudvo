@@ -11,6 +11,10 @@ class ShortLink extends Model
         'destination',
     ];
 
+    protected $casts = [
+        'destination' => 'encrypted',
+    ];
+
     protected static function booted(): void
     {
         static::saving(function (ShortLink $model) {
