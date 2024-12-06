@@ -57,7 +57,7 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->when(GenerateShortLinkKey::class)
             ->needs(Hashids::class)
-            ->give(fn () => new Hashids(ShortLink::class, 4));
+            ->give(fn () => new Hashids(ShortLink::class, 6));
     }
 
     /**
