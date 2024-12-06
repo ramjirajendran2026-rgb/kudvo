@@ -16,6 +16,7 @@ use App\Livewire\Pages\Wiki\Index as WikiIndex;
 use App\Livewire\Pages\Wiki\Show as WikiDetails;
 use App\Models\Election;
 use App\Models\Elector;
+use App\Models\ShortLink;
 use App\Services\Clicksend\Http\Controllers\WebhookController as ClicksendWebhookController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -24,7 +25,6 @@ use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 use Mcamara\LaravelLocalization\Middleware\LaravelLocalizationRedirectFilter;
 use Mcamara\LaravelLocalization\Middleware\LaravelLocalizationViewPath;
 use Mcamara\LaravelLocalization\Middleware\LocaleSessionRedirect;
-use Symfony\Component\HttpFoundation\Response;
 
 /*
 |--------------------------------------------------------------------------
@@ -121,7 +121,9 @@ Route::group(
                     return redirect()->route('short_link.election', ['election' => $request->get('e')]);
                 }
 
-                abort(Response::HTTP_NOT_FOUND);
+                $shortLink = ShortLink::where('key', collect($request->query())->keys()->first())->firstOrFail();
+
+                return redirect()->away($shortLink->destination);
             },
         )->name(name: 'short_link.go');
 

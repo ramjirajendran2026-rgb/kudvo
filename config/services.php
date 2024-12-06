@@ -39,4 +39,8 @@ return [
         'no_except' => true,
     ],
 
+    'secured_voting' => [
+        'api_key' => env('SECURED_VOTING_API_KEY'),
+    ],
+
 ];

@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
+use App\Actions\GenerateShortLinkKey;
 use App\Filament\Election\Http\Responses\Auth\LogoutResponse;
 use App\KudvoManager;
+use App\Models\ShortLink;
 use App\Models\User;
 use App\Services\Clicksend\ClicksendChannel;
 use App\Services\TwentyFourSevenSms\TwentyFourSevenSmsChannel;
@@ -29,6 +31,7 @@ use Filament\Tables\Actions\CreateAction as TableCreateAction;
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Table;
 use GuzzleHttp\Client;
+use Hashids\Hashids;
 use Illuminate\Notifications\ChannelManager;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\App;
@@ -51,6 +54,10 @@ class AppServiceProvider extends ServiceProvider
         });
 
         $this->app->bind(LogoutResponseContract::class, LogoutResponse::class);
+
+        $this->app->when(GenerateShortLinkKey::class)
+            ->needs(Hashids::class)
+            ->give(fn () => new Hashids(ShortLink::class, 4));
     }
 
     /**
