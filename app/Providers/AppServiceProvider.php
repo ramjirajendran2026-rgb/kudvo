@@ -2,9 +2,11 @@
 
 namespace App\Providers;
 
+use App\Actions\GenerateParticipantShortKey;
 use App\Actions\GenerateShortLinkKey;
 use App\Filament\Election\Http\Responses\Auth\LogoutResponse;
 use App\KudvoManager;
+use App\Models\Participant;
 use App\Models\ShortLink;
 use App\Models\User;
 use App\Services\Clicksend\ClicksendChannel;
@@ -54,11 +56,15 @@ class AppServiceProvider extends ServiceProvider
             return new KudvoManager;
         });
 
-        $this->app->bind(LogoutResponseContract::class, LogoutResponse::class);
+        $this->app->bind(abstract: LogoutResponseContract::class, concrete: LogoutResponse::class);
 
-        $this->app->when(GenerateShortLinkKey::class)
-            ->needs(Hashids::class)
-            ->give(fn () => new Hashids(ShortLink::class, 6));
+        $this->app->when(concrete: GenerateShortLinkKey::class)
+            ->needs(abstract: Hashids::class)
+            ->give(implementation: fn (): Hashids => new Hashids(salt: ShortLink::class, minHashLength: 6));
+
+        $this->app->when(concrete: GenerateParticipantShortKey::class)
+            ->needs(abstract: Hashids::class)
+            ->give(implementation: fn (): Hashids => new Hashids(salt: Participant::class, minHashLength: 6));
     }
 
     /**

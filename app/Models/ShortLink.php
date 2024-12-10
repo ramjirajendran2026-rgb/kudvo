@@ -3,10 +3,13 @@
 namespace App\Models;
 
 use App\Actions\GenerateShortLinkKey;
+use App\Models\Concerns\HasNextPossibleKey;
 use Illuminate\Database\Eloquent\Model;
 
 class ShortLink extends Model
 {
+    use HasNextPossibleKey;
+
     protected $fillable = [
         'destination',
     ];
@@ -17,7 +20,7 @@ class ShortLink extends Model
 
     protected static function booted(): void
     {
-        static::saving(function (ShortLink $model) {
+        static::saving(function (self $model) {
             if (blank($model->key)) {
                 $model->key = app(GenerateShortLinkKey::class)->execute();
             }

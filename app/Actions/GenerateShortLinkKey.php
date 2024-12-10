@@ -9,13 +9,11 @@ class GenerateShortLinkKey
 {
     public function __construct(
         protected Hashids $hashids,
+        protected ShortLink $shortLink,
     ) {}
 
     public function execute(): string
     {
-        $lastId = ShortLink::max(app(ShortLink::class)->getKeyName()) ?? 0;
-        $lastId++;
-
-        return $this->hashids->encode($lastId);
+        return $this->hashids->encode($this->shortLink->getNextPossibleKey());
     }
 }
