@@ -32,6 +32,7 @@ use Filament\Tables\Columns\Column;
 use Filament\Tables\Table;
 use GuzzleHttp\Client;
 use Hashids\Hashids;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\ChannelManager;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\App;
@@ -65,6 +66,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Model::shouldBeStrict(App::isLocal());
+
         if (App::isLocal()) {
             Mail::alwaysTo(address: 'iliyas.m@inodesys.com');
         }

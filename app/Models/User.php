@@ -85,6 +85,15 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasMedia,
         });
     }
 
+    public function isBelongsToOrganisation(Organisation $organisation): bool
+    {
+        if ($this->relationLoaded('organisations')) {
+            return $this->organisations->contains($organisation);
+        }
+
+        return $this->organisations()->whereKey($organisation)->exists();
+    }
+
     public function canAccessPanel(Panel $panel): bool
     {
         return match ($panel->getId()) {
@@ -97,7 +106,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasMedia,
     public function canAccessTenant(Model $tenant): bool
     {
         return match (true) {
-            $tenant instanceof Organisation => $this->organisations()->whereKey(id: $tenant->getKey())->exists()
+            $tenant instanceof Organisation => $this->isBelongsToOrganisation($tenant)
                 || $tenant->elections()->whereUser(user: $this)->exists(),
             default => false,
         };
@@ -105,19 +114,29 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasMedia,
 
     public function getTenants(Panel $panel): array | Collection
     {
+        $this->loadCollaboratedOrganisations();
+
         return $this->organisations
-            ->merge(
-                items: Organisation::query()
-                    ->whereHas(
-                        relation: 'elections',
-                        callback: fn (Builder $query) => $query->whereBelongsTo(related: Filament::auth()->user(), relationshipName: 'owner')
-                            ->orWhereHas(
-                                relation: 'collaborators',
-                                callback: fn ($query) => $query->whereKey(Filament::auth()->id())
-                            )
+            ->merge(items: $this->collaboratedOrganisations)
+            ->unique($this->getKeyName());
+    }
+
+    protected function loadCollaboratedOrganisations(): void
+    {
+        if (isset($this->relations['collaboratedOrganisations'])) {
+            return;
+        }
+
+        $this->relations['collaboratedOrganisations'] = Organisation::query()
+            ->whereHas(
+                relation: 'elections',
+                callback: fn (Builder $query) => $query->whereBelongsTo(related: Filament::auth()->user(), relationshipName: 'owner')
+                    ->orWhereHas(
+                        relation: 'collaborators',
+                        callback: fn ($query) => $query->whereKey(Filament::auth()->id())
                     )
-                    ->get()
-            );
+            )
+            ->get();
     }
 
     public function getFilamentAvatarUrl(): ?string

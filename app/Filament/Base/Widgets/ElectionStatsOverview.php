@@ -53,4 +53,9 @@ class ElectionStatsOverview extends BaseWidget
                 ->icon(icon: 'heroicon-o-face-frown'),
         ];
     }
+
+    protected function getPollingInterval(): ?string
+    {
+        return ($this->election->is_open || $this->election->is_booth_open) ? static::$pollingInterval : null;
+    }
 }

@@ -28,6 +28,7 @@ use Filament\Tables\Actions\EditAction as TableEditAction;
 use Filament\Tables\Actions\ImportAction as TableImportAction;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
 class Electors extends ElectionPage implements HasTable
@@ -113,7 +114,8 @@ class Electors extends ElectionPage implements HasTable
 
                     $this->getGenerateDummyElectorsAction(),
                 ]),
-            ]);
+            ])
+            ->modifyQueryUsing(callback: fn (Builder $query): Builder => $query->with(['event', 'ballot']));
     }
 
     protected function getHeaderWidgets(): array

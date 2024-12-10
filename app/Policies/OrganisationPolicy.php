@@ -24,6 +24,6 @@ class OrganisationPolicy
 
     public function update(User $user, Organisation $organisation): bool
     {
-        return $organisation->users()->whereKey($user)->exists();
+        return $user->isBelongsToOrganisation(organisation: $organisation);
     }
 }
