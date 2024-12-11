@@ -17,6 +17,7 @@ return new class extends Migration
                 $table->string(column: 'name')->nullable();
                 $table->string(column: 'email')->nullable();
                 $table->string(column: 'phone')->nullable();
+                $table->unsignedDecimal(column: 'weightage', total: 25, places: 15)->default(value: 1);
 
                 $table->timestamp(column: 'voted_at')->nullable();
 

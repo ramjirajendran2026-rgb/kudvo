@@ -13,11 +13,8 @@ return new class extends Migration
             callback: function (Blueprint $table): void {
                 $table->id();
 
-                $table->text(column: 'title');
-
-                $table->string(column: 'timezone')->nullable();
-                $table->timestamp(column: 'voting_starts_at')->nullable();
-                $table->timestamp(column: 'voting_ends_at')->nullable();
+                $table->string(column: 'name');
+                $table->text(column: 'description')->nullable();
 
                 $table->timestamp('published_at')->nullable();
 
