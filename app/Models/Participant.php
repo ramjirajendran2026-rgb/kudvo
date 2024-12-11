@@ -21,11 +21,13 @@ class Participant extends Model
         'name',
         'email',
         'phone',
+        'weightage',
         'voted_at',
         'meeting_id',
     ];
 
     protected $casts = [
+        'weightage' => 'double',
         'voted_at' => 'datetime',
         'meeting_id' => 'int',
     ];

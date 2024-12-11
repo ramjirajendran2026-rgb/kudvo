@@ -9,16 +9,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Meeting extends Model
 {
     protected $fillable = [
-        'title',
+        'name',
+        'description',
         'timezone',
-        'voting_starts_at',
-        'voting_ends_at',
         'organisation_id',
     ];
 
     protected $casts = [
-        'voting_starts_at' => 'datetime',
-        'voting_ends_at' => 'datetime',
         'organisation_id' => 'int',
     ];
 
@@ -27,13 +24,13 @@ class Meeting extends Model
         return $this->belongsTo(related: Organisation::class);
     }
 
-    public function resolutions(): HasMany
-    {
-        return $this->hasMany(related: Resolution::class);
-    }
-
     public function participants(): HasMany
     {
         return $this->hasMany(related: Participant::class);
+    }
+
+    public function resolutions(): HasMany
+    {
+        return $this->hasMany(related: Resolution::class);
     }
 }
