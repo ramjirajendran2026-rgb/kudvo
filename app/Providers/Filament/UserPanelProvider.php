@@ -97,7 +97,6 @@ class UserPanelProvider extends PanelProvider
             ->databaseNotificationsPolling(interval: null)
             ->globalSearch(provider: false)
             ->topNavigation()
-            ->breadcrumbs(condition: false)
             ->spa()
             ->unsavedChangesAlerts()
             ->renderHook(

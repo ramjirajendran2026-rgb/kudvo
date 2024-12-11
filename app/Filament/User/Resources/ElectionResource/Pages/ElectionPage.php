@@ -141,6 +141,11 @@ abstract class ElectionPage extends Page implements HasElection, HasElectorGroup
         ];
     }
 
+    public function getBreadcrumbs(): array
+    {
+        return [];
+    }
+
     protected function getMountedActionFormModel(): Model | string | null
     {
         return $this->getElection();
