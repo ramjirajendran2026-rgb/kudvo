@@ -1,4 +1,4 @@
-<x-layouts.base>
+<x-layouts.base :seo-data="$seoData ?? null">
     <header
         x-data="{ isSticky: false }"
         x-bind:class="{

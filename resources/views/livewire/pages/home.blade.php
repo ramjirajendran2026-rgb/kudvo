@@ -100,7 +100,7 @@
                 >
                     <div class="mb-16 md:mb-0 lg:my-auto lg:pr-5">
                         <h2
-                            class="mb-5 font-sans text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl sm:leading-none"
+                            class="mb-5 font-sans text-3xl font-bold leading-8 tracking-tight text-gray-900 sm:text-4xl sm:leading-none"
                         >
                             {{ $item->title }}
                         </h2>
