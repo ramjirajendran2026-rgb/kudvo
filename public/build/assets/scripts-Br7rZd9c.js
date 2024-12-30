@@ -1,0 +1,1 @@
+import"./swal-BC02UTOP.js";window.tts=function(n){if("speechSynthesis"in window){const e=new SpeechSynthesisUtterance(n);e.pitch=1,e.rate=1,e.volume=1,e.lang="en-IN",window.speechSynthesis.speak(e)}else console.log("speechSynthesis not available")};
