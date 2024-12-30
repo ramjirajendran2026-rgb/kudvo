@@ -7,21 +7,21 @@ return [
     ],
 
     'content' => [
-        'headline' => 'Secure and Efficient Online Voting Solutions for Your Organization',
+        'headline' => 'Secure and Efficient eVote Solutions for Your Online Election System',
         'hero' => [
             'items' => [
                 [
-                    'title' => 'Enhance Homeowners Association Governance',
-                    'description' => 'Manage condominium community decisions',
-                    'image' => asset('img/home/hero/hoa-home-owner-asspciation-or-condominium-associations.webp'),
-                    'image_alt' => 'Aerial view of a suburban neighborhood with well-maintained houses and greenery, representing a homeowner association community.',
+                    'title' => 'eVote Made Simple. Strengthening Democracy with Kudvo',
+                    'description' => 'Increase voter turnout, enhance security, and streamline your election process with our innovative platform.',
+                    'image' => asset('img/home/hero/online-voting-system.webp'),
+                    'image_alt' => ' A computer and a voting machine are displayed against a backdrop of various icons representing technology and democracy.',
                     'cta_label' => 'Get Started',
                     'cta_url' => route('filament.user.auth.register'),
                     'cta2_label' => 'Explore',
                     'cta2_url' => route('products.election.home'),
                 ],
                 [
-                    'title' => 'Secure and Efficient Online Voting System for Clubs',
+                    'title' => 'Effortless Online Voting for Clubs: Secure and Reliable eVote Solutions',
                     'description' => 'Streamline your decision-making process with our trusted system.',
                     'image' => asset('img/home/hero/club.webp'),
                     'image_alt' => 'Collage of sports and leisure activities including golf, tennis, soccer, and a marina with boats, showcasing a vibrant club environment.',
@@ -31,7 +31,17 @@ return [
                     'cta2_url' => route('products.election.home'),
                 ],
                 [
-                    'title' => 'Corporate and Industry: Streamline Decision-Making Processes',
+                    'title' => 'Revolutionizing Homeowners Association Governance with Online Elections',
+                    'description' => 'Manage condominium community decisions',
+                    'image' => asset('img/home/hero/hoa-home-owner-asspciation-or-condominium-associations.webp'),
+                    'image_alt' => 'Aerial view of a suburban neighborhood with well-maintained houses and greenery, representing a homeowner association community.',
+                    'cta_label' => 'Get Started',
+                    'cta_url' => route('filament.user.auth.register'),
+                    'cta2_label' => 'Explore',
+                    'cta2_url' => route('products.election.home'),
+                ],
+                [
+                    'title' => 'Simplify Corporate Decisions with Kudvo’s Secure Online Resolution Voting System',
                     'description' => 'offers a convenient solution for board meetings, corporate resolutions.',
                     'image' => asset('img/home/hero/corparate-industry.webp'),
                     'image_alt' => 'Industrial cityscape with a large chemical plant in the center, surrounded by skyscrapers and green spaces.',
@@ -41,7 +51,7 @@ return [
                     'cta2_url' => route('products.election.home'),
                 ],
                 [
-                    'title' => 'Associations & Unions: Strengthen Membership Engagement',
+                    'title' => 'Boost Engagement in Associations & Unions through Online Voting',
                     'description' => 'Foster stronger engagement among your association or union members.',
                     'image' => asset('img/home/hero/associations-and-unions.webp'),
                     'image_alt' => 'Diverse group of people connected by lines and circles, representing a network or collaboration.',
@@ -51,7 +61,7 @@ return [
                     'cta2_url' => route('products.election.home'),
                 ],
                 [
-                    'title' => 'Trust & Educational Institutions: Promote Student and Staff Participation',
+                    'title' => 'Transform Educational Institutions with Trusted Online Election Tools',
                     'description' => 'Encourage student and staff participation in institutional decisions.',
                     'image' => asset('img/home/hero/school-or-university.webp'),
                     'image_alt' => 'Aerial view of a modern university campus with multiple buildings, landscaped grounds, and walking paths.',
@@ -61,7 +71,7 @@ return [
                     'cta2_url' => route('products.election.home'),
                 ],
                 [
-                    'title' => 'Employee Associations: Empower Your Workforce',
+                    'title' => 'Empower Employee Associations with Seamless Online Voting Platforms',
                     'description' => 'Empower your workforce with a voice in organizational decisions.',
                     'image' => asset('img/home/hero/employer-associations.webp'),
                     'image_alt' => 'The image shows a diverse group of professionals smiling. They are dressed in different work clothes, including business suits and safety gear, indicating various professions.',
