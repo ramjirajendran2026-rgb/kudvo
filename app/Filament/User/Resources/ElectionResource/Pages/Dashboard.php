@@ -263,7 +263,7 @@ class Dashboard extends ElectionPage
             ->icon('heroicon-m-receipt-percent')
             ->visible(
                 condition: fn (self $livewire) => $livewire->getElection()->isCheckoutRequired() &&
-                    Filament::auth()->user()->canAccessPanel(Filament::getPanel(id: 'admin'))
+                    (Filament::auth()->user()->hasAdminRole() || Filament::auth()->user()->hasStaffRole())
             );
     }
 
