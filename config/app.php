@@ -6,6 +6,7 @@ use App\Providers\BroadcastServiceProvider;
 use App\Providers\EventServiceProvider;
 use App\Providers\Filament\AdminPanelProvider;
 use App\Providers\Filament\ElectionPanelProvider;
+use App\Providers\Filament\MeetingPanelProvider;
 use App\Providers\Filament\NominationPanelProvider;
 use App\Providers\Filament\UserPanelProvider;
 use App\Providers\HorizonServiceProvider;
@@ -184,6 +185,7 @@ return [
         NominationPanelProvider::class,
         ElectionPanelProvider::class,
         AdminPanelProvider::class,
+        MeetingPanelProvider::class,
         RouteServiceProvider::class,
         TelescopeServiceProvider::class,
     ])->toArray(),
@@ -246,6 +248,13 @@ return [
         ],
 
         'demo_election_code' => env('APP_DEMO_ELECTION_CODE'),
+    ],
+
+    'meeting' => [
+        'code' => [
+            'prefix' => 'MT',
+            'length' => 8,
+        ],
     ],
 
 ];

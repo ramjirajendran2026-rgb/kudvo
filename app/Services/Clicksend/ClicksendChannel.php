@@ -10,6 +10,7 @@ use ClickSend\Model\SmsMessage;
 use ClickSend\Model\SmsMessageCollection;
 use Exception;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
@@ -52,6 +53,12 @@ class ClicksendChannel
             }
 
             Log::info('[Clicksend] SendSMS Request: ' . ((string) $message));
+
+            if (App::isLocal()) {
+                Log::info('[Clicksend] SendSMS Request: skipped on local');
+
+                return null;
+            }
             $response = $this->api->smsSendPost(
                 (new SmsMessageCollection)
                     ->setMessages([$message])

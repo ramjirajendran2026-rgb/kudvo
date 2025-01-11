@@ -37,6 +37,7 @@
         "laravel/cashier": "^15.3",
         "laravel/framework": "^10.10",
         "laravel/horizon": "^5.27",
+        "laravel/pail": "^1.2",
         "laravel/pulse": "^1.2",
         "laravel/reverb": "@beta",
         "laravel/sanctum": "^3.3",
@@ -106,6 +107,10 @@
         ],
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
+        ],
+        "dev": [
+            "Composer\\Config::disableProcessTimeout",
+            "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan queue:listen --tries=1\" \"php artisan pail -v --timeout=0\" \"php artisan reverb:start\" \"bun run dev\" --names=queue,logs,reverb,vite"
         ]
     },
     "extra": {

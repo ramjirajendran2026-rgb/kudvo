@@ -1,5 +1,6 @@
 <?php
 
+use App\Actions\Meeting\GenerateDetailedResultPdf;
 use App\Filament\Election\Pages\Index as ElectionPanel;
 use App\Http\Controllers\AwsSnsController;
 use App\Http\Controllers\CheckoutController;
@@ -16,6 +17,8 @@ use App\Livewire\Pages\Wiki\Index as WikiIndex;
 use App\Livewire\Pages\Wiki\Show as WikiDetails;
 use App\Models\Election;
 use App\Models\Elector;
+use App\Models\Meeting;
+use App\Models\Participant;
 use App\Models\ShortLink;
 use App\Services\Clicksend\Http\Controllers\WebhookController as ClicksendWebhookController;
 use Illuminate\Http\Request;
@@ -121,6 +124,13 @@ Route::group(
                     return redirect()->route('short_link.election', ['election' => $request->get('e')]);
                 }
 
+                if ($request->filled('p')) {
+                    /** @var Participant $participant */
+                    $participant = Participant::with('meeting')->where('short_key', $request->get('p'))->firstOrFail();
+
+                    return redirect()->signedRoute('filament.meeting.eul', ['participant' => $participant, 'meeting' => $participant->meeting]);
+                }
+
                 $shortLink = ShortLink::where('key', collect($request->query())->keys()->first())->firstOrFail();
 
                 return redirect()->away($shortLink->destination);
@@ -149,5 +159,9 @@ Route::group(
 
             Route::post('ses/notification/' . $route, [AwsSnsController::class, $controllerActionName])->name($routeName);
         }
+
+        Route::get('meet/{meeting}/resolutions/detailed-result', function (Meeting $meeting) {
+            return app(GenerateDetailedResultPdf::class)->execute($meeting);
+        });
     }
 );

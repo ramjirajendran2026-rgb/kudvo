@@ -1,27 +1,37 @@
 {
   "resources/css/app.css": {
-    "file": "assets/app-DfPqB36U.css",
+    "file": "assets/app-xBfYZJ9N.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
   "resources/css/filament/admin/theme.css": {
-    "file": "assets/theme-CFqHX10p.css",
+    "file": "assets/theme-D3hJZbs4.css",
     "src": "resources/css/filament/admin/theme.css",
     "isEntry": true
   },
   "resources/css/filament/election/theme.css": {
-    "file": "assets/theme-Dca5eubP.css",
+    "file": "assets/theme-CcZPhk6v.css",
     "src": "resources/css/filament/election/theme.css",
     "isEntry": true
   },
+  "resources/css/filament/meeting/theme.css": {
+    "file": "assets/theme-xbtGEljk.css",
+    "src": "resources/css/filament/meeting/theme.css",
+    "isEntry": true
+  },
   "resources/css/filament/nomination/theme.css": {
-    "file": "assets/theme-BtdqiGtu.css",
+    "file": "assets/theme-DA__BSwN.css",
     "src": "resources/css/filament/nomination/theme.css",
     "isEntry": true
   },
   "resources/css/filament/user/theme.css": {
-    "file": "assets/theme-LLCmcdhK.css",
+    "file": "assets/theme-Av8sBXBE.css",
     "src": "resources/css/filament/user/theme.css",
+    "isEntry": true
+  },
+  "resources/css/pdf.css": {
+    "file": "assets/pdf-D35IVTos.css",
+    "src": "resources/css/pdf.css",
     "isEntry": true
   },
   "resources/js/app.js": {

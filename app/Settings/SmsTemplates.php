@@ -14,6 +14,10 @@ class SmsTemplates extends Settings
 
     public string $elector_voted_confirmation;
 
+    public string $meeting_invitation;
+
+    public string $meeting_participant_mfa;
+
     public static function group(): string
     {
         return 'sms_templates';

@@ -132,3 +132,17 @@
         }
     }
 }
+
+.resolution-choice-picker {
+    @apply w-full grid-flow-row sm:grid-flow-col divide-y sm:divide-x;
+
+    .fi-btn {
+        @apply text-custom-600 dark:text-custom-400;
+        @apply [&:nth-child(1_of_.fi-btn)]:rounded-s-none [&:nth-last-child(1_of_.fi-btn)]:rounded-e-none [&:nth-child(1_of_.fi-btn)]:rounded-t-lg [&:nth-last-child(1_of_.fi-btn)]:rounded-b-lg;
+        @apply sm:[&:nth-child(1_of_.fi-btn)]:rounded-t-none sm:[&:nth-last-child(1_of_.fi-btn)]:rounded-b-none sm:[&:nth-child(1_of_.fi-btn)]:rounded-s-lg sm:[&:nth-last-child(1_of_.fi-btn)]:rounded-e-lg;
+    }
+
+    .fi-btn-icon {
+        @apply text-inherit dark:text-inherit;
+    }
+}

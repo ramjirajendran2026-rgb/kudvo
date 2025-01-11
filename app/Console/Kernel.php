@@ -17,6 +17,12 @@ class Kernel extends ConsoleKernel
             ->everyMinute()
             ->withoutOverlapping()
             ->runInBackground();
+
+        $schedule->command(command: 'meeting:blast-participation-links')
+            ->name(description: 'meeting:blast-participation-links')
+            ->everyMinute()
+            ->withoutOverlapping()
+            ->runInBackground();
     }
 
     /**

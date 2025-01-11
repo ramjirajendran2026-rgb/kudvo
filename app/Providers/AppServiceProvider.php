@@ -2,10 +2,12 @@
 
 namespace App\Providers;
 
-use App\Actions\GenerateParticipantShortKey;
 use App\Actions\GenerateShortLinkKey;
+use App\Actions\Meeting\GenerateMeetingShortKey;
+use App\Actions\Meeting\GenerateParticipantShortKey;
 use App\Filament\Election\Http\Responses\Auth\LogoutResponse;
 use App\KudvoManager;
+use App\Models\Meeting;
 use App\Models\Participant;
 use App\Models\ShortLink;
 use App\Models\User;
@@ -62,6 +64,10 @@ class AppServiceProvider extends ServiceProvider
             ->needs(abstract: Hashids::class)
             ->give(implementation: fn (): Hashids => new Hashids(salt: ShortLink::class, minHashLength: 6));
 
+        $this->app->when(concrete: GenerateMeetingShortKey::class)
+            ->needs(abstract: Hashids::class)
+            ->give(implementation: fn (): Hashids => new Hashids(salt: Meeting::class, minHashLength: 6));
+
         $this->app->when(concrete: GenerateParticipantShortKey::class)
             ->needs(abstract: Hashids::class)
             ->give(implementation: fn (): Hashids => new Hashids(salt: Participant::class, minHashLength: 6));
@@ -72,7 +78,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Model::shouldBeStrict(App::isLocal());
+        //        Model::shouldBeStrict(App::isLocal());
 
         if (App::isLocal()) {
             Mail::alwaysTo(address: 'iliyas.m@inodesys.com');
@@ -82,7 +88,7 @@ class AppServiceProvider extends ServiceProvider
             return $user->canAccessPanel(panel: Filament::getPanel(id: 'admin'));
         });
 
-        Str::macro(name: 'isUnicode', macro: fn ($string): bool => strlen($string) != strlen(utf8_decode($string)));
+        Str::macro(name: 'isUnicode', macro: fn ($string): bool => strlen($string) != strlen(mb_convert_encoding($string, 'ISO-8859-1', 'UTF-8')));
         Str::macro(name: 'maxLimit', macro: function ($value, $limit = 100, $end = '...'): string {
             if (mb_strwidth($value, 'UTF-8') <= $limit) {
                 return $value;

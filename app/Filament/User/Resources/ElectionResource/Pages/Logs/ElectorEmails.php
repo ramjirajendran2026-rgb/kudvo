@@ -171,8 +171,8 @@ class ElectorEmails extends ElectionPage implements HasTable
         $tabs = [];
 
         if ($this->hasBallotLink($this->getElection())) {
-            $tabs[MailMessagePurpose::BallotLink->value] = Tab::make(label: MailMessagePurpose::BallotLink->getLabel())
-                ->modifyQueryUsing(callback: fn (Builder $query) => MailMessagePurpose::BallotLink->getTabQuery($query));
+            $tabs[MailMessagePurpose::MeetingInvitation->value] = Tab::make(label: MailMessagePurpose::MeetingInvitation->getLabel())
+                ->modifyQueryUsing(callback: fn (Builder $query) => MailMessagePurpose::MeetingInvitation->getTabQuery($query));
         }
 
         if ($this->hasMfa($this->getElection())) {

@@ -6,6 +6,7 @@ use App\Filament\Admin\Clusters\SmsSettingsCluster;
 use App\Notifications\Election\BallotLinkNotification;
 use App\Notifications\Election\MfaCodeNotification;
 use App\Notifications\Election\VotedConfirmationNotification;
+use App\Notifications\Meeting\MeetingInvitationNotification;
 use App\Settings\SmsTemplates;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -108,6 +109,29 @@ class Templates extends SettingsPage
                     ))
                     ->schema(components: [
                         Forms\Components\Textarea::make(name: 'elector_nomination_mfa')
+                            ->autosize()
+                            ->hiddenLabel(),
+                    ]),
+
+                Forms\Components\Section::make(heading: 'Meeting Invitation')
+                    ->compact()
+                    ->headerActions(actions: Arr::map(
+                        array: [
+                            'MEETING_LINK' => MeetingInvitationNotification::VAR_MEETING_LINK_SHORT,
+                            'MEETING_NAME' => MeetingInvitationNotification::VAR_MEETING_NAME_SHORT,
+                            'PARTICIPANT_NAME' => MeetingInvitationNotification::VAR_PARTICIPANT_NAME_SHORT,
+                        ],
+                        callback: fn (string $value, string $key) => Forms\Components\Actions\Action::make(name: 'insert' . Str::title($key))
+                            ->alpineClickHandler(
+                                handler: 'target = document.getElementById(\'data.meeting_invitation\');$wire.data.meeting_invitation = target.value.substring(0, target.selectionStart) + \'' . $value . '\' + target.value.substring(target.selectionEnd)'
+                            )
+                            ->color(color: 'info')
+                            ->label(label: $key)
+                            ->link()
+                            ->size(size: ActionSize::Small),
+                    ))
+                    ->schema(components: [
+                        Forms\Components\Textarea::make(name: 'meeting_invitation')
                             ->autosize()
                             ->hiddenLabel(),
                     ]),

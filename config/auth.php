@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Elector;
+use App\Models\Participant;
 use App\Models\User;
 
 return [
@@ -48,6 +49,11 @@ return [
             'driver' => 'session',
             'provider' => 'electors',
         ],
+
+        'participant' => [
+            'driver' => 'session',
+            'provider' => 'participants',
+        ],
     ],
 
     /*
@@ -76,6 +82,11 @@ return [
         'electors' => [
             'driver' => 'eloquent',
             'model' => Elector::class,
+        ],
+
+        'participants' => [
+            'driver' => 'eloquent',
+            'model' => Participant::class,
         ],
 
         // 'users' => [

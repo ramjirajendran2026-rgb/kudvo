@@ -14,6 +14,7 @@ readonly class OrganisationForm
     public static function countryComponent(): CountryPicker
     {
         return CountryPicker::make()
+            ->default(state: request()->ipinfo?->country)
             ->label(label: __('filament.user.organisation-resource.form.country.label'))
             ->required();
     }
@@ -49,6 +50,7 @@ readonly class OrganisationForm
     public static function timezoneComponent(): TimezonePicker
     {
         return TimezonePicker::make()
+            ->default(state: request()->ipinfo?->timezone)
             ->label(label: __('filament.user.organisation-resource.form.timezone.label'))
             ->required();
     }

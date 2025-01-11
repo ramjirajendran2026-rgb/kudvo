@@ -5,12 +5,15 @@ namespace App;
 use App\Enums\ElectionPanelState;
 use App\Models\Election;
 use App\Models\ElectionBoothToken;
+use App\Models\Meeting;
 use App\Models\Nomination;
 use App\Models\Organisation;
 
 class KudvoManager
 {
     protected ?Election $election = null;
+
+    protected ?Meeting $meeting = null;
 
     protected ?Nomination $nomination = null;
 
@@ -77,5 +80,17 @@ class KudvoManager
     public function isBoothDevice(): bool
     {
         return filled($this->getElectionBoothToken());
+    }
+
+    public function setMeeting(?Meeting $meeting): void
+    {
+        $this->meeting = $meeting;
+
+        $this->setOrganisation(organisation: $meeting?->organisation);
+    }
+
+    public function getMeeting(): ?Meeting
+    {
+        return $this->meeting;
     }
 }

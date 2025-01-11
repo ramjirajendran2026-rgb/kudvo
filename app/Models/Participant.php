@@ -2,19 +2,40 @@
 
 namespace App\Models;
 
-use App\Actions\GenerateParticipantShortKey;
+use App\Actions\Meeting\GenerateParticipantShortKey;
+use App\Facades\Kudvo;
+use App\Filament\Meeting\MeetingPanel;
 use App\Models\Concerns\HasNextPossibleKey;
+use App\Notifications\Meeting\MeetingInvitationNotification;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Models\Contracts\HasName;
+use Filament\Panel;
+use Illuminate\Auth\Authenticatable;
+use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Foundation\Auth\Access\Authorizable;
+use Illuminate\Http\Request;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Validator;
 
-class Participant extends Model
+class Participant extends Model implements AuthenticatableContract, AuthorizableContract, FilamentUser, HasName
 {
+    use Authenticatable;
+    use Authorizable;
+    use HasFactory;
     use HasNextPossibleKey;
     use HasUlids;
+    use Notifiable;
 
     protected $fillable = [
         'membership_number',
@@ -58,16 +79,128 @@ class Participant extends Model
         return $this->hasMany(related: ResolutionVote::class);
     }
 
+    public function authSessions(): MorphMany
+    {
+        return $this->morphMany(
+            related: AuthSession::class,
+            name: 'authenticatable',
+        );
+    }
+
+    public function authSession(): MorphOne
+    {
+        return $this
+            ->morphOne(
+                related: AuthSession::class,
+                name: 'authenticatable',
+            )
+            ->latestOfMany();
+    }
+
+    public function emails(): MorphMany
+    {
+        return $this
+            ->morphMany(
+                related: Email::class,
+                name: 'notifiable',
+            );
+    }
+
+    public function smsMessages(): MorphMany
+    {
+        return $this
+            ->morphMany(
+                related: SmsMessage::class,
+                name: 'smsable',
+            );
+    }
+
     public function scopeVoted(Builder $query): Builder
     {
         return $query->whereNotNull('voted_at');
     }
 
-    /**
-     * @return array<int, string>
-     */
+    public function scopeNonVoted(Builder $query): Builder
+    {
+        return $query->whereNull('voted_at');
+    }
+
     public function uniqueIds(): array
     {
         return ['key'];
+    }
+
+    public function getRouteKeyName(): string
+    {
+        return 'key';
+    }
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return match (true) {
+            $panel instanceof MeetingPanel => $this->meeting_id === Kudvo::getMeeting()?->getKey(),
+            default => false,
+        };
+    }
+
+    public function getFilamentName(): string
+    {
+        return $this->name ?: $this->membership_number;
+    }
+
+    public function routeNotificationForSms(?Notification $notification = null)
+    {
+        return $this->phone;
+    }
+
+    public function routeNotificationForMail(?Notification $notification = null)
+    {
+        $validator = Validator::make(
+            data: [
+                'email' => $this->email,
+            ],
+            rules: [
+                'email' => 'required|email:rfc,dns',
+            ],
+        );
+
+        return $validator->passes() ? $this->email : null;
+    }
+
+    public function getAuthPassword()
+    {
+        return $this->short_key;
+    }
+
+    public function createAuthSession(string $sessionId, string $guardName, Request $request): AuthSession
+    {
+        $this->authSessions()
+            ->where('guard_name', $guardName)
+            ->delete();
+
+        return $this->authSessions()
+            ->create(attributes: [
+                'session_id' => $sessionId,
+                'guard_name' => $guardName,
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+            ]);
+    }
+
+    public function sendParticipationLink(?Meeting $meeting = null, bool $now = false): void
+    {
+        /** @var Meeting $meeting */
+        $meeting ??= $this->meeting;
+
+        $notification = new MeetingInvitationNotification(
+            participant: $this,
+            meeting: $meeting,
+        );
+
+        if ($now) {
+            $this->notifyNow(instance: $notification);
+        } else {
+            $this->notify(instance: $notification);
+        }
     }
 }

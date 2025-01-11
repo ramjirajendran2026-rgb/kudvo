@@ -48,8 +48,6 @@
         @filamentStyles
         @vite('resources/css/app.css')
 
-        {{ app(LocalFontProvider::class)->getHtml(family: 'Poppins') }}
-
         @stack('styles')
     </head>
 

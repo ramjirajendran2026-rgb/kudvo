@@ -4,6 +4,10 @@
 
 @config 'tailwind.config.js';
 
+.fi-page-sub-navigation-sidebar-ctn {
+    @apply sticky top-24;
+}
+
 .fi-in-placeholder {
     @apply text-center;
 }
@@ -36,6 +40,28 @@
             @apply flex flex-col md:flex-row;
         }
     }
+
+    & .fi-in-split {
+        @apply gap-2 sm:gap-4 md:gap-6;
+    }
+}
+
+.resolution-repeatable-entry {
+    & .fi-in-repeatable-item {
+        @apply rounded-none border-gray-200 bg-inherit shadow-none ring-0 dark:border-white/10 dark:bg-inherit p-0;
+
+        .fi-section-content {
+            @apply dark:bg-white pt-0;
+
+            .resolution-description {
+                @apply prose max-w-none overflow-x-auto;
+            }
+        }
+
+        .fi-in-affixes {
+            @apply flex flex-col md:flex-row;
+        }
+    }
 }
 
 .fi-page.fi-resource-list-records-page.fi-resource-elections:has(
@@ -53,11 +79,5 @@
                 }
             }
         }
-    }
-}
-
-.candidate-repeatable-entry {
-    .fi-in-split {
-        @apply gap-2 sm:gap-4 md:gap-6;
     }
 }

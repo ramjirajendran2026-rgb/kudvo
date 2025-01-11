@@ -19,10 +19,11 @@ return new class extends Migration
                 $table->string(column: 'phone')->nullable();
                 $table->unsignedDecimal(column: 'weightage', total: 25, places: 15)->default(value: 1);
 
+                $table->timestamp(column: 'attended_at')->nullable();
                 $table->timestamp(column: 'voted_at')->nullable();
 
-                $table->ulid('key')->unique();
-                $table->string('short_key')->unique();
+                $table->ulid(column: 'key')->unique();
+                $table->string(column: 'short_key')->unique();
 
                 $table->foreignId(column: 'meeting_id')
                     ->constrained()->cascadeOnUpdate()->cascadeOnDelete();

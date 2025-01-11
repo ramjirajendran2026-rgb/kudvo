@@ -1,0 +1,47 @@
+@import '../base/theme.css';
+@import '../base/sweetalert2.css';
+@import '../../../../vendor/awcodes/filament-tiptap-editor/resources/css/plugin.css';
+
+@config 'tailwind.config.js';
+
+.fi-topbar {
+    @apply relative mx-auto w-full max-w-7xl lg:px-8;
+
+    nav {
+        @apply h-auto min-h-16 py-4 md:px-4 lg:rounded-b-xl;
+
+        div.hidden {
+            @apply flex;
+        }
+    }
+
+    .fi-logo {
+        @apply flex h-auto items-center justify-center gap-x-4;
+    }
+
+    .fi-user-menu {
+        .fi-avatar {
+            @apply size-12;
+        }
+    }
+}
+
+.fi-main {
+    @apply px-0 md:px-6 lg:px-8;
+
+    .fi-header {
+        @apply px-4 md:px-0;
+
+        > div:has(> .fi-header-heading) {
+            @apply flex-grow;
+
+            .fi-header-heading {
+                @apply text-center;
+            }
+
+            .fi-header-subheading {
+                @apply text-center max-w-full;
+            }
+        }
+    }
+}

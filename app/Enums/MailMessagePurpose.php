@@ -2,6 +2,9 @@
 
 namespace App\Enums;
 
+use App\Models\Election;
+use App\Models\Meeting;
+use App\Models\Nomination;
 use Filament\Resources\Components\Tab;
 use Filament\Support\Contracts\HasLabel;
 use Illuminate\Database\Eloquent\Builder;
@@ -22,6 +25,10 @@ enum MailMessagePurpose: string implements HasLabel
     case ElectionCollaboratorInvitation = 'election_collaborator_invitation';
 
     case NominationMfaCode = 'nomination_mfa_code';
+
+    case MeetingInvitation = 'meeting_invitation';
+
+    case MeetingMfaCode = 'meeting_mfa_code';
 
     public function getLabel(): ?string
     {
@@ -44,13 +51,20 @@ enum MailMessagePurpose: string implements HasLabel
 
     public function getTabQuery(Builder $query): Builder
     {
+        return $query->where('purpose', $this->value);
+    }
+
+    public function getEventType(): string
+    {
         return match ($this) {
-            self::BallotLink => $query->where('purpose', self::BallotLink),
-            self::BallotMfaCode => $query->where('purpose', self::BallotMfaCode),
-            self::VotedConfirmation => $query->where('purpose', self::VotedConfirmation),
-            self::VotedBallotCopy => $query->where('purpose', self::VotedBallotCopy),
-            self::ElectionCollaboratorInvitation => $query->where('purpose', self::ElectionCollaboratorInvitation),
-            self::NominationMfaCode => $query->where('purpose', self::NominationMfaCode),
+            self::BallotLink,
+            self::BallotMfaCode,
+            self::VotedConfirmation,
+            self::VotedBallotCopy,
+            self::ElectionCollaboratorInvitation => Election::class,
+            self::NominationMfaCode => Nomination::class,
+            self::MeetingInvitation,
+            self::MeetingMfaCode => Meeting::class,
         };
     }
 }

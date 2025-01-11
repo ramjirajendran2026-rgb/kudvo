@@ -13,6 +13,8 @@ export default {
 
         './resources/views/components/**/*.blade.php',
 
+        './resources/views/pdf/**/*.blade.php',
+
         './app/Livewire/**/*.php',
         './resources/views/livewire/**/*.blade.php',
 

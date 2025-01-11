@@ -74,7 +74,7 @@ return [
                         ],
                         'actions' => [
                             'submit' => [
-                                'label' => 'Send OTP',
+                                'label' => 'Get OTP',
                             ],
                         ],
                         'notice' => [

@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\ResolutionVoteResponse;
+use App\Enums\ResolutionChoice;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -15,7 +15,7 @@ class ResolutionVote extends Model
     ];
 
     protected $casts = [
-        'response' => ResolutionVoteResponse::class,
+        'response' => ResolutionChoice::class,
         'participant_id' => 'int',
         'resolution_id' => 'int',
     ];

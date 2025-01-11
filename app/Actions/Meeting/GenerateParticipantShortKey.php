@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions;
+namespace App\Actions\Meeting;
 
 use App\Models\Participant;
 use Hashids\Hashids;
