@@ -2,8 +2,9 @@
 
 namespace App\Filament\Meeting\Pages;
 
+use App\Enums\MeetingStatus;
+use App\Enums\MeetingVotingStatus;
 use App\Forms\Components\ResolutionChoicePicker;
-use App\Models\Participant;
 use App\Models\Resolution;
 use App\Models\ResolutionVote;
 use Filament\Forms\Components\Actions;
@@ -69,8 +70,7 @@ class Resolutions extends BasePage implements HasForms
 
     public function getVotedChoices(): array
     {
-        /** @var Participant $participant */
-        $participant = filament()->auth()->user();
+        $participant = $this->getParticipant();
 
         return $participant->votes
             ->mapWithKeys(fn (ResolutionVote $resolutionVote, int $key) => [$resolutionVote->resolution_id => $resolutionVote->response?->value])
@@ -95,19 +95,17 @@ JS
 
         $data = $this->form->getState();
 
-        /** @var Participant $participant */
-        $participant = filament()->auth()->user();
+        $participant = $this->getParticipant();
 
         foreach ($data as $resolutionId => $choice) {
             $participant->votes()
                 ->updateOrCreate(
                     ['resolution_id' => $resolutionId],
-                    ['response' => $choice],
+                    ['response' => $choice, 'weightage' => $participant->weightage],
                 );
         }
 
-        $participant->voted_at = now();
-        $participant->save();
+        $participant->touch('voted_at');
 
         $this->js(
             <<<'JS'
@@ -122,7 +120,11 @@ JS
 
     public function canSubmit(): bool
     {
-        if (! $this->getMeeting()->is_published) {
+        if (! $this->getMeeting()->isStatus(MeetingStatus::Published)) {
+            return false;
+        }
+
+        if (! $this->getMeeting()->isVotingStatus(MeetingVotingStatus::Open)) {
             return false;
         }
 

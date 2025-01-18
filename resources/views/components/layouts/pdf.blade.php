@@ -27,9 +27,7 @@
         @stack('styles')
     </head>
 
-    <body
-        class="min-h-screen bg-gray-50 font-normal text-gray-950 antialiased"
-    >
+    <body class="min-h-screen bg-gray-50 font-normal text-gray-950 antialiased">
         {{ $slot }}
 
         @stack('scripts')

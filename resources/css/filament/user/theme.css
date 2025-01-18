@@ -48,10 +48,10 @@
 
 .resolution-repeatable-entry {
     & .fi-in-repeatable-item {
-        @apply rounded-none border-gray-200 bg-inherit shadow-none ring-0 dark:border-white/10 dark:bg-inherit p-0;
+        @apply rounded-none border-gray-200 bg-inherit p-0 shadow-none ring-0 dark:border-white/10 dark:bg-inherit;
 
         .fi-section-content {
-            @apply dark:bg-white pt-0;
+            @apply pt-0 dark:bg-white;
 
             .resolution-description {
                 @apply prose max-w-none overflow-x-auto;

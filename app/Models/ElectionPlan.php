@@ -73,7 +73,7 @@ class ElectionPlan extends Model
             ->toCollection()
             ->where('feature', $feature)
             ->first()
-                ?->feature_fee ?? 0;
+            ?->feature_fee ?? 0;
     }
 
     public function getElectorFee(ElectionFeature $feature): int
@@ -83,6 +83,6 @@ class ElectionPlan extends Model
             ->toCollection()
             ->where('feature', $feature)
             ->first()
-                ?->elector_fee ?? 0;
+            ?->elector_fee ?? 0;
     }
 }

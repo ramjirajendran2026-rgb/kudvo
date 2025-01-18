@@ -40,7 +40,7 @@
             }
 
             .fi-header-subheading {
-                @apply text-center max-w-full;
+                @apply max-w-full text-center;
             }
         }
     }

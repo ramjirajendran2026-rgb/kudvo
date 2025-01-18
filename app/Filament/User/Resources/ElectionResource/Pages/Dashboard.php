@@ -246,7 +246,7 @@ class Dashboard extends ElectionPage
             ->visible(
                 condition: fn (self $livewire) => (
                     $this->isOwner() ||
-                    $this->getElection()->getCollaboratorPermissions(Filament::auth()->user())->payment === ElectionCollaboratorPermission::FullAccess
+                        $this->getElection()->getCollaboratorPermissions(Filament::auth()->user())->payment === ElectionCollaboratorPermission::FullAccess
                 ) && $livewire->getElection()->isCheckoutRequired()
             )
             ->label(label: 'Proceed to Pay');

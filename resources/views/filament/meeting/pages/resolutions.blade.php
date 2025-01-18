@@ -1,9 +1,7 @@
-<x-filament-panels::page
-    :full-height="true"
->
+<x-filament-panels::page :full-height="true">
     @php($notice = $this->getNotice())
 
-    @if(filled($notice))
+    @if (filled($notice))
         <x-filament::section>
             <div class="prose max-w-none">
                 {!! $notice !!}

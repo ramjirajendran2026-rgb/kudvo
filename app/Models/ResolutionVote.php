@@ -10,12 +10,14 @@ class ResolutionVote extends Model
 {
     protected $fillable = [
         'response',
+        'weightage',
         'participant_id',
         'resolution_id',
     ];
 
     protected $casts = [
         'response' => ResolutionChoice::class,
+        'weightage' => 'double',
         'participant_id' => 'int',
         'resolution_id' => 'int',
     ];

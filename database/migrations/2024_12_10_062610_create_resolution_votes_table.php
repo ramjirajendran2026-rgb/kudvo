@@ -14,6 +14,7 @@ return new class extends Migration
                 $table->id();
 
                 $table->string(column: 'response');
+                $table->unsignedDecimal(column: 'weightage', total: 25, places: 15)->default(value: 1);
 
                 $table->foreignId(column: 'participant_id')
                     ->constrained()->cascadeOnUpdate()->cascadeOnDelete();

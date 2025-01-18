@@ -6,23 +6,21 @@
     $statePath = $getStatePath();
 @endphp
 
-<x-filament::section
-    :heading="$getHeading()"
->
-    <div class="prose max-w-none mb-6">
+<x-filament::section :heading="$getHeading()">
+    <div class="prose mb-6 max-w-none">
         {!! $getContent() !!}
     </div>
 
     <x-dynamic-component
-            :component="$getFieldWrapperView()"
-            :field="$field"
-            :has-inline-label="$hasInlineLabel"
+        :component="$getFieldWrapperView()"
+        :field="$field"
+        :has-inline-label="$hasInlineLabel"
     >
         <x-slot
-                name="label"
-                @class([
-                    'sm:pt-1.5' => $hasInlineLabel,
-                ])
+            name="label"
+            @class([
+                'sm:pt-1.5' => $hasInlineLabel,
+            ])
         >
             {{ $getLabel() }}
         </x-slot>
@@ -58,8 +56,8 @@
                     :for="$inputId"
                     grouped
                     :icon="$getIcon($value)"
-                    :icon-size="Filament\Support\Enums\IconSize::Large"
-                    :size="Filament\Support\Enums\ActionSize::ExtraLarge"
+                    :icon-size="IconSize::Large"
+                    :size="ActionSize::ExtraLarge"
                     tag="label"
                 >
                     {{ $label }}

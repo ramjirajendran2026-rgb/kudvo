@@ -12,7 +12,7 @@
                     {{ \Filament\Support\generate_href_html($this->getStepUrl($step) ?? '#') }}
                     @class([
                         'flex h-full items-center gap-x-4 px-6 py-4 text-start',
-                        '' => $pendingStep->getIndex() < $step->getIndex()
+                        '' => $pendingStep->getIndex() < $step->getIndex(),
                     ])
                 >
                     <div
@@ -41,35 +41,35 @@
                             />
                         @else
                             <span
-                            @class([
-                                'text-sm font-medium',
-                                'text-gray-500 dark:text-gray-400' => $currentStep->getIndex() !== $step->getIndex(),
-                                'text-primary-600 dark:text-primary-500' => $currentStep->getIndex() === $step->getIndex(),
-                            ])
-                        >
-                            {{ $step->getIndex() }}
-                        </span>
+                                @class([
+                                    'text-sm font-medium',
+                                    'text-gray-500 dark:text-gray-400' => $currentStep->getIndex() !== $step->getIndex(),
+                                    'text-primary-600 dark:text-primary-500' => $currentStep->getIndex() === $step->getIndex(),
+                                ])
+                            >
+                                {{ $step->getIndex() }}
+                            </span>
                         @endif
                     </div>
 
                     <div class="grid justify-items-start md:w-max md:max-w-60">
-                    <span
-                        @class([
-                            'text-sm font-medium',
-                            'text-gray-500 dark:text-gray-400' => $currentStep->getIndex() < $step->getIndex(),
-                            'text-primary-600 dark:text-primary-400' => $currentStep->getIndex() === $step->getIndex(),
-                            'text-gray-950 dark:text-white' => $currentStep->getIndex() > $step->getIndex(),
-                        ])
-                    >
-                        {{ $step->getLabel() }}
-                    </span>
+                        <span
+                            @class([
+                                'text-sm font-medium',
+                                'text-gray-500 dark:text-gray-400' => $currentStep->getIndex() < $step->getIndex(),
+                                'text-primary-600 dark:text-primary-400' => $currentStep->getIndex() === $step->getIndex(),
+                                'text-gray-950 dark:text-white' => $currentStep->getIndex() > $step->getIndex(),
+                            ])
+                        >
+                            {{ $step->getLabel() }}
+                        </span>
 
                         @if (filled($description = $step->getDescription()))
                             <span
                                 class="text-start text-sm text-gray-500 dark:text-gray-400"
                             >
-                            {{ $description }}
-                        </span>
+                                {{ $description }}
+                            </span>
                         @endif
                     </div>
                 </a>

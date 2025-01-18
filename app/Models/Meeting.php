@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
 class Meeting extends Model
@@ -41,6 +42,20 @@ class Meeting extends Model
         'cancelled_at' => 'datetime',
         'organisation_id' => 'int',
     ];
+
+    protected function votingStartsAtLocal(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value, array $attributes) => $this->voting_starts_at?->tz(value: $this->timezone),
+        );
+    }
+
+    protected function votingEndsAtLocal(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value, array $attributes) => $this->voting_ends_at?->tz(value: $this->timezone),
+        );
+    }
 
     protected function isCancelled(): Attribute
     {
@@ -75,7 +90,7 @@ class Meeting extends Model
                 $this->voting_ends_at?->isPast() => MeetingVotingStatus::Ended,
                 $this->voting_starts_at?->isPast() => MeetingVotingStatus::Open,
                 $this->voting_starts_at?->isFuture() => MeetingVotingStatus::Scheduled,
-                default => MeetingVotingStatus::Pending,
+                default => MeetingVotingStatus::NotApplicable,
             },
         );
     }
@@ -182,10 +197,26 @@ class Meeting extends Model
             return MeetingOnboardingStep::AddResolutions;
         }
 
-        if (! $this->is_published) {
+        if (! $this->isStatus(MeetingStatus::Published)) {
             return MeetingOnboardingStep::Publish;
         }
 
         return null;
+    }
+
+    /**
+     * @param  MeetingStatus|array<int, MeetingStatus>  $status
+     */
+    public function isStatus(MeetingStatus | array $status): bool
+    {
+        return in_array($this->status, Arr::wrap($status), true);
+    }
+
+    /**
+     * @param  MeetingVotingStatus|array<int, MeetingVotingStatus>  $status
+     */
+    public function isVotingStatus(MeetingVotingStatus | array $status): bool
+    {
+        return in_array($this->voting_status, Arr::wrap($status), true);
     }
 }

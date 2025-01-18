@@ -4,7 +4,7 @@ namespace App\Enums;
 
 enum MeetingVotingStatus: string
 {
-    case Pending = 'pending';
+    case NotApplicable = 'not_applicable';
     case Scheduled = 'scheduled';
     case Open = 'open';
     case Ended = 'ended';
