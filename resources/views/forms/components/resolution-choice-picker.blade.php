@@ -1,4 +1,7 @@
 @php
+    use Filament\Support\Enums\ActionSize;
+    use Filament\Support\Enums\IconSize;
+
     $hasInlineLabel = $hasInlineLabel();
     $id = $getId();
     $isDisabled = $isDisabled();
