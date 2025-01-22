@@ -19,6 +19,7 @@ use Filament\Tables\Actions\EditAction as TableEditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Facades\Gate;
 
 class MeetingLinkBlasts extends ManageRelatedRecords
 {
@@ -100,6 +101,7 @@ class MeetingLinkBlasts extends ManageRelatedRecords
     public static function getTableCreateAction(): TableCreateAction
     {
         return TableCreateAction::make()
+            ->authorize(fn (self $livewire): bool => Gate::check('createLinkBlast', [$livewire->getRecord()]))
             ->createAnother(condition: false)
             ->icon(icon: 'heroicon-m-plus')
             ->modalCancelAction(action: false)
@@ -112,6 +114,7 @@ class MeetingLinkBlasts extends ManageRelatedRecords
     public static function getTableEditAction(): TableEditAction
     {
         return TableEditAction::make()
+            ->authorize(fn (self $livewire, MeetingLinkBlast $record): bool => Gate::check('updateLinkBlast', [$livewire->getRecord(), $record]))
             ->iconButton()
             ->modalCancelAction(action: false)
             ->modalFooterActionsAlignment(alignment: Alignment::Center)
@@ -122,6 +125,7 @@ class MeetingLinkBlasts extends ManageRelatedRecords
     public static function getTableDeleteAction(): TableDeleteAction
     {
         return TableDeleteAction::make()
+            ->authorize(fn (self $livewire, MeetingLinkBlast $record): bool => Gate::check('deleteLinkBlast', [$livewire->getRecord(), $record]))
             ->iconButton()
             ->visible(condition: fn (MeetingLinkBlast $record): bool => $record->status === MeetingLinkBlastStatus::Scheduled);
     }

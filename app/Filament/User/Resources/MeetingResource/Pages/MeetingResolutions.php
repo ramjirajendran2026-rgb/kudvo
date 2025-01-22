@@ -28,6 +28,7 @@ use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\HtmlString;
 
 class MeetingResolutions extends ViewRecord
@@ -193,6 +194,7 @@ BLADE
     protected function getCreateResolutionAction(): CreateAction
     {
         return CreateAction::make()
+            ->authorize(fn (self $livewire): bool => Gate::check('createResolution', [$livewire->getRecord()]))
             ->after(callback: fn () => $this->dispatch('meeting.onboarding.refresh')->self())
             ->form(form: static fn (Form $form): Form => ResolutionResource::form(form: $form))
             ->model(model: Resolution::class)
@@ -207,6 +209,7 @@ BLADE
     protected function getReorderResolutionAction(): EditAction
     {
         return EditAction::make(name: 'reorderResolution')
+            ->authorize(fn (self $livewire, Resolution $state): bool => Gate::check('reorderResolution', [$livewire->getRecord(), $state]))
             ->form(form: [
                 Repeater::make(name: 'resolutions')
                     ->addable(condition: false)
@@ -231,6 +234,7 @@ BLADE
     protected function getEditResolutionAction(): Action
     {
         return Action::make(name: 'editResolution')
+            ->authorize(fn (self $livewire, Resolution $state): bool => Gate::check('updateResolution', [$livewire->getRecord(), $state]))
             ->action(action: static function (Action $action, Model $record, array $data): void {
                 $record->update(attributes: $data);
 
@@ -254,6 +258,7 @@ BLADE
     protected function getDeleteResolutionAction(): Action
     {
         return Action::make(name: 'deleteResolution')
+            ->authorize(fn (self $livewire, Resolution $state): bool => Gate::check('deleteResolution', [$livewire->getRecord(), $state]))
             ->after(callback: fn () => $this->dispatch('meeting.onboarding.refresh')->self())
             ->requiresConfirmation()
             ->action(action: static function (Action $action, Model $record): void {

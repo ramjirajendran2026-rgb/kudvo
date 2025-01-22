@@ -80,6 +80,9 @@ class MeetingResource extends Resource
 
                 Tables\Columns\TextColumn::make(name: 'name')
                     ->wrap(),
+
+                Tables\Columns\TextColumn::make('status')
+                    ->badge(),
             ])
             ->emptyStateDescription(description: __(key: 'filament-tables::table.empty.description', replace: [
                 'model' => static::getPluralModelLabel(),
@@ -191,7 +194,8 @@ class MeetingResource extends Resource
 
     public static function getDescriptionFormComponent(): TiptapEditor
     {
-        return TiptapEditor::make(name: 'description');
+        return TiptapEditor::make(name: 'description')
+            ->maxContentWidth('full');
     }
 
     public static function getTimezoneFormComponent(): TimezonePicker

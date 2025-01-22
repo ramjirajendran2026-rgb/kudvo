@@ -14,12 +14,16 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ManageRelatedRecords;
+use Filament\Support\Enums\IconPosition;
 use Filament\Tables\Actions\Action as TableAction;
 use Filament\Tables\Actions\ActionGroup;
+use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rules\Unique;
 use Ysfkaya\FilamentPhoneInput\PhoneInputNumberType;
 use Ysfkaya\FilamentPhoneInput\Tables\PhoneColumn;
@@ -110,20 +114,28 @@ class MeetingParticipants extends ManageRelatedRecords
             ->actions(actions: [
                 $this->getSendMeetingLinkAction(),
 
-                ParticipantResource::getEditTableAction(),
+                ParticipantResource::getEditTableAction()
+                    ->authorize(fn (self $livewire, Participant $participant) => Gate::check('updateParticipant', [$livewire->getOwnerRecord(), $participant])),
 
                 ParticipantResource::getDeleteTableAction()
+                    ->authorize(fn (self $livewire, Participant $participant) => Gate::check('deleteParticipant', [$livewire->getOwnerRecord(), $participant]))
                     ->after(callback: fn () => $this->dispatch('meeting.onboarding.refresh')->self()),
             ])
             ->bulkActions(actions: [
                 BulkActionGroup::make(actions: [
                     ParticipantResource::getDeleteBulkAction()
+                        ->authorize(fn (self $livewire) => Gate::check('deleteAnyParticipant', [$livewire->getOwnerRecord()]))
                         ->after(callback: fn () => $this->dispatch('meeting.onboarding.refresh')->self()),
+
+                    $this->getSendMeetingLinkBulkAction(),
                 ]),
             ])
             ->columns(components: [
                 TextColumn::make(name: 'name')
                     ->description(description: fn (Participant $record): ?string => $record->membership_number)
+                    ->icon(fn (Participant $participant): ?string => $participant->is_voted ? 'heroicon-s-shield-check' : null)
+                    ->iconColor('success')
+                    ->iconPosition(IconPosition::After)
                     ->searchable(condition: ['name', 'membership_number'])
                     ->wrap(),
 
@@ -139,12 +151,14 @@ class MeetingParticipants extends ManageRelatedRecords
             ])
             ->headerActions(actions: [
                 ParticipantResource::getImportTableAction()
+                    ->authorize('importParticipant')
                     ->fillForm([
                         'phone_country' => Filament::getTenant()?->country ?: config(key: 'app.default_phone_country'),
                     ])
                     ->options(options: ['meeting_id' => $this->getRecord()->getKey()]),
 
                 ParticipantResource::getCreateTableAction()
+                    ->authorize('createParticipant')
                     ->after(callback: fn () => $this->dispatch('meeting.onboarding.refresh')->self())
                     ->createAnother(condition: false),
 
@@ -159,6 +173,7 @@ class MeetingParticipants extends ManageRelatedRecords
     protected function getSendMeetingLinkAction(): TableAction
     {
         return TableAction::make(name: 'sendMeetingLink')
+            ->authorize(fn (self $livewire, Participant $participant) => Gate::check('notifyParticipantMeetingLink', [$livewire->getOwnerRecord(), $participant]))
             ->requiresConfirmation()
             ->action(action: function (self $livewire, Participant $participant, TableAction $action) {
                 $participant->sendParticipationLink(meeting: $livewire->getOwnerRecord());
@@ -173,9 +188,34 @@ class MeetingParticipants extends ManageRelatedRecords
             );
     }
 
+    protected function getSendMeetingLinkBulkAction(): BulkAction
+    {
+        return BulkAction::make(name: 'sendMeetingLinkToSelected')
+            ->authorize(fn (self $livewire) => Gate::check('notifyParticipantMeetingLinkAny', [$livewire->getOwnerRecord()]))
+            ->requiresConfirmation()
+            ->action(action: function (BulkAction $action, Collection $collection, self $livewire) {
+                $collection->each(
+                    callback: function (Participant $participant) use ($livewire) {
+                        if (! $participant->is_voted) {
+                            $participant->sendParticipationLink($livewire->getOwnerRecord());
+                        }
+                    }
+                );
+
+                $action->success();
+            })
+            ->icon(icon: 'heroicon-m-bell-alert')
+            ->label('Send meeting link')
+            ->successNotification(
+                notification: fn (Notification $notification) => $notification
+                    ->title(title: 'Meeting link sent')
+            );
+    }
+
     public function getGenerateDummyParticipantsAction(): TableAction
     {
         return TableAction::make('generateDummyParticipants')
+            ->authorize('generateDummyParticipant')
             ->requiresConfirmation()
             ->action(function (self $livewire, TableAction $action, array $data) {
                 Participant::factory($data['count'])
