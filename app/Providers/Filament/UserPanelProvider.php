@@ -22,6 +22,7 @@ use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\SpatieLaravelTranslatablePlugin;
 use Filament\Support\Colors\Color;
+use Filament\Support\Enums\MaxWidth;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -81,6 +82,7 @@ class UserPanelProvider extends PanelProvider
             ->brandLogo(logo: asset(path: 'img/nav-logo.webp'))
             ->brandLogoHeight(height: '3rem')
             ->brandName(name: config('app.name'))
+            ->maxContentWidth(MaxWidth::Full)
             ->colors(colors: [
                 'primary' => Color::Indigo,
             ])
