@@ -17,6 +17,10 @@ class EditOrganisationProfile extends EditTenantProfile
 {
     use Translatable;
 
+    public ?string $currentUrl = null;
+
+    public ?string $previousUrl = null;
+
     public static function getLabel(): string
     {
         return __('filament.user.pages.organisation.edit.label');
@@ -27,6 +31,9 @@ class EditOrganisationProfile extends EditTenantProfile
         parent::mount();
 
         $this->setActiveLocale(App::getLocale());
+
+        $this->currentUrl = url()->current();
+        $this->previousUrl = url()->previous();
     }
 
     public static function getResource(): string
@@ -86,6 +93,6 @@ class EditOrganisationProfile extends EditTenantProfile
 
     protected function getRedirectUrl(): ?string
     {
-        return Filament::getUrl();
+        return $this->previousUrl !== $this->currentUrl ? $this->previousUrl : Filament::getUrl($this->getRecord());
     }
 }

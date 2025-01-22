@@ -11,6 +11,18 @@ use Filament\Panel;
 
 class EditProfile extends BasePage
 {
+    public ?string $currentUrl = null;
+
+    public ?string $previousUrl = null;
+
+    public function mount(): void
+    {
+        parent::mount();
+
+        $this->currentUrl = url()->current();
+        $this->previousUrl = url()->previous();
+    }
+
     protected function getNameFormComponent(): Component
     {
         return UserForm::nameComponent();
@@ -29,6 +41,6 @@ class EditProfile extends BasePage
 
     protected function getRedirectUrl(): ?string
     {
-        return Filament::getUrl();
+        return $this->previousUrl !== $this->currentUrl ? $this->previousUrl : Filament::getUrl();
     }
 }
