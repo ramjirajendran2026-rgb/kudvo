@@ -82,7 +82,7 @@ class UserPanelProvider extends PanelProvider
             ->brandLogo(logo: asset(path: 'img/nav-logo.webp'))
             ->brandLogoHeight(height: '3rem')
             ->brandName(name: config('app.name'))
-            ->maxContentWidth(MaxWidth::Full)
+            ->maxContentWidth(maxContentWidth: MaxWidth::ScreenTwoExtraLarge)
             ->colors(colors: [
                 'primary' => Color::Indigo,
             ])
