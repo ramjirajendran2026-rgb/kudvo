@@ -38,7 +38,7 @@ class EntryForm extends Component implements HasForms
 
     public function render()
     {
-        return view('livewire.survey.entry', ['survey' => $this->survey])
+        return view('livewire.survey.entry-form', ['survey' => $this->survey])
             ->layoutData([
                 'seoData' => new SEOData(
                     title: $this->survey->name,
