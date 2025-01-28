@@ -3,6 +3,7 @@
 namespace App\Filament\Admin\Resources;
 
 use App\Filament\Admin\Resources\SurveyResource\Pages;
+use App\Models\Survey;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
@@ -17,7 +18,6 @@ use Filament\Support\Enums\MaxWidth;
 use Filament\Tables;
 use Filament\Tables\Table;
 use FilamentTiptapEditor\TiptapEditor;
-use MattDaneshvar\Survey\Models\Survey;
 
 class SurveyResource extends Resource
 {
@@ -47,6 +47,8 @@ class SurveyResource extends Resource
                 Repeater::make('questions')
                     ->reorderable('order')
                     ->relationship()
+                    ->reorderable()
+                    ->orderColumn()
                     ->schema([
                         Group::make([
                             TextInput::make('content')
