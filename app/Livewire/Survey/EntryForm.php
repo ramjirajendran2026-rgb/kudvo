@@ -15,6 +15,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\HtmlString;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
+use MattDaneshvar\Survey\Models\Entry;
 use MattDaneshvar\Survey\Models\Question;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
@@ -22,7 +23,7 @@ use RalphJSmit\Laravel\SEO\Support\SEOData;
  * @property Form $form
  */
 #[Layout('components.layouts.base')]
-class Entry extends Component implements HasForms
+class EntryForm extends Component implements HasForms
 {
     use InteractsWithForms;
 
@@ -72,7 +73,7 @@ class Entry extends Component implements HasForms
     {
         $data = $this->form->getState();
 
-        (new \MattDaneshvar\Survey\Models\Entry)->for($this->survey)->fromArray($data)->push();
+        (new Entry)->for($this->survey)->fromArray($data)->push();
 
         $this->form->fill();
 

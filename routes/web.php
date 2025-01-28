@@ -15,7 +15,7 @@ use App\Livewire\Pages\QsyssMeetingRegistrationResponses;
 use App\Livewire\Pages\VoteNow;
 use App\Livewire\Pages\Wiki\Index as WikiIndex;
 use App\Livewire\Pages\Wiki\Show as WikiDetails;
-use App\Livewire\Survey\Entry;
+use App\Livewire\Survey\EntryForm;
 use App\Models\Election;
 use App\Models\Elector;
 use App\Models\Meeting;
@@ -145,7 +145,7 @@ Route::group(
             ->middleware('signed')
             ->name('qsyss-meeting.responses');
 
-        Route::get('survey/{survey}/{slug?}', Entry::class);
+        Route::get('survey/{survey}/{slug?}', EntryForm::class);
 
         Route::post(uri: 'clicksend/webhook', action: ClicksendWebhookController::class);
 
