@@ -45,6 +45,7 @@
         "laravel/tinker": "^2.8",
         "lasserafn/php-initial-avatar-generator": "^4.3",
         "league/flysystem-aws-s3-v3": "^3.0",
+        "matt-daneshvar/laravel-survey": "^0.4.0",
         "mcamara/laravel-localization": "^2.0",
         "mvenghaus/filament-plugin-translatable-inline": "^3.0",
         "nnjeim/world": "^1.1",

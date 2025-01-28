@@ -1,0 +1,115 @@
+<?php
+
+namespace App\Filament\Admin\Resources;
+
+use App\Filament\Admin\Resources\SurveyResource\Pages;
+use Filament\Forms\Components\Group;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TagsInput;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Resources\Resource;
+use Filament\Support\Enums\MaxWidth;
+use Filament\Tables;
+use Filament\Tables\Table;
+use FilamentTiptapEditor\TiptapEditor;
+use MattDaneshvar\Survey\Models\Survey;
+
+class SurveyResource extends Resource
+{
+    protected static ?string $model = Survey::class;
+
+    protected static ?string $recordTitleAttribute = 'name';
+
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    public static function form(Form $form): Form
+    {
+        return $form
+            ->columns(null)
+            ->schema([
+                Section::make()
+                    ->schema([
+                        TextInput::make('name')
+                            ->required(),
+
+                        TiptapEditor::make('settings.description')
+                            ->maxContentWidth(MaxWidth::Full->value),
+
+                        Toggle::make('settings.accept-guest-entries')
+                            ->default(true),
+                    ]),
+
+                Repeater::make('questions')
+                    ->reorderable('order')
+                    ->relationship()
+                    ->schema([
+                        Group::make([
+                            TextInput::make('content')
+                                ->columnSpan(4)
+                                ->required(),
+
+                            Select::make('type')
+                                ->default('text')
+                                ->live()
+                                ->options([
+                                    'text' => 'Text',
+                                    'number' => 'Number',
+                                    'radio' => 'Single-selection',
+                                    'multiselect' => 'Multi-selection',
+                                ])
+                                ->required(),
+                        ])->columns(5),
+
+                        TagsInput::make('options')
+                            ->placeholder('New option')
+                            ->visible(fn (Get $get) => in_array($get('type'), ['radio', 'multiselect'])),
+
+                        TagsInput::make('rules')
+                            ->suggestions([
+                                'required',
+                            ])
+                            ->placeholder('New rule'),
+                    ]),
+            ]);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                Tables\Columns\TextColumn::make('name'),
+            ])
+            ->filters([
+                //
+            ])
+            ->actions([
+                Tables\Actions\EditAction::make(),
+            ])
+            ->bulkActions([
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
+                ]),
+            ]);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => Pages\ListSurveys::route('/'),
+            'create' => Pages\CreateSurvey::route('/create'),
+            'edit' => Pages\EditSurvey::route('/{record}/edit'),
+        ];
+    }
+}
