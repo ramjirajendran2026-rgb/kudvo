@@ -35,10 +35,14 @@ class SurveyResource extends Resource
                 Section::make()
                     ->schema([
                         TextInput::make('name')
+                            ->hiddenLabel()
+                            ->placeholder('Survey name')
                             ->required(),
 
                         TiptapEditor::make('settings.description')
-                            ->maxContentWidth(MaxWidth::Full->value),
+                            ->hiddenLabel()
+                            ->maxContentWidth(MaxWidth::Full->value)
+                            ->placeholder('Survey description'),
 
                         Toggle::make('settings.accept-guest-entries')
                             ->default(true),
@@ -53,10 +57,13 @@ class SurveyResource extends Resource
                         Group::make([
                             TextInput::make('content')
                                 ->columnSpan(4)
+                                ->hiddenLabel()
+                                ->placeholder('Question content')
                                 ->required(),
 
                             Select::make('type')
                                 ->default('text')
+                                ->hiddenLabel()
                                 ->live()
                                 ->options([
                                     'text' => 'Text',
@@ -64,10 +71,12 @@ class SurveyResource extends Resource
                                     'radio' => 'Single-selection',
                                     'multiselect' => 'Multi-selection',
                                 ])
+                                ->placeholder('Select type')
                                 ->required(),
                         ])->columns(5),
 
                         TagsInput::make('options')
+                            ->hiddenLabel()
                             ->placeholder('New option')
                             ->visible(fn (Get $get) => in_array($get('type'), ['radio', 'multiselect'])),
 
@@ -75,6 +84,7 @@ class SurveyResource extends Resource
                             ->suggestions([
                                 'required',
                             ])
+                            ->hiddenLabel()
                             ->placeholder('New rule'),
                     ]),
             ]);
