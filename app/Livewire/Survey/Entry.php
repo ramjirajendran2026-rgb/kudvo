@@ -4,6 +4,7 @@ namespace App\Livewire\Survey;
 
 use Coderflex\FilamentTurnstile\Forms\Components\Turnstile;
 use Filament\Forms\Components\Actions;
+use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -52,6 +53,8 @@ class Entry extends Component implements HasForms
                 ...$this->survey->questions->map(fn (Question $question) => match ($question->type) {
                     'text' => $this->textQuestion($question),
                     'radio' => $this->radioQuestion($question),
+                    'number' => $this->numberQuestion($question),
+                    'multiselect' => $this->multiselectQuestion($question),
                     default => null,
                 })->filter()->toArray(),
 
@@ -93,7 +96,16 @@ JS
     protected function textQuestion(Question $question)
     {
         return TextInput::make($question->key)
-            ->label(new HtmlString($question->content));
+            ->label(new HtmlString($question->content))
+            ->rules($question->rules);
+    }
+
+    protected function numberQuestion(Question $question)
+    {
+        return TextInput::make($question->key)
+            ->numeric()
+            ->label(new HtmlString($question->content))
+            ->rules($question->rules);
     }
 
     protected function radioQuestion(Question $question)
@@ -104,6 +116,19 @@ JS
             ->label(new HtmlString($question->content))
             ->options(Arr::mapWithKeys($question->options, fn ($option, $key) => [
                 $option => $option,
-            ]));
+            ]))
+            ->rules($question->rules);
+    }
+
+    protected function multiselectQuestion(Question $question)
+    {
+        return CheckboxList::make($question->key)
+            ->columns(3)
+            ->gridDirection('row')
+            ->label(new HtmlString($question->content))
+            ->options(Arr::mapWithKeys($question->options, fn ($option, $key) => [
+                $option => $option,
+            ]))
+            ->rules($question->rules);
     }
 }
