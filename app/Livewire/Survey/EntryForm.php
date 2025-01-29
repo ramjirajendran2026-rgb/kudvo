@@ -97,6 +97,7 @@ JS
     protected function textQuestion(Question $question)
     {
         return TextInput::make($question->key)
+            ->datalist($question->options)
             ->label(new HtmlString($question->content))
             ->rules($question->rules);
     }
@@ -104,6 +105,7 @@ JS
     protected function numberQuestion(Question $question)
     {
         return TextInput::make($question->key)
+            ->datalist($question->options)
             ->numeric()
             ->label(new HtmlString($question->content))
             ->rules($question->rules);

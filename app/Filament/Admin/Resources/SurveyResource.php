@@ -12,7 +12,6 @@ use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
-use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Tables;
@@ -64,7 +63,6 @@ class SurveyResource extends Resource
                             Select::make('type')
                                 ->default('text')
                                 ->hiddenLabel()
-                                ->live()
                                 ->options([
                                     'text' => 'Text',
                                     'number' => 'Number',
@@ -77,8 +75,7 @@ class SurveyResource extends Resource
 
                         TagsInput::make('options')
                             ->hiddenLabel()
-                            ->placeholder('New option')
-                            ->visible(fn (Get $get) => in_array($get('type'), ['radio', 'multiselect'])),
+                            ->placeholder('New option'),
 
                         TagsInput::make('rules')
                             ->suggestions([
@@ -99,9 +96,6 @@ class SurveyResource extends Resource
                 Tables\Columns\TextColumn::make('entries_count')
                     ->alignCenter()
                     ->counts('entries'),
-            ])
-            ->filters([
-                //
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
