@@ -8,6 +8,7 @@ use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -84,6 +85,18 @@ class SurveyResource extends Resource
                             ->hiddenLabel()
                             ->placeholder('New rule'),
                     ]),
+
+                SpatieMediaLibraryFileUpload::make('footer_images')
+                    ->appendFiles()
+                    ->collection(Survey::MEDIA_COLLECTION_FOOTER_IMAGES)
+                    ->image()
+                    ->imagePreviewHeight(100)
+                    ->imageResizeMode('cover')
+                    ->imageResizeTargetHeight(100)
+                    ->maxFiles(15)
+                    ->multiple()
+                    ->panelLayout('grid')
+                    ->reorderable(),
             ]);
     }
 
