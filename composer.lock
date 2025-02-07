@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "94ed70c8492467fe0ff794583cd429c0",
+    "content-hash": "5e012f38bad5946179bce488221c4c35",
     "packages": [
         {
             "name": "akaunting/laravel-money",
@@ -7416,65 +7416,6 @@
                 "source": "https://github.com/Masterminds/html5-php/tree/2.9.0"
             },
             "time": "2024-03-31T07:05:07+00:00"
-        },
-        {
-            "name": "matt-daneshvar/laravel-survey",
-            "version": "v0.4.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/matt-daneshvar/laravel-survey.git",
-                "reference": "c36a25d6a80524709499a02dd1970e0c360d1a69"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/matt-daneshvar/laravel-survey/zipball/c36a25d6a80524709499a02dd1970e0c360d1a69",
-                "reference": "c36a25d6a80524709499a02dd1970e0c360d1a69",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/database": "^6.0|^7.0|^8.0|^9.0|^10.0|^11.0",
-                "php": "^7.3|^7.4|^8.0|^8.1|^8.2|^8.3"
-            },
-            "require-dev": {
-                "illuminate/http": "^6.0|^7.0|^8.0|^9.0|^10.0|^11.0",
-                "laravel/legacy-factories": "^1.1",
-                "mockery/mockery": "^1.3.2|^1.4",
-                "orchestra/testbench": "^4.0|^5.0|^6.0|^7.0|^8.0|^9.0",
-                "phpunit/phpunit": "^8.0|^9.0|^10.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "MattDaneshvar\\Survey\\SurveyServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "MattDaneshvar\\Survey\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Matt Daneshvar",
-                    "email": "matt.daneshvar@gmail.com"
-                }
-            ],
-            "description": "Create surveys inside your Laravel app",
-            "keywords": [
-                "laravel",
-                "survey"
-            ],
-            "support": {
-                "issues": "https://github.com/matt-daneshvar/laravel-survey/issues",
-                "source": "https://github.com/matt-daneshvar/laravel-survey/tree/v0.4.0"
-            },
-            "time": "2024-03-14T22:57:49+00:00"
         },
         {
             "name": "mcamara/laravel-localization",
