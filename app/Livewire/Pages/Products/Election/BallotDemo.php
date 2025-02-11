@@ -163,13 +163,14 @@ JS
             $data['membership_number'] = fake()->bothify('??######');
 
             try {
+                /** @var Elector $elector */
                 $elector = $election->electors()->create($data);
             } catch (UniqueConstraintViolationException $exception) {
             }
         } while (! isset($elector));
 
         if ($election->preference->ballot_link_unique && (filled($elector->email) || filled($elector->phone))) {
-            $elector->sendBallotLink($election, now: true);
+            $elector->fresh()->sendBallotLink($election, now: true);
 
             $this->js(
                 <<<'JS'
