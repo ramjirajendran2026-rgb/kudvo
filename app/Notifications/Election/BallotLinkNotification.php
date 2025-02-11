@@ -16,6 +16,7 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
+use Symfony\Component\Mime\Message;
 
 class BallotLinkNotification extends Notification implements HasMailMessagePurpose, HasSmsMessagePurpose, ShouldQueue
 {
@@ -54,7 +55,12 @@ class BallotLinkNotification extends Notification implements HasMailMessagePurpo
             ->greeting(greeting: "Dear $elector->display_name,")
             ->line(line: "Use the following link to cast your vote for $election->name.")
             ->action(text: 'Vote Now', url: $this->getBallotLink())
-            ->line(line: 'Thank you for using our application!');
+            ->line(line: 'Thank you for using our application!')
+            ->withSymfonyMessage(
+                callback: fn (Message $message) => $message
+                    ->getHeaders()
+                    ->addTextHeader('Sensitivity', 'Private')
+            );
     }
 
     public function toSms(object $notifiable): string

@@ -8,6 +8,7 @@ use App\Notifications\Contracts\HasMailMessagePurpose;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\URL;
+use Symfony\Component\Mime\Message;
 
 class CollaboratorInvitationNotification extends Notification implements HasMailMessagePurpose
 {
@@ -26,7 +27,12 @@ class CollaboratorInvitationNotification extends Notification implements HasMail
             ->subject(subject: 'Election Collaboration Invitation')
             ->greeting(greeting: 'Hello!')
             ->line(line: "You've been invited to collaborate on the election **{$this->invitation->election->name}** as **{$this->invitation->designation}**.")
-            ->action('Accept Invitation', URL::signedRoute(name: 'filament.user.election-collaborators.accept', parameters: ['invitation' => $this->invitation->getRouteKey()]));
+            ->action('Accept Invitation', URL::signedRoute(name: 'filament.user.election-collaborators.accept', parameters: ['invitation' => $this->invitation->getRouteKey()]))
+            ->withSymfonyMessage(
+                callback: fn (Message $message) => $message
+                    ->getHeaders()
+                    ->addTextHeader('Sensitivity', 'Private')
+            );
     }
 
     public function toArray($notifiable): array
