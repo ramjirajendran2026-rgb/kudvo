@@ -14,6 +14,7 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Symfony\Component\Mime\Message;
 
 class MfaCodeNotification extends Notification implements HasMailMessagePurpose, HasSmsMessagePurpose
 {
@@ -45,7 +46,12 @@ class MfaCodeNotification extends Notification implements HasMailMessagePurpose,
 
         return (new MailMessage)
             ->subject(subject: "MFA Code for $election->name")
-            ->line(line: "**$oneTimePassword->code** is your MFA code for $election->name");
+            ->line(line: "**$oneTimePassword->code** is your MFA code for $election->name")
+            ->withSymfonyMessage(
+                callback: fn (Message $message) => $message
+                    ->getHeaders()
+                    ->addTextHeader('Sensitivity', 'Private')
+            );
     }
 
     public function toSms(object $notifiable): string

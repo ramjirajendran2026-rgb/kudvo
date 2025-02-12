@@ -8,6 +8,7 @@ use App\Models\Nominator;
 use App\Models\Nominee;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Symfony\Component\Mime\Message;
 
 class SeconderAcceptanceNotification extends Notification
 {
@@ -46,7 +47,12 @@ class SeconderAcceptanceNotification extends Notification
             ->line(line: 'Please click on the following button to access the nomination and respond accordingly.')
             ->action(text: 'Click Here', url: ManageNominees::getUrl(parameters: ['nomination' => $nomination]))
             ->line(line: 'If you have any questions or concerns, feel free to contact our support team.')
-            ->line(line: 'Thank you for your prompt attention to this matter. We appreciate your active participation in the nomination process.');
+            ->line(line: 'Thank you for your prompt attention to this matter. We appreciate your active participation in the nomination process.')
+            ->withSymfonyMessage(
+                callback: fn (Message $message) => $message
+                    ->getHeaders()
+                    ->addTextHeader('Sensitivity', 'Private')
+            );
     }
 
     public function toArray($notifiable): array

@@ -11,6 +11,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Dompdf\Dompdf;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Symfony\Component\Mime\Message;
 
 class VotedBallotCopyNotification extends Notification implements HasMailMessagePurpose
 {
@@ -41,6 +42,11 @@ class VotedBallotCopyNotification extends Notification implements HasMailMessage
             ->attachData(
                 data: $this->generateBallotCopyPdf()->output(),
                 name: 'ballot-copy-' . $this->election->code . '.pdf',
+            )
+            ->withSymfonyMessage(
+                callback: fn (Message $message) => $message
+                    ->getHeaders()
+                    ->addTextHeader('Sensitivity', 'Private')
             );
     }
 

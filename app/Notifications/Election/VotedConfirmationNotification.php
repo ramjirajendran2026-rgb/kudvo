@@ -14,6 +14,7 @@ use App\Settings\SmsTemplates;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Str;
+use Symfony\Component\Mime\Message;
 
 class VotedConfirmationNotification extends Notification implements HasMailMessagePurpose, HasSmsMessagePurpose
 {
@@ -50,7 +51,12 @@ class VotedConfirmationNotification extends Notification implements HasMailMessa
     {
         return (new MailMessage)
             ->greeting(greeting: $this->formatTemplate(template: 'Dear ' . static::VAR_ELECTOR_NAME . ',', notifiable: $notifiable))
-            ->line(line: $this->formatTemplate(template: 'You have successfully cast your vote for **' . static::VAR_ELECTION_NAME . '** on **' . static::VAR_VOTED_AT . '**.', notifiable: $notifiable));
+            ->line(line: $this->formatTemplate(template: 'You have successfully cast your vote for **' . static::VAR_ELECTION_NAME . '** on **' . static::VAR_VOTED_AT . '**.', notifiable: $notifiable))
+            ->withSymfonyMessage(
+                callback: fn (Message $message) => $message
+                    ->getHeaders()
+                    ->addTextHeader('Sensitivity', 'Private')
+            );
     }
 
     public function toSms(object $notifiable): string
