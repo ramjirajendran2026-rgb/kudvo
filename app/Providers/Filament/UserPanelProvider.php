@@ -115,12 +115,11 @@ class UserPanelProvider extends PanelProvider
                 hook: fn () => new HtmlString(html: '<span class="pg-election-list hidden"></span>'),
                 scopes: ManageElections::class
             )
-            ->when(
-                value: app(ServiceConfig::class)->tawk_to->enabled,
-                callback: fn (Panel $panel) => $panel->renderHook(
-                    name: PanelsRenderHook::BODY_END,
-                    hook: fn (ServiceConfig $services) => new HtmlString(html: $services->tawk_to->script),
-                ),
+            ->renderHook(
+                name: PanelsRenderHook::BODY_END,
+                hook: fn (ServiceConfig $services) => $services->tawk_to->enabled ?
+                    new HtmlString(html: $services->tawk_to->script) :
+                    null,
             )
             ->plugins(plugins: [
                 SpatieLaravelTranslatablePlugin::make()
