@@ -2,10 +2,10 @@
     <!-- Animated Background Shapes -->
     <div class="container fixed inset-0 -z-10">
         <div
-            class="animate-float absolute left-[-35%] top-[25%] md:left-[-15%] md:top-[-5%] h-64 w-64 rounded-full bg-amber-300 opacity-30 mix-blend-multiply blur-xl filter"
+            class="animate-float absolute left-[-35%] top-[25%] h-64 w-64 rounded-full bg-amber-300 opacity-30 mix-blend-multiply blur-xl filter md:left-[-15%] md:top-[-5%]"
         ></div>
         <div
-            class="animate-float absolute right-[-25%] top-[15%] md:right-[-5%] md:top-[-15%] h-72 w-72 rounded-full bg-emerald-300 opacity-30 mix-blend-multiply blur-xl filter"
+            class="animate-float absolute right-[-25%] top-[15%] h-72 w-72 rounded-full bg-emerald-300 opacity-30 mix-blend-multiply blur-xl filter md:right-[-5%] md:top-[-15%]"
             style="animation-delay: -2s"
         ></div>
         <div
