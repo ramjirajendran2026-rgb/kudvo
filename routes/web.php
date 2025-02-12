@@ -82,6 +82,9 @@ Route::group(
 
                         Route::get(uri: 'phygital-voting', action: PhygitalHome::class)
                             ->name(name: 'phygital.home');
+
+                        Route::get(uri: 'survey', action: App\Livewire\Pages\Products\Survey\Home::class)
+                            ->name(name: 'survey.home');
                     });
             });
 

@@ -156,6 +156,9 @@ return [
                 'phygital' => [
                     'label' => 'Phygital Voting',
                 ],
+                'survey' => [
+                    'label' => 'Survey',
+                ],
             ],
         ],
         'wiki' => [

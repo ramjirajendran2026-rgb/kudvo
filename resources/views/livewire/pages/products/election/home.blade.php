@@ -10,20 +10,20 @@
 
 <main class="pg-el pg-home overflow-hidden">
     <!-- Animated Background Shapes -->
-    <div class="fixed container inset-0 -z-10 ">
+    <div class="container fixed inset-0 -z-10">
         <div
-            class="animate-float absolute left-[-15%] top-[-5%] h-64 w-64 rounded-full  bg-blue-300 opacity-30 mix-blend-multiply blur-xl filter"
+            class="animate-float absolute left-[-15%] top-[-5%] h-64 w-64 rounded-full bg-blue-300 opacity-30 mix-blend-multiply blur-xl filter"
         ></div>
         <div
-            class="animate-float absolute right-[-5%] top-[-15%] h-72 w-72 rounded-full  bg-green-300 opacity-30 mix-blend-multiply blur-xl filter"
+            class="animate-float absolute right-[-5%] top-[-15%] h-72 w-72 rounded-full bg-green-300 opacity-30 mix-blend-multiply blur-xl filter"
             style="animation-delay: -2s"
         ></div>
         <div
-            class="animate-float absolute bottom-[5%] right-[-15%] h-80 w-80 rounded-full  bg-red-300 opacity-30 mix-blend-multiply blur-xl filter"
+            class="animate-float absolute bottom-[5%] right-[-15%] h-80 w-80 rounded-full bg-red-300 opacity-30 mix-blend-multiply blur-xl filter"
             style="animation-delay: -4s"
         ></div>
     </div>
-    <section id="hero" class="py-16 px-2 md:px-0">
+    <section id="hero" class="px-2 py-16 md:px-0">
         <div
             class="mx-auto flex max-w-screen-lg flex-col items-center justify-center gap-6 lg:flex-row"
         >
@@ -37,7 +37,9 @@
                 <p class="text-base text-gray-700 md:text-lg">
                     {{ __('pages/products/election/home.content.hero.description') }}
                 </p>
-                <div class="flex flex-col sm:flex-row justify-center md:justify-start gap-5">
+                <div
+                    class="flex flex-col justify-center gap-5 sm:flex-row md:justify-start"
+                >
                     <x-filament::button
                         size="xl"
                         color="primary"
@@ -54,8 +56,8 @@
                         title="Kudvo Sign up"
                     >
                         {{ __('pages/products/election/home.content.cta_section.cta_label') }}
-                    </x-filament::button></div>
-
+                    </x-filament::button>
+                </div>
             </div>
             <div data-aos="fade-left" class="flex items-center justify-center">
                 <img

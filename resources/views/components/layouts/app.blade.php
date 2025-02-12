@@ -107,7 +107,7 @@
                         <x-filament::dropdown.list>
                             <x-filament::dropdown.list.item
                                 :href="route('products.election.home')"
-                                icon="heroicon-o-archive-box"
+                                icon="heroicon-o-computer-desktop"
                                 tag="a"
                             >
                                 {{ __('app.nav.products.items.election.label') }}
@@ -129,6 +129,14 @@
                                 badge="soon"
                             >
                                 {{ __('app.nav.products.items.resolution_voting.label') }}
+                            </x-filament::dropdown.list.item>
+
+                            <x-filament::dropdown.list.item
+                                :href="route('products.survey.home')"
+                                icon="heroicon-o-document-chart-bar"
+                                tag="a"
+                            >
+                                {{ __('app.nav.products.items.survey.label') }}
                             </x-filament::dropdown.list.item>
                         </x-filament::dropdown.list>
                     </x-filament::dropdown>
@@ -234,6 +242,14 @@
                                 badge="coming"
                             >
                                 {{ __('app.nav.products.items.resolution_voting.label') }}
+                            </x-filament::dropdown.list.item>
+
+                            <x-filament::dropdown.list.item
+                                :href="route('products.survey.home')"
+                                icon="heroicon-o-document-chart-bar"
+                                tag="a"
+                            >
+                                {{ __('app.nav.products.items.survey.label') }}
                             </x-filament::dropdown.list.item>
                         </x-filament::dropdown.list>
                     </x-filament::dropdown>

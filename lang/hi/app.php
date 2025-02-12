@@ -156,6 +156,9 @@ return [
                 'phygital' => [
                     'label' => 'Phygital मतदान',
                 ],
+                'survey' => [
+                    'label' => 'सर्वेक्षण',
+                ],
             ],
         ],
         'wiki' => [
