@@ -1,4 +1,19 @@
-<main class="pg-pgdl h-full w-full px-4">
+<main class="pg-pgdl overflow-hidden">
+    <!-- Animated Background Shapes -->
+    <div class="fixed container inset-0 -z-10 ">
+        <div
+            class="animate-float absolute left-[-15%] top-[-5%] h-64 w-64 rounded-full  bg-blue-300 opacity-30 mix-blend-multiply blur-xl filter"
+        ></div>
+        <div
+            class="animate-float absolute right-[-5%] top-[-15%] h-72 w-72 rounded-full  bg-green-300 opacity-30 mix-blend-multiply blur-xl filter"
+            style="animation-delay: -2s"
+        ></div>
+        <div
+            class="animate-float absolute bottom-[5%] right-[-15%] h-80 w-80 rounded-full  bg-yellow-300 opacity-30 mix-blend-multiply blur-xl filter"
+            style="animation-delay: -4s"
+        ></div>
+    </div>
+
     <section id="hero" class="container mx-auto">
         <div
             class="mx-auto flex max-w-screen-lg flex-col items-center justify-center gap-6 lg:flex-row"
@@ -13,14 +28,24 @@
                 <p class="text-base text-gray-700 md:text-lg">
                     @lang('pages/products/phygital/home.content.hero.description')
                 </p>
+                <div class="flex flex-col sm:flex-row  justify-center md:justify-start gap-5">
+                    <x-filament::button
+                        size="xl"
+                        color="primary"
+                        tag="a"
+                        :href="__('pages/products/election/home.content.hero.cta.url')"
+                    >
+                        {{ __('pages/products/election/home.content.hero.cta.label') }}
+                    </x-filament::button>
                 <x-filament::button
                     size="xl"
-                    color="primary"
+                    color="gray"
                     tag="a"
                     :href="__('pages/products/phygital/home.content.hero.cta.url')"
                 >
                     @lang('pages/products/phygital/home.content.hero.cta.label')
                 </x-filament::button>
+                </div>
             </div>
             <div
                 data-aos="fade-left"
@@ -35,7 +60,8 @@
             </div>
         </div>
     </section>
-    <section id="key-features" class="container w-full py-16">
+    <section id="key-features" class=" bg-slate-50 w-full py-16">
+        <div class="container">
         <div
             data-aos="zoom-out-up"
             class="mx-auto flex flex-col items-center justify-center gap-4"
@@ -84,8 +110,10 @@
                 </ul>
             </div>
         </div>
+        </div>
     </section>
-    <section id="vvpat-printing" class="container w-full py-16">
+    <section id="vvpat-printing" class="bg-slate-50 w-full py-16">
+        <div class="container">
         <div
             data-aos="zoom-out-up"
             class="mx-auto flex flex-col items-center justify-center gap-4"
@@ -134,11 +162,12 @@
                 </ul>
             </div>
         </div>
+        </div>
     </section>
-    <section id="how-we-do" class="container mx-auto w-full">
+    <section id="how-we-do" class="container mx-auto  w-full">
         <div class="relative">
             <main
-                class="relative flex flex-col justify-center overflow-hidden bg-slate-50"
+                class="relative flex flex-col justify-center overflow-hidden "
             >
                 <div class="mx-auto w-full max-w-6xl px-4 py-12 md:px-6">
                     <div class="flex justify-center">
@@ -156,7 +185,7 @@
                                 aria-label="Watch the video"
                             >
                                 <img
-                                    class="rounded-3xl shadow-2xl transition-shadow duration-300 ease-in-out"
+                                    class="rounded-3xl shadow-xl transition-shadow duration-300 ease-in-out"
                                     src="@lang('pages/products/phygital/home.content.how_we_do.video.thumbnail.src')"
                                     width="768"
                                     height="432"
@@ -248,7 +277,7 @@
             </main>
         </div>
     </section>
-    <section class="container">
+    <section class="container ">
         <p
             class="mx-auto w-full max-w-screen-md py-16 text-center md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed"
         >
