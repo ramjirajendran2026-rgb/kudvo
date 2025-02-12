@@ -2,7 +2,7 @@
     <header
         x-data="{ isSticky: false }"
         x-bind:class="{
-            'bg-white shadow-lg dark:bg-gray-900 dark:ring-white/10 ring-1 ring-gray-950/5 mb-0':
+            'bg-slate-50 shadow-lg dark:bg-gray-900 dark:ring-white/10 ring-1 ring-gray-950/5 mb-0':
                 isSticky,
         }"
         x-on:scroll.window="isSticky = window.scrollY > 16"
@@ -200,7 +200,7 @@
                 x-cloak
                 x-show="isOpen"
                 @click.away="isOpen = false"
-                class="absolute inset-x-2 top-20 z-50 origin-top-right transform space-y-6 rounded-xl bg-white px-4 py-6 shadow-lg transition lg:hidden"
+                class="absolute inset-x-2 top-20 z-50 origin-top-right transform space-y-6 rounded-xl bg-slate-50 px-4 py-6 shadow-lg transition lg:hidden"
             >
                 <ul
                     class="flex w-full flex-col items-start space-y-4 lg:flex-row"
@@ -271,7 +271,7 @@
                     </x-filament-panels::topbar.item>
                 </ul>
 
-                <div class="flex gap-x-4">
+                <div class="flex flex-col sm:flex-row gap-4">
                     <x-locale-switch />
 
                     <x-filament::button

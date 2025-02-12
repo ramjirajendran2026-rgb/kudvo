@@ -12,14 +12,14 @@
     <!-- Animated Background Shapes -->
     <div class="container fixed inset-0 -z-10">
         <div
-            class="animate-float absolute left-[-15%] top-[-5%] h-64 w-64 rounded-full bg-blue-300 opacity-30 mix-blend-multiply blur-xl filter"
+            class="animate-float absolute left-[-35%] top-[25%] md:top-[75%] md:left-[-5%]  h-64 w-64 rounded-full bg-blue-300 opacity-30 mix-blend-multiply blur-xl filter"
         ></div>
         <div
-            class="animate-float absolute right-[-5%] top-[-15%] h-72 w-72 rounded-full bg-green-300 opacity-30 mix-blend-multiply blur-xl filter"
+            class="animate-float absolute right-[-25%] top-[15%] md:right-[15%] md:top-[15%] h-72 w-72 rounded-full bg-violet-300 opacity-30 mix-blend-multiply blur-xl filter"
             style="animation-delay: -2s"
         ></div>
         <div
-            class="animate-float absolute bottom-[5%] right-[-15%] h-80 w-80 rounded-full bg-red-300 opacity-30 mix-blend-multiply blur-xl filter"
+            class="animate-float absolute bottom-[5%] right-[-15%] md:bottom-[5%] md:right-[5%] h-80 w-80 rounded-full bg-green-300 opacity-30 mix-blend-multiply blur-xl filter"
             style="animation-delay: -4s"
         ></div>
     </div>
@@ -38,7 +38,7 @@
                     {{ __('pages/products/election/home.content.hero.description') }}
                 </p>
                 <div
-                    class="flex flex-col justify-center gap-5 sm:flex-row md:justify-start"
+                    class="flex w-full flex-col justify-center gap-5 sm:flex-row lg:justify-start"
                 >
                     <x-filament::button
                         size="xl"
