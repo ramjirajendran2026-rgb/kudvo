@@ -95,7 +95,7 @@
                     {{ __('app.nav.home.label') }}
                 </x-filament-panels::topbar.item>
                 <li class="fi-topbar-item">
-                    <x-filament::dropdown placement="bottom-start" teleport>
+                    <x-filament::dropdown placement="bottom-start" class="[&_.fi-dropdown-panel]:bg-slate-50" teleport>
                         <x-slot name="trigger">
                             <ul>
                                 <x-filament-panels::topbar.item>
@@ -209,7 +209,7 @@
                         {{ __('app.nav.home.label') }}
                     </x-filament-panels::topbar.item>
 
-                    <x-filament::dropdown placement="bottom-start" teleport>
+                    <x-filament::dropdown placement="bottom-start" class="[&_.fi-dropdown-panel]:bg-slate-50" teleport>
                         <x-slot name="trigger">
                             <x-filament-panels::topbar.item>
                                 {{ __('app.nav.products.label') }}
