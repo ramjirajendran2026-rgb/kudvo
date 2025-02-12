@@ -1,9 +1,11 @@
 @php
     use App\Settings\GoogleTagManagerSettings;
+    use App\Settings\ServiceConfig;
     use Filament\FontProviders\LocalFontProvider;
     use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 
     $googleTagManager = app(GoogleTagManagerSettings::class);
+    $serviceConfig = app(ServiceConfig::class);
 @endphp
 
 <!DOCTYPE html>
@@ -59,6 +61,10 @@
         {{ $slot }}
 
         @livewire('notifications')
+
+        @if ($serviceConfig->tawk_to->enabled)
+            {!! $serviceConfig->tawk_to->script !!}
+        @endif
 
         @filamentScripts
         @vite('resources/js/app.js')
