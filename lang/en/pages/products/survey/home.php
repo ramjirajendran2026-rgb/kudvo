@@ -19,7 +19,7 @@ return [
             ],
         ],
         'features' => [
-            'title' => 'Why Choose Our Kudvo Survey Platform?',
+            'title' => 'Why Choose Our Survey Platform?',
             'description' => 'Kudvo Powerful features that make survey creation and analysis effortless',
             'items' => [
                 [
@@ -55,7 +55,7 @@ return [
             ],
         ],
         'uses' => [
-            'title' => 'Kudvo Survey Perfect for Every Use Case',
+            'title' => 'Perfect for Every Use Case',
             'items' => [
 
                 [
@@ -107,7 +107,7 @@ return [
         ],
         'cta_section' => [
             'title' => 'Ready to Transform Your Feedback Process?',
-            'description' => 'Start your first Kudvo survey today and revolutionize the way you collect feedback!',
+            'description' => 'Start your first survey today and revolutionize the way you collect feedback!',
             'cta' => [
                 'url' => route('filament.user.auth.register'),
                 'label' => 'Sign Up for Free',

@@ -32,7 +32,7 @@
                         icon="heroicon-m-arrow-right"
                         icon-position="after"
                         tag="a"
-                        href="@lang('pages/products/survey/home.content.hero.cta.url')"
+                        href="{{__('pages/products/survey/home.content.hero.cta.url')}}"
                     >
                         @lang('pages/products/survey/home.content.hero.cta.label')
                     </x-filament::button>
@@ -1178,7 +1178,7 @@
                 icon-position="after"
                 color="gray"
                 tag="a"
-                href="@lang('pages/products/survey/home.content.cta_section.cta.url')"
+                href="{{__('pages/products/survey/home.content.cta_section.cta.url')}}"
             >
                 @lang('pages/products/survey/home.content.cta_section.cta.label')
             </x-filament::button>
