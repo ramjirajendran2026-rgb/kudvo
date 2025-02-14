@@ -14,34 +14,37 @@
         ></div>
     </div>
     <!-- Hero Section -->
-    <section class="container px-6 pt-10 md:pb-10">
+    <section class="container px-6 md:pb-32 md:pt-10">
         <div
-            class="mx-auto grid max-w-screen-lg items-center gap-12 md:grid-cols-2"
+            class="mx-auto grid max-w-screen-lg items-center gap-12 md:grid-cols-3"
         >
-            <div data-aos="fade-right">
-                <h1 class="mb-6 text-3xl font-bold sm:text-4xl">
+            <div
+                data-aos="fade-right"
+                class="text-center md:col-span-2 md:text-start"
+            >
+                <h1 class="mb-6 text-3xl font-bold md:text-4xl">
                     @lang('pages/products/survey/home.content.hero.title')
                 </h1>
                 <p class="mb-8 text-base text-gray-600 md:text-lg">
                     @lang('pages/products/survey/home.content.hero.description')
                 </p>
-                <div class="flex flex-col gap-4 sm:flex-row">
-                    <x-filament::button
-                        size="xl"
-                        color="primary"
-                        icon="heroicon-m-arrow-right"
-                        icon-position="after"
-                        tag="a"
-                        href="{{__('pages/products/survey/home.content.hero.cta.url')}}"
-                    >
-                        @lang('pages/products/survey/home.content.hero.cta.label')
-                    </x-filament::button>
-                </div>
+
+                <x-filament::button
+                    size="xl"
+                    color="primary"
+                    icon="heroicon-m-arrow-right"
+                    icon-position="after"
+                    tag="a"
+                    class="w-full md:w-fit"
+                    href="{{__('pages/products/survey/home.content.hero.cta.url')}}"
+                >
+                    @lang('pages/products/survey/home.content.hero.cta.label')
+                </x-filament::button>
             </div>
             <div class="relative" data-aos="fade-left">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    class="mx-auto w-3/4 rounded-2xl"
+                    class="mx-auto w-full rounded-2xl"
                     viewBox="0 0 500 500"
                 >
                     <g id="freepik--background-complete--inject-99">
@@ -1160,6 +1163,41 @@
             </div>
         </div>
     </section>
+
+    <div class="mx-auto max-w-7xl px-6 md:px-12 xl:px-6">
+        <div class="mt-12 text-gray-900 md:w-2/3 lg:w-1/3">
+            <h2 class="my-8 text-2xl font-bold text-gray-900 md:text-4xl">
+                Why Kudvo is the Best Free Survey Tool?
+            </h2>
+        </div>
+        <div
+            class="mt-10 grid divide-x divide-y divide-gray-300 overflow-hidden rounded-3xl border border-gray-300 text-gray-700 sm:grid-cols-2 md:mt-16 lg:grid-cols-4 lg:divide-y-0 xl:grid-cols-4"
+        >
+            @foreach (__('pages/products/survey/home.content.keyfeatures') as $feature)
+                <div
+                    class="group relative bg-white transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-400/10"
+                >
+                    <div class="relative space-y-8 p-8 py-12">
+                        <x-filament::icon
+                            :icon="$feature['icon']"
+                            class="h-12 w-12 text-primary-600"
+                        />
+
+                        <div class="space-y-2">
+                            <h5
+                                class="text-xl font-semibold text-gray-900 transition group-hover:text-primary-600"
+                            >
+                                {{ $feature['name'] }}
+                            </h5>
+                            <p class="text-gray-600">
+                                {{ $feature['description'] }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    </div>
 
     <!-- CTA Section -->
     <section class="px-6 py-20">
