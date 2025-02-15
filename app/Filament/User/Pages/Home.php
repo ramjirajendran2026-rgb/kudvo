@@ -2,6 +2,7 @@
 
 namespace App\Filament\User\Pages;
 
+use Filament\Facades\Filament;
 use Filament\Pages\Page;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Contracts\Support\Htmlable;
@@ -14,9 +15,11 @@ class Home extends Page
 
     protected static string $view = 'filament.user.pages.home';
 
+    protected static ?string $slug = '/';
+
     public function getHeading(): string | Htmlable
     {
-        return '';
+        return Filament::getTenant()?->name ?? '';
     }
 
     public function getMaxContentWidth(): MaxWidth | string | null
