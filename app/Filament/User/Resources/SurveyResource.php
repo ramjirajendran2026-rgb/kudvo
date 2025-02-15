@@ -20,6 +20,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\MaxWidth;
@@ -133,6 +134,7 @@ class SurveyResource extends Resource
     public static function getHasDescriptionComponent(): Hidden
     {
         return Hidden::make('has_description')
+            ->afterStateUpdated(fn (bool $state, Set $set) => $set('description', $state ? '' : null))
             ->default(false);
     }
 
@@ -153,7 +155,6 @@ class SurveyResource extends Resource
     public static function getDescriptionComponent(): TiptapEditor
     {
         return TiptapEditor::make('description')
-            ->dehydrateStateUsing(fn ($state, Get $get) => ($get('has_description') ?? false) ? $state : null)
             ->dehydratedWhenHidden()
             ->hiddenLabel()
             ->placeholder('Survey description')
