@@ -10,6 +10,7 @@ use App\Livewire\Pages\Products\Election\BallotDemo;
 use App\Livewire\Pages\Products\Election\Home as ElectionHome;
 use App\Livewire\Pages\Products\Election\HowItWorks;
 use App\Livewire\Pages\Products\Phygital\Home as PhygitalHome;
+use App\Livewire\Pages\Products\Survey\Home as SurveyHome;
 use App\Livewire\Pages\QsyssMeetingRegistration;
 use App\Livewire\Pages\QsyssMeetingRegistrationResponses;
 use App\Livewire\Pages\VoteNow;
@@ -83,7 +84,7 @@ Route::group(
                         Route::get(uri: 'phygital-voting', action: PhygitalHome::class)
                             ->name(name: 'phygital.home');
 
-                        Route::get(uri: 'survey', action: App\Livewire\Pages\Products\Survey\Home::class)
+                        Route::get(uri: 'survey', action: SurveyHome::class)
                             ->name(name: 'survey.home');
                     });
             });
