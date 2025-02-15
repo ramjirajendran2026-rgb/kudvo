@@ -23,6 +23,7 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\FontWeight;
+use Filament\Support\Enums\IconPosition;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
@@ -144,6 +145,9 @@ class SurveyResource extends Resource
         return Actions::make([
             Action::make('addDescription')
                 ->alpineClickHandler('$wire.set(\'data.has_description\', true)')
+                ->tooltip('You can add an image banner, logo, or any video to personalize your survey.')
+                ->icon('heroicon-o-information-circle')
+                ->iconPosition(IconPosition::After)
                 ->link()
                 ->visible(condition: fn (Get $get): bool => ! $get('has_description')),
             Action::make('removeDescription')
@@ -158,7 +162,7 @@ class SurveyResource extends Resource
         return TiptapEditor::make('description')
             ->dehydratedWhenHidden()
             ->hiddenLabel()
-            ->placeholder('Survey description')
+            ->placeholder('You can add an image banner, logo, or any video to personalize your survey.')
             ->visible(condition: fn (Get $get): bool => $get('has_description') ?? false);
     }
 
