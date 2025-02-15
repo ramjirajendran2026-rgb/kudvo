@@ -64,6 +64,12 @@ Route::group(
                 Route::get(uri: 'vote-now', action: VoteNow::class)
                     ->name(name: 'vote-now');
 
+                Route::get(uri: 'survey/{survey}/entry', action: EntryForm::class)
+                    ->name(name: 'survey.entry');
+
+                Route::get(uri: 'survey/{survey}/preview', action: EntryForm::class)
+                    ->name(name: 'survey.preview');
+
                 Route::prefix('products')
                     ->name('products.')
                     ->group(function (): void {
@@ -144,8 +150,6 @@ Route::group(
         Route::get('meeting/responses', QsyssMeetingRegistrationResponses::class)
             ->middleware('signed')
             ->name('qsyss-meeting.responses');
-
-        Route::get('survey/{survey}/{slug?}', EntryForm::class);
 
         Route::post(uri: 'clicksend/webhook', action: ClicksendWebhookController::class);
 
