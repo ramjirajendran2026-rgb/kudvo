@@ -14,6 +14,11 @@
         @endforeach
     </x-filament::tabs>
 
+    <x-filament::loading-indicator
+        wire:loading
+        class="mx-auto h-5 w-5 text-primary-500 dark:text-primary-400"
+    />
+
     @if ($this->activeTab === SurveyResponsesPageTabs::Summary)
         <x-filament::section compact>
             <h1
