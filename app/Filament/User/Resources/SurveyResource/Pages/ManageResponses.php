@@ -9,7 +9,9 @@ use App\Models\Survey;
 use App\Models\SurveyAnswer;
 use App\Models\SurveyQuestion;
 use App\Models\SurveyResponse;
+use Filament\Actions\Action;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
 use Filament\Resources\Pages\Page;
 use Filament\Support\Enums\MaxWidth;
@@ -116,6 +118,16 @@ class ManageResponses extends Page implements HasForms
     protected function getHeaderActions(): array
     {
         return [
+            Action::make('refresh')
+                ->action(
+                    fn () => Notification::make()
+                        ->title('Refreshed')
+                        ->success()
+                        ->send()
+                )
+                ->icon('heroicon-o-arrow-path')
+                ->iconButton(),
+
             SurveyResource::getSettingsAction(),
 
             SurveyResource::getCopyLinkAction()
