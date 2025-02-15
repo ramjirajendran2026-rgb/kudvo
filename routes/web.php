@@ -15,6 +15,7 @@ use App\Livewire\Pages\QsyssMeetingRegistrationResponses;
 use App\Livewire\Pages\VoteNow;
 use App\Livewire\Pages\Wiki\Index as WikiIndex;
 use App\Livewire\Pages\Wiki\Show as WikiDetails;
+use App\Livewire\Survey\EntryForm;
 use App\Models\Election;
 use App\Models\Elector;
 use App\Models\Meeting;
@@ -62,6 +63,12 @@ Route::group(
 
                 Route::get(uri: 'vote-now', action: VoteNow::class)
                     ->name(name: 'vote-now');
+
+                Route::get(uri: 'survey/{survey}/entry', action: EntryForm::class)
+                    ->name(name: 'survey.entry');
+
+                Route::get(uri: 'survey/{survey}/preview', action: EntryForm::class)
+                    ->name(name: 'survey.preview');
 
                 Route::prefix('products')
                     ->name('products.')
