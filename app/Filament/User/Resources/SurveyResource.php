@@ -116,6 +116,7 @@ class SurveyResource extends Resource
             ->hiddenLabel()
             ->maxLength(500)
             ->placeholder('Survey title')
+            ->required()
             ->rows(1);
     }
 
