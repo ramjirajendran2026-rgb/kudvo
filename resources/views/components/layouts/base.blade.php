@@ -1,9 +1,11 @@
 @php
     use App\Settings\GoogleTagManagerSettings;
+    use App\Settings\ServiceConfig;
     use Filament\FontProviders\LocalFontProvider;
     use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 
     $googleTagManager = app(GoogleTagManagerSettings::class);
+    $serviceConfig = app(ServiceConfig::class);
 @endphp
 
 <!DOCTYPE html>
@@ -14,6 +16,7 @@
         <meta name="application-name" content="{{ config('app.name') }}" />
         <meta name="csrf-token" content="{{ csrf_token() }}" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="theme-color" content="#f8fafc" />
 
         @if (app()->isProduction())
             {!! $googleTagManager->getHeadScript() !!}
@@ -59,6 +62,10 @@
         {{ $slot }}
 
         @livewire('notifications')
+
+        @if ($serviceConfig->tawk_to->enabled)
+            {!! $serviceConfig->tawk_to->script !!}
+        @endif
 
         @filamentScripts
         @vite('resources/js/app.js')

@@ -10,6 +10,7 @@ use App\Livewire\Pages\Products\Election\BallotDemo;
 use App\Livewire\Pages\Products\Election\Home as ElectionHome;
 use App\Livewire\Pages\Products\Election\HowItWorks;
 use App\Livewire\Pages\Products\Phygital\Home as PhygitalHome;
+use App\Livewire\Pages\Products\Survey\Home as SurveyHome;
 use App\Livewire\Pages\QsyssMeetingRegistration;
 use App\Livewire\Pages\QsyssMeetingRegistrationResponses;
 use App\Livewire\Pages\VoteNow;
@@ -64,6 +65,12 @@ Route::group(
                 Route::get(uri: 'vote-now', action: VoteNow::class)
                     ->name(name: 'vote-now');
 
+                Route::get(uri: 'survey/{survey}/entry', action: EntryForm::class)
+                    ->name(name: 'survey.entry');
+
+                Route::get(uri: 'survey/{survey}/preview', action: EntryForm::class)
+                    ->name(name: 'survey.preview');
+
                 Route::prefix('products')
                     ->name('products.')
                     ->group(function (): void {
@@ -82,6 +89,9 @@ Route::group(
 
                         Route::get(uri: 'phygital-voting', action: PhygitalHome::class)
                             ->name(name: 'phygital.home');
+
+                        Route::get(uri: 'survey', action: SurveyHome::class)
+                            ->name(name: 'survey.home');
                     });
             });
 
@@ -144,8 +154,6 @@ Route::group(
         Route::get('meeting/responses', QsyssMeetingRegistrationResponses::class)
             ->middleware('signed')
             ->name('qsyss-meeting.responses');
-
-        Route::get('survey/{survey}/{slug?}', EntryForm::class);
 
         Route::post(uri: 'clicksend/webhook', action: ClicksendWebhookController::class);
 

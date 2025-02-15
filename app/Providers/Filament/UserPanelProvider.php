@@ -13,6 +13,7 @@ use App\Filament\User\Pages\Organisation\Register as RegisterOrganisation;
 use App\Filament\User\Resources\ElectionResource\Pages\ManageElections;
 use App\Models\Organisation;
 use App\Settings\GoogleTagManagerSettings;
+use App\Settings\ServiceConfig;
 use Exception;
 use Filament\FontProviders\LocalFontProvider;
 use Filament\Http\Middleware\Authenticate;
@@ -113,6 +114,12 @@ class UserPanelProvider extends PanelProvider
                 name: PanelsRenderHook::PAGE_START,
                 hook: fn () => new HtmlString(html: '<span class="pg-election-list hidden"></span>'),
                 scopes: ManageElections::class
+            )
+            ->renderHook(
+                name: PanelsRenderHook::BODY_END,
+                hook: fn (ServiceConfig $services) => $services->tawk_to->enabled ?
+                    new HtmlString(html: $services->tawk_to->script) :
+                    null,
             )
             ->plugins(plugins: [
                 SpatieLaravelTranslatablePlugin::make()
