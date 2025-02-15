@@ -95,6 +95,7 @@ class SurveyResource extends Resource
     {
         return [
             'index' => Pages\ManageSurveys::route('/'),
+            'create' => Pages\CreateSurvey::route('/create'),
             'edit' => Pages\EditSurvey::route('/{record}/questions'),
             'responses' => Pages\ManageResponses::route('/{record}/responses'),
         ];
