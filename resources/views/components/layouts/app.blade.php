@@ -2,7 +2,7 @@
     <header
         x-data="{ isSticky: false }"
         x-bind:class="{
-            'bg-white shadow-lg dark:bg-gray-900 dark:ring-white/10 ring-1 ring-gray-950/5 mb-0':
+            'bg-slate-50 shadow-lg dark:bg-gray-900 dark:ring-white/10 ring-1 ring-gray-950/5 mb-0':
                 isSticky,
         }"
         x-on:scroll.window="isSticky = window.scrollY > 16"
@@ -95,7 +95,11 @@
                     {{ __('app.nav.home.label') }}
                 </x-filament-panels::topbar.item>
                 <li class="fi-topbar-item">
-                    <x-filament::dropdown placement="bottom-start" teleport>
+                    <x-filament::dropdown
+                        placement="bottom-start"
+                        class="[&_.fi-dropdown-panel]:bg-slate-50"
+                        teleport
+                    >
                         <x-slot name="trigger">
                             <ul>
                                 <x-filament-panels::topbar.item>
@@ -107,7 +111,7 @@
                         <x-filament::dropdown.list>
                             <x-filament::dropdown.list.item
                                 :href="route('products.election.home')"
-                                icon="heroicon-o-archive-box"
+                                icon="heroicon-o-computer-desktop"
                                 tag="a"
                             >
                                 {{ __('app.nav.products.items.election.label') }}
@@ -129,6 +133,14 @@
                                 badge="soon"
                             >
                                 {{ __('app.nav.products.items.resolution_voting.label') }}
+                            </x-filament::dropdown.list.item>
+
+                            <x-filament::dropdown.list.item
+                                :href="route('products.survey.home')"
+                                icon="heroicon-o-document-chart-bar"
+                                tag="a"
+                            >
+                                {{ __('app.nav.products.items.survey.label') }}
                             </x-filament::dropdown.list.item>
                         </x-filament::dropdown.list>
                     </x-filament::dropdown>
@@ -192,7 +204,7 @@
                 x-cloak
                 x-show="isOpen"
                 @click.away="isOpen = false"
-                class="absolute inset-x-2 top-20 z-50 origin-top-right transform space-y-6 rounded-xl bg-white px-4 py-6 shadow-lg transition lg:hidden"
+                class="absolute inset-x-2 top-20 z-50 origin-top-right transform space-y-6 rounded-xl bg-slate-50 px-4 py-6 shadow-lg transition lg:hidden"
             >
                 <ul
                     class="flex w-full flex-col items-start space-y-4 lg:flex-row"
@@ -201,7 +213,11 @@
                         {{ __('app.nav.home.label') }}
                     </x-filament-panels::topbar.item>
 
-                    <x-filament::dropdown placement="bottom-start" teleport>
+                    <x-filament::dropdown
+                        placement="bottom-start"
+                        class="[&_.fi-dropdown-panel]:bg-slate-50"
+                        teleport
+                    >
                         <x-slot name="trigger">
                             <x-filament-panels::topbar.item>
                                 {{ __('app.nav.products.label') }}
@@ -235,6 +251,14 @@
                             >
                                 {{ __('app.nav.products.items.resolution_voting.label') }}
                             </x-filament::dropdown.list.item>
+
+                            <x-filament::dropdown.list.item
+                                :href="route('products.survey.home')"
+                                icon="heroicon-o-document-chart-bar"
+                                tag="a"
+                            >
+                                {{ __('app.nav.products.items.survey.label') }}
+                            </x-filament::dropdown.list.item>
                         </x-filament::dropdown.list>
                     </x-filament::dropdown>
 
@@ -255,7 +279,7 @@
                     </x-filament-panels::topbar.item>
                 </ul>
 
-                <div class="flex gap-x-4">
+                <div class="flex flex-col gap-4 sm:flex-row">
                     <x-locale-switch />
 
                     <x-filament::button

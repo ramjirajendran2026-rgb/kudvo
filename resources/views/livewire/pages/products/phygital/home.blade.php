@@ -1,4 +1,19 @@
-<main class="pg-pgdl h-full w-full px-4">
+<main class="pg-pgdl overflow-hidden">
+    <!-- Animated Background Shapes -->
+    <div class="container fixed inset-0 -z-10">
+        <div
+            class="animate-float absolute left-[-35%] top-[25%] h-64 w-64 rounded-full bg-amber-300 opacity-30 mix-blend-multiply blur-xl filter md:left-[-15%] md:top-[-5%]"
+        ></div>
+        <div
+            class="animate-float absolute right-[-25%] top-[15%] h-72 w-72 rounded-full bg-emerald-300 opacity-30 mix-blend-multiply blur-xl filter md:right-[-5%] md:top-[-15%]"
+            style="animation-delay: -2s"
+        ></div>
+        <div
+            class="animate-float absolute bottom-[5%] right-[-15%] h-80 w-80 rounded-full bg-yellow-300 opacity-30 mix-blend-multiply blur-xl filter"
+            style="animation-delay: -4s"
+        ></div>
+    </div>
+
     <section id="hero" class="container mx-auto">
         <div
             class="mx-auto flex max-w-screen-lg flex-col items-center justify-center gap-6 lg:flex-row"
@@ -13,14 +28,26 @@
                 <p class="text-base text-gray-700 md:text-lg">
                     @lang('pages/products/phygital/home.content.hero.description')
                 </p>
-                <x-filament::button
-                    size="xl"
-                    color="primary"
-                    tag="a"
-                    :href="__('pages/products/phygital/home.content.hero.cta.url')"
+                <div
+                    class="flex w-full flex-col justify-center gap-5 sm:flex-row lg:justify-start"
                 >
-                    @lang('pages/products/phygital/home.content.hero.cta.label')
-                </x-filament::button>
+                    <x-filament::button
+                        size="xl"
+                        color="primary"
+                        tag="a"
+                        :href="__('pages/products/election/home.content.hero.cta.url')"
+                    >
+                        {{ __('pages/products/election/home.content.hero.cta.label') }}
+                    </x-filament::button>
+                    <x-filament::button
+                        size="xl"
+                        color="gray"
+                        tag="a"
+                        :href="__('pages/products/phygital/home.content.hero.cta.url')"
+                    >
+                        @lang('pages/products/phygital/home.content.hero.cta.label')
+                    </x-filament::button>
+                </div>
             </div>
             <div
                 data-aos="fade-left"
@@ -35,111 +62,113 @@
             </div>
         </div>
     </section>
-    <section id="key-features" class="container w-full py-16">
-        <div
-            data-aos="zoom-out-up"
-            class="mx-auto flex flex-col items-center justify-center gap-4"
-        >
+    <section id="key-features" class="w-full bg-slate-50 py-16">
+        <div class="container">
             <div
-                class="rounded-lg border-[1px] border-primary-400 bg-primary-100 px-3 py-1 text-sm text-primary-600"
+                data-aos="zoom-out-up"
+                class="mx-auto flex flex-col items-center justify-center gap-4"
             >
-                @lang('pages/products/phygital/home.content.key_features.label')
+                <div
+                    class="rounded-lg border-[1px] border-primary-400 bg-primary-100 px-3 py-1 text-sm text-primary-600"
+                >
+                    @lang('pages/products/phygital/home.content.key_features.label')
+                </div>
+                <h2
+                    class="text-center text-3xl font-bold tracking-tighter sm:text-4xl"
+                >
+                    @lang('pages/products/phygital/home.content.key_features.title')
+                </h2>
+                <p
+                    class="max-w-screen-lg text-center md:text-lg/relaxed lg:text-lg/relaxed"
+                >
+                    @lang('pages/products/phygital/home.content.key_features.description')
+                </p>
             </div>
-            <h2
-                class="text-center text-3xl font-bold tracking-tighter sm:text-4xl"
+            <div
+                class="mt-8 flex w-full flex-col items-center justify-center md:flex-row"
             >
-                @lang('pages/products/phygital/home.content.key_features.title')
-            </h2>
-            <p
-                class="max-w-screen-lg text-center md:text-lg/relaxed lg:text-lg/relaxed"
-            >
-                @lang('pages/products/phygital/home.content.key_features.description')
-            </p>
-        </div>
-        <div
-            class="mt-8 flex w-full flex-col items-center justify-center md:flex-row"
-        >
-            <div data-aos="fade-left" class="w-full md:w-1/2">
-                <img
-                    class="mx-auto size-80 object-contain"
-                    src="@lang('pages/products/phygital/home.content.key_features.image')"
-                    alt="@lang('pages/products/phygital/home.content.key_features.image_alt')"
-                    title="@lang('pages/products/phygital/home.content.key_features.title')"
-                />
-            </div>
-            <div data-aos="fade-right" class="w-full md:w-1/2">
-                <ul class="grid gap-6">
-                    @foreach (__('pages/products/phygital/home.content.key_features.items') as $item)
-                        <li>
-                            <div class="grid gap-1">
-                                <h3 class="text-xl font-bold">
-                                    {{ $item['title'] }}
-                                </h3>
-                                <p>
-                                    {{ $item['description'] }}
-                                </p>
-                            </div>
-                        </li>
-                    @endforeach
-                </ul>
+                <div data-aos="fade-left" class="w-full md:w-1/2">
+                    <img
+                        class="mx-auto size-80 object-contain"
+                        src="@lang('pages/products/phygital/home.content.key_features.image')"
+                        alt="@lang('pages/products/phygital/home.content.key_features.image_alt')"
+                        title="@lang('pages/products/phygital/home.content.key_features.title')"
+                    />
+                </div>
+                <div data-aos="fade-right" class="w-full md:w-1/2">
+                    <ul class="grid gap-6">
+                        @foreach (__('pages/products/phygital/home.content.key_features.items') as $item)
+                            <li>
+                                <div class="grid gap-1">
+                                    <h3 class="text-xl font-bold">
+                                        {{ $item['title'] }}
+                                    </h3>
+                                    <p>
+                                        {{ $item['description'] }}
+                                    </p>
+                                </div>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
             </div>
         </div>
     </section>
-    <section id="vvpat-printing" class="container w-full py-16">
-        <div
-            data-aos="zoom-out-up"
-            class="mx-auto flex flex-col items-center justify-center gap-4"
-        >
+    <section id="vvpat-printing" class="w-full bg-slate-50 py-16">
+        <div class="container">
             <div
-                class="rounded-lg border-[1px] border-primary-400 bg-primary-100 px-3 py-1 text-sm text-primary-600"
+                data-aos="zoom-out-up"
+                class="mx-auto flex flex-col items-center justify-center gap-4"
             >
-                @lang('pages/products/phygital/home.content.vvpat_printing.label')
+                <div
+                    class="rounded-lg border-[1px] border-primary-400 bg-primary-100 px-3 py-1 text-sm text-primary-600"
+                >
+                    @lang('pages/products/phygital/home.content.vvpat_printing.label')
+                </div>
+                <h2
+                    class="text-center text-3xl font-bold tracking-tighter sm:text-4xl"
+                >
+                    @lang('pages/products/phygital/home.content.vvpat_printing.title')
+                </h2>
+                <p
+                    class="max-w-screen-lg text-center md:text-lg/relaxed lg:text-lg/relaxed"
+                >
+                    @lang('pages/products/phygital/home.content.vvpat_printing.description')
+                </p>
             </div>
-            <h2
-                class="text-center text-3xl font-bold tracking-tighter sm:text-4xl"
+            <div
+                class="mt-8 flex w-full flex-col items-center justify-center md:flex-row"
             >
-                @lang('pages/products/phygital/home.content.vvpat_printing.title')
-            </h2>
-            <p
-                class="max-w-screen-lg text-center md:text-lg/relaxed lg:text-lg/relaxed"
-            >
-                @lang('pages/products/phygital/home.content.vvpat_printing.description')
-            </p>
-        </div>
-        <div
-            class="mt-8 flex w-full flex-col items-center justify-center md:flex-row"
-        >
-            <div data-aos="fade-left" class="w-full md:w-1/2">
-                <img
-                    class="mx-auto size-80 object-contain"
-                    src="@lang('pages/products/phygital/home.content.vvpat_printing.image')"
-                    alt="@lang('pages/products/phygital/home.content.vvpat_printing.image_alt')"
-                    title="@lang('pages/products/phygital/home.content.vvpat_printing.title')"
-                />
-            </div>
-            <div data-aos="fade-right" class="w-full md:w-1/2">
-                <ul class="grid gap-6">
-                    @foreach (__('pages/products/phygital/home.content.vvpat_printing.items') as $item)
-                        <li>
-                            <div class="grid gap-1">
-                                <h3 class="text-xl font-bold">
-                                    {{ $item['title'] }}
-                                </h3>
-                                <p>
-                                    {{ $item['description'] }}
-                                </p>
-                            </div>
-                        </li>
-                    @endforeach
-                </ul>
+                <div data-aos="fade-left" class="w-full md:w-1/2">
+                    <img
+                        class="mx-auto size-80 object-contain"
+                        src="@lang('pages/products/phygital/home.content.vvpat_printing.image')"
+                        alt="@lang('pages/products/phygital/home.content.vvpat_printing.image_alt')"
+                        title="@lang('pages/products/phygital/home.content.vvpat_printing.title')"
+                    />
+                </div>
+                <div data-aos="fade-right" class="w-full md:w-1/2">
+                    <ul class="grid gap-6">
+                        @foreach (__('pages/products/phygital/home.content.vvpat_printing.items') as $item)
+                            <li>
+                                <div class="grid gap-1">
+                                    <h3 class="text-xl font-bold">
+                                        {{ $item['title'] }}
+                                    </h3>
+                                    <p>
+                                        {{ $item['description'] }}
+                                    </p>
+                                </div>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
             </div>
         </div>
     </section>
     <section id="how-we-do" class="container mx-auto w-full">
         <div class="relative">
-            <main
-                class="relative flex flex-col justify-center overflow-hidden bg-slate-50"
-            >
+            <main class="relative flex flex-col justify-center overflow-hidden">
                 <div class="mx-auto w-full max-w-6xl px-4 py-12 md:px-6">
                     <div class="flex justify-center">
                         <!-- Modal video component -->
@@ -156,7 +185,7 @@
                                 aria-label="Watch the video"
                             >
                                 <img
-                                    class="rounded-3xl shadow-2xl transition-shadow duration-300 ease-in-out"
+                                    class="rounded-3xl shadow-xl transition-shadow duration-300 ease-in-out"
                                     src="@lang('pages/products/phygital/home.content.how_we_do.video.thumbnail.src')"
                                     width="768"
                                     height="432"

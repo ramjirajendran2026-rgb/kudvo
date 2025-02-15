@@ -8,8 +8,22 @@
     $additionalSections = __('pages/products/election/home.content.additional_sections');
 @endphp
 
-<main class="pg-el pg-home h-full w-full">
-    <section id="hero" class="py-16">
+<main class="pg-el pg-home overflow-hidden">
+    <!-- Animated Background Shapes -->
+    <div class="container fixed inset-0 -z-10">
+        <div
+            class="animate-float absolute left-[-35%] top-[25%] h-64 w-64 rounded-full bg-blue-300 opacity-30 mix-blend-multiply blur-xl filter md:left-[-5%] md:top-[75%]"
+        ></div>
+        <div
+            class="animate-float absolute right-[-25%] top-[15%] h-72 w-72 rounded-full bg-violet-300 opacity-30 mix-blend-multiply blur-xl filter md:right-[15%] md:top-[15%]"
+            style="animation-delay: -2s"
+        ></div>
+        <div
+            class="animate-float absolute bottom-[5%] right-[-15%] h-80 w-80 rounded-full bg-green-300 opacity-30 mix-blend-multiply blur-xl filter md:bottom-[5%] md:right-[5%]"
+            style="animation-delay: -4s"
+        ></div>
+    </div>
+    <section id="hero" class="px-2 py-16 md:px-0">
         <div
             class="mx-auto flex max-w-screen-lg flex-col items-center justify-center gap-6 lg:flex-row"
         >
@@ -23,14 +37,27 @@
                 <p class="text-base text-gray-700 md:text-lg">
                     {{ __('pages/products/election/home.content.hero.description') }}
                 </p>
-                <x-filament::button
-                    size="xl"
-                    color="primary"
-                    tag="a"
-                    :href="__('pages/products/election/home.content.hero.cta.url')"
+                <div
+                    class="flex w-full flex-col justify-center gap-5 sm:flex-row lg:justify-start"
                 >
-                    {{ __('pages/products/election/home.content.hero.cta.label') }}
-                </x-filament::button>
+                    <x-filament::button
+                        size="xl"
+                        color="primary"
+                        tag="a"
+                        :href="__('pages/products/election/home.content.hero.cta.url')"
+                    >
+                        {{ __('pages/products/election/home.content.hero.cta.label') }}
+                    </x-filament::button>
+                    <x-filament::button
+                        tag="a"
+                        color="gray"
+                        :href="__('pages/products/election/home.content.cta_section.cta_url')"
+                        size="xl"
+                        title="Kudvo Sign up"
+                    >
+                        {{ __('pages/products/election/home.content.cta_section.cta_label') }}
+                    </x-filament::button>
+                </div>
             </div>
             <div data-aos="fade-left" class="flex items-center justify-center">
                 <img
