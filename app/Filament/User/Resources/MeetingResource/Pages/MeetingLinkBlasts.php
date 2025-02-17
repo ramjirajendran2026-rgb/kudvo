@@ -6,7 +6,6 @@ use App\Enums\MeetingLinkBlastStatus;
 use App\Events\MeetingLinkBlastCompleted;
 use App\Events\MeetingLinkBlastInitiated;
 use App\Filament\User\Resources\MeetingResource;
-use App\Models\Meeting;
 use App\Models\MeetingLinkBlast;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Form;
@@ -66,10 +65,10 @@ class MeetingLinkBlasts extends ManageRelatedRecords
                     ->helperText(text: 'Delivery may take several minutes, depending on the number of participants. Please plan accordingly.')
                     ->hiddenLabel()
                     ->label(label: 'Schedule at')
-                    ->minDate(date: fn (Meeting $meeting): string => now($meeting->timezone)->format('Y-m-d H:i'))
+                    ->minDate(date: now($this->getRecord()->timezone)->format('Y-m-d H:i'))
                     ->required()
                     ->seconds(condition: false)
-                    ->timezone(timezone: fn (Meeting $meeting): ?string => $meeting->timezone),
+                    ->timezone(timezone: $this->getRecord()->timezone),
             ]);
     }
 
@@ -86,7 +85,8 @@ class MeetingLinkBlasts extends ManageRelatedRecords
 
                 TextColumn::make(name: 'scheduled_at')
                     ->dateTime(format: 'M j, Y h:i A')
-                    ->timezone(timezone: fn (Meeting $meeting): ?string => $meeting->timezone),
+                    ->sinceTooltip()
+                    ->timezone(timezone: $this->getRecord()->timezone),
 
                 TextColumn::make(name: 'status')
                     ->badge(),
