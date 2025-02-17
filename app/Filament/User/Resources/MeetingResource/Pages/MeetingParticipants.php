@@ -151,14 +151,14 @@ class MeetingParticipants extends ManageRelatedRecords
             ])
             ->headerActions(actions: [
                 ParticipantResource::getImportTableAction()
-                    ->authorize('importParticipant')
+                    ->authorize(fn (self $livewire) => $this->can('importParticipant'))
                     ->fillForm([
                         'phone_country' => Filament::getTenant()?->country ?: config(key: 'app.default_phone_country'),
                     ])
                     ->options(options: ['meeting_id' => $this->getRecord()->getKey()]),
 
                 ParticipantResource::getCreateTableAction()
-                    ->authorize('createParticipant')
+                    ->authorize(fn (self $livewire) => $this->can('createParticipant'))
                     ->after(callback: fn () => $this->dispatch('meeting.onboarding.refresh')->self())
                     ->createAnother(condition: false),
 
@@ -215,7 +215,7 @@ class MeetingParticipants extends ManageRelatedRecords
     public function getGenerateDummyParticipantsAction(): TableAction
     {
         return TableAction::make('generateDummyParticipants')
-            ->authorize('generateDummyParticipant')
+            ->authorize(fn (self $livewire) => $this->can('generateDummyParticipants'))
             ->requiresConfirmation()
             ->action(function (self $livewire, TableAction $action, array $data) {
                 Participant::factory($data['count'])
