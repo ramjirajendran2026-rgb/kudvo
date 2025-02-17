@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\MeetingLinkBlastStatus;
 use App\Enums\MeetingStatus;
 use App\Enums\MeetingVotingStatus;
 use App\Models\Meeting;
@@ -156,7 +157,7 @@ class MeetingPolicy
     {
         return $meeting->isStatus(MeetingStatus::Published) &&
             $meeting->isVotingStatus([MeetingVotingStatus::Scheduled, MeetingVotingStatus::Open]) &&
-            $blast->status === MeetingVotingStatus::Scheduled &&
+            $blast->status === MeetingLinkBlastStatus::Scheduled &&
             $this->hasRoleAccess($user, $meeting);
     }
 
@@ -164,7 +165,7 @@ class MeetingPolicy
     {
         return $meeting->isStatus(MeetingStatus::Published) &&
             $meeting->isVotingStatus([MeetingVotingStatus::Scheduled, MeetingVotingStatus::Open]) &&
-            $blast->status === MeetingVotingStatus::Scheduled &&
+            $blast->status === MeetingLinkBlastStatus::Scheduled &&
             $this->hasRoleAccess($user, $meeting);
     }
 
