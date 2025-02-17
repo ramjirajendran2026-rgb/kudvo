@@ -12,6 +12,7 @@ use App\Models\Meeting;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
@@ -201,6 +202,7 @@ class MeetingResource extends Resource
     public static function getTimezoneFormComponent(): TimezonePicker
     {
         return TimezonePicker::make()
+            ->default(Filament::getTenant()?->timezone ?? request()->ipinfo?->timezone)
             ->required();
     }
 
@@ -215,7 +217,7 @@ class MeetingResource extends Resource
     public static function getVotingEndsAtFormComponent(): DateTimePicker
     {
         return DateTimePicker::make(name: 'voting_ends_at')
-            ->after(date: 'starts_at')
+            ->after(date: 'voting_starts_at')
             ->label(label: __('filament.user.election-resource.form.ends_at.label'))
             ->required()
             ->seconds(condition: false);
