@@ -4,6 +4,7 @@ namespace App\Filament\User\Resources;
 
 use App\Actions\Meeting\PublishMeeting;
 use App\Actions\Meeting\ScheduleMeetingLinkBlast;
+use App\Enums\MeetingVotingStatus;
 use App\Filament\User\Resources\MeetingResource\Pages;
 use App\Filament\User\Resources\MeetingResource\Widgets\MeetingOnboardingWidget;
 use App\Filament\User\Resources\MeetingResource\Widgets\MeetingStatsOverview;
@@ -85,7 +86,18 @@ class MeetingResource extends Resource
 
                 Tables\Columns\TextColumn::make('status')
                     ->badge(),
+
+                Tables\Columns\TextColumn::make('voting_status')
+                    ->badge()
+                    ->getStateUsing(fn (Meeting $meeting) => $meeting->is_published ? $meeting->voting_status : MeetingVotingStatus::NotApplicable)
+                    ->label('Voting'),
+
+                Tables\Columns\TextColumn::make('created_at')
+                    ->date()
+                    ->timeTooltip()
+                    ->timezone(Filament::getTenant()?->timezone),
             ])
+            ->defaultSort('id', direction: 'desc')
             ->emptyStateDescription(description: __(key: 'filament-tables::table.empty.description', replace: [
                 'model' => static::getPluralModelLabel(),
             ]))
