@@ -52,6 +52,15 @@
       "resources/js/swal.js"
     ]
   },
+  "resources/js/filament/meeting/scripts.js": {
+    "file": "assets/scripts-D1MAhonk.js",
+    "name": "scripts",
+    "src": "resources/js/filament/meeting/scripts.js",
+    "isEntry": true,
+    "imports": [
+      "resources/js/swal.js"
+    ]
+  },
   "resources/js/swal.js": {
     "file": "assets/swal-BC02UTOP.js",
     "name": "swal",
