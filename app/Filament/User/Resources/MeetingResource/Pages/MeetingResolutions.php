@@ -107,7 +107,7 @@ class MeetingResolutions extends ViewRecord
                     ->schema(components: [
                         Section::make(heading: static fn (Resolution $record): string => $record->name)
                             ->collapsible()
-                            ->columns(columns: 3)
+                            ->columns(columns: 6)
                             ->headerActions(actions: [
                                 $this->getEditResolutionAction(),
 
@@ -127,6 +127,7 @@ class MeetingResolutions extends ViewRecord
                                 TextEntry::make(name: 'for_label')
                                     ->alignCenter()
                                     ->color(color: ResolutionChoice::For->getColor())
+                                    ->columnSpan(static fn (Resolution $record): int => $record->allow_abstain_votes ? 2 : 3)
                                     ->hiddenLabel()
                                     ->icon(icon: ResolutionChoice::For->getIcon())
                                     ->iconColor(color: ResolutionChoice::For->getColor())
@@ -136,6 +137,7 @@ class MeetingResolutions extends ViewRecord
                                 TextEntry::make(name: 'against_label')
                                     ->alignCenter()
                                     ->color(color: ResolutionChoice::Against->getColor())
+                                    ->columnSpan(static fn (Resolution $record): int => $record->allow_abstain_votes ? 2 : 3)
                                     ->hiddenLabel()
                                     ->icon(icon: ResolutionChoice::Against->getIcon())
                                     ->iconColor(color: ResolutionChoice::Against->getColor())
@@ -145,6 +147,7 @@ class MeetingResolutions extends ViewRecord
                                 TextEntry::make(name: 'abstain_label')
                                     ->alignCenter()
                                     ->color(color: ResolutionChoice::Abstain->getColor())
+                                    ->columnSpan(2)
                                     ->hiddenLabel()
                                     ->icon(icon: ResolutionChoice::Abstain->getIcon())
                                     ->iconColor(color: ResolutionChoice::Abstain->getColor())
