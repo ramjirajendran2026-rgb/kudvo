@@ -78,7 +78,7 @@ class MeetingPolicy
         return $meeting->isStatus(MeetingStatus::Onboarding) && $this->hasRoleAccess($user, $meeting);
     }
 
-    public function generateDummyParticipant(User $user, Meeting $meeting): bool
+    public function generateDummyParticipants(User $user, Meeting $meeting): bool
     {
         return $meeting->isStatus(MeetingStatus::Onboarding) && $user->hasAdminRole();
     }
