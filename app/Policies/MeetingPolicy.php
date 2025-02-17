@@ -128,7 +128,9 @@ class MeetingPolicy
 
     public function reorderResolution(User $user, Meeting $meeting): bool
     {
-        return $meeting->isStatus(MeetingStatus::Onboarding) && $this->hasRoleAccess($user, $meeting);
+        return $meeting->isStatus(MeetingStatus::Onboarding) &&
+            $this->hasRoleAccess($user, $meeting) &&
+            $meeting->resolutions()->count() > 1;
     }
 
     public function updateResolution(User $user, Meeting $meeting, Resolution $resolution): bool
