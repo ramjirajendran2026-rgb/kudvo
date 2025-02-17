@@ -18,6 +18,7 @@ export default defineConfig({
                 'resources/js/filament/election/scripts.js',
 
                 'resources/css/filament/meeting/theme.css',
+                'resources/js/filament/meeting/scripts.js',
 
                 'resources/css/filament/nomination/theme.css',
 
