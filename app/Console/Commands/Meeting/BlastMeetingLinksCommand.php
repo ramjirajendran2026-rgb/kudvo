@@ -29,7 +29,7 @@ class BlastMeetingLinksCommand extends Command
                     MeetingLinkBlastInitiated::dispatch($blast);
 
                     /** @var Meeting $meeting */
-                    $meeting = $blast->election;
+                    $meeting = $blast->meeting;
                     $meeting->participants()
                         ->chunkById(
                             count: 50,
