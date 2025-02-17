@@ -95,6 +95,7 @@ class MeetingLinkBlasts extends ManageRelatedRecords
                 static::getTableCreateAction(),
             ])
             ->modelLabel(label: 'Link Blast')
+            ->recordTitle(fn (MeetingLinkBlast $record): string => $record->scheduled_at?->timezone($this->getRecord()->timezone)->format('M j, Y h:i A'))
             ->recordTitleAttribute(attribute: 'scheduled_at');
     }
 
