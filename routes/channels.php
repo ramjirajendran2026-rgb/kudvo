@@ -20,3 +20,7 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 Broadcast::channel('elections.{electionId}', function ($user, $electionId) {
     return true;
 });
+
+Broadcast::channel('meetings.{meetingId}', function ($user, $meetingId) {
+    return true;
+});

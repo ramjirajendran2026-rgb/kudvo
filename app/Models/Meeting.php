@@ -6,12 +6,15 @@ use App\Actions\Meeting\GenerateMeetingShortKey;
 use App\Enums\MeetingOnboardingStep;
 use App\Enums\MeetingStatus;
 use App\Enums\MeetingVotingStatus;
+use App\Filament\Imports\ParticipantImporter;
 use App\Models\Concerns\HasNextPossibleKey;
+use Filament\Actions\Imports\Models\Import;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Support\Arr;
@@ -172,6 +175,19 @@ class Meeting extends Model
             'meeting_id',
             'smsable_id',
         )->where('smsable_type', Participant::class);
+    }
+
+    public function imports(): BelongsToMany
+    {
+        return $this->belongsToMany(related: Import::class)
+            ->using(class: ImportMeeting::class)
+            ->withPivot(columns: ['options', 'column_map']);
+    }
+
+    public function participantImports(): BelongsToMany
+    {
+        return $this->imports()
+            ->where('importer', ParticipantImporter::class);
     }
 
     public function getRouteKeyName(): string

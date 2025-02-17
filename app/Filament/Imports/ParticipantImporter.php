@@ -8,7 +8,7 @@ use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\Import;
 use Illuminate\Support\Arr;
-use Illuminate\Validation\Rules\Unique;
+use Illuminate\Validation\Rule;
 
 class ParticipantImporter extends Importer
 {
@@ -24,9 +24,11 @@ class ParticipantImporter extends Importer
 
             ImportColumn::make(name: 'membership_number')
                 ->example(example: 'MEM-12345')
-                ->rules(rules: fn (array $options): array => [
+                ->rules(rules: fn (array $options, Participant $record): array => [
                     'max:150',
-                    (new Unique(app(self::$model)->getTable()))->where('meeting_id', $options['meeting_id'] ?? null),
+                    Rule::unique(table: 'participants')
+                        ->ignoreModel(model: $record)
+                        ->where(column: 'meeting_id', value: $options['meeting_id'] ?? null),
                 ]),
 
             ImportColumn::make(name: 'email')
@@ -56,8 +58,10 @@ class ParticipantImporter extends Importer
 
     public function resolveRecord(): ?Participant
     {
-        return new Participant(attributes: [
+        return Participant::firstOrNew([
             'meeting_id' => $this->getOptions()['meeting_id'],
+
+            'membership_number' => $this->data['membership_number'],
         ]);
     }
 

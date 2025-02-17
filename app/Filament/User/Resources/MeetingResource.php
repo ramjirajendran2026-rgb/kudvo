@@ -7,6 +7,7 @@ use App\Actions\Meeting\ScheduleMeetingLinkBlast;
 use App\Filament\User\Resources\MeetingResource\Pages;
 use App\Filament\User\Resources\MeetingResource\Widgets\MeetingOnboardingWidget;
 use App\Filament\User\Resources\MeetingResource\Widgets\MeetingStatsOverview;
+use App\Filament\User\Resources\MeetingResource\Widgets\ParticipantDataImportProgress;
 use App\Forms\Components\TimezonePicker;
 use App\Models\Meeting;
 use Filament\Actions\Action;
@@ -126,6 +127,7 @@ class MeetingResource extends Resource
         return [
             MeetingOnboardingWidget::class,
             MeetingStatsOverview::class,
+            ParticipantDataImportProgress::class,
         ];
     }
 

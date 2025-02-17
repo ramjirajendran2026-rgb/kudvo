@@ -3,15 +3,18 @@
 namespace App\Filament\User\Resources\MeetingResource\Pages;
 
 use App\Enums\MeetingOnboardingStep;
+use App\Events\Meeting\ParticipantImportCompleted;
 use App\Filament\User\Resources\MeetingResource;
 use App\Filament\User\Resources\ParticipantResource;
 use App\Models\Meeting;
 use App\Models\Participant;
 use Database\Factories\ParticipantFactory;
+use Filament\Actions\Imports\Models\Import;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
+use Filament\Notifications\Actions\Action as NotificationAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Support\Enums\IconPosition;
@@ -21,6 +24,7 @@ use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Gate;
@@ -30,7 +34,9 @@ use Ysfkaya\FilamentPhoneInput\Tables\PhoneColumn;
 
 class MeetingParticipants extends ManageRelatedRecords
 {
-    use Concerns\UsesMeetingOnboardingWidget;
+    use Concerns\UsesMeetingOnboardingWidget {
+        getHeaderWidgets as getMeetingOnboardingWidgetHeaderWidgets;
+    }
 
     protected static string $resource = MeetingResource::class;
 
@@ -61,6 +67,46 @@ class MeetingParticipants extends ManageRelatedRecords
         }
 
         return true;
+    }
+
+    protected function getListeners(): array
+    {
+        return [
+            ...parent::getListeners(),
+
+            'echo-private:meetings.' . $this->getRecord()->getKey() . ',.' . ParticipantImportCompleted::getBroadcastName() => 'notifyImportCompletion',
+        ];
+    }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            ...$this->getMeetingOnboardingWidgetHeaderWidgets(),
+
+            ...$this->getImportProgressWidgets(),
+        ];
+    }
+
+    protected function getImportProgressWidgets(): array
+    {
+        if (! $this->hasPendingOnboardingStep()) {
+            return [];
+        }
+
+        return $this->getRecord()
+            ->participantImports()
+            ->whereNull(columns: 'completed_at')
+            ->get()
+            ->map(callback: fn (Import $import) => MeetingResource\Widgets\ParticipantDataImportProgress::make(['import' => $import]))
+            ->toArray();
+    }
+
+    public function getWidgetData(): array
+    {
+        return [
+            ...parent::getWidgetData(),
+            'meeting' => $this->getRecord(),
+        ];
     }
 
     public static function getNavigationLabel(): string
@@ -168,6 +214,48 @@ class MeetingParticipants extends ManageRelatedRecords
                 ]),
             ])
             ->recordTitleAttribute(attribute: 'name');
+    }
+
+    public function notifyImportCompletion(array $event): void
+    {
+        $this->refreshPendingOnboardingStep();
+
+        $import = Import::with(relations: 'user')->find(id: $event['importId']);
+
+        if (! $import->user instanceof Authenticatable) {
+            return;
+        }
+
+        $failedRowsCount = $import->getFailedRowsCount();
+
+        Notification::make()
+            ->persistent()
+            ->title($import->importer::getCompletedNotificationTitle($import))
+            ->body($import->importer::getCompletedNotificationBody($import))
+            ->when(
+                ! $failedRowsCount,
+                fn (Notification $notification) => $notification->success(),
+            )
+            ->when(
+                $failedRowsCount && ($failedRowsCount < $import->total_rows),
+                fn (Notification $notification) => $notification->warning(),
+            )
+            ->when(
+                $failedRowsCount === $import->total_rows,
+                fn (Notification $notification) => $notification->danger(),
+            )
+            ->when(
+                $failedRowsCount,
+                fn (Notification $notification) => $notification->actions([
+                    NotificationAction::make('downloadFailedRowsCsv')
+                        ->label('Download failed rows')
+                        ->color('danger')
+                        ->icon(icon: 'heroicon-m-arrow-down-tray')
+                        ->url(route('filament.imports.failed-rows.download', ['import' => $import], absolute: false), shouldOpenInNewTab: true)
+                        ->markAsRead(),
+                ]),
+            )
+            ->send();
     }
 
     protected function getSendMeetingLinkAction(): TableAction

@@ -15,6 +15,8 @@ use App\Listeners\LogClicksendSentSms;
 use App\Listeners\LogSentMail;
 use App\Listeners\LogSentNotification;
 use App\Listeners\LogTwentyFourSevenSmsSentMessage;
+use App\Listeners\Meeting\AssociateParticipantImportToMeeting;
+use App\Listeners\Meeting\NotifyParticipantImportCompletion;
 use App\Listeners\SendNomineeNominatedNotifications;
 use App\Services\Clicksend\SmsSent;
 use App\Services\TwentyFourSevenSms\SmsMessageSent;
@@ -72,10 +74,12 @@ class EventServiceProvider extends ServiceProvider
         ImportStarted::class => [
             AssociateElectorImportToElection::class,
             AssociateCandidateImportToElection::class,
+            AssociateParticipantImportToMeeting::class,
         ],
         ImportCompleted::class => [
             NotifyElectorImportCompletion::class,
             NotifyCandidateImportCompletion::class,
+            NotifyParticipantImportCompletion::class,
         ],
         ImportChunkProcessed::class => [
             NotifyElectionDataImportProgress::class,
