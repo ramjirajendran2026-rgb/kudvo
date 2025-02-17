@@ -18,6 +18,7 @@ use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Markdown;
 use Illuminate\Contracts\Support\Htmlable;
+use Livewire\Attributes\On;
 
 class MeetingDashboard extends ViewRecord
 {
@@ -40,21 +41,7 @@ class MeetingDashboard extends ViewRecord
 
         $this->currentOnboardingStep = MeetingOnboardingStep::Publish;
 
-        $meeting = $this->getMeeting();
-
-        $this->refreshPendingOnboardingStep();
-        $this->state = match (true) {
-            $this->getPendingOnboardingStep() === MeetingOnboardingStep::AddParticipants => MeetingDashboardState::OnboardParticipants,
-            $this->getPendingOnboardingStep() === MeetingOnboardingStep::AddResolutions => MeetingDashboardState::OnboardResolutions,
-            $this->getPendingOnboardingStep() === MeetingOnboardingStep::Publish => MeetingDashboardState::ReadyToPublish,
-            $meeting->isStatus(MeetingStatus::Cancelled) => MeetingDashboardState::Cancelled,
-            //            $meeting->isStatus(MeetingStatus::Completed) => MeetingDashboardState::Completed,
-            $meeting->isVotingStatus(MeetingVotingStatus::Scheduled) => MeetingDashboardState::VotingScheduled,
-            $meeting->isVotingStatus(MeetingVotingStatus::Open) => MeetingDashboardState::VotingInProgress,
-            $meeting->isVotingStatus(MeetingVotingStatus::Ended) => MeetingDashboardState::VotingEnded,
-            $meeting->isVotingStatus(MeetingVotingStatus::Closed) => MeetingDashboardState::VotingClosed,
-            default => null,
-        };
+        $this->refreshState();
     }
 
     public static function getNavigationLabel(): string
@@ -120,10 +107,16 @@ class MeetingDashboard extends ViewRecord
         return MeetingResource::getDeleteAction();
     }
 
+    protected function getPublishAction(): Action
+    {
+        return MeetingResource::getPublishAction()
+            ->after(callback: fn () => $this->dispatch('refresh')->self());
+    }
+
     protected function getStateActions(): array
     {
         return match ($this->state) {
-            MeetingDashboardState::ReadyToPublish => [MeetingResource::getPublishAction()],
+            MeetingDashboardState::ReadyToPublish => [$this->getPublishAction()],
             MeetingDashboardState::VotingInProgress, MeetingDashboardState::VotingEnded => [$this->getCloseVotingAction()],
             MeetingDashboardState::VotingClosed => [
                 $this->getDownloadResultAction(),
@@ -131,6 +124,29 @@ class MeetingDashboard extends ViewRecord
             ],
             default => [],
         };
+    }
+
+    #[On('refresh')]
+    public function refreshState(): void
+    {
+        $this->refreshPendingOnboardingStep();
+
+        $meeting = $this->getMeeting();
+
+        $this->state = match (true) {
+            $this->getPendingOnboardingStep() === MeetingOnboardingStep::AddParticipants => MeetingDashboardState::OnboardParticipants,
+            $this->getPendingOnboardingStep() === MeetingOnboardingStep::AddResolutions => MeetingDashboardState::OnboardResolutions,
+            $this->getPendingOnboardingStep() === MeetingOnboardingStep::Publish => MeetingDashboardState::ReadyToPublish,
+            $meeting->isStatus(MeetingStatus::Cancelled) => MeetingDashboardState::Cancelled,
+            //            $meeting->isStatus(MeetingStatus::Completed) => MeetingDashboardState::Completed,
+            $meeting->isVotingStatus(MeetingVotingStatus::Scheduled) => MeetingDashboardState::VotingScheduled,
+            $meeting->isVotingStatus(MeetingVotingStatus::Open) => MeetingDashboardState::VotingInProgress,
+            $meeting->isVotingStatus(MeetingVotingStatus::Ended) => MeetingDashboardState::VotingEnded,
+            $meeting->isVotingStatus(MeetingVotingStatus::Closed) => MeetingDashboardState::VotingClosed,
+            default => null,
+        };
+
+        $this->cacheStateActions();
     }
 
     public function getStateHeading(): string | Htmlable | null
@@ -146,12 +162,14 @@ class MeetingDashboard extends ViewRecord
     public function getCloseVotingAction()
     {
         return Action::make('closeVoting')
+            ->requiresConfirmation()
             ->authorize($this->canCloseVoting())
             ->action(function (Meeting $meeting, Action $action) {
                 $meeting->touch('voting_closed_at');
 
                 $action->success();
             })
+            ->after(callback: fn () => $this->dispatch('refresh')->self())
             ->successNotificationTitle('Voting closed successfully');
     }
 
