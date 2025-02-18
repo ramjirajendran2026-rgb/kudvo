@@ -20,7 +20,12 @@ class MeetingStatsOverview extends BaseWidget
 
     protected function getColumns(): int
     {
-        return 4;
+        return 2;
+    }
+
+    public function getColumnSpan(): int | string | array
+    {
+        return 1;
     }
 
     protected function getStats(): array

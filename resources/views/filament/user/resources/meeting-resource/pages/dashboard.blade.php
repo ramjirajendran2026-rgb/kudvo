@@ -1,6 +1,6 @@
 <x-filament-panels::page>
     @if ($state = $this->getStateHeading())
-        <x-filament::section>
+        <x-filament::section compact>
             <x-filament.state
                 :actions="$this->getCachedStateActions()"
                 :description="$this->getStateDescription()"
