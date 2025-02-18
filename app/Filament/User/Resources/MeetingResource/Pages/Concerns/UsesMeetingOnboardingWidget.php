@@ -6,6 +6,7 @@ use App\Enums\MeetingOnboardingStep;
 use App\Filament\Base\Pages\Concerns\InteractsWithFooterActions;
 use App\Filament\User\Resources\MeetingResource\Widgets\MeetingOnboardingWidget;
 use Filament\Actions\Action;
+use Filament\Notifications\Notification;
 use Filament\Support\Enums\Alignment;
 use Livewire\Attributes\On;
 
@@ -31,6 +32,12 @@ trait UsesMeetingOnboardingWidget
             $this->getPendingOnboardingStep() !== $this->getCurrentOnboardingStep() &&
             $this->getPendingOnboardingStep()->getIndex() < $this->getCurrentOnboardingStep()->getIndex()
         ) {
+            Notification::make()
+                ->title('Not allowed')
+                ->body('Please complete the previous steps before proceeding to the next one.')
+                ->warning()
+                ->send();
+
             $this->redirect(url: $this->getPendingOnboardingStep()->getUrl(parameters: $this->getSubNavigationParameters()));
         }
     }
