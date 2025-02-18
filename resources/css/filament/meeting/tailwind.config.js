@@ -3,6 +3,8 @@ import preset from '../../../../vendor/filament/filament/tailwind.config.preset'
 export default {
     presets: [preset],
     content: [
+        './app/Providers/Filament/MeetingPanelProvider.php',
+
         './app/Filament/Meeting/**/*.php',
         './resources/views/filament/meeting/**/*.blade.php',
 
