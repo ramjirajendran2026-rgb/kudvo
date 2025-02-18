@@ -126,13 +126,11 @@
                             </x-filament::dropdown.list.item>
 
                             <x-filament::dropdown.list.item
-                                :disabled="true"
+                                :href="route('products.meeting.home')"
                                 icon="heroicon-o-scale"
                                 tag="a"
-                                href="#"
-                                badge="soon"
                             >
-                                {{ __('app.nav.products.items.resolution_voting.label') }}
+                                {{ __('app.nav.products.items.meeting.label') }}
                             </x-filament::dropdown.list.item>
 
                             <x-filament::dropdown.list.item
@@ -242,14 +240,11 @@
                             </x-filament::dropdown.list.item>
 
                             <x-filament::dropdown.list.item
-                                :disabled="true"
+                                :href="route('products.meeting.home')"
                                 icon="heroicon-o-scale"
                                 tag="a"
-                                href="#"
-                                tooltip="Coming soon"
-                                badge="coming"
                             >
-                                {{ __('app.nav.products.items.resolution_voting.label') }}
+                                {{ __('app.nav.products.items.meeting.label') }}
                             </x-filament::dropdown.list.item>
 
                             <x-filament::dropdown.list.item
