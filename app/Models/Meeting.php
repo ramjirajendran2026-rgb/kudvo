@@ -213,7 +213,7 @@ class Meeting extends Model
             return MeetingOnboardingStep::AddResolutions;
         }
 
-        if (! $this->isStatus(MeetingStatus::Published)) {
+        if ($this->isStatus(MeetingStatus::Onboarding)) {
             return MeetingOnboardingStep::Publish;
         }
 

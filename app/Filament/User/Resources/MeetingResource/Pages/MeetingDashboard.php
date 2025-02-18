@@ -81,6 +81,8 @@ class MeetingDashboard extends ViewRecord
 
             ActionGroup::make(actions: [
                 $this->getDeleteAction(),
+                $this->getCloseVotingAction(),
+                $this->getCancelAction(),
             ])->dropdownPlacement(placement: 'bottom-end'),
         ];
     }
@@ -93,6 +95,16 @@ class MeetingDashboard extends ViewRecord
 
         return [
             MeetingResource\Widgets\MeetingStatsOverview::make(),
+        ];
+    }
+
+    protected function getFooterWidgets(): array
+    {
+        if ($this->hasPendingOnboardingStep()) {
+            return [];
+        }
+
+        return [
             MeetingResource\Widgets\MeetingParticipantsWidget::make(),
         ];
     }
@@ -155,12 +167,33 @@ class MeetingDashboard extends ViewRecord
         return $this->state?->getLabel($this->getMeeting());
     }
 
+    public function getStateIcon(): ?string
+    {
+        return $this->state?->getIcon($this->getMeeting());
+    }
+
     public function getStateDescription(): string | Htmlable | null
     {
         return $this->state?->getDescription($this->getMeeting());
     }
 
-    public function getCloseVotingAction()
+    public function getCancelAction(): Action
+    {
+        return Action::make('cancelMeeting')
+            ->requiresConfirmation()
+            ->authorize($this->canCancel())
+            ->action(function (Meeting $meeting, Action $action) {
+                $meeting->touch('cancelled_at');
+
+                $action->success();
+            })
+            ->after(callback: fn () => $this->dispatch('refresh')->self())
+            ->color('danger')
+            ->icon('heroicon-m-x-circle')
+            ->successNotificationTitle('Cancelled successfully');
+    }
+
+    public function getCloseVotingAction(): Action
     {
         return Action::make('closeVoting')
             ->requiresConfirmation()
@@ -171,10 +204,12 @@ class MeetingDashboard extends ViewRecord
                 $action->success();
             })
             ->after(callback: fn () => $this->dispatch('refresh')->self())
+            ->color('warning')
+            ->icon('heroicon-m-lock-closed')
             ->successNotificationTitle('Voting closed successfully');
     }
 
-    public function getDownloadResultAction()
+    public function getDownloadResultAction(): Action
     {
         return Action::make('downloadResult')
             ->authorize($this->canDownloadResult())
@@ -189,7 +224,7 @@ class MeetingDashboard extends ViewRecord
             ->label('Result');
     }
 
-    public function getDownloadDetailedResultAction()
+    public function getDownloadDetailedResultAction(): Action
     {
         return Action::make('downloadDetailedResult')
             ->authorize($this->canDownloadDetailedResult())
@@ -202,6 +237,11 @@ class MeetingDashboard extends ViewRecord
             })
             ->icon('heroicon-m-arrow-down-tray')
             ->label('Detailed result');
+    }
+
+    public function canCancel(): bool
+    {
+        return self::getResource()::can('cancel', $this->getMeeting());
     }
 
     public function canCloseVoting(): bool

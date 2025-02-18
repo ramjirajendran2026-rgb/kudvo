@@ -44,6 +44,13 @@ class MeetingPolicy
             $this->hasRoleAccess($user, $meeting);
     }
 
+    public function cancel(User $user, Meeting $meeting): bool
+    {
+        return $meeting->isStatus(MeetingStatus::Published) &&
+            $meeting->isVotingStatus([MeetingVotingStatus::Scheduled, MeetingVotingStatus::Open, MeetingVotingStatus::Ended]) &&
+            $this->hasRoleAccess($user, $meeting);
+    }
+
     public function closeVoting(User $user, Meeting $meeting): bool
     {
         return $meeting->isStatus(MeetingStatus::Published) &&

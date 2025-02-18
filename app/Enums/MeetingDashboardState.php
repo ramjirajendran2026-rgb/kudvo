@@ -5,6 +5,7 @@ namespace App\Enums;
 use App\Filament\User\Resources\MeetingResource\Pages\MeetingParticipants;
 use App\Filament\User\Resources\MeetingResource\Pages\MeetingResolutions;
 use App\Models\Meeting;
+use Filament\Support\Markdown;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 
@@ -36,6 +37,9 @@ enum MeetingDashboardState: string
                     ' label="Voting for this election will ends in "' .
                     ' reload="true" />'
                 )
+            ),
+            self::Cancelled => new HtmlString(
+                Markdown::inline('This meeting has been cancelled at **' . $meeting->cancelled_at->timezone($meeting->timezone)->format(format: 'M d, Y h:i A (T)') . '**')
             ),
             default => null,
         };

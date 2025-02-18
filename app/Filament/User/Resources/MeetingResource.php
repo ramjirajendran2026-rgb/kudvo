@@ -74,6 +74,11 @@ class MeetingResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->actions([
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\DeleteAction::make(),
+                ]),
+            ])
             ->columns(components: [
                 Tables\Columns\TextColumn::make(name: 'code')
                     ->copyable()
