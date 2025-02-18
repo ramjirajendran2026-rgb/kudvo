@@ -1,4 +1,4 @@
-<main class="page-home h-full w-full">
+<main class="page-home w-full overflow-hidden">
     <section
         id="hero"
         class="container relative overflow-hidden"
