@@ -5,6 +5,9 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write # Grants the workflow write permissions for the repository
+
 jobs:
   run-and-commit-assets:
     runs-on: ubuntu-latest
@@ -45,6 +48,8 @@ jobs:
 
       # Step 7: Add and Commit Generated Assets
       - name: Commit and Push Changes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
