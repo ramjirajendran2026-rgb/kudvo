@@ -3,6 +3,7 @@
 namespace App\Filament\User\Resources\MeetingResource\Pages;
 
 use App\Enums\MeetingOnboardingStep;
+use App\Enums\MeetingStatus;
 use App\Events\Meeting\ParticipantImportCompleted;
 use App\Filament\User\Resources\MeetingResource;
 use App\Filament\User\Resources\ParticipantResource;
@@ -16,6 +17,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Notifications\Actions\Action as NotificationAction;
 use Filament\Notifications\Notification;
+use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Support\Enums\IconPosition;
 use Filament\Tables\Actions\Action as TableAction;
@@ -69,6 +71,14 @@ class MeetingParticipants extends ManageRelatedRecords
         return true;
     }
 
+    public function getMeeting(): Meeting
+    {
+        /** @var Meeting $meeting */
+        $meeting = $this->getRecord();
+
+        return $meeting;
+    }
+
     protected function getListeners(): array
     {
         return [
@@ -93,7 +103,7 @@ class MeetingParticipants extends ManageRelatedRecords
             return [];
         }
 
-        return $this->getRecord()
+        return $this->getMeeting()
             ->participantImports()
             ->whereNull(columns: 'completed_at')
             ->get()
@@ -105,7 +115,7 @@ class MeetingParticipants extends ManageRelatedRecords
     {
         return [
             ...parent::getWidgetData(),
-            'meeting' => $this->getRecord(),
+            'meeting' => $this->getMeeting(),
         ];
     }
 
@@ -119,6 +129,23 @@ class MeetingParticipants extends ManageRelatedRecords
         return [
             MeetingResource::getUrl() => MeetingResource::getBreadcrumb(),
             MeetingDashboard::getUrl(parameters: ['record' => $this->getRecord()]) => $this->getRecordTitle(),
+        ];
+    }
+
+    public function getTabs(): array
+    {
+        if (! $this->getMeeting()->is_published) {
+            return [];
+        }
+
+        return [
+            'all' => Tab::make('All'),
+
+            'voted' => Tab::make('Voted')
+                ->modifyQueryUsing(callback: fn ($query) => $query->whereNotNull('voted_at')),
+
+            'non-voted' => Tab::make('Non-Voted')
+                ->modifyQueryUsing(callback: fn ($query) => $query->whereNull('voted_at')),
         ];
     }
 
@@ -195,6 +222,12 @@ class MeetingParticipants extends ManageRelatedRecords
                     ->alignCenter()
                     ->numeric(),
             ])
+            ->emptyStateDescription(
+                $this->getMeeting()->isStatus(MeetingStatus::Onboarding) ?
+                    __('filament-tables::table.empty.description', [
+                        'model' => ParticipantResource::getModelLabel(),
+                    ]) : null
+            )
             ->headerActions(actions: [
                 ParticipantResource::getImportTableAction()
                     ->authorize(fn (self $livewire) => $this->can('importParticipant', $this->getOwnerRecord()))
