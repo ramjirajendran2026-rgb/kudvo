@@ -30,6 +30,12 @@ class MeetingParticipantsWidget extends BaseWidget
                     ->indicateUsing(fn () => null),
             ], FiltersLayout::AboveContent)
             ->heading(null)
+            ->poll('30s')
             ->query(fn () => Participant::query()->where('meeting_id', $this->record->getKey()));
+    }
+
+    public function getRecord(): Meeting
+    {
+        return $this->record;
     }
 }

@@ -47,6 +47,11 @@ class ParticipantResource extends Resource
                 TextColumn::make(name: 'weightage')
                     ->alignCenter()
                     ->numeric(),
+
+                TextColumn::make(name: 'voted_at')
+                    ->dateTimeTooltip('d M Y h:i:s A (T)')
+                    ->since()
+                    ->timezone(fn ($livewire) => $livewire->getRecord()->timezone),
             ])
             ->emptyStateDescription(description: null);
     }
