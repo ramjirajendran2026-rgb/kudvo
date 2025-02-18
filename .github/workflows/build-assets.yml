@@ -14,28 +14,34 @@ jobs:
       - name: Check out the code
         uses: actions/checkout@v4
 
-      # Step 2: Install Bun
+      # Step 2: Set up PHP
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+
+      # Step 3: Install Composer Dependencies
+      - name: Install Composer Dependencies
+        run: composer install --no-interaction --prefer-dist --no-scripts
+
+      # Step 4: Install Bun
       - name: Install Bun
         run: |
           curl -fsSL https://bun.sh/install | bash
-          echo 'export PATH="$HOME/.bun/bin:$PATH"' >> $GITHUB_ENV # Add Bun to PATH globally
-          export PATH="$HOME/.bun/bin:$PATH" # Also update PATH in the current session
-          bun --version # Verify installation in current session
+          echo 'export PATH="$HOME/.bun/bin:$PATH"' >> $GITHUB_ENV
+          export PATH="$HOME/.bun/bin:$PATH"
 
-      # Step 3: Verify Bun installation in a new step
-      - name: Verify Bun Installation
+      # Step 5: Install Node.js Dependencies
+      - name: Install Node.js Dependencies
         run: |
-          export PATH="$HOME/.bun/bin:$PATH" # Ensure PATH is available in the step's context
-          bun --version
-
-      # Step 4: Run Bun commands
-      - name: Run Bun Commands
-        run: |
-          export PATH="$HOME/.bun/bin:$PATH" # Ensure PATH is available in the step's context
           bun install
+
+      # Step 6: Build Assets
+      - name: Run Assets Build
+        run: |
           bun run build
 
-      # Step 5: Add and commit generated assets
+      # Step 7: Add and Commit Generated Assets
       - name: Commit and Push Changes
         run: |
           git config --global user.name "github-actions[bot]"
