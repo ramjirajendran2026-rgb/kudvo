@@ -77,6 +77,8 @@ class MeetingDashboard extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
+            $this->getPreviousPageAction(),
+
             $this->getEditAction(),
 
             ActionGroup::make(actions: [

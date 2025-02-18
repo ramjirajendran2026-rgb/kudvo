@@ -179,9 +179,13 @@ BLADE
     protected function getHeaderActions(): array
     {
         return [
+            $this->getPreviousPageAction(),
+
             $this->getReorderResolutionAction(),
 
             $this->getCreateResolutionAction(),
+
+            $this->getNextPageAction(),
         ];
     }
 
@@ -203,6 +207,7 @@ BLADE
             ->model(model: Resolution::class)
             ->modalCancelAction(action: false)
             ->modalWidth(width: MaxWidth::FourExtraLarge)
+            ->outlined()
             ->record(record: null)
             ->relationship(relationship: static fn (self $livewire): Relation => $livewire->getRecord()->resolutions())
             ->stickyModalFooter()

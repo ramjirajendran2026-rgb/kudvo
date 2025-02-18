@@ -225,6 +225,15 @@ class MeetingParticipants extends ManageRelatedRecords
             ]);
     }
 
+    protected function getHeaderActions(): array
+    {
+        return [
+            $this->getPreviousPageAction(),
+
+            $this->getNextPageAction(),
+        ];
+    }
+
     public function notifyImportCompletion(array $event): void
     {
         $this->refreshPendingOnboardingStep();
