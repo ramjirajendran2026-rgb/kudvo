@@ -63,11 +63,6 @@ class Resolutions extends BasePage implements HasForms
         return $this->getMeeting()->description;
     }
 
-    public function getSubheading(): string | Htmlable | null
-    {
-        return 'Resolutions to vote on';
-    }
-
     public function getVotedChoices(): array
     {
         $participant = $this->getParticipant();
