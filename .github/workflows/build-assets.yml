@@ -34,11 +34,13 @@ jobs:
       # Step 5: Install Node.js Dependencies
       - name: Install Node.js Dependencies
         run: |
+          export PATH="$HOME/.bun/bin:$PATH"
           bun install
 
       # Step 6: Build Assets
       - name: Run Assets Build
         run: |
+          export PATH="$HOME/.bun/bin:$PATH"
           bun run build
 
       # Step 7: Add and Commit Generated Assets
