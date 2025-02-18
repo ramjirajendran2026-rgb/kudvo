@@ -19,20 +19,16 @@ use Filament\Notifications\Actions\Action as NotificationAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ManageRelatedRecords;
-use Filament\Support\Enums\IconPosition;
 use Filament\Tables\Actions\Action as TableAction;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rules\Unique;
-use Ysfkaya\FilamentPhoneInput\PhoneInputNumberType;
-use Ysfkaya\FilamentPhoneInput\Tables\PhoneColumn;
 
 class MeetingParticipants extends ManageRelatedRecords
 {
@@ -203,25 +199,6 @@ class MeetingParticipants extends ManageRelatedRecords
                     $this->getSendMeetingLinkBulkAction(),
                 ]),
             ])
-            ->columns(components: [
-                TextColumn::make(name: 'name')
-                    ->description(description: fn (Participant $record): ?string => $record->membership_number)
-                    ->icon(fn (Participant $participant): ?string => $participant->is_voted ? 'heroicon-s-shield-check' : null)
-                    ->iconColor('success')
-                    ->iconPosition(IconPosition::After)
-                    ->searchable(condition: ['name', 'membership_number'])
-                    ->wrap(),
-
-                TextColumn::make(name: 'email')
-                    ->searchable(),
-
-                PhoneColumn::make(name: 'phone')
-                    ->displayFormat(format: PhoneInputNumberType::E164),
-
-                TextColumn::make(name: 'weightage')
-                    ->alignCenter()
-                    ->numeric(),
-            ])
             ->emptyStateDescription(
                 $this->getMeeting()->isStatus(MeetingStatus::Onboarding) ?
                     __('filament-tables::table.empty.description', [
@@ -245,8 +222,7 @@ class MeetingParticipants extends ManageRelatedRecords
                     $this->getGenerateDummyParticipantsAction()
                         ->after(callback: fn () => $this->dispatch('meeting.onboarding.refresh')->self()),
                 ]),
-            ])
-            ->recordTitleAttribute(attribute: 'name');
+            ]);
     }
 
     public function notifyImportCompletion(array $event): void

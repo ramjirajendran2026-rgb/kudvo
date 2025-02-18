@@ -6,24 +6,49 @@ use App\Filament\Imports\ParticipantImporter;
 use App\Models\Participant;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
+use Filament\Support\Enums\IconPosition;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ImportAction;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
+use Ysfkaya\FilamentPhoneInput\PhoneInputNumberType;
+use Ysfkaya\FilamentPhoneInput\Tables\PhoneColumn;
 
 class ParticipantResource extends Resource
 {
     protected static ?string $model = Participant::class;
+
+    protected static ?string $recordTitleAttribute = 'name';
 
     protected static bool $isDiscovered = false;
 
     public static function table(Table $table): Table
     {
         return $table
-            ->recordTitleAttribute(attribute: static::getRecordTitleAttribute());
+            ->columns(components: [
+                TextColumn::make(name: 'name')
+                    ->description(description: fn (Participant $record): ?string => $record->membership_number)
+                    ->icon(fn (Participant $participant): ?string => $participant->is_voted ? 'heroicon-s-shield-check' : null)
+                    ->iconColor('success')
+                    ->iconPosition(IconPosition::After)
+                    ->searchable(condition: ['name', 'membership_number'])
+                    ->wrap(),
+
+                TextColumn::make(name: 'email')
+                    ->searchable(),
+
+                PhoneColumn::make(name: 'phone')
+                    ->displayFormat(format: PhoneInputNumberType::E164),
+
+                TextColumn::make(name: 'weightage')
+                    ->alignCenter()
+                    ->numeric(),
+            ])
+            ->emptyStateDescription(description: null);
     }
 
     public static function getNameFormComponent(): TextInput

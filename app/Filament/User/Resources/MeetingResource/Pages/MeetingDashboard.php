@@ -93,6 +93,7 @@ class MeetingDashboard extends ViewRecord
 
         return [
             MeetingResource\Widgets\MeetingStatsOverview::make(),
+            MeetingResource\Widgets\MeetingParticipantsWidget::make(),
         ];
     }
 
