@@ -26,10 +26,8 @@ use Filament\Forms\Get;
 use Filament\Pages\SubNavigationPosition;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
-use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\IconPosition;
 use Filament\Tables;
-use Filament\Tables\Columns\TextColumn\TextColumnSize;
 use Filament\Tables\Table;
 use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Database\Eloquent\Model;
@@ -82,11 +80,10 @@ class MeetingResource extends Resource
             ])
             ->columns(components: [
                 Tables\Columns\TextColumn::make(name: 'code')
+                    ->badge()
                     ->copyable()
                     ->icon(icon: 'heroicon-m-clipboard-document')
-                    ->iconPosition(iconPosition: IconPosition::After)
-                    ->size(size: TextColumnSize::Large)
-                    ->weight(weight: FontWeight::SemiBold),
+                    ->iconPosition(iconPosition: IconPosition::After),
 
                 Tables\Columns\TextColumn::make(name: 'name')
                     ->wrap(),
