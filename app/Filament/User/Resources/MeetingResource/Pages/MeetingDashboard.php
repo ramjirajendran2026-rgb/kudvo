@@ -133,7 +133,10 @@ class MeetingDashboard extends ViewRecord
     {
         return match ($this->state) {
             MeetingDashboardState::ReadyToPublish => [$this->getPublishAction()],
-            MeetingDashboardState::VotingInProgress, MeetingDashboardState::VotingEnded => [$this->getCloseVotingAction()],
+            MeetingDashboardState::VotingInProgress, MeetingDashboardState::VotingEnded => [
+                $this->getCloseVotingAction(),
+                $this->getExtendVotingTimeAction(),
+            ],
             MeetingDashboardState::VotingClosed => [
                 $this->getDownloadResultAction(),
                 $this->getDownloadDetailedResultAction(),
@@ -178,6 +181,13 @@ class MeetingDashboard extends ViewRecord
     public function getStateDescription(): string | Htmlable | null
     {
         return $this->state?->getDescription($this->getMeeting());
+    }
+
+    public function getExtendVotingTimeAction(): Action
+    {
+        return MeetingResource::getExtendVotingTimeAction()
+            ->authorize($this->canExtendVotingTime())
+            ->after(callback: fn () => $this->dispatch('refresh')->self());
     }
 
     public function getCancelAction(): Action
@@ -245,6 +255,11 @@ class MeetingDashboard extends ViewRecord
     public function canCancel(): bool
     {
         return self::getResource()::can('cancel', $this->getMeeting());
+    }
+
+    public function canExtendVotingTime(): bool
+    {
+        return self::getResource()::can('extendVotingTime', $this->getMeeting());
     }
 
     public function canCloseVoting(): bool

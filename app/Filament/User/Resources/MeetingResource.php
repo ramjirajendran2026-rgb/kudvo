@@ -155,6 +155,27 @@ class MeetingResource extends Resource
             ->icon(icon: 'heroicon-m-pencil-square');
     }
 
+    public static function getExtendVotingTimeAction(): EditAction
+    {
+        return EditAction::make('extendVotingTime')
+            ->color('success')
+            ->form([
+                static::getTimezoneFormComponent()
+                    ->disabled(),
+
+                static::getVotingStartsAtFormComponent()
+                    ->disabled(),
+
+                static::getVotingEndsAtFormComponent()
+                    ->after('now'),
+            ])
+            ->icon('heroicon-m-clock')
+            ->label(label: 'Extend Voting Time')
+            ->modalHeading(heading: 'Extend Voting Time')
+            ->successNotificationTitle('Extended successfully')
+            ->url(null);
+    }
+
     public static function getDeleteAction(): DeleteAction
     {
         return DeleteAction::make();
