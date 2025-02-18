@@ -228,9 +228,6 @@ class SurveyResource extends Resource
         return \Filament\Actions\Action::make('preview')
             ->authorize('preview')
             ->color('gray')
-            ->extraAttributes([
-                'wire:dirty.class' => 'hidden',
-            ])
             ->icon('heroicon-m-eye')
             ->modalCancelAction(false)
             ->modalContent(fn (Survey $record) => new HtmlString(Blade::render(
@@ -320,16 +317,17 @@ JS
     {
         return \Filament\Actions\Action::make('viewResponses')
             ->authorize('viewResponses')
-            ->url(fn (Survey $record) => static::getUrl('responses', ['record' => $record]))
+            ->color('success')
             ->icon('heroicon-o-document-text')
-            ->label('Responses');
+            ->label('Responses')
+            ->url(fn (Survey $record) => static::getUrl('responses', ['record' => $record]));
     }
 
     public static function getEditPageAction(): \Filament\Actions\Action
     {
         return \Filament\Actions\Action::make('editPage')
-            ->url(fn (Survey $record) => static::getUrl('edit', ['record' => $record]))
             ->icon('heroicon-o-document-text')
-            ->label('Questions');
+            ->label('Questions')
+            ->url(fn (Survey $record) => static::getUrl('edit', ['record' => $record]));
     }
 }

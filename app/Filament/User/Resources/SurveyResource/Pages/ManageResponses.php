@@ -115,18 +115,23 @@ class ManageResponses extends Page implements HasForms
         abort_unless(SurveyResource::can('viewResponses', $this->getRecord()), 403);
     }
 
+    protected function getRefreshAction(): Action
+    {
+        return Action::make('refresh')
+            ->action(
+                fn () => Notification::make()
+                    ->title('Refreshed')
+                    ->success()
+                    ->send()
+            )
+            ->icon('heroicon-o-arrow-path')
+            ->iconButton();
+    }
+
     protected function getHeaderActions(): array
     {
         return [
-            Action::make('refresh')
-                ->action(
-                    fn () => Notification::make()
-                        ->title('Refreshed')
-                        ->success()
-                        ->send()
-                )
-                ->icon('heroicon-o-arrow-path')
-                ->iconButton(),
+            $this->getRefreshAction(),
 
             SurveyResource::getSettingsAction(),
 

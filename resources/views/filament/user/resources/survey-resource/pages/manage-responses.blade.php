@@ -16,6 +16,7 @@
 
     <x-filament::loading-indicator
         wire:loading
+        wire:target="activeTab"
         class="mx-auto h-5 w-5 text-primary-500 dark:text-primary-400"
     />
 
@@ -74,7 +75,17 @@
             </span>
         </div>
 
-        <div class="[&>.max-w-screen-md]:!p-0">
+        <x-filament::loading-indicator
+            wire:loading
+            wire:target="activeResponseId"
+            class="mx-auto h-5 w-5 text-primary-500 dark:text-primary-400"
+        />
+
+        <div
+            class="[&>.max-w-screen-md]:!p-0"
+            wire:target="activeResponseId"
+            wire:loading.class="hidden"
+        >
             @livewire('survey.entry-form', ['survey' => $this->getRecord(), 'isDisabled' => true, 'data' => $this->activeResponseData()], key($this->activeResponseId))
         </div>
     @endif

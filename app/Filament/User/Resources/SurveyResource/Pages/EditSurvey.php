@@ -7,7 +7,6 @@ use Filament\Actions\Action;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Support\Js;
 
 class EditSurvey extends EditRecord
 {
@@ -36,7 +35,7 @@ class EditSurvey extends EditRecord
     protected function getCancelFormAction(): Action
     {
         return parent::getCancelFormAction()
-            ->alpineClickHandler('window.location.href = ' . Js::from(static::getResource()::getUrl()));
+            ->hidden();
     }
 
     protected function getHeaderActions(): array
@@ -50,11 +49,25 @@ class EditSurvey extends EditRecord
             SurveyResource::getShareAction()
                 ->outlined(),
 
-            SurveyResource::getPreviewAction(),
-
             SurveyResource::getPublishAction(),
 
             SurveyResource::getResponsePageAction(),
+
+            SurveyResource::getPreviewAction()
+                ->extraAttributes([
+                    'wire:target' => 'data',
+                    'wire:dirty.class' => 'hidden',
+                ]),
+
+            $this->getSaveFormAction()
+                ->extraAttributes([
+                    'class' => 'hidden',
+                    'wire:target' => 'data',
+                    'wire:dirty.class.remove' => 'hidden',
+                ])
+                ->formId('form')
+                ->icon('heroicon-m-check')
+                ->label('Save'),
         ];
     }
 }
