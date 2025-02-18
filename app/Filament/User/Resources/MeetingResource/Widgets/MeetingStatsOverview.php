@@ -2,6 +2,8 @@
 
 namespace App\Filament\User\Resources\MeetingResource\Widgets;
 
+use App\Filament\User\Resources\MeetingResource\Pages\MeetingParticipants;
+use App\Filament\User\Resources\MeetingResource\Pages\MeetingResolutions;
 use App\Models\Meeting;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 
@@ -18,7 +20,7 @@ class MeetingStatsOverview extends BaseWidget
 
     protected function getColumns(): int
     {
-        return 2;
+        return 4;
     }
 
     protected function getStats(): array
@@ -27,10 +29,17 @@ class MeetingStatsOverview extends BaseWidget
             ->loadCount(['resolutions', 'participants', 'votedParticipants', 'nonVotedParticipants']);
 
         return [
-            BaseWidget\Stat::make(label: 'Total Resolutions', value: $meeting->resolutions_count),
-            BaseWidget\Stat::make(label: 'Total Participants', value: $meeting->participants_count),
-            BaseWidget\Stat::make(label: 'Voting Completed', value: $meeting->voted_participants_count),
-            BaseWidget\Stat::make(label: 'Voting Pending', value: $meeting->non_voted_participants_count),
+            BaseWidget\Stat::make(label: 'Resolutions', value: $meeting->resolutions_count)
+                ->icon(icon: MeetingResolutions::getNavigationIcon()),
+
+            BaseWidget\Stat::make(label: 'Participants', value: $meeting->participants_count)
+                ->icon(icon: MeetingParticipants::getNavigationIcon()),
+
+            BaseWidget\Stat::make(label: 'Voted', value: $meeting->voted_participants_count)
+                ->icon(icon: 'heroicon-o-check-circle'),
+
+            BaseWidget\Stat::make(label: 'Non-voted', value: $meeting->non_voted_participants_count)
+                ->icon(icon: 'heroicon-o-x-circle'),
         ];
     }
 }
