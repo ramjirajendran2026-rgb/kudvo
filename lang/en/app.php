@@ -150,7 +150,7 @@ return [
                 'election' => [
                     'label' => 'Online Election',
                 ],
-                'resolution_voting' => [
+                'meeting' => [
                     'label' => 'Resolution Voting',
                 ],
                 'phygital' => [

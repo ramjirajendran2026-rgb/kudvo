@@ -9,6 +9,7 @@ use App\Livewire\Pages\PrivacyPolicy;
 use App\Livewire\Pages\Products\Election\BallotDemo;
 use App\Livewire\Pages\Products\Election\Home as ElectionHome;
 use App\Livewire\Pages\Products\Election\HowItWorks;
+use App\Livewire\Pages\Products\Meeting\Home as MeetingHome;
 use App\Livewire\Pages\Products\Phygital\Home as PhygitalHome;
 use App\Livewire\Pages\Products\Survey\Home as SurveyHome;
 use App\Livewire\Pages\QsyssMeetingRegistration;
@@ -89,6 +90,9 @@ Route::group(
 
                         Route::get(uri: 'phygital-voting', action: PhygitalHome::class)
                             ->name(name: 'phygital.home');
+
+                        Route::get(uri: 'meeting', action: MeetingHome::class)
+                            ->name(name: 'meeting.home');
 
                         Route::get(uri: 'survey', action: SurveyHome::class)
                             ->name(name: 'survey.home');

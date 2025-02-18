@@ -150,7 +150,7 @@ return [
                 'election' => [
                     'label' => 'ऑनलाइन चुनाव',
                 ],
-                'resolution_voting' => [
+                'meeting' => [
                     'label' => 'संकल्प वोटिंग',
                 ],
                 'phygital' => [
