@@ -50,11 +50,11 @@ class Resolutions extends Page implements HasForms
 
                 Actions::make([
                     Action::make('submit')
+                        ->requiresConfirmation()
+                        ->action(fn () => $this->submit())
                         ->authorize(fn () => $this->canSubmit())
                         ->icon('heroicon-o-check')
-                        ->size(ActionSize::ExtraLarge)
-                        ->submit('form')
-                        ->livewireTarget('submit'),
+                        ->size(ActionSize::ExtraLarge),
                 ])->alignCenter(),
             ])
             ->statePath('data');
@@ -115,15 +115,7 @@ JS
 
         $participant->touch('voted_at');
 
-        $this->js(
-            <<<'JS'
-Swal.fire({
-    text: 'Your response has been submitted successfully.',
-    title: 'Submitted',
-    icon: 'success'
-})
-JS
-        );
+        $this->redirect(Filament::getCurrentPanel()->getUrl());
     }
 
     public function canSubmit(): bool
