@@ -6,6 +6,6 @@ trait HasNextPossibleKey
 {
     public function getNextPossibleKey(): int
     {
-        return (static::max($this->getKeyName()) ?: 0) + 1;
+        return ((static::max($this->getKeyName()) ?: 0) + 1) . rand(1000, 9999);
     }
 }
