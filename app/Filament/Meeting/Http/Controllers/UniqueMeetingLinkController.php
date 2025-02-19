@@ -16,9 +16,18 @@ class UniqueMeetingLinkController
 
         $user = Filament::getCurrentPanel()->auth()->user();
 
-        if (blank($user) || ! $participant->is($user)) {
-            Login::doLogin(participant: $participant, panel: Filament::getCurrentPanel(), request: $request);
+        if ($participant->is($user)) {
+            return app(abstract: LoginResponse::class);
         }
+
+        if (filled($user)) {
+            Filament::auth()->logout();
+
+            session()->invalidate();
+            session()->regenerateToken();
+        }
+
+        Login::doLogin(participant: $participant, panel: Filament::getCurrentPanel(), request: $request);
 
         return app(abstract: LoginResponse::class);
     }
