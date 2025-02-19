@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Enums\ElectionPanelState;
+use App\Enums\MeetingPanelState;
 use App\Models\Election;
 use App\Models\ElectionBoothToken;
 use App\Models\Meeting;
@@ -22,6 +23,8 @@ class KudvoManager
     protected ?ElectionPanelState $electionPanelState = null;
 
     protected ?ElectionBoothToken $electionBoothToken = null;
+
+    protected ?MeetingPanelState $meetingPanelState = null;
 
     public function setOrganisation(?Organisation $organisation): void
     {
@@ -92,5 +95,15 @@ class KudvoManager
     public function getMeeting(): ?Meeting
     {
         return $this->meeting;
+    }
+
+    public function setMeetingPanelState(?MeetingPanelState $state): void
+    {
+        $this->meetingPanelState = $state;
+    }
+
+    public function getMeetingPanelState(): ?MeetingPanelState
+    {
+        return $this->meetingPanelState;
     }
 }

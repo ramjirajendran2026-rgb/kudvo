@@ -164,10 +164,12 @@ class MeetingResource extends Resource
                     ->disabled(),
 
                 static::getVotingStartsAtFormComponent()
-                    ->disabled(),
+                    ->disabled()
+                    ->timezone(fn (Get $get): ?string => $get(path: 'timezone')),
 
                 static::getVotingEndsAtFormComponent()
-                    ->after('now'),
+                    ->after('now')
+                    ->timezone(fn (Get $get): ?string => $get(path: 'timezone')),
             ])
             ->icon('heroicon-m-clock')
             ->label(label: 'Extend Voting Time')

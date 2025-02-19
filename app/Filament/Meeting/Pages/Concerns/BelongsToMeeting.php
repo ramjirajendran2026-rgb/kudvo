@@ -1,16 +1,14 @@
 <?php
 
-namespace App\Filament\Meeting\Pages;
+namespace App\Filament\Meeting\Pages\Concerns;
 
 use App\Facades\Kudvo;
 use App\Models\Meeting;
-use App\Models\Participant;
-use Filament\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\HtmlString;
 
-abstract class BasePage extends Page
+trait BelongsToMeeting
 {
     public Meeting $meeting;
 
@@ -21,22 +19,14 @@ abstract class BasePage extends Page
         return parent::getUrl($parameters, $isAbsolute, $panel, $tenant);
     }
 
-    public function mount(): void
-    {
-        $this->meeting = Kudvo::getMeeting();
-    }
-
     public function getMeeting(): Meeting
     {
         return $this->meeting;
     }
 
-    public function getParticipant(): Participant
+    public function getTitle(): string | Htmlable
     {
-        /** @var Participant $participant */
-        $participant = filament()->auth()->user();
-
-        return $participant;
+        return $this->getMeeting()->name;
     }
 
     public function getSubheading(): string | Htmlable | null

@@ -2,24 +2,31 @@
 
 namespace App\Filament\Meeting\Pages;
 
-use App\Enums\MeetingStatus;
-use App\Enums\MeetingVotingStatus;
+use App\Enums\MeetingPanelState;
+use App\Facades\Kudvo;
+use App\Filament\Base\Pages\Concerns\HasStateSection;
+use App\Filament\Meeting\Pages\Concerns\BelongsToMeeting;
 use App\Forms\Components\ResolutionChoicePicker;
+use App\Models\Participant;
 use App\Models\Resolution;
 use App\Models\ResolutionVote;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
+use Filament\Pages\Page;
 use Filament\Support\Enums\ActionSize;
 use Illuminate\Contracts\Support\Htmlable;
 
 /**
  * @property Form $form
  */
-class Resolutions extends BasePage implements HasForms
+class Resolutions extends Page implements HasForms
 {
+    use BelongsToMeeting;
+    use HasStateSection;
     use InteractsWithForms;
 
     protected static string $view = 'filament.meeting.pages.resolutions';
@@ -28,9 +35,9 @@ class Resolutions extends BasePage implements HasForms
 
     public function mount(): void
     {
-        parent::mount();
-
-        $this->form->fill($this->getVotedChoices());
+        if ($this->canSubmit()) {
+            $this->form->fill($this->getVotedChoices());
+        }
     }
 
     public function form(Form $form): Form
@@ -63,11 +70,17 @@ class Resolutions extends BasePage implements HasForms
         return $this->getMeeting()->description;
     }
 
+    public function getParticipant(): Participant
+    {
+        /** @var Participant $participant */
+        $participant = filament()->auth()->user();
+
+        return $participant;
+    }
+
     public function getVotedChoices(): array
     {
-        $participant = $this->getParticipant();
-
-        return $participant->votes
+        return $this->getParticipant()->votes
             ->mapWithKeys(fn (ResolutionVote $resolutionVote, int $key) => [$resolutionVote->resolution_id => $resolutionVote->response?->value])
             ->toArray();
     }
@@ -115,14 +128,26 @@ JS
 
     public function canSubmit(): bool
     {
-        if (! $this->getMeeting()->isStatus(MeetingStatus::Published)) {
-            return false;
-        }
+        return $this->getPanelState() === MeetingPanelState::VotingOpen;
+    }
 
-        if (! $this->getMeeting()->isVotingStatus(MeetingVotingStatus::Open)) {
-            return false;
-        }
+    public function getPanelState(): ?MeetingPanelState
+    {
+        return Kudvo::getMeetingPanelState();
+    }
 
-        return ! $this->getParticipant()->is_voted;
+    public function getStateDescription(): string | Htmlable | null
+    {
+        return $this->getPanelState()?->getDescription($this->getMeeting(), Filament::auth()->user());
+    }
+
+    public function getStateIcon(): ?string
+    {
+        return $this->getPanelState()?->getIcon($this->getMeeting(), Filament::auth()->user());
+    }
+
+    public function getStateHeading(): string | Htmlable | null
+    {
+        return $this->getPanelState()?->getHeading($this->getMeeting(), Filament::auth()->user());
     }
 }

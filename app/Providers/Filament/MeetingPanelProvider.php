@@ -6,6 +6,7 @@ use App\Facades\Kudvo;
 use App\Filament\Base\Http\Middleware\IdentifyMeeting;
 use App\Filament\LocalAvatarProvider;
 use App\Filament\Meeting\Http\Controllers\UniqueMeetingLinkController;
+use App\Filament\Meeting\Http\Middleware\IdentifyPanelState;
 use App\Filament\Meeting\MeetingPanel;
 use App\Filament\Meeting\Pages\Auth\Login;
 use App\Settings\GoogleTagManagerSettings;
@@ -51,6 +52,7 @@ class MeetingPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
             ])
+            ->middleware([IdentifyPanelState::class], isPersistent: true)
             ->authMiddleware([
                 Authenticate::class,
             ])
