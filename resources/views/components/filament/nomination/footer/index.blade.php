@@ -17,7 +17,7 @@
             @else
                     Powered by
             @endif
-            <x-filament::link :href="filament()->getHomeUrl()">
+            <x-filament::link target="_blank" :href="route('home')">
                 {{ config('app.name') }}
             </x-filament::link>
         </div>

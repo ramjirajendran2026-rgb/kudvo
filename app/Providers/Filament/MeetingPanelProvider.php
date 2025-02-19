@@ -25,6 +25,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\HtmlString;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
@@ -88,6 +89,10 @@ class MeetingPanelProvider extends PanelProvider
             ->renderHook(
                 name: PanelsRenderHook::BODY_START,
                 hook: fn (GoogleTagManagerSettings $gtm) => new HtmlString(html: $gtm->getBodyScript())
+            )
+            ->renderHook(
+                name: PanelsRenderHook::FOOTER,
+                hook: fn () => Blade::render(string: '<x-filament.nomination.footer />')
             );
     }
 

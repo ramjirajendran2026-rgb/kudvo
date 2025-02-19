@@ -30,5 +30,7 @@
         </form>
     @endif
 
+    <x-filament.nomination.footer class="text-center" />
+
     <x-filament-actions::modals />
 </div>
