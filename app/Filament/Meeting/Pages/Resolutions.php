@@ -49,12 +49,7 @@ class Resolutions extends Page implements HasForms
                     ->map(fn (Resolution $resolution) => ResolutionChoicePicker::makeFor($resolution)),
 
                 Actions::make([
-                    Action::make('submit')
-                        ->requiresConfirmation()
-                        ->action(fn () => $this->submit())
-                        ->authorize(fn () => $this->canSubmit())
-                        ->icon('heroicon-o-check')
-                        ->size(ActionSize::ExtraLarge),
+                    $this->validateAction(),
                 ])->alignCenter(),
             ])
             ->statePath('data');
@@ -83,6 +78,44 @@ class Resolutions extends Page implements HasForms
         return $this->getParticipant()->votes
             ->mapWithKeys(fn (ResolutionVote $resolutionVote, int $key) => [$resolutionVote->resolution_id => $resolutionVote->response?->value])
             ->toArray();
+    }
+
+    public function validateAction()
+    {
+        return Action::make('validate')
+            ->action(function (array $arguments) {
+                if (! $this->canSubmit()) {
+                    $this->js(
+                        <<<'JS'
+Swal.fire({
+    text: 'You are not allowed to vote. Please contact the meeting organizer for more information.',
+    title: 'Not Allowed',
+    icon: 'error'
+})
+JS
+                    );
+
+                    return;
+                }
+
+                $this->form->getState();
+
+                $this->replaceMountedAction('submit', $arguments);
+            })
+            ->authorize(fn () => $this->canSubmit())
+            ->icon('heroicon-o-check')
+            ->label('Submit')
+            ->size(ActionSize::ExtraLarge);
+    }
+
+    public function submitAction()
+    {
+        return \Filament\Actions\Action::make('submit')
+            ->requiresConfirmation()
+            ->action(fn () => $this->submit())
+            ->authorize(fn () => $this->canSubmit())
+            ->icon('heroicon-o-check')
+            ->size(ActionSize::ExtraLarge);
     }
 
     public function submit(): void
