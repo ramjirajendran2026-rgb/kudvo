@@ -78,7 +78,7 @@ class MeetingPanelProvider extends PanelProvider
             ->maxContentWidth(maxContentWidth: MaxWidth::SevenExtraLarge)
             ->brandName(name: fn (): string => Kudvo::getOrganisation()?->name)
             ->brandLogo(logo: fn (): HtmlString => $this->getBrandLogo())
-            ->brandLogoHeight(height: '4rem')
+            ->brandLogoHeight(height: 'auto')
             ->darkMode(condition: false)
             ->spa()
             ->renderHook(
@@ -101,7 +101,7 @@ class MeetingPanelProvider extends PanelProvider
 <img
     alt="$organisation->name\'s logo"
     src="$logoUrl"
-    class="rounded-xl h-full"
+    class="rounded-xl"
 />
 <div
     class="text-xl md:text-3xl font-bold leading-5 tracking-tight text-gray-950 dark:text-white"

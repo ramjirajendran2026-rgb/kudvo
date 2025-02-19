@@ -4,24 +4,42 @@
 
 @config 'tailwind.config.js';
 
-.fi-topbar {
-    @apply relative mx-auto w-full max-w-7xl lg:px-8;
-
-    nav {
-        @apply h-auto min-h-16 py-4 md:px-4 lg:rounded-b-xl;
-
-        div.hidden {
-            @apply flex;
+.fi-layout {
+    .fi-user-menu {
+        .fi-avatar {
+            @apply size-10 md:size-16;
         }
     }
 
     .fi-logo {
         @apply flex h-auto items-center justify-center gap-x-4;
+
+        & img {
+            @apply h-10 w-auto rounded-lg lg:h-16;
+        }
+
+        & div {
+            @apply text-center lg:text-4xl print:text-lg;
+        }
+    }
+}
+
+.fi-simple-layout {
+    .fi-logo {
+        @apply flex h-auto flex-col items-center justify-center gap-4;
+
+        & img {
+            @apply h-20 w-auto rounded-lg md:h-24;
+        }
+
+        & div {
+            @apply lg:text-3xl print:text-2xl;
+        }
     }
 
-    .fi-user-menu {
-        .fi-avatar {
-            @apply size-12;
+    .fi-simple-main {
+        form {
+            @apply mx-auto w-full max-w-screen-sm;
         }
     }
 }
