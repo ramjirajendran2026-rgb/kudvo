@@ -17,6 +17,8 @@ export default {
         './app/Tables/**/*.php',
         './resources/views/tables/**/*.blade.php',
 
+        './resources/views/livewire/survey/entry-form.blade.php',
+
         './vendor/filament/**/*.blade.php',
 
         './vendor/awcodes/filament-tiptap-editor/resources/**/*.blade.php',

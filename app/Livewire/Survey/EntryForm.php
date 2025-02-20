@@ -30,7 +30,7 @@ class EntryForm extends Component implements HasForms
 
     public function mount(): void
     {
-        $this->isPreview ??= request()->routeIs('survey.preview');
+        $this->isPreview ??= request()->routeIs('survey.preview') || ! $this->survey->is_published || ! $this->survey->is_active;
 
         $this->authorizePageAccess();
 
@@ -71,7 +71,11 @@ class EntryForm extends Component implements HasForms
 
                     Actions\Action::make('clear')
                         ->action(fn () => $this->form->fill())
-                        ->color('gray'),
+                        ->color('gray')
+                        ->extraAttributes([
+                            'wire:dirty' => true,
+                            'wire:target' => 'data',
+                        ]),
                 ])->hidden(fn () => $this->isDisabled),
             ]);
     }
