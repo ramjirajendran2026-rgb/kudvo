@@ -189,6 +189,13 @@ class MeetingPolicy
             $this->hasRoleAccess($user, $meeting);
     }
 
+    public function submitResolutionResponse(Participant $participant, Meeting $meeting): bool
+    {
+        return ! $participant->is_voted &&
+            $meeting->isStatus(MeetingStatus::Published) &&
+            $meeting->isVotingStatus(MeetingVotingStatus::Open);
+    }
+
     protected function hasRoleAccess(User $user, Meeting $meeting): bool
     {
         return User::whereKey($user->getKey())
