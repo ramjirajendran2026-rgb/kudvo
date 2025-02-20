@@ -141,6 +141,12 @@ class MeetingPolicy
         return $meeting->isStatus(MeetingStatus::Onboarding) && $this->hasRoleAccess($user, $meeting);
     }
 
+    public function previewResolution(User $user, Meeting $meeting): bool
+    {
+        return $this->hasRoleAccess($user, $meeting) &&
+            $meeting->resolutions()->exists();
+    }
+
     public function reorderResolution(User $user, Meeting $meeting): bool
     {
         return $meeting->isStatus(MeetingStatus::Onboarding) &&

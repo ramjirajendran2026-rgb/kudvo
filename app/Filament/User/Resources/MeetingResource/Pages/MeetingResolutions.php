@@ -181,6 +181,8 @@ BLADE
         return [
             $this->getPreviousPageAction(),
 
+            $this->getPreviewAction(),
+
             $this->getReorderResolutionAction(),
 
             $this->getCreateResolutionAction(),
@@ -196,6 +198,29 @@ BLADE
 
             $this->getNextPageAction(),
         ];
+    }
+
+    protected function getPreviewAction(): \Filament\Actions\Action
+    {
+        return \Filament\Actions\Action::make(name: 'preview')
+            ->authorize(fn (self $livewire): bool => Gate::check('previewResolution', [$livewire->getRecord()]))
+            ->extraModalWindowAttributes([
+                'class' => '[&_.fi-modal-content]:bg-gray-50 [&_.fi-modal-content]:dark:bg-gray-950',
+            ])
+            ->icon(icon: 'heroicon-o-eye')
+            ->modalAutofocus(false)
+            ->modalCancelAction(false)
+            ->modalContent(fn () => new HtmlString(Blade::render(
+                <<<'BLADE'
+@livewire('meeting.resolution-response-form', ['meeting' => $meeting, 'isPreview' => true])
+BLADE
+                ,
+                ['meeting' => $this->getRecord()]
+            )))
+            ->modalSubmitAction(false)
+            ->modalWidth(MaxWidth::ScreenLarge)
+            ->outlined()
+            ->slideOver();
     }
 
     protected function getCreateResolutionAction(): CreateAction
