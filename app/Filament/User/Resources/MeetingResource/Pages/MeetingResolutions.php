@@ -11,6 +11,7 @@ use App\Models\Resolution;
 use Blade;
 use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\StaticAction;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -29,7 +30,9 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\HtmlString;
+use Illuminate\Support\Js;
 
 class MeetingResolutions extends ViewRecord
 {
@@ -204,12 +207,50 @@ BLADE
     {
         return \Filament\Actions\Action::make(name: 'preview')
             ->authorize(fn (self $livewire): bool => Gate::check('previewResolution', [$livewire->getRecord()]))
+            ->color('primary')
+            ->extraModalFooterActions([
+                \Filament\Actions\Action::make('openInNewTab')
+                    ->icon(icon: 'heroicon-m-arrow-top-right-on-square')
+                    ->url(
+                        URL::signedRoute('filament.meeting.pages.resolution-voting.preview', ['meeting' => $this->getRecord()]),
+                        shouldOpenInNewTab: true,
+                    ),
+
+                \Filament\Actions\Action::make('shareLink')
+                    ->alpineClickHandler(fn (self $livewire) => sprintf(
+                        <<<'JS'
+navigator.share({
+    title: %s,
+    text: %s,
+    url: %s
+})
+JS
+                        ,
+                        Js::encode($livewire->getRecord()->name),
+                        Js::encode('Use this link to preview the resolutions for the meeting.'),
+                        Js::encode(URL::signedRoute('filament.meeting.pages.resolution-voting.preview', ['meeting' => $livewire->getRecord()])),
+                    ))
+                    ->icon('heroicon-m-share')
+                    ->outlined(),
+
+                \Filament\Actions\Action::make('copyLink')
+                    ->alpineClickHandler(static fn (self $livewire) => sprintf(
+                        <<<'JS'
+navigator.clipboard.writeText(%s).then(() => new FilamentNotification().title('Copied successfully').success().send())
+JS
+                        ,
+                        Js::encode(URL::signedRoute('filament.meeting.pages.resolution-voting.preview', ['meeting' => $livewire->getRecord()])),
+                    ))
+                    ->icon(icon: 'heroicon-m-clipboard-document')
+                    ->outlined(),
+            ])
             ->extraModalWindowAttributes([
                 'class' => '[&_.fi-modal-content]:bg-gray-50 [&_.fi-modal-content]:dark:bg-gray-950',
             ])
             ->icon(icon: 'heroicon-o-eye')
             ->modalAutofocus(false)
-            ->modalCancelAction(false)
+            ->modalCancelAction(fn (StaticAction $action) => $action->color('danger')->outlined())
+            ->modalCancelActionLabel('Close preview')
             ->modalContent(fn () => new HtmlString(Blade::render(
                 <<<'BLADE'
 @livewire('meeting.resolution-response-form', ['meeting' => $meeting, 'isPreview' => true])
@@ -217,6 +258,7 @@ BLADE
                 ,
                 ['meeting' => $this->getRecord()]
             )))
+            ->modalHeading('')
             ->modalSubmitAction(false)
             ->modalWidth(MaxWidth::ScreenLarge)
             ->outlined()
