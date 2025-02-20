@@ -72,8 +72,9 @@ class ParticipantResource extends Resource
     public static function getEmailFormComponent(): TextInput
     {
         return TextInput::make(name: 'email')
+            ->email()
             ->maxLength(length: 150)
-            ->email();
+            ->requiredWithout('phone');
     }
 
     public static function getPhoneFormComponent(): PhoneInput

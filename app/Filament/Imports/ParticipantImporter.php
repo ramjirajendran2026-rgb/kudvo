@@ -20,11 +20,13 @@ class ParticipantImporter extends Importer
             ImportColumn::make(name: 'name')
                 ->example(example: 'ABC Corp.')
                 ->requiredMapping()
-                ->rules(rules: ['required', 'max:150']),
+                ->rules(rules: ['bail', 'required', 'max:150']),
 
             ImportColumn::make(name: 'membership_number')
                 ->example(example: 'MEM-12345')
                 ->rules(rules: fn (array $options, Participant $record): array => [
+                    'bail',
+                    'nullable',
                     'max:150',
                     Rule::unique(table: 'participants')
                         ->ignoreModel(model: $record)
@@ -33,18 +35,19 @@ class ParticipantImporter extends Importer
 
             ImportColumn::make(name: 'email')
                 ->example(example: 'abc@example.com')
-                ->rules(rules: ['email', 'max:150']),
+                ->rules(rules: ['bail', 'nullable', 'required_without:phone', 'email', 'max:150'])
+                ->requiredMapping(),
 
             ImportColumn::make(name: 'phone')
                 ->castStateUsing(callback: fn (?string $state, array $options) => ($phone = phone(number: $state, country: Arr::wrap(value: $options['phone_country']))) && $phone->isValid() ? $phone->formatE164() : $state)
                 ->example(example: '+919876543210')
                 ->fillRecordUsing(callback: fn (?string $state, array $options, Participant $record) => $record->phone = phone(number: $state, country: Arr::wrap(value: $options['phone_country']))->isValid() ? phone(number: $state, country: Arr::wrap(value: $options['phone_country']))->formatE164() : null)
-                ->rules(rules: ['max:150', 'phone:AUTO']),
+                ->rules(rules: ['bail', 'nullable', 'max:150', 'phone:AUTO']),
 
             ImportColumn::make(name: 'weightage')
                 ->example(example: '20')
                 ->numeric()
-                ->rules(rules: ['numeric', 'min:0']),
+                ->rules(rules: ['bail', 'numeric', 'min:0']),
         ];
     }
 
