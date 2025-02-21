@@ -5,9 +5,17 @@
 @config 'tailwind.config.js';
 
 .fi-layout {
+    .fi-topbar {
+        @apply mx-auto w-full max-w-7xl px-4 md:px-6 lg:px-8;
+
+        & > nav {
+            @apply lg:rounded-b-xl;
+        }
+    }
+
     .fi-user-menu {
         .fi-avatar {
-            @apply size-10 md:size-16;
+            @apply size-10;
         }
     }
 
@@ -15,7 +23,7 @@
         @apply flex h-auto items-center justify-center gap-x-4;
 
         & img {
-            @apply h-10 w-auto rounded-lg lg:h-16;
+            @apply h-10 w-auto rounded-lg;
         }
 
         & div {
