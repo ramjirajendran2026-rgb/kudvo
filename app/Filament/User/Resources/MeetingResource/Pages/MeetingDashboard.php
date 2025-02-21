@@ -18,6 +18,8 @@ use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Markdown;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\HtmlString;
 use Livewire\Attributes\On;
 
 class MeetingDashboard extends ViewRecord
@@ -53,6 +55,39 @@ class MeetingDashboard extends ViewRecord
     {
         return [
             MeetingResource::getUrl() => MeetingResource::getBreadcrumb(),
+            new HtmlString(Blade::render(
+                <<<'BLADE'
+<div class="flex flex-wrap items-center gap-x-2">
+    <x-filament::badge
+        :color="$status->getColor()"
+        class="tracking-widest font-semibold"
+    >
+        {{ $status->getLabel() }}
+    </x-filament::badge>
+    <x-filament::badge
+        icon="heroicon-m-clipboard-document"
+        icon-position="after"
+        class="font-mono tracking-widest cursor-pointer"
+        x-on:click="
+            window.navigator.clipboard.writeText('{{ $code }}')
+            $tooltip('Copied', {
+                theme: $store.theme,
+                timeout: 2000,
+            })
+        "
+    >
+        {{ $code }}
+    </x-filament::badge>
+</div>
+BLADE
+                ,
+                [
+                    'code' => $this->getMeeting()->code,
+                    'status' => $this->getMeeting()->status,
+                    'votingStartsAt' => $this->getMeeting()->voting_starts_at_local->format(format: 'd M, Y h:i A (T)'),
+                    'votingEndsAt' => $this->getMeeting()->voting_ends_at_local->format(format: 'd M, Y h:i A (T)'),
+                ]
+            )),
         ];
     }
 
@@ -63,7 +98,7 @@ class MeetingDashboard extends ViewRecord
 
     public function getSubheading(): string | Htmlable | null
     {
-        return Markdown::inline(text: sprintf('**%s** to **%s**', $this->getMeeting()->voting_starts_at_local->format(format: 'M d, Y h:i A (T)'), $this->getMeeting()->voting_ends_at_local->format(format: 'M d, Y h:i A (T)')));
+        return Markdown::inline(text: sprintf('**%s** to **%s**', $this->getMeeting()->code, $this->getMeeting()->voting_starts_at_local->format(format: 'M d, Y h:i A (T)'), $this->getMeeting()->voting_ends_at_local->format(format: 'M d, Y h:i A (T)')));
     }
 
     public function getMeeting(): Meeting
