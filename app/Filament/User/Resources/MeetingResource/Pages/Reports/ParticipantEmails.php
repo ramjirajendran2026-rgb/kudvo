@@ -2,6 +2,7 @@
 
 namespace App\Filament\User\Resources\MeetingResource\Pages\Reports;
 
+use App\Enums\EmailTableFilter;
 use App\Enums\MailMessagePurpose;
 use App\Filament\User\Resources\MeetingResource;
 use App\Models\Email;
@@ -92,32 +93,6 @@ class ParticipantEmails extends ManageRelatedRecords
             ])
             ->defaultSort(column: 'sent_at', direction: 'desc')
             ->hiddenFilterIndicators()
-            ->filters(filters: [
-                Tables\Filters\Filter::make(name: 'bounced_at')
-                    ->default()
-                    ->label(label: 'Bounced'),
-
-                Tables\Filters\Filter::make(name: 'complained_at')
-                    ->label(label: 'Complained'),
-
-                Tables\Filters\Filter::make(name: 'delivered_at')
-                    ->default()
-                    ->label(label: 'Delivered'),
-
-                Tables\Filters\Filter::make(name: 'delivery_delayed_at')
-                    ->default()
-                    ->label(label: 'Delivery Delayed'),
-
-                Tables\Filters\Filter::make(name: 'rejected_at')
-                    ->default()
-                    ->label(label: 'Rejected'),
-
-                Tables\Filters\Filter::make(name: 'rendering_failed_at')
-                    ->default()
-                    ->label(label: 'Rendering Failed'),
-
-                Tables\Filters\Filter::make(name: 'sent_at')
-                    ->label(label: 'Sent'),
-            ], layout: Tables\Enums\FiltersLayout::AboveContent);
+            ->filters(filters: EmailTableFilter::getFilters(), layout: Tables\Enums\FiltersLayout::AboveContent);
     }
 }
