@@ -6,10 +6,14 @@
 
 .fi-layout {
     .fi-topbar {
-        @apply mx-auto w-full max-w-7xl px-4 md:px-6 lg:px-8;
+        @apply mx-auto w-full max-w-7xl md:px-6 lg:px-8;
 
         & > nav {
-            @apply lg:rounded-b-xl;
+            @apply h-auto py-4 lg:rounded-b-xl;
+
+            & > :first-child {
+                @apply flex;
+            }
         }
     }
 
