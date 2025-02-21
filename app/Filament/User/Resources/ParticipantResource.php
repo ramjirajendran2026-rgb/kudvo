@@ -4,6 +4,7 @@ namespace App\Filament\User\Resources;
 
 use App\Filament\Imports\ParticipantImporter;
 use App\Models\Participant;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\IconPosition;
@@ -80,6 +81,9 @@ class ParticipantResource extends Resource
     public static function getPhoneFormComponent(): PhoneInput
     {
         return PhoneInput::make(name: 'phone')
+            ->defaultCountry(Filament::getTenant()?->country ?: config(key: 'app.default_phone_country'))
+            ->disableIpLookUp()
+            ->initialCountry(Filament::getTenant()?->country ?: config(key: 'app.default_phone_country'))
             ->validateFor();
     }
 
