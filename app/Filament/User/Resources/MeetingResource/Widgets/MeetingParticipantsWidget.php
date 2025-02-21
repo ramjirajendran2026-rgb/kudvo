@@ -19,6 +19,7 @@ class MeetingParticipantsWidget extends BaseWidget
     public function table(Table $table): Table
     {
         return ParticipantResource::table($table)
+            ->hiddenFilterIndicators()
             ->filters([
                 TernaryFilter::make('voted_at')
                     ->default()
@@ -26,8 +27,7 @@ class MeetingParticipantsWidget extends BaseWidget
                     ->nullable()
                     ->placeholder('All participants')
                     ->trueLabel('Voted')
-                    ->falseLabel('Non-Voted')
-                    ->indicateUsing(fn () => null),
+                    ->falseLabel('Non-Voted'),
             ], FiltersLayout::AboveContent)
             ->heading(null)
             ->poll('30s')
