@@ -27,19 +27,25 @@ enum MeetingDashboardState: string
             self::VotingScheduled => new HtmlString(
                 html: Blade::render(
                     string: '<x-timer-countdown wire:key="open-timer-' . $meeting->voting_starts_at->unix() . '" target="' . $meeting->voting_starts_at->unix() . '"' .
-                    ' label="Voting for this election will starts in "' .
+                    ' label="Resolution voting for this meeting will starts in "' .
                     ' reload="true" />'
                 )
             ),
             self::VotingInProgress => new HtmlString(
                 html: Blade::render(
                     string: '<x-timer-countdown wire:key="close-timer-' . $meeting->voting_ends_at->unix() . '" target="' . $meeting->voting_ends_at->unix() . '"' .
-                    ' label="Voting for this election will ends in "' .
+                    ' label="Resolution voting for this meeting will ends in "' .
                     ' reload="true" />'
                 )
             ),
             self::Cancelled => new HtmlString(
                 Markdown::inline('This meeting has been cancelled at **' . $meeting->cancelled_at->timezone($meeting->timezone)->format(format: 'M d, Y h:i A (T)') . '**')
+            ),
+            self::VotingEnded => new HtmlString(
+                Markdown::inline('Resolution voting for this meeting has been ended at<br />**' . $meeting->voting_ends_at_local->format(format: 'M d, Y h:i A (T)') . '**')
+            ),
+            self::VotingClosed => new HtmlString(
+                Markdown::inline('Resolution voting for this meeting has been closed at<br />**' . $meeting->voting_closed_at->timezone($meeting->timezone)->format(format: 'M d, Y h:i A (T)') . '**')
             ),
             default => null,
         };
