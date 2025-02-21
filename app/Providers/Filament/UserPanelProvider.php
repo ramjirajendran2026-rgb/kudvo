@@ -80,6 +80,7 @@ class UserPanelProvider extends PanelProvider
                     action: [ElectionUserInvitationController::class, 'accept']
                 )->name(name: 'election-collaborators.accept');
             })
+            ->homeUrl(fn () => route('home'))
             ->brandLogo(logo: asset(path: 'img/nav-logo.webp'))
             ->brandLogoHeight(height: '3rem')
             ->brandName(name: config('app.name'))
