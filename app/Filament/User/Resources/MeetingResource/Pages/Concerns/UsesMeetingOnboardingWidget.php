@@ -33,8 +33,9 @@ trait UsesMeetingOnboardingWidget
             $this->getPendingOnboardingStep()->getIndex() < $this->getCurrentOnboardingStep()->getIndex()
         ) {
             Notification::make()
-                ->title('Not allowed')
-                ->body('Please complete the previous steps before proceeding to the next one.')
+                ->icon('heroicon-o-light-bulb')
+                ->title('Finish current step')
+                ->body('Please complete the current steps before proceeding to the next one.')
                 ->warning()
                 ->send();
 
