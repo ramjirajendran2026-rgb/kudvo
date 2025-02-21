@@ -16,6 +16,44 @@ class MeetingPolicy
 {
     use HandlesAuthorization;
 
+    public function before(User $user, string $ability): ?bool
+    {
+        if ($user->hasAdminRole()) {
+            return match ($ability) {
+                'viewAny',
+                'view',
+                'create',
+                'update',
+                'delete',
+                'cancel',
+                'extendVotingTime',
+                'closeVoting',
+                'downloadResult',
+                'downloadDetailedResult',
+                'viewAnyParticipant',
+                'createParticipant',
+                'importParticipant',
+                'generateDummyParticipants',
+                'updateParticipant',
+                'deleteParticipant',
+                'deleteAnyParticipant',
+                'notifyParticipantMeetingLinkAny',
+                'notifyParticipantMeetingLink',
+                'createResolution',
+                'previewResolution',
+                'reorderResolution',
+                'updateResolution',
+                'deleteResolution',
+                'createLinkBlast',
+                'updateLinkBlast',
+                'deleteLinkBlast' => true,
+                default => null,
+            };
+        }
+
+        return null;
+    }
+
     public function viewAny(User $user): bool
     {
         return true;
