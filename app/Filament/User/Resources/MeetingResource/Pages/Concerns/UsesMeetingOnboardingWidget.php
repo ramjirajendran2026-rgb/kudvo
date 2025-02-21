@@ -6,6 +6,7 @@ use App\Enums\MeetingOnboardingStep;
 use App\Filament\Base\Pages\Concerns\InteractsWithFooterActions;
 use App\Filament\User\Resources\MeetingResource\Widgets\MeetingOnboardingWidget;
 use Filament\Actions\Action;
+use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Filament\Support\Enums\Alignment;
 use Livewire\Attributes\On;
@@ -39,7 +40,10 @@ trait UsesMeetingOnboardingWidget
                 ->warning()
                 ->send();
 
-            $this->redirect(url: $this->getPendingOnboardingStep()->getUrl(parameters: $this->getSubNavigationParameters()));
+            $this->redirect(
+                url: $this->getPendingOnboardingStep()->getUrl(parameters: $this->getSubNavigationParameters()),
+                navigate: Filament::getCurrentPanel()->hasSpaMode(),
+            );
         }
     }
 
