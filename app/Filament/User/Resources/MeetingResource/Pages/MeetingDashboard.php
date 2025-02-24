@@ -98,7 +98,7 @@ BLADE
 
     public function getSubheading(): string | Htmlable | null
     {
-        return Markdown::inline(text: sprintf('**%s** to **%s**', $this->getMeeting()->code, $this->getMeeting()->voting_starts_at_local->format(format: 'M d, Y h:i A (T)'), $this->getMeeting()->voting_ends_at_local->format(format: 'M d, Y h:i A (T)')));
+        return Markdown::inline(text: sprintf('**%s** to **%s**', $this->getMeeting()->voting_starts_at_local->format(format: 'M d, Y h:i A (T)'), $this->getMeeting()->voting_ends_at_local->format(format: 'M d, Y h:i A (T)')));
     }
 
     public function getMeeting(): Meeting
