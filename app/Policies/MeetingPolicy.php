@@ -16,9 +16,9 @@ class MeetingPolicy
 {
     use HandlesAuthorization;
 
-    public function before(User $user, string $ability): ?bool
+    public function before(User | Participant | null $user, string $ability): ?bool
     {
-        if ($user->hasAdminRole()) {
+        if ($user instanceof User && $user->hasAdminRole()) {
             return match ($ability) {
                 'viewAny',
                 'view',
