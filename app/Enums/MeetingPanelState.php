@@ -32,11 +32,19 @@ enum MeetingPanelState: string
                     string: "<x-timer-countdown
                                 target='{$meeting->voting_starts_at?->unix()}'
                                 reload='true'
-                                label='Voting for this meeting will starts in'
+                                label='Resolution voting for this meeting will starts in'
                             />"
                 )
             ),
-            self::VotingOpen => 'Resolution voting for this meeting is open.',
+            self::VotingOpen => new HtmlString(
+                html: Blade::render(
+                    string: "<x-timer-countdown
+                                target='{$meeting->voting_ends_at?->unix()}'
+                                reload='true'
+                                label='Resolution voting for this meeting is open now and will ends in'
+                            />"
+                )
+            ),
             self::VotingClosed => 'Resolution voting for this meeting is closed. Please contact the organizer for more information.',
             self::VotingCompleted => 'Resolution voting for this meeting has been completed. Please contact the organizer for more information.',
         };
@@ -49,7 +57,7 @@ enum MeetingPanelState: string
             self::Completed => 'heroicon-o-check-circle',
             self::AlreadyVoted => 'heroicon-o-check-circle',
             self::VotingScheduled => 'heroicon-o-calendar',
-            self::VotingOpen => 'heroicon-o-clock',
+            self::VotingOpen => 'heroicon-o-archive-box',
             self::VotingClosed => 'heroicon-o-stop-circle',
             self::VotingCompleted => 'heroicon-o-check-circle',
         };
@@ -62,7 +70,7 @@ enum MeetingPanelState: string
             self::Completed => 'Completed',
             self::AlreadyVoted => 'Submitted',
             self::VotingScheduled => 'Voting Scheduled',
-            self::VotingOpen => 'Voting Open',
+            self::VotingOpen => 'Open for Voting',
             self::VotingClosed => 'Voting Closed',
             self::VotingCompleted => 'Voting Completed',
         };

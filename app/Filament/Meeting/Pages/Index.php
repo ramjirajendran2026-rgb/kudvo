@@ -8,6 +8,7 @@ use App\Filament\Base\Pages\Concerns\HasStateSection;
 use App\Filament\Meeting\Pages\Concerns\BelongsToMeeting;
 use App\Filament\Meeting\Pages\ResolutionVoting\Vote;
 use App\Models\Participant;
+use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Forms\Form;
 use Filament\Pages\Page;
@@ -25,13 +26,6 @@ class Index extends Page
 
     protected static ?string $slug = '/';
 
-    public function mount(): void
-    {
-        if ($this->getPanelState() === MeetingPanelState::VotingOpen) {
-            $this->redirect(Vote::getUrl());
-        }
-    }
-
     public function getHeading(): string | Htmlable
     {
         return $this->getMeeting()->name;
@@ -48,6 +42,23 @@ class Index extends Page
     public function getPanelState(): ?MeetingPanelState
     {
         return Kudvo::getMeetingPanelState();
+    }
+
+    protected function getStateActions(): array
+    {
+        return match ($this->getPanelState()) {
+            MeetingPanelState::AlreadyVoted => [
+                Action::make('viewMyVotes')
+                    ->icon('heroicon-m-eye')
+                    ->url(Vote::getUrl()),
+            ],
+            MeetingPanelState::VotingOpen => [
+                Action::make('proceedToVote')
+                    ->icon('heroicon-m-arrow-right')
+                    ->url(Vote::getUrl()),
+            ],
+            default => [],
+        };
     }
 
     public function getStateDescription(): string | Htmlable | null
