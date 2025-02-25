@@ -120,6 +120,7 @@ BLADE
                 $this->getDeleteAction(),
                 $this->getCloseVotingAction(),
                 $this->getCancelAction(),
+                $this->getPaymentReceiptAction(),
             ])->dropdownPlacement(placement: 'bottom-end'),
         ];
     }
@@ -161,13 +162,17 @@ BLADE
     protected function getPublishAction(): Action
     {
         return MeetingResource::getPublishAction()
+            ->authorize(fn () => $this->canPublish())
             ->after(callback: fn () => $this->dispatch('refresh')->self());
     }
 
     protected function getStateActions(): array
     {
         return match ($this->state) {
-            MeetingDashboardState::ReadyToPublish => [$this->getPublishAction()],
+            MeetingDashboardState::ReadyToPublish => [
+                $this->getCheckoutAction(),
+                $this->getPublishAction(),
+            ],
             MeetingDashboardState::VotingInProgress, MeetingDashboardState::VotingEnded => [
                 $this->getCloseVotingAction(),
                 $this->getExtendVotingTimeAction(),
@@ -216,6 +221,26 @@ BLADE
     public function getStateDescription(): string | Htmlable | null
     {
         return $this->state?->getDescription($this->getMeeting());
+    }
+
+    public function getCheckoutAction(): Action
+    {
+        return Action::make('checkout')
+            ->authorize(fn () => $this->canCheckout())
+            ->action(action: function (self $livewire) {
+                $meeting = $livewire->getMeeting();
+
+                return $meeting->checkout(user: auth()->user());
+            })
+            ->label('Proceed to pay');
+    }
+
+    public function getPaymentReceiptAction(): Action
+    {
+        return Action::make(name: 'payment_receipt')
+            ->icon(icon: 'heroicon-s-receipt-percent')
+            ->url(url: fn (self $livewire) => (($charge = $livewire->getMeeting()->payments()->first()->stripe_invoice_data['charge'] ?? null) && is_array($charge)) ? $charge['receipt_url'] : $livewire->getMeeting()->payments()->first()?->stripe_invoice_data['invoice_pdf'], shouldOpenInNewTab: true)
+            ->visible(condition: fn (self $livewire) => filled($livewire->getMeeting()->payments()->first()?->stripe_invoice_data));
     }
 
     public function getExtendVotingTimeAction(): Action
@@ -290,6 +315,16 @@ BLADE
     public function canCancel(): bool
     {
         return self::getResource()::can('cancel', $this->getMeeting());
+    }
+
+    public function canPublish(): bool
+    {
+        return self::getResource()::can('publish', $this->getMeeting());
+    }
+
+    public function canCheckout(): bool
+    {
+        return self::getResource()::can('checkout', $this->getMeeting());
     }
 
     public function canExtendVotingTime(): bool

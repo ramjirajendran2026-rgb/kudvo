@@ -55,7 +55,7 @@ enum MeetingOnboardingStep: string implements HasDescription, HasIcon, HasLabel
             self::CreateMeeting => 'Create Meeting',
             self::AddParticipants => 'Add Participants',
             self::AddResolutions => 'Add Resolutions',
-            self::Publish => 'Publish',
+            self::Publish => 'Pay & Publish',
         };
     }
 

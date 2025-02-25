@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use App\Enums\MeetingLinkBlastStatus;
+use App\Enums\MeetingOnboardingStep;
 use App\Enums\MeetingStatus;
 use App\Enums\MeetingVotingStatus;
 use App\Models\Meeting;
@@ -84,6 +85,22 @@ class MeetingPolicy
     {
         return $meeting->isStatus(MeetingStatus::Published) &&
             $meeting->isVotingStatus([MeetingVotingStatus::Scheduled, MeetingVotingStatus::Open, MeetingVotingStatus::Ended]) &&
+            $this->hasRoleAccess($user, $meeting);
+    }
+
+    public function checkout(User $user, Meeting $meeting): bool
+    {
+        return $meeting->isStatus(MeetingStatus::Onboarding) &&
+            $meeting->getOnboardingStep() === MeetingOnboardingStep::Publish &&
+            $meeting->isCheckoutRequired() &&
+            $this->hasRoleAccess($user, $meeting);
+    }
+
+    public function publish(User $user, Meeting $meeting): bool
+    {
+        return $meeting->isStatus(MeetingStatus::Onboarding) &&
+            $meeting->getOnboardingStep() === MeetingOnboardingStep::Publish &&
+            ! $meeting->isCheckoutRequired() &&
             $this->hasRoleAccess($user, $meeting);
     }
 

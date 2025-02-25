@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Laravel\Cashier\Checkout;
 
 class Meeting extends Model
 {
@@ -157,6 +158,12 @@ class Meeting extends Model
             ->orderBy(column: 'sort');
     }
 
+    public function payments(): HasMany
+    {
+        return $this->hasMany(MeetingPayment::class)
+            ->latest();
+    }
+
     public function participantEmails(): HasManyThrough
     {
         return $this->hasManyThrough(
@@ -234,5 +241,69 @@ class Meeting extends Model
     public function isVotingStatus(MeetingVotingStatus | array $status): bool
     {
         return in_array($this->voting_status, Arr::wrap($status), true);
+    }
+
+    public function isCheckoutRequired(): bool
+    {
+        return $this->payments()->doesntExist();
+    }
+
+    public function checkout(User $user): Checkout
+    {
+        $participantsCount = $this->participants()->count();
+
+        $items = collect(value: [
+            [
+                'quantity' => 1,
+                'price_data' => [
+                    'currency' => 'USD',
+                    'unit_amount' => 2500,
+                    'product_data' => [
+                        'name' => 'Base fee',
+                    ],
+                ],
+            ],
+            [
+                'quantity' => $participantsCount,
+                'price_data' => [
+                    'currency' => 'USD',
+                    'unit_amount' => 100,
+                    'product_data' => [
+                        'name' => 'Participant fee',
+                    ],
+                ],
+            ],
+        ]);
+
+        return $user
+            ->allowPromotionCodes()
+            ->collectTaxIds()
+            ->checkout(
+                items: $items->toArray(),
+                sessionOptions: [
+                    'success_url' => route(name: 'checkout.success') . '?session_id={CHECKOUT_SESSION_ID}',
+                    'cancel_url' => route(name: 'checkout.cancel') . '?session_id={CHECKOUT_SESSION_ID}',
+                    'automatic_tax' => [
+                        'enabled' => true,
+                    ],
+                    'billing_address_collection' => 'required',
+                    'customer_update' => [
+                        'address' => 'auto',
+                    ],
+                    'invoice_creation' => [
+                        'enabled' => true,
+                        'invoice_data' => [
+                            'metadata' => [
+                                'related_type' => 'meeting',
+                                'related_id' => $this->getKey(),
+                            ],
+                        ],
+                    ],
+                    'metadata' => [
+                        'related_type' => 'meeting',
+                        'related_id' => $this->getKey(),
+                    ],
+                ],
+            );
     }
 }

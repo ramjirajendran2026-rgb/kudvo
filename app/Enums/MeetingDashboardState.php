@@ -56,7 +56,7 @@ enum MeetingDashboardState: string
         return match ($this) {
             self::OnboardParticipants => MeetingParticipants::getNavigationIcon(),
             self::OnboardResolutions => MeetingResolutions::getNavigationIcon(),
-            self::ReadyToPublish => 'heroicon-o-rocket-launch',
+            self::ReadyToPublish => $meeting->isCheckoutRequired() ? 'heroicon-o-credit-card' : 'heroicon-o-rocket-launch',
             self::Cancelled => 'heroicon-o-x-circle',
             self::Completed => 'heroicon-o-check-circle',
             self::VotingScheduled => 'heroicon-o-calendar',
@@ -71,7 +71,7 @@ enum MeetingDashboardState: string
         return match ($this) {
             self::OnboardParticipants => 'Add Participants',
             self::OnboardResolutions => 'Add Resolutions',
-            self::ReadyToPublish => 'Ready to Publish',
+            self::ReadyToPublish => $meeting->isCheckoutRequired() ? 'Pay to Publish' : 'Ready to Publish',
             self::Cancelled => 'Cancelled',
             self::Completed => 'Completed',
             self::VotingScheduled => 'Voting Scheduled',
