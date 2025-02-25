@@ -37,8 +37,6 @@ class MeetingPolicy
                 'updateParticipant',
                 'deleteParticipant',
                 'deleteAnyParticipant',
-                'notifyParticipantMeetingLinkAny',
-                'notifyParticipantMeetingLink',
                 'createResolution',
                 'previewResolution',
                 'reorderResolution',
@@ -236,6 +234,10 @@ class MeetingPolicy
 
     protected function hasRoleAccess(User $user, Meeting $meeting): bool
     {
+        if ($user->hasAdminRole()) {
+            return true;
+        }
+
         return User::whereKey($user->getKey())
             ->whereRelation('organisations', 'id', $meeting->organisation_id)
             ->exists();
