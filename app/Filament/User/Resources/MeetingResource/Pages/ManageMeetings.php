@@ -48,12 +48,14 @@ class ManageMeetings extends ManageRecords
             'completed' => Tab::make('Completed')
                 ->icon('heroicon-o-check-circle')
                 ->query(
-                    fn (Builder $query) => $query->whereNotNull('cancelled_at')
-                        ->orWhere(
-                            fn (Builder $query) => $query
-                                ->whereNotNull(columns: 'published_at')
-                                ->where('voting_closed_at', '<=', now())
-                        )
+                    fn (Builder $query) => $query->where(
+                        column: fn (Builder $query) => $query->whereNotNull('cancelled_at')
+                            ->orWhere(
+                                fn (Builder $query) => $query
+                                    ->whereNotNull(columns: 'published_at')
+                                    ->where('voting_closed_at', '<=', now())
+                            )
+                    )
                 ),
         ];
     }
