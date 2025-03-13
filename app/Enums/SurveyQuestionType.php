@@ -178,7 +178,7 @@ enum SurveyQuestionType: string implements HasLabel
     protected function getPhoneComponent(SurveyQuestion $question): PhoneInput
     {
         return PhoneInput::make($question->key)
-            ->defaultCountry(request()->ipinfo?->country)
+            ->defaultCountry(request()->ipinfo?->country ?? '')
             ->label($question->text)
             ->required($question->is_required)
             ->validateFor();
