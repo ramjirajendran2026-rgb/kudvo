@@ -66,14 +66,11 @@ Route::group(
                 Route::get(uri: 'vote-now', action: VoteNow::class)
                     ->name(name: 'vote-now');
 
-                Route::middleware([\ipinfo\ipinfolaravel\ipinfolaravel::class])
-                    ->group(function () {
-                        Route::get(uri: 'survey/{survey}/entry', action: EntryForm::class)
-                            ->name(name: 'survey.entry');
+                Route::get(uri: 'survey/{survey}/entry', action: EntryForm::class)
+                    ->name(name: 'survey.entry');
 
-                        Route::get(uri: 'survey/{survey}/preview', action: EntryForm::class)
-                            ->name(name: 'survey.preview');
-                    });
+                Route::get(uri: 'survey/{survey}/preview', action: EntryForm::class)
+                    ->name(name: 'survey.preview');
 
                 Route::prefix('products')
                     ->name('products.')
