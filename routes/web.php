@@ -53,6 +53,7 @@ Route::group(
                 LocaleSessionRedirect::class,
                 LaravelLocalizationRedirectFilter::class,
                 LaravelLocalizationViewPath::class,
+                \ipinfo\ipinfolaravel\ipinfolaravel::class,
             ])
             ->group(function () {
                 Livewire::setUpdateRoute(function ($handle) {
