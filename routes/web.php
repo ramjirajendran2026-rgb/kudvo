@@ -27,6 +27,7 @@ use App\Services\Clicksend\Http\Controllers\WebhookController as ClicksendWebhoo
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
+use ipinfo\ipinfolaravel\ipinfolaravel;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 use Mcamara\LaravelLocalization\Middleware\LaravelLocalizationRedirectFilter;
 use Mcamara\LaravelLocalization\Middleware\LaravelLocalizationViewPath;
@@ -53,13 +54,16 @@ Route::group(
                 LocaleSessionRedirect::class,
                 LaravelLocalizationRedirectFilter::class,
                 LaravelLocalizationViewPath::class,
-                \ipinfo\ipinfolaravel\ipinfolaravel::class,
+                ipinfolaravel::class,
             ])
             ->group(function () {
                 Livewire::setUpdateRoute(function ($handle) {
                     return Route::post('livewire/update', $handle)
                         ->name('i18n.livewire.update');
                 });
+
+                Route::get('ipinfo', fn (Request $request) => dd($request->ipinfo))
+                    ->name('ipinfo');
 
                 Route::get(uri: '/', action: Home::class)
                     ->name(name: 'home');
