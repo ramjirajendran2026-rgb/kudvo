@@ -205,8 +205,9 @@ enum SurveyQuestionType: string implements HasLabel
                 ->default(null),
 
             PhoneInput::make($question->key)
-                ->defaultCountry(request()->ipinfo?->country ?? 'IN')
                 ->disableIpLookUp()
+                ->defaultCountry('IN')
+                ->initialCountry('IN')
                 ->hidden(fn (Get $get) => filled($get($question->key . '_otp_id')))
                 ->hintActions([
                     Action::make('send_otp')
