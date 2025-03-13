@@ -210,7 +210,7 @@ enum SurveyQuestionType: string implements HasLabel
                 ->initialCountry('IN')
                 ->hidden(fn (Get $get) => filled($get($question->key . '_otp_id')))
                 ->hintActions([
-                    Action::make('send_otp')
+                    Action::make('get_otp')
                         ->action(function (Component $livewire, PhoneInput $component, Set $set) use ($question) {
                             $livewire->validateOnly($component->getStatePath());
 
@@ -224,7 +224,7 @@ enum SurveyQuestionType: string implements HasLabel
 
                             $set($question->key . '_otp_id', $otp->id);
                         })
-                        ->label('Send OTP')
+                        ->label('Get OTP')
                         ->visible(fn (Get $get) => blank($get($question->key . '_otp_id'))),
                 ])
                 ->label($question->text)
