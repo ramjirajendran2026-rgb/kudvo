@@ -62,7 +62,7 @@ class EntryForm extends Component implements HasForms
             ->statePath('data')
             ->schema([
                 ...$this->survey->questions->map(
-                    fn (SurveyQuestion $question) => $question->type->getFormComponent($question)
+                    fn (SurveyQuestion $question) => $question->type->getFormComponent($question, $this->isPreview)
                 )->filter()->toArray(),
 
                 Actions::make([

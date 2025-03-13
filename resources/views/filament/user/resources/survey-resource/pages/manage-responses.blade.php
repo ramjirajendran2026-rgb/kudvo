@@ -40,7 +40,7 @@
                         <li
                             class="flex items-center gap-4 rounded-lg bg-primary-50 px-2 py-1 dark:bg-primary-900/20"
                         >
-                            <span>{{ $answer }}</span>
+                            {!! $question->type->getAnswerOutput($question, $answer) !!}
                             <x-filament::badge color="success" size="sm">
                                 {{ $count }}
                             </x-filament::badge>

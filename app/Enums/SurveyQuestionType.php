@@ -6,6 +6,7 @@ use App\Models\SurveyQuestion;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
@@ -13,6 +14,9 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\TimePicker;
 use Filament\Support\Contracts\HasLabel;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\HtmlString;
+use Illuminate\Support\Str;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
 enum SurveyQuestionType: string implements HasLabel
@@ -28,6 +32,7 @@ enum SurveyQuestionType: string implements HasLabel
     case Phone = 'phone';
     case Number = 'number';
     case Url = 'url';
+    case Photo = 'photo';
 
     public static function getOptions(): array
     {
@@ -48,6 +53,7 @@ enum SurveyQuestionType: string implements HasLabel
             self::Phone => 'Phone',
             self::Number => 'Number',
             self::Url => 'URL',
+            self::Photo => 'Photo',
         };
     }
 
@@ -67,7 +73,19 @@ enum SurveyQuestionType: string implements HasLabel
         };
     }
 
-    public function getFormComponent(SurveyQuestion $question): ?Section
+    public function getAnswerOutput(SurveyQuestion $question, ?string $answer): ?string
+    {
+        return match ($this) {
+            self::Photo => new HtmlString(sprintf(
+                '<a href="%s" target="_blank" >%s</a>',
+                Storage::disk(config('filament.default_filesystem_disk'))->url($answer),
+                Str::afterLast($answer, '/'),
+            )),
+            default => new HtmlString("<span>$answer</span>"),
+        };
+    }
+
+    public function getFormComponent(SurveyQuestion $question, bool $isPreview = false): ?Section
     {
         $components = match ($this) {
             self::ShortAnswer => $this->getShortAnswerComponent($question),
@@ -81,6 +99,7 @@ enum SurveyQuestionType: string implements HasLabel
             self::Phone => $this->getPhoneComponent($question),
             self::Number => $this->getNumberComponent($question),
             self::Url => $this->getUrlComponent($question),
+            self::Photo => $this->getPhotoComponent($question, $isPreview),
         };
 
         if (blank($components)) {
@@ -92,17 +111,17 @@ enum SurveyQuestionType: string implements HasLabel
             ->schema(Arr::wrap($components));
     }
 
+    protected function getShortAnswerComponent(SurveyQuestion $question): TextInput
+    {
+        return $this->makeTextInputComponent($question);
+    }
+
     protected function makeTextInputComponent(SurveyQuestion $question): TextInput
     {
         return TextInput::make($question->key)
             ->label($question->text)
             ->placeholder('Your answer')
             ->required($question->is_required);
-    }
-
-    protected function getShortAnswerComponent(SurveyQuestion $question): TextInput
-    {
-        return $this->makeTextInputComponent($question);
     }
 
     protected function getParagraphComponent(SurveyQuestion $question): Textarea
@@ -174,5 +193,20 @@ enum SurveyQuestionType: string implements HasLabel
     {
         return $this->makeTextInputComponent($question)
             ->url();
+    }
+
+    protected function getPhotoComponent(SurveyQuestion $question, bool $isPreview = false): FileUpload
+    {
+        return FileUpload::make($question->key)
+            ->avatar()
+            ->directory('survey/photos/' . $question->key)
+            ->imageEditor(fn (FileUpload $component) => ! $component->isDisabled())
+            ->imageEditorAspectRatios(['1:1'])
+            ->imageEditorMode(2)
+            ->label($question->text)
+            ->panelAspectRatio('1:1')
+            ->panelLayout('compact')
+            ->required($question->is_required)
+            ->storeFiles(! $isPreview);
     }
 }
