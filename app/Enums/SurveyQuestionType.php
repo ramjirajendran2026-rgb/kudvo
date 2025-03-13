@@ -2,21 +2,31 @@
 
 namespace App\Enums;
 
+use App\Forms\Components\OtpInput;
+use App\Models\OneTimePassword;
 use App\Models\SurveyQuestion;
+use App\Notifications\OneTimePasswordNotification;
+use Closure;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\TimePicker;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Support\Contracts\HasLabel;
+use Illuminate\Notifications\Notification;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
+use Livewire\Component;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
 enum SurveyQuestionType: string implements HasLabel
@@ -30,6 +40,7 @@ enum SurveyQuestionType: string implements HasLabel
     case DateTime = 'datetime';
     case Email = 'email';
     case Phone = 'phone';
+    case VerifiedPhone = 'verified_phone';
     case Number = 'number';
     case Url = 'url';
     case Photo = 'photo';
@@ -50,7 +61,8 @@ enum SurveyQuestionType: string implements HasLabel
             self::Time => 'Time',
             self::DateTime => 'Date & Time',
             self::Email => 'Email',
-            self::Phone => 'Phone',
+            self::Phone => 'Phone number',
+            self::VerifiedPhone => 'Verified phone number',
             self::Number => 'Number',
             self::Url => 'URL',
             self::Photo => 'Photo',
@@ -97,6 +109,7 @@ enum SurveyQuestionType: string implements HasLabel
             self::DateTime => $this->getDateTimeComponent($question),
             self::Email => $this->getEmailComponent($question),
             self::Phone => $this->getPhoneComponent($question),
+            self::VerifiedPhone => $this->getVerifiedPhoneComponent($question),
             self::Number => $this->getNumberComponent($question),
             self::Url => $this->getUrlComponent($question),
             self::Photo => $this->getPhotoComponent($question, $isPreview),
@@ -182,6 +195,64 @@ enum SurveyQuestionType: string implements HasLabel
             ->label($question->text)
             ->required($question->is_required)
             ->validateFor();
+    }
+
+    protected function getVerifiedPhoneComponent(SurveyQuestion $question): array
+    {
+        return [
+            Hidden::make($question->key . '_otp_id')
+                ->default(null),
+
+            PhoneInput::make($question->key)
+                ->defaultCountry(request()->ipinfo?->country ?? '')
+                ->hidden(fn (Get $get) => filled($get($question->key . '_otp_id')))
+                ->hintActions([
+                    Action::make('send_otp')
+                        ->action(function (Component $livewire, PhoneInput $component, Set $set) use ($question) {
+                            $livewire->validateOnly($component->getStatePath());
+
+                            $otp = OneTimePassword::create([
+                                'phone' => $component->getState(),
+                            ]);
+
+                            \Illuminate\Support\Facades\Notification::route('sms', $component->getState())
+                                ->notifyNow(new OneTimePasswordNotification($otp));
+
+                            $set($question->key . '_otp_id', $otp->id);
+                        })
+                        ->label('Send OTP')
+                        ->visible(fn (Get $get) => blank($get($question->key . '_otp_id'))),
+                ])
+                ->label($question->text)
+                ->required($question->is_required)
+                ->validateFor(),
+
+            TextInput::make($question->key)
+                ->disabled()
+                ->hintActions([
+                    Action::make('edit')
+                        ->action(fn (Set $set) => $set($question->key . '_otp_id', null))
+                        ->icon('heroicon-s-pencil-square'),
+                ])
+                ->label($question->text)
+                ->required($question->is_required)
+                ->visible(fn (Get $get) => filled($get($question->key . '_otp_id'))),
+
+            OtpInput::make($question->key . '_otp')
+                ->disabled(fn (Get $get) => blank($get($question->key . '_otp_id')))
+                ->hiddenLabel(false)
+                ->label('OTP')
+                ->length(6)
+                ->required(fn (Get $get) => filled($get($question->key)))
+                ->rules([
+                    fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get, $question) {
+                        $otp = OneTimePassword::find($get($question->key . '_otp_id'));
+                        if ($otp->phone !== $get($question->key) || ! $otp->verify($value)) {
+                            $fail('The :attribute is invalid.');
+                        }
+                    },
+                ]),
+        ];
     }
 
     protected function getNumberComponent(SurveyQuestion $question): TextInput
