@@ -21,8 +21,8 @@ use Filament\Forms\Components\TimePicker;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Support\Contracts\HasLabel;
-use Illuminate\Notifications\Notification;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
@@ -201,6 +201,7 @@ enum SurveyQuestionType: string implements HasLabel
     {
         return [
             Hidden::make($question->key . '_otp_id')
+                ->dehydrated(false)
                 ->default(null),
 
             PhoneInput::make($question->key)
@@ -213,9 +214,10 @@ enum SurveyQuestionType: string implements HasLabel
 
                             $otp = OneTimePassword::create([
                                 'phone' => $component->getState(),
+                                'code' => rand(1000, 9999),
                             ]);
 
-                            \Illuminate\Support\Facades\Notification::route('sms', $component->getState())
+                            Notification::route('sms', $component->getState())
                                 ->notifyNow(new OneTimePasswordNotification($otp));
 
                             $set($question->key . '_otp_id', $otp->id);
@@ -228,7 +230,7 @@ enum SurveyQuestionType: string implements HasLabel
                 ->validateFor(),
 
             TextInput::make($question->key)
-                ->disabled()
+                ->readOnly()
                 ->hintActions([
                     Action::make('edit')
                         ->action(fn (Set $set) => $set($question->key . '_otp_id', null))
@@ -239,10 +241,12 @@ enum SurveyQuestionType: string implements HasLabel
                 ->visible(fn (Get $get) => filled($get($question->key . '_otp_id'))),
 
             OtpInput::make($question->key . '_otp')
+                ->dehydrated(false)
                 ->disabled(fn (Get $get) => blank($get($question->key . '_otp_id')))
+                ->hidden(fn (Get $get) => OneTimePassword::find($get($question->key . '_otp_id'))?->isVerified())
                 ->hiddenLabel(false)
                 ->label('OTP')
-                ->length(6)
+                ->length(4)
                 ->required(fn (Get $get) => filled($get($question->key)))
                 ->rules([
                     fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get, $question) {

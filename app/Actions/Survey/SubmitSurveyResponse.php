@@ -14,7 +14,7 @@ class SubmitSurveyResponse
         /** @var SurveyResponse $response */
         $response = $survey->responses()->create();
 
-        $data = collect($data)->filter()->map(fn ($value, $key) => [
+        $data = collect($data)->filter()->filter(fn ($value, $key) => ! Str::endsWith($key, '_otp'))->map(fn ($value, $key) => [
             'question_id' => Str::replaceStart(SurveyQuestion::KEY_PREFIX, '', $key),
             'content' => $value,
         ])->values()->all();
