@@ -39,6 +39,7 @@ enum SurveyQuestionType: string implements HasLabel
     case Date = 'date';
     case Time = 'time';
     case DateTime = 'datetime';
+    case MonthYear = 'month_year';
     case Email = 'email';
     case Phone = 'phone';
     case VerifiedPhone = 'verified_phone';
@@ -67,6 +68,7 @@ enum SurveyQuestionType: string implements HasLabel
             self::Date => 'Date',
             self::Time => 'Time',
             self::DateTime => 'Date & Time',
+            self::MonthYear => 'Month & Year',
             self::Email => 'Email',
             self::Phone => 'Phone number',
             self::VerifiedPhone => 'Verified phone number',
@@ -114,6 +116,7 @@ enum SurveyQuestionType: string implements HasLabel
             self::Date => $this->getDateComponent($question),
             self::Time => $this->getTimeComponent($question),
             self::DateTime => $this->getDateTimeComponent($question),
+            self::MonthYear => $this->getMonthYearPickerComponent($question),
             self::Email => $this->getEmailComponent($question),
             self::Phone => $this->getPhoneComponent($question),
             self::VerifiedPhone => $this->getVerifiedPhoneComponent($question),
@@ -187,6 +190,22 @@ enum SurveyQuestionType: string implements HasLabel
         return DateTimePicker::make($question->key)
             ->label($question->text)
             ->required($question->is_required);
+    }
+
+    protected function getMonthYearPickerComponent(SurveyQuestion $question): TextInput
+    {
+        return $this->makeTextInputComponent($question)
+            ->extraInputAttributes([
+                'max' => '2024-12',
+                'min' => '2015-01',
+            ])
+            ->rules([
+                'date',
+                'date_format:Y-m',
+                'after_or_equal:2015-01',
+                'before_or_equal:2024-12',
+            ])
+            ->type('month');
     }
 
     protected function getEmailComponent(SurveyQuestion $question): TextInput
