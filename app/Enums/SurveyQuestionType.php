@@ -194,17 +194,23 @@ enum SurveyQuestionType: string implements HasLabel
     protected function getMonthYearPickerComponent(SurveyQuestion $question): TextInput
     {
         return $this->makeTextInputComponent($question)
-            ->extraInputAttributes([
-                'max' => '2024-12',
-                'min' => '2015-01',
-            ])
             ->rules([
                 'date',
                 'date_format:Y-m',
-                'after_or_equal:2015-01',
-                'before_or_equal:2024-12',
             ])
-            ->type('month');
+            ->type('month')
+            ->when(
+                $question->settings['month_year']['max'],
+                fn (TextInput $component, string $value) => $component
+                    ->extraInputAttributes(['max' => $value], true)
+                    ->rule('before_or_equal:' . $value)
+            )
+            ->when(
+                $question->settings['month_year']['min'],
+                fn (TextInput $component, string $value) => $component
+                    ->extraInputAttributes(['min' => $value], true)
+                    ->rule('after_or_equal:' . $value)
+            );
     }
 
     protected function getEmailComponent(SurveyQuestion $question): TextInput

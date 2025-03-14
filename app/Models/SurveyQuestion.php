@@ -23,6 +23,7 @@ class SurveyQuestion extends Model implements Sortable
         'options',
         'has_other_option',
         'is_required',
+        'settings',
         'sort',
         'survey_id',
     ];
@@ -32,6 +33,7 @@ class SurveyQuestion extends Model implements Sortable
         'options' => 'array',
         'has_other_option' => 'boolean',
         'is_required' => 'boolean',
+        'settings' => 'array',
         'sort' => 'int',
         'survey_id' => 'int',
     ];

@@ -9,6 +9,7 @@ use App\Models\Survey;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
@@ -220,6 +221,27 @@ class SurveyResource extends Resource
                     ->default(false)
                     ->label('Allow other option?')
                     ->visible(condition: fn (Get $get): bool => SurveyQuestionType::tryFrom($get('type'))?->canHaveOtherOption() ?? false),
+
+                Group::make([
+                    TextInput::make('min')
+                        ->label('Min')
+                        ->rules(['date', 'date_format:Y-m'])
+                        ->rule(fn (Get $get) => 'before:' . $get('max'), fn (Get $get) => filled($get('max')))
+                        ->type('month')
+                        ->validationMessages([
+                            'before' => 'Must be lesser than max month',
+                        ]),
+
+                    TextInput::make('max')
+                        ->label('Max')
+                        ->rules(['date', 'date_format:Y-m'])
+                        ->rule(fn (Get $get) => 'after:' . $get('min'), fn (Get $get) => filled($get('min')))
+                        ->type('month')
+                        ->validationMessages([
+                            'after' => 'Must be greater than min month',
+                        ]),
+                ])->columns()->statePath('settings.month_year')
+                    ->visible(fn (Get $get): bool => SurveyQuestionType::tryFrom($get('type')) === SurveyQuestionType::MonthYear),
             ]);
     }
 
