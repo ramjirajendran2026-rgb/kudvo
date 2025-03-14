@@ -11,6 +11,7 @@ use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Field;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Radio;
@@ -38,6 +39,7 @@ enum SurveyQuestionType: string implements HasLabel
     case Date = 'date';
     case Time = 'time';
     case DateTime = 'datetime';
+    case MonthYear = 'month_year';
     case Email = 'email';
     case Phone = 'phone';
     case VerifiedPhone = 'verified_phone';
@@ -47,7 +49,13 @@ enum SurveyQuestionType: string implements HasLabel
 
     public static function getOptions(): array
     {
-        return Arr::mapWithKeys(self::cases(), fn (self $case): array => [$case->value => $case->getLabel()]);
+        return collect(self::cases())
+            ->when(
+                ! auth()->user()?->hasAdminRole(),
+                fn ($collection) => $collection->filter(fn (self $case) => $case !== self::VerifiedPhone)
+            )
+            ->mapWithKeys(fn (self $case): array => [$case->value => $case->getLabel()])
+            ->toArray();
     }
 
     public function getLabel(): ?string
@@ -60,6 +68,7 @@ enum SurveyQuestionType: string implements HasLabel
             self::Date => 'Date',
             self::Time => 'Time',
             self::DateTime => 'Date & Time',
+            self::MonthYear => 'Month & Year',
             self::Email => 'Email',
             self::Phone => 'Phone number',
             self::VerifiedPhone => 'Verified phone number',
@@ -107,6 +116,7 @@ enum SurveyQuestionType: string implements HasLabel
             self::Date => $this->getDateComponent($question),
             self::Time => $this->getTimeComponent($question),
             self::DateTime => $this->getDateTimeComponent($question),
+            self::MonthYear => $this->getMonthYearPickerComponent($question),
             self::Email => $this->getEmailComponent($question),
             self::Phone => $this->getPhoneComponent($question),
             self::VerifiedPhone => $this->getVerifiedPhoneComponent($question),
@@ -180,6 +190,22 @@ enum SurveyQuestionType: string implements HasLabel
         return DateTimePicker::make($question->key)
             ->label($question->text)
             ->required($question->is_required);
+    }
+
+    protected function getMonthYearPickerComponent(SurveyQuestion $question): TextInput
+    {
+        return $this->makeTextInputComponent($question)
+            ->extraInputAttributes([
+                'max' => '2024-12',
+                'min' => '2015-01',
+            ])
+            ->rules([
+                'date',
+                'date_format:Y-m',
+                'after_or_equal:2015-01',
+                'before_or_equal:2024-12',
+            ])
+            ->type('month');
     }
 
     protected function getEmailComponent(SurveyQuestion $question): TextInput
