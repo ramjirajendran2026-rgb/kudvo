@@ -1,5 +1,5 @@
 <div
-    class="mx-auto flex min-h-screen w-full max-w-screen-md flex-col justify-center gap-y-6 px-4 py-6 sm:px-6 lg:px-8"
+    class="mx-auto flex w-full max-w-screen-md flex-col justify-center gap-y-6 px-4 py-6 sm:px-6 lg:px-8"
 >
     <h1
         class="text-center text-2xl font-bold tracking-tight text-gray-950 dark:text-white sm:text-3xl"
