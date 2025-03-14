@@ -71,6 +71,8 @@ Route::group(
                 Route::get(uri: 'vote-now', action: VoteNow::class)
                     ->name(name: 'vote-now');
 
+                Route::get(uri: 'forms/{survey}', action: EntryForm::class);
+
                 Route::get(uri: 'survey/{survey}/entry', action: EntryForm::class)
                     ->name(name: 'survey.entry');
 
