@@ -48,7 +48,13 @@ enum SurveyQuestionType: string implements HasLabel
 
     public static function getOptions(): array
     {
-        return Arr::mapWithKeys(self::cases(), fn (self $case): array => [$case->value => $case->getLabel()]);
+        return collect(self::cases())
+            ->when(
+                ! auth()->user()?->hasAdminRole(),
+                fn ($collection) => $collection->filter(fn (self $case) => $case !== self::VerifiedPhone)
+            )
+            ->mapWithKeys(fn (self $case): array => [$case->value => $case->getLabel()])
+            ->toArray();
     }
 
     public function getLabel(): ?string
