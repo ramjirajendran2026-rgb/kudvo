@@ -295,7 +295,17 @@ enum SurveyQuestionType: string implements HasLabel
     protected function getNumberComponent(SurveyQuestion $question): TextInput
     {
         return $this->makeTextInputComponent($question)
-            ->numeric();
+            ->numeric()
+            ->when(
+                $question->settings['number']['min'] ?? null,
+                fn (TextInput $component, string $value) => $component
+                    ->minValue($value)
+            )
+            ->when(
+                $question->settings['number']['max'] ?? null,
+                fn (TextInput $component, string $value) => $component
+                    ->maxValue($value)
+            );
     }
 
     protected function getUrlComponent(SurveyQuestion $question): TextInput

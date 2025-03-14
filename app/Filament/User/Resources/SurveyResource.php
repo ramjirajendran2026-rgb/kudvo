@@ -224,6 +224,23 @@ class SurveyResource extends Resource
 
                 Group::make([
                     TextInput::make('min')
+                        ->numeric()
+                        ->rule(
+                            static fn (Get $get): ?string => 'max:' . $get('max'),
+                            static fn (Get $get): bool => filled($get('max')),
+                        ),
+
+                    TextInput::make('max')
+                        ->numeric()
+                        ->rule(
+                            static fn (Get $get): ?string => 'min:' . $get('min'),
+                            static fn (Get $get): bool => filled($get('min')),
+                        ),
+                ])->columns()->statePath('settings.number')
+                    ->visible(static fn (Get $get): bool => SurveyQuestionType::tryFrom($get('type')) === SurveyQuestionType::Number),
+
+                Group::make([
+                    TextInput::make('min')
                         ->label('Min')
                         ->rules(['date', 'date_format:Y-m'])
                         ->rule(fn (Get $get) => 'before:' . $get('max'), fn (Get $get) => filled($get('max')))
