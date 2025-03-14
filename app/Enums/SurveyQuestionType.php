@@ -11,6 +11,7 @@ use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Field;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Radio;
@@ -206,7 +207,7 @@ enum SurveyQuestionType: string implements HasLabel
 
             PhoneInput::make($question->key)
                 ->defaultCountry(request()->ipinfo?->country ?? '')
-                ->hidden(fn (Get $get) => filled($get($question->key . '_otp_id')))
+                ->hidden(fn (Get $get, Field $component) => filled($get($question->key . '_otp_id')) || $component->getContainer()->isDisabled())
                 ->hintActions([
                     Action::make('send_otp')
                         ->action(function (Component $livewire, PhoneInput $component, Set $set) use ($question) {
@@ -223,7 +224,7 @@ enum SurveyQuestionType: string implements HasLabel
                             $set($question->key . '_otp_id', $otp->id);
                         })
                         ->label('Send OTP')
-                        ->visible(fn (Get $get) => blank($get($question->key . '_otp_id'))),
+                        ->hidden(static fn (Get $get, Field $component) => filled($get($question->key . '_otp_id')) || $component->getContainer()->isDisabled()),
                 ])
                 ->label($question->text)
                 ->required($question->is_required)
@@ -234,16 +235,17 @@ enum SurveyQuestionType: string implements HasLabel
                 ->hintActions([
                     Action::make('edit')
                         ->action(fn (Set $set) => $set($question->key . '_otp_id', null))
-                        ->icon('heroicon-s-pencil-square'),
+                        ->icon('heroicon-s-pencil-square')
+                        ->hidden(static fn (Field $component) => $component->getContainer()->isDisabled()),
                 ])
                 ->label($question->text)
                 ->required($question->is_required)
-                ->visible(fn (Get $get) => filled($get($question->key . '_otp_id'))),
+                ->visible(fn (Get $get, Field $component) => filled($get($question->key . '_otp_id')) || $component->getContainer()->isDisabled()),
 
             OtpInput::make($question->key . '_otp')
-                ->dehydrated(false)
                 ->disabled(fn (Get $get) => blank($get($question->key . '_otp_id')))
-                ->hidden(fn (Get $get) => OneTimePassword::find($get($question->key . '_otp_id'))?->isVerified())
+                ->dehydrated(false)
+                ->hidden(fn (Get $get, Field $component) => $component->getContainer()->isDisabled() || OneTimePassword::find($get($question->key . '_otp_id'))?->isVerified())
                 ->hiddenLabel(false)
                 ->label('OTP')
                 ->length(4)
