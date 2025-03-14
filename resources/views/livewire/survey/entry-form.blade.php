@@ -10,8 +10,8 @@
     @if ($this->isSubmitted)
         <x-filament::section compact>
             <x-filament.state
-                :heading="$this->isPreview ? 'Preview completed' : 'Submission completed'"
-                description="Thank you for submitting your answers"
+                :heading="$this->getSuccessHeading()"
+                :description="$this->getSuccessDescription()"
                 icon="heroicon-o-document-check"
             />
         </x-filament::section>

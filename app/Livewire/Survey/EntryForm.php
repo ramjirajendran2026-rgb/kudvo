@@ -5,10 +5,12 @@ namespace App\Livewire\Survey;
 use App\Actions\Survey\SubmitSurveyResponse;
 use App\Models\Survey;
 use App\Models\SurveyQuestion;
+use App\Models\SurveyResponse;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
+use Illuminate\Support\HtmlString;
 use Livewire\Component;
 
 /**
@@ -19,6 +21,8 @@ class EntryForm extends Component implements HasForms
     use InteractsWithForms;
 
     public Survey $survey;
+
+    public ?SurveyResponse $surveyResponse = null;
 
     public ?array $data = null;
 
@@ -94,8 +98,24 @@ class EntryForm extends Component implements HasForms
             return;
         }
 
-        app(SubmitSurveyResponse::class)->execute($this->survey, $data);
+        $this->surveyResponse = app(SubmitSurveyResponse::class)->execute($this->survey, $data);
 
         $this->isSubmitted = true;
+    }
+
+    public function getSuccessHeading(): string
+    {
+        return $this->isPreview ? 'Preview completed' : 'Submission completed';
+    }
+
+    public function getSuccessDescription(): HtmlString
+    {
+        $refNumber = $this->surveyResponse?->sort;
+
+        return new HtmlString(
+            <<<HTML
+Your reference number is <strong>#$refNumber</strong>
+HTML
+        );
     }
 }
