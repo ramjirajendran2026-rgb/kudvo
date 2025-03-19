@@ -5,6 +5,7 @@ namespace App\Enums;
 use App\Models\Election;
 use App\Models\Meeting;
 use App\Models\Nomination;
+use App\Models\Survey;
 use Filament\Resources\Components\Tab;
 use Filament\Support\Contracts\HasLabel;
 use Illuminate\Database\Eloquent\Builder;
@@ -24,6 +25,8 @@ enum SmsMessagePurpose: string implements HasLabel
     case MeetingInvitation = 'meeting_invitation';
 
     case MeetingMfaCode = 'meeting_mfa_code';
+
+    case SurveyAcknowledgement = 'survey_acknowledgement';
 
     public function getLabel(): ?string
     {
@@ -55,6 +58,7 @@ enum SmsMessagePurpose: string implements HasLabel
             self::NominationMfaCode => Nomination::class,
             self::MeetingInvitation,
             self::MeetingMfaCode => Meeting::class,
+            self::SurveyAcknowledgement => Survey::class,
         };
     }
 }

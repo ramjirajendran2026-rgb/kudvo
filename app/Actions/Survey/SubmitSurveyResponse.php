@@ -2,9 +2,12 @@
 
 namespace App\Actions\Survey;
 
+use App\Enums\SurveyQuestionType;
 use App\Models\Survey;
 use App\Models\SurveyQuestion;
 use App\Models\SurveyResponse;
+use App\Notifications\Survey\AcknowledgementNotification;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Str;
 
 class SubmitSurveyResponse
@@ -20,6 +23,21 @@ class SubmitSurveyResponse
         ])->values()->all();
 
         $response->answers()->createMany($data);
+
+        $verifiedPhoneQuestionIds = $survey->questions()
+            ->where('type', SurveyQuestionType::VerifiedPhone)
+            ->get()
+            ->filter(fn (SurveyQuestion $surveyQuestion) => $surveyQuestion->settings['verified_phone']['send_acknowledgement'] ?? false)
+            ->pluck('id');
+
+        $verifiedPhoneAnswers = collect($data)
+            ->filter(fn ($value, $key) => $verifiedPhoneQuestionIds->contains($value['question_id']))
+            ->all();
+
+        foreach ($verifiedPhoneAnswers as $verifiedPhoneAnswer) {
+            Notification::route('sms', $verifiedPhoneAnswer['content'])
+                ->notifyNow(new AcknowledgementNotification($survey, $response, ['sms']));
+        }
 
         return $response;
     }

@@ -18,6 +18,8 @@ class SmsTemplates extends Settings
 
     public string $meeting_participant_mfa;
 
+    public string $survey_acknowledgement;
+
     public static function group(): string
     {
         return 'sms_templates';

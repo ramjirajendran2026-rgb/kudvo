@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Survey;
 
+use App\Actions\Survey\GenerateReferenceNumber;
 use App\Actions\Survey\SubmitSurveyResponse;
 use App\Models\Survey;
 use App\Models\SurveyQuestion;
@@ -110,11 +111,11 @@ class EntryForm extends Component implements HasForms
 
     public function getSuccessDescription(): HtmlString
     {
-        $refNumber = $this->surveyResponse?->sort;
+        $refNumber = app(GenerateReferenceNumber::class)->execute($this->surveyResponse, $this->survey);
 
         return new HtmlString(
             <<<HTML
-Your reference number is <strong>#$refNumber</strong>
+Your reference number is <strong>$refNumber</strong>
 HTML
         );
     }

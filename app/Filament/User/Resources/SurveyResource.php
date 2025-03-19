@@ -259,6 +259,14 @@ class SurveyResource extends Resource
                         ]),
                 ])->columns()->statePath('settings.month_year')
                     ->visible(fn (Get $get): bool => SurveyQuestionType::tryFrom($get('type')) === SurveyQuestionType::MonthYear),
+
+                Group::make([
+                    Toggle::make('send_acknowledgement')
+                        ->default(false)
+                        ->hintIcon(icon: 'heroicon-o-information-circle', tooltip: 'Acknowledgement SMS will be sent to this phone number after survey completion.')
+                        ->label('Send acknowledgement?'),
+                ])->columns()->statePath('settings.verified_phone')
+                    ->visible(fn (Get $get): bool => SurveyQuestionType::tryFrom($get('type')) === SurveyQuestionType::VerifiedPhone),
             ]);
     }
 

@@ -7,6 +7,7 @@ use App\Notifications\Election\BallotLinkNotification;
 use App\Notifications\Election\MfaCodeNotification;
 use App\Notifications\Election\VotedConfirmationNotification;
 use App\Notifications\Meeting\MeetingInvitationNotification;
+use App\Notifications\Survey\AcknowledgementNotification;
 use App\Settings\SmsTemplates;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -135,10 +136,32 @@ class Templates extends SettingsPage
                             ->autosize()
                             ->hiddenLabel(),
                     ]),
+
+                Forms\Components\Section::make(heading: 'Survey Acknowledgement')
+                    ->compact()
+                    ->headerActions(actions: Arr::map(
+                        array: [
+                            'SURVEY_NAME' => AcknowledgementNotification::VAR_SURVEY_NAME_SHORT,
+                            'REFERENCE_NUMBER' => AcknowledgementNotification::VAR_REFERENCE_NUMBER,
+                        ],
+                        callback: fn (string $value, string $key) => Forms\Components\Actions\Action::make(name: 'insert' . Str::title($key))
+                            ->alpineClickHandler(
+                                handler: 'target = document.getElementById(\'data.survey_acknowledgement\');$wire.data.survey_acknowledgement = target.value.substring(0, target.selectionStart) + \'' . $value . '\' + target.value.substring(target.selectionEnd)'
+                            )
+                            ->color(color: 'info')
+                            ->label(label: $key)
+                            ->link()
+                            ->size(size: ActionSize::Small),
+                    ))
+                    ->schema(components: [
+                        Forms\Components\Textarea::make(name: 'survey_acknowledgement')
+                            ->autosize()
+                            ->hiddenLabel(),
+                    ]),
             ]);
     }
 
-    public static function canAccess(): bool
+    public static function canAccess(array $parameters = []): bool
     {
         return SmsSettingsCluster::canAccess();
     }
