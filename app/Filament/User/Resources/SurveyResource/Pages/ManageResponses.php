@@ -2,6 +2,7 @@
 
 namespace App\Filament\User\Resources\SurveyResource\Pages;
 
+use App\Actions\Survey\GenerateReferenceNumber;
 use App\Enums\SurveyQuestionType;
 use App\Enums\SurveyResponsesPageTabs;
 use App\Filament\User\Resources\SurveyResource;
@@ -83,9 +84,11 @@ class ManageResponses extends Page implements HasForms
 
     public function getResponseNumbers(): array
     {
+        $generator = app(GenerateReferenceNumber::class);
+
         return $this->getSurvey()
-            ->responses()
-            ->pluck('sort', 'id')
+            ->responses
+            ->mapWithKeys(fn (SurveyResponse $surveyResponse) => [$surveyResponse->id => $generator->execute($surveyResponse, $this->getSurvey())])
             ->toArray();
     }
 

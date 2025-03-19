@@ -64,7 +64,7 @@
                 <x-filament::input.select wire:model.live="activeResponseId">
                     @foreach ($this->getResponseNumbers() as $id => $number)
                         <option value="{{ $id }}">
-                            Response #{{ $number }}
+                            Response {{ $number }}
                         </option>
                     @endforeach
                 </x-filament::input.select>
