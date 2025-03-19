@@ -323,6 +323,16 @@ BLADE
             ->form([
                 Toggle::make('is_active')
                     ->label('Collect responses?'),
+
+                Group::make([
+                    TextInput::make('reference_number_prefix')
+                        ->maxLength(12),
+
+                    TextInput::make('reference_number_pad_length')
+                        ->maxValue(12)
+                        ->minValue(1)
+                        ->numeric(),
+                ])->statePath('settings'),
             ])
             ->label('Settings')
             ->modalHeading('Settings');
