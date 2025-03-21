@@ -5,12 +5,14 @@ namespace App\Filament\User\Resources\SurveyResource\Pages;
 use App\Actions\Survey\GenerateReferenceNumber;
 use App\Enums\SurveyQuestionType;
 use App\Enums\SurveyResponsesPageTabs;
+use App\Exports\SurveyResponsesExport;
 use App\Filament\User\Resources\SurveyResource;
 use App\Models\Survey;
 use App\Models\SurveyAnswer;
 use App\Models\SurveyQuestion;
 use App\Models\SurveyResponse;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
@@ -18,6 +20,8 @@ use Filament\Resources\Pages\Page;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ManageResponses extends Page implements HasForms
 {
@@ -45,19 +49,22 @@ class ManageResponses extends Page implements HasForms
         $this->previousUrl = url()->previous();
     }
 
-    public function getMaxContentWidth(): MaxWidth | string | null
+    protected function authorizeAccess(): void
     {
-        return MaxWidth::ScreenMedium;
+        abort_unless(SurveyResource::can('viewResponses', $this->getRecord()), 403);
+    }
+
+    protected function getSurvey(): Survey
+    {
+        /** @var Survey $survey */
+        $survey = $this->getRecord();
+
+        return $survey;
     }
 
     public function getBreadcrumbs(): array
     {
         return [];
-    }
-
-    public function getTitle(): string | Htmlable
-    {
-        return 'Survey #' . $this->getRecord()->getKey();
     }
 
     public function getTabs(): array
@@ -105,32 +112,6 @@ class ManageResponses extends Page implements HasForms
             ->toArray() ?? [];
     }
 
-    protected function getSurvey(): Survey
-    {
-        /** @var Survey $survey */
-        $survey = $this->getRecord();
-
-        return $survey;
-    }
-
-    protected function authorizeAccess(): void
-    {
-        abort_unless(SurveyResource::can('viewResponses', $this->getRecord()), 403);
-    }
-
-    protected function getRefreshAction(): Action
-    {
-        return Action::make('refresh')
-            ->action(
-                fn () => Notification::make()
-                    ->title('Refreshed')
-                    ->success()
-                    ->send()
-            )
-            ->icon('heroicon-o-arrow-path')
-            ->iconButton();
-    }
-
     protected function getHeaderActions(): array
     {
         return [
@@ -149,6 +130,37 @@ class ManageResponses extends Page implements HasForms
             SurveyResource::getPublishAction(),
 
             SurveyResource::getEditPageAction(),
+
+            ActionGroup::make([
+                Action::make('download')
+                    ->action(function (self $livewire) {
+                        return Excel::download(new SurveyResponsesExport($livewire->getSurvey()), Str::slug($livewire->getSurvey()->title) . '-responses.xlsx');
+                    })
+                    ->icon('heroicon-s-arrow-down-tray'),
+            ])->dropdownPlacement('bottom-end'),
         ];
+    }
+
+    protected function getRefreshAction(): Action
+    {
+        return Action::make('refresh')
+            ->action(
+                fn () => Notification::make()
+                    ->title('Refreshed')
+                    ->success()
+                    ->send()
+            )
+            ->icon('heroicon-o-arrow-path')
+            ->iconButton();
+    }
+
+    public function getMaxContentWidth(): MaxWidth | string | null
+    {
+        return MaxWidth::ScreenMedium;
+    }
+
+    public function getTitle(): string | Htmlable
+    {
+        return 'Survey #' . $this->getRecord()->getKey();
     }
 }
