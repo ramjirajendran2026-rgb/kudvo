@@ -222,6 +222,11 @@ class SurveyResource extends Resource
                     ->label('Allow other option?')
                     ->visible(condition: fn (Get $get): bool => SurveyQuestionType::tryFrom($get('type'))?->canHaveOtherOption() ?? false),
 
+                Toggle::make('settings.unique')
+                    ->default(false)
+                    ->label('Must be unique?')
+                    ->visible(condition: fn (Get $get): bool => SurveyQuestionType::tryFrom($get('type'))?->canBeUnique() ?? false),
+
                 Group::make([
                     TextInput::make('min')
                         ->numeric()

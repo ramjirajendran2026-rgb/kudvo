@@ -27,6 +27,7 @@ use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Livewire\Component;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
@@ -75,6 +76,18 @@ enum SurveyQuestionType: string implements HasLabel
             self::Number => 'Number',
             self::Url => 'URL',
             self::Photo => 'Photo',
+        };
+    }
+
+    public function canBeUnique(): bool
+    {
+        return match ($this) {
+            self::MultipleChoice,
+            self::Checkboxes,
+            self::Email,
+            self::Phone,
+            self::VerifiedPhone => true,
+            default => false,
         };
     }
 
@@ -160,7 +173,12 @@ enum SurveyQuestionType: string implements HasLabel
         return Radio::make($question->key)
             ->label($question->text)
             ->options(Arr::mapWithKeys($question->options, fn ($option) => [$option => $option]))
-            ->required($question->is_required);
+            ->required($question->is_required)
+            ->rule(
+                Rule::unique('survey_answers', 'content')
+                    ->where('question_id', $question->getKey()),
+                $question->settings['unique'] ?? false,
+            );
     }
 
     protected function getCheckboxesComponent(SurveyQuestion $question): CheckboxList
@@ -168,7 +186,12 @@ enum SurveyQuestionType: string implements HasLabel
         return CheckboxList::make($question->key)
             ->label($question->text)
             ->options(Arr::mapWithKeys($question->options, fn ($option) => [$option => $option]))
-            ->required($question->is_required);
+            ->required($question->is_required)
+            ->rule(
+                Rule::unique('survey_answers', 'content')
+                    ->where('question_id', $question->getKey()),
+                $question->settings['unique'] ?? false,
+            );
     }
 
     protected function getDateComponent(SurveyQuestion $question): DatePicker
@@ -217,7 +240,12 @@ enum SurveyQuestionType: string implements HasLabel
     protected function getEmailComponent(SurveyQuestion $question): TextInput
     {
         return $this->makeTextInputComponent($question)
-            ->email();
+            ->email()
+            ->rule(
+                Rule::unique('survey_answers', 'content')
+                    ->where('question_id', $question->getKey()),
+                $question->settings['unique'] ?? false,
+            );
     }
 
     protected function getPhoneComponent(SurveyQuestion $question): PhoneInput
@@ -226,6 +254,11 @@ enum SurveyQuestionType: string implements HasLabel
             ->defaultCountry(request()->ipinfo?->country ?? '')
             ->label($question->text)
             ->required($question->is_required)
+            ->rule(
+                Rule::unique('survey_answers', 'content')
+                    ->where('question_id', $question->getKey()),
+                $question->settings['unique'] ?? false,
+            )
             ->validateFor();
     }
 
@@ -261,6 +294,11 @@ enum SurveyQuestionType: string implements HasLabel
                 ])
                 ->label($question->text)
                 ->required($question->is_required)
+                ->rule(
+                    Rule::unique('survey_answers', 'content')
+                        ->where('question_id', $question->getKey()),
+                    $question->settings['unique'] ?? false,
+                )
                 ->validateFor(),
 
             TextInput::make($question->key)
