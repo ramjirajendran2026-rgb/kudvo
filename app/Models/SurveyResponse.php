@@ -16,6 +16,7 @@ class SurveyResponse extends Model implements Sortable
     protected $fillable = [
         'ip_address',
         'user_agent',
+        'referrer_code',
         'sort',
         'survey_id',
         'user_id',

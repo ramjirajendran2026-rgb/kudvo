@@ -12,17 +12,17 @@ use Illuminate\Support\Str;
 
 class SubmitSurveyResponse
 {
-    public function execute(Survey $survey, array $data): SurveyResponse
+    public function execute(Survey $survey, array $answers, ?array $responseData = null): SurveyResponse
     {
         /** @var SurveyResponse $response */
-        $response = $survey->responses()->create();
+        $response = $survey->responses()->create($responseData ?? []);
 
-        $data = collect($data)->filter()->filter(fn ($value, $key) => ! Str::endsWith($key, '_otp'))->map(fn ($value, $key) => [
+        $answers = collect($answers)->filter()->filter(fn ($value, $key) => ! Str::endsWith($key, '_otp'))->map(fn ($value, $key) => [
             'question_id' => Str::replaceStart(SurveyQuestion::KEY_PREFIX, '', $key),
             'content' => $value,
         ])->values()->all();
 
-        $response->answers()->createMany($data);
+        $response->answers()->createMany($answers);
 
         $verifiedPhoneQuestionIds = $survey->questions()
             ->where('type', SurveyQuestionType::VerifiedPhone)
@@ -30,7 +30,7 @@ class SubmitSurveyResponse
             ->filter(fn (SurveyQuestion $surveyQuestion) => $surveyQuestion->settings['verified_phone']['send_acknowledgement'] ?? false)
             ->pluck('id');
 
-        $verifiedPhoneAnswers = collect($data)
+        $verifiedPhoneAnswers = collect($answers)
             ->filter(fn ($value, $key) => $verifiedPhoneQuestionIds->contains($value['question_id']))
             ->all();
 

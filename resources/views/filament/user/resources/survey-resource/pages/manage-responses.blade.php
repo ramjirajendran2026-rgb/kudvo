@@ -73,6 +73,12 @@
                 Submitted on
                 {{ $this->getActiveResponse()?->created_at->timezone(filament()->getTenant()?->timezone)->format('d M, Y h:i:s A') }}
             </span>
+            @if (filled($this->getActiveResponse()?->referrer_code))
+                <span class="text-sm text-gray-950 dark:text-white">
+                    • Referrer Code:
+                    {{ $this->getActiveResponse()?->referrer_code }}
+                </span>
+            @endif
         </div>
 
         <x-filament::loading-indicator

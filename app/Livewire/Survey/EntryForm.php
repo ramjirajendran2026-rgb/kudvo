@@ -33,9 +33,13 @@ class EntryForm extends Component implements HasForms
 
     public bool $isPreview;
 
+    public ?string $referrer_code = null;
+
     public function mount(): void
     {
         $this->isPreview ??= request()->routeIs('survey.preview') || ! $this->survey->is_published || ! $this->survey->is_active;
+
+        $this->referrer_code ??= request()->query('referrer_code');
 
         $this->authorizePageAccess();
 
@@ -99,7 +103,10 @@ class EntryForm extends Component implements HasForms
             return;
         }
 
-        $this->surveyResponse = app(SubmitSurveyResponse::class)->execute($this->survey, $data);
+        $this->surveyResponse = app(SubmitSurveyResponse::class)
+            ->execute($this->survey, $data, [
+                'referrer_code' => $this->referrer_code,
+            ]);
 
         $this->isSubmitted = true;
     }

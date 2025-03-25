@@ -34,7 +34,7 @@ class SurveyResponsesExport implements FromCollection, WithColumnFormatting, Wit
             ->with('answers')
             ->get()
             ->map(
-                fn (SurveyResponse $response) => collect(['reference_number' => $this->generateReferenceNumber->execute($response, $this->survey), 'sort' => $response->id, 'created_at' => $response->created_at->format('Y-m-d H:i:s')])
+                fn (SurveyResponse $response) => collect(['reference_number' => $this->generateReferenceNumber->execute($response, $this->survey), 'referrer_code' => $response->referrer_code, 'sort' => $response->id, 'created_at' => $response->created_at->format('Y-m-d H:i:s')])
                     ->merge($response->answers->mapWithKeys(fn (SurveyAnswer $surveyAnswer) => [SurveyQuestion::KEY_PREFIX . $surveyAnswer->question_id => $this->getFormattedAnswer($surveyAnswer)])->toArray())
             );
     }
@@ -44,16 +44,12 @@ class SurveyResponsesExport implements FromCollection, WithColumnFormatting, Wit
         return [
             $row['reference_number'] ?? 'N/A',
             Date::dateTimeToExcel(Carbon::parse($row['created_at']) ?? now()),
+            $row['referrer_code'],
             ...$this->getQuestions()
                 ->pluck('id')
                 ->map(fn (int $questionId) => $row[SurveyQuestion::KEY_PREFIX . $questionId] ?? '')
                 ->toArray(),
         ];
-    }
-
-    public function headings(): array
-    {
-        return ['Reference Number', 'Submitted At', ...$this->getQuestions()->pluck('text')->values()->toArray()];
     }
 
     protected function getQuestions()
@@ -67,6 +63,11 @@ class SurveyResponsesExport implements FromCollection, WithColumnFormatting, Wit
             SurveyQuestionType::Photo => Storage::disk(config('filament.default_filesystem_disk'))->url($answer->content),
             default => $answer->content_formatted,
         };
+    }
+
+    public function headings(): array
+    {
+        return ['Reference Number', 'Submitted At', 'Referrer Code', ...$this->getQuestions()->pluck('text')->values()->toArray()];
     }
 
     public function columnFormats(): array
