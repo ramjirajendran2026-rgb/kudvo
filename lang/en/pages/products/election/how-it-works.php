@@ -45,7 +45,7 @@ return [
             ],
         ],
         'video' => [
-            'url' => asset('video/products/election/how-it-works.mp4'),
+            'url' => asset('video\products\election\kudvo-sms-vote-video.mp4'),
             'unsupported_label' => 'Your browser does not support HTML5 video.',
         ],
     ],

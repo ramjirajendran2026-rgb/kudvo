@@ -236,14 +236,14 @@
                                     class="mx-auto flex h-full max-w-5xl items-center"
                                 >
                                     <div
-                                        class="aspect-video max-h-full w-full overflow-hidden rounded-3xl bg-black shadow-2xl"
+                                        class="max-h-full aspect-[9/16] w-full overflow-hidden rounded-3xl bg-black shadow-2xl"
                                         @click.outside="modalOpen = false"
                                         @keydown.escape.window="modalOpen = false"
                                     >
                                         <video
                                             x-init="$watch('modalOpen', (value) => (value ? $el.play() : $el.pause()))"
-                                            width="1920"
-                                            height="1080"
+                                            width="1080"
+                                            height="1920"
                                             loop
                                             controls
                                         >
