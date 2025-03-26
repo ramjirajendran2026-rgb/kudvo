@@ -44,9 +44,21 @@ return [
                             </svg>',
             ],
         ],
-        'video' => [
-            'url' => asset('video/products/election/how-it-works.mp4'),
-            'unsupported_label' => 'Your browser does not support HTML5 video.',
+        'videos' => [
+            [
+                'title' => 'How to vote with Kudvo using SMS',
+                'thumbnail' => asset('img/products/election/how-to-vote-using-sms.webp'),
+                'url' => 'https://kudvo.s3.amazonaws.com/media/marketing/products/election/how-it-works-sms-voting.mp4',
+                'aspect_ratio' => '9/16',
+                'unsupported_label' => 'Your browser does not support HTML5 video.',
+            ],
+            [
+                'title' => 'How to vote with Kudvo using Email',
+                'thumbnail' => asset('img/products/election/how-to-vote-using-email.webp'),
+                'url' => 'https://kudvo.s3.amazonaws.com/media/marketing/products/election/how-it-works-email-voting.mp4',
+                'aspect_ratio' => '16/9',
+                'unsupported_label' => 'Your browser does not support HTML5 video.',
+            ],
         ],
     ],
 ];
