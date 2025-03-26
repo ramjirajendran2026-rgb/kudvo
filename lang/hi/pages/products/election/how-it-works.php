@@ -44,9 +44,21 @@ return [
                         </svg>',
             ],
         ],
-        'video' => [
-            'url' => asset('video/products/election/how-it-works.mp4'),
-            'unsupported_label' => 'आपका ब्राउज़र HTML5 वीडियो का समर्थन नहीं करता है।',
+        'videos' => [
+            [
+                'title' => 'एसएमएस का उपयोग करके कुदवो के साथ वोट कैसे करें',
+                'thumbnail' => asset('img/products/election/how-to-vote-using-sms.webp'),
+                'url' => 'https://kudvo.s3.amazonaws.com/media/marketing/products/election/how-it-works-sms-voting.mp4',
+                'aspect_ratio' => '9/16',
+                'unsupported_label' => 'आपका ब्राउज़र HTML5 वीडियो का समर्थन नहीं करता है।',
+            ],
+            [
+                'title' => 'ईमेल का उपयोग करके कुदवो के साथ वोट कैसे करें',
+                'thumbnail' => asset('img/products/election/how-to-vote-using-sms.webp'),
+                'url' => 'https://kudvo.s3.amazonaws.com/media/marketing/products/election/how-it-works-email-voting.mp4',
+                'aspect_ratio' => '16/9',
+                'unsupported_label' => 'आपका ब्राउज़र HTML5 वीडियो का समर्थन नहीं करता है।',
+            ],
         ],
     ],
 ];
