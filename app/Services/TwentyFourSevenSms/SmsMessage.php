@@ -43,7 +43,7 @@ class SmsMessage
 
     public function getMessage(): ?string
     {
-        return $this->message;
+        return Str::transliterate($this->message);
     }
 
     public function getServiceName(): ServiceName
