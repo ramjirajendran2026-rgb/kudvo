@@ -22,8 +22,6 @@ class LogClicksendSentSms
 
         /** @var SendSmsResponseMessageData $message */
         foreach ($event->response->messages as $message) {
-            Log::info("[Clicksend] Message Response: {$message->toJson()}");
-
             if (blank($message->message_id)) {
                 continue;
             }

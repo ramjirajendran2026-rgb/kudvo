@@ -62,8 +62,6 @@ class TwentyFourSevenSmsChannel
                 throw new Exception(message: 'Invalid response received. ' . $response);
             }
 
-            Log::info(message: '[24x7SMS] SendSMS Response: ' . $response);
-
             SmsMessageSent::dispatch($notifiable, $notification, $response);
 
             return $response;

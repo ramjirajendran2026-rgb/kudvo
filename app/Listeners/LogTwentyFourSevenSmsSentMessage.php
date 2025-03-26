@@ -9,7 +9,6 @@ use App\Notifications\Contracts\HasSmsMessagePurpose;
 use App\Services\TwentyFourSevenSms\SmsMessageSent;
 use App\Services\TwentyFourSevenSms\TwentyFourSevenSmsChannel;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class LogTwentyFourSevenSmsSentMessage
@@ -28,8 +27,6 @@ class LogTwentyFourSevenSmsSentMessage
             ) {
                 continue;
             }
-
-            Log::info(message: '[24x7SMS] Message Response: ' . json_encode($message));
 
             SmsMessage::createOrFirst(
                 [
