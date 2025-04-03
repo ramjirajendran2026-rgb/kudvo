@@ -10,7 +10,6 @@ use App\Services\Clicksend\ClicksendChannel;
 use App\Services\Clicksend\Data\SendSmsResponseMessageData;
 use App\Services\Clicksend\SmsSent;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Log;
 
 class LogClicksendSentSms
 {
