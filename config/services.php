@@ -34,6 +34,14 @@ return [
         ],
     ],
 
+    'stripe' => [
+        'key' => env('STRIPE_KEY'),
+        'secret' => env('STRIPE_SECRET'),
+        'webhook' => [
+            'secret' => env('STRIPE_WEBHOOK_SECRET'),
+        ],
+    ],
+
     'ipinfo' => [
         'access_token' => env('IPINFO_TOKEN'),
         'no_except' => true,

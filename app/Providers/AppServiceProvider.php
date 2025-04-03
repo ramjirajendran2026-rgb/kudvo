@@ -26,10 +26,12 @@ use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Textarea;
 use Filament\Http\Responses\Auth\Contracts\LogoutResponse as LogoutResponseContract;
 use Filament\Notifications\Livewire\Notifications;
+use Filament\Support\Assets\Js;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Support\Enums\VerticalAlignment;
+use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Tables\Actions\CreateAction as TableCreateAction;
 use Filament\Tables\Columns\Column;
@@ -49,30 +51,6 @@ use Illuminate\Support\Str;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
-    public function register(): void
-    {
-        $this->app->singleton(abstract: 'kudvo', concrete: function (): KudvoManager {
-            return new KudvoManager;
-        });
-
-        $this->app->bind(abstract: LogoutResponseContract::class, concrete: LogoutResponse::class);
-
-        $this->app->when(concrete: GenerateShortLinkKey::class)
-            ->needs(abstract: Hashids::class)
-            ->give(implementation: fn (): Hashids => new Hashids(salt: ShortLink::class, minHashLength: 6));
-
-        $this->app->when(concrete: GenerateMeetingShortKey::class)
-            ->needs(abstract: Hashids::class)
-            ->give(implementation: fn (): Hashids => new Hashids(salt: Meeting::class, minHashLength: 6));
-
-        $this->app->when(concrete: GenerateParticipantShortKey::class)
-            ->needs(abstract: Hashids::class)
-            ->give(implementation: fn (): Hashids => new Hashids(salt: Participant::class, minHashLength: 6));
-    }
-
     /**
      * Bootstrap any application services.
      */
@@ -152,6 +130,10 @@ class AppServiceProvider extends ServiceProvider
             'primary' => Color::Indigo,
         ]);
 
+        FilamentAsset::register(assets: [
+            Js::make(id: 'stripe-address-form-component', path: 'https://js.stripe.com/v3/')->loadedOnRequest(),
+        ]);
+
         Notifications::alignment(alignment: Alignment::Center);
         Notifications::verticalAlignment(alignment: VerticalAlignment::Start);
 
@@ -217,5 +199,29 @@ HTML
             $component->language(language: 'en-us')
                 ->hidden(condition: App::isLocal());
         });
+    }
+
+    /**
+     * Register any application services.
+     */
+    public function register(): void
+    {
+        $this->app->singleton(abstract: 'kudvo', concrete: function (): KudvoManager {
+            return new KudvoManager;
+        });
+
+        $this->app->bind(abstract: LogoutResponseContract::class, concrete: LogoutResponse::class);
+
+        $this->app->when(concrete: GenerateShortLinkKey::class)
+            ->needs(abstract: Hashids::class)
+            ->give(implementation: fn (): Hashids => new Hashids(salt: ShortLink::class, minHashLength: 6));
+
+        $this->app->when(concrete: GenerateMeetingShortKey::class)
+            ->needs(abstract: Hashids::class)
+            ->give(implementation: fn (): Hashids => new Hashids(salt: Meeting::class, minHashLength: 6));
+
+        $this->app->when(concrete: GenerateParticipantShortKey::class)
+            ->needs(abstract: Hashids::class)
+            ->give(implementation: fn (): Hashids => new Hashids(salt: Participant::class, minHashLength: 6));
     }
 }
