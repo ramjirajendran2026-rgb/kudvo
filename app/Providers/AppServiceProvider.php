@@ -2,14 +2,8 @@
 
 namespace App\Providers;
 
-use App\Actions\GenerateShortLinkKey;
-use App\Actions\Meeting\GenerateMeetingShortKey;
-use App\Actions\Meeting\GenerateParticipantShortKey;
 use App\Filament\Election\Http\Responses\Auth\LogoutResponse;
 use App\KudvoManager;
-use App\Models\Meeting;
-use App\Models\Participant;
-use App\Models\ShortLink;
 use App\Models\User;
 use App\Services\Clicksend\ClicksendChannel;
 use App\Services\TwentyFourSevenSms\TwentyFourSevenSmsChannel;
@@ -37,7 +31,6 @@ use Filament\Tables\Actions\CreateAction as TableCreateAction;
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Table;
 use GuzzleHttp\Client;
-use Hashids\Hashids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\ChannelManager;
 use Illuminate\Support\Arr;
@@ -211,17 +204,5 @@ HTML
         });
 
         $this->app->bind(abstract: LogoutResponseContract::class, concrete: LogoutResponse::class);
-
-        $this->app->when(concrete: GenerateShortLinkKey::class)
-            ->needs(abstract: Hashids::class)
-            ->give(implementation: fn (): Hashids => new Hashids(salt: ShortLink::class, minHashLength: 6));
-
-        $this->app->when(concrete: GenerateMeetingShortKey::class)
-            ->needs(abstract: Hashids::class)
-            ->give(implementation: fn (): Hashids => new Hashids(salt: Meeting::class, minHashLength: 6));
-
-        $this->app->when(concrete: GenerateParticipantShortKey::class)
-            ->needs(abstract: Hashids::class)
-            ->give(implementation: fn (): Hashids => new Hashids(salt: Participant::class, minHashLength: 6));
     }
 }
