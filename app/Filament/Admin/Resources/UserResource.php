@@ -62,6 +62,18 @@ class UserResource extends Resource
                         $record->hasStaffRole() => Filament::getPanel(id: 'admin')->getUrl(),
                         default => Filament::getPanel(id: 'app')->getUrl()
                     }),
+
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\Action::make('mark_as_verified')
+                        ->requiresConfirmation()
+                        ->action(function (User $record, Tables\Actions\Action $action) {
+                            $record->markEmailAsVerified();
+
+                            $action->success();
+                        })
+                        ->successNotificationTitle('Marked as verified')
+                        ->visible(fn (User $record): bool => ! $record->hasVerifiedEmail()),
+                ]),
             ])
             ->columns(components: [
                 Tables\Columns\TextColumn::make(name: 'id')
