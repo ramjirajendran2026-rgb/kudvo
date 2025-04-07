@@ -82,8 +82,7 @@ enum SurveyQuestionType: string implements HasLabel
     public function canBeUnique(): bool
     {
         return match ($this) {
-            self::MultipleChoice,
-            self::Checkboxes,
+            self::ShortAnswer,
             self::Email,
             self::Phone,
             self::VerifiedPhone => true,
