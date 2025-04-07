@@ -8,6 +8,6 @@ class ResultMetaData extends Data
 {
     public function __construct(
         public string $key,
-        public int $value,
+        public string $value,
     ) {}
 }

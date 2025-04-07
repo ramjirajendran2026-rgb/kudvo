@@ -704,6 +704,9 @@ candidate_bio' => [
                 'email' => [
                     'label' => 'ईमेल पता', // Email address
                 ],
+                'weightage' => [
+                    'label' => 'महत्व', // Weightage
+                ],
                 'segments' => [
                     'label' => 'खंड', // Segments
                 ],

@@ -19,6 +19,7 @@ class ElectorFactory extends Factory
             'last_name' => null,
             'email' => null,
             'phone' => null,
+            'weightage' => 1,
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ];
@@ -49,6 +50,15 @@ class ElectorFactory extends Factory
         return $this->state(function (array $attributes) use ($phone) {
             return [
                 'phone' => $phone ?: $this->faker->e164PhoneNumber(),
+            ];
+        });
+    }
+
+    public function withWeightage(): static
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'weightage' => $this->faker->randomFloat(2, 0.01, 100),
             ];
         });
     }

@@ -159,7 +159,7 @@ class Result extends ElectionPage
                                                 ->badge()
                                                 ->color(color: 'success')
                                                 ->extraAttributes(attributes: ['class' => '[&_.fi-badge]:text-xl [&_.fi-badge]:w-full [&_.w-max:has(.fi-badge)]:w-full'])
-                                                ->formatStateUsing(callback: fn (int $state): string => Str::plural(value: "$state vote", count: $state))
+                                                ->formatStateUsing(callback: fn (string $state): string => Str::plural(value: "$state vote", count: $state))
                                                 ->getStateUsing(callback: fn (Candidate $record) => $this->getCandidateVotes($record->uuid, $this->boothId))
                                                 ->grow(condition: false)
                                                 ->hidden(condition: fn (Candidate $record): bool => $this->getElection()->preference->disable_unopposed_selection && $record->position->isUnopposed())
@@ -181,7 +181,7 @@ class Result extends ElectionPage
             ->record($this->getElection());
     }
 
-    protected function getCandidateVotes(string $key, ?int $boothId = null): int
+    protected function getCandidateVotes(string $key, ?int $boothId = null): string
     {
         return $this->getElection()->result?->meta->toCollection()
             ->when(
@@ -190,7 +190,7 @@ class Result extends ElectionPage
                 fn (Collection $collection) => $collection->where('key', "$key"),
             )
             ->first()
-            ?->value ?? 0;
+            ?->value ?? '0';
     }
 
     protected function generateEmptyStatePlaceholder(string $heading, ?string $description = null, ?string $icon = null, array $actions = []): HtmlString
