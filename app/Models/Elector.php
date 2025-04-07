@@ -53,6 +53,7 @@ class Elector extends Model implements AuthenticatableContract, AuthorizableCont
         'full_name',
         'email',
         'phone',
+        'weightage',
         'groups',
         'current_session_id',
         'event_id',
@@ -61,6 +62,7 @@ class Elector extends Model implements AuthenticatableContract, AuthorizableCont
 
     protected $casts = [
         'event_id' => 'int',
+        'weightage' => 'decimal:16',
     ];
 
     protected $appends = [

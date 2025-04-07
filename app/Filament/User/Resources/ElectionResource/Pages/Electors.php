@@ -30,6 +30,7 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Log;
 
 class Electors extends ElectionPage implements HasTable
 {
@@ -91,6 +92,10 @@ class Electors extends ElectionPage implements HasTable
                 $this->getDeleteAction(),
 
                 $this->getSendBallotLinkAction(),
+
+                ActionGroup::make(actions: [
+                    $this->getLogBallotLink(),
+                ]),
             ])
             ->groupedBulkActions(actions: [
                 ElectorResource::getBulkDeleteAction()
@@ -191,6 +196,15 @@ class Electors extends ElectionPage implements HasTable
     {
         return ElectorResource::getTableDeleteAction()
             ->visible(condition: $this->canDelete());
+    }
+
+    protected function getLogBallotLink(): TableAction
+    {
+        return TableAction::make(name: 'logBallotLink')
+            ->action(action: function (HasElection $livewire, Elector $elector, TableAction $action) {
+                Log::info(sprintf('Ballot link: %s - %s', $elector->membership_number, route(name: 'short_link.go', parameters: ['b' => $elector->short_code])));
+            })
+            ->visible(condition: fn (HasElection $livewire): bool => auth()->user()?->hasAdminRole());
     }
 
     protected function getSendBallotLinkAction(): TableAction
@@ -309,6 +323,7 @@ class Electors extends ElectionPage implements HasTable
                     ->when($data['with_name'], fn (ElectorFactory $factory) => $factory->withName())
                     ->when($data['with_email'], fn (ElectorFactory $factory) => $factory->withEmail())
                     ->when($data['with_phone'], fn (ElectorFactory $factory) => $factory->withPhone())
+                    ->when($data['with_weightage'], fn (ElectorFactory $factory) => $factory->withWeightage())
                     ->create();
 
                 $action->success();
@@ -328,6 +343,9 @@ class Electors extends ElectionPage implements HasTable
                     ->default(true),
 
                 Toggle::make('with_phone')
+                    ->default(true),
+
+                Toggle::make('with_weightage')
                     ->default(true),
             ])
             ->successNotificationTitle('Generated successfully');

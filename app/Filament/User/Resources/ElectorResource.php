@@ -18,6 +18,7 @@ use Filament\Tables\Actions\DeleteAction as TableDeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction as TableEditAction;
 use Filament\Tables\Actions\ImportAction as TableImportAction;
+use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Guava\FilamentClusters\Forms\Cluster;
@@ -92,6 +93,8 @@ class ElectorResource extends Resource
                             )
                     ),
 
+                ElectorForm::weightageComponent(),
+
                 ElectorForm::groupsComponent()
                     ->hidden(),
 
@@ -127,6 +130,11 @@ class ElectorResource extends Resource
                     ->label(label: __('filament.user.elector-resource.table.email.label'))
                     ->wrap()
                     ->searchable(),
+
+                TextColumn::make(name: 'weightage')
+                    ->label(label: __('filament.user.elector-resource.table.weightage.label'))
+                    ->formatStateUsing(callback: fn ($state) => rtrim(rtrim($state, '0'), '.'))
+                    ->summarize(Sum::make()->label('')),
 
                 TextColumn::make(name: 'segments.name')
                     ->badge()

@@ -718,6 +718,9 @@ return [
                 'email' => [
                     'label' => 'Email address',
                 ],
+                'weightage' => [
+                    'label' => 'Weightage',
+                ],
                 'segments' => [
                     'label' => 'Segments',
                 ],

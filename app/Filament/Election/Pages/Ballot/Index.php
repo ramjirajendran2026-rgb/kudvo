@@ -111,6 +111,7 @@ class Index extends BasePage
                             uuid: $position->uuid,
                             preference: $this->getElection()->preference
                         )
+                            ->weightage($this->getElector()?->weightage ?? '1')
                             ->when(
                                 $this->getElection()->preference->candidate_group,
                                 callback: fn (VotesPicker $picker) => $picker

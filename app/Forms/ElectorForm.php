@@ -123,4 +123,14 @@ readonly class ElectorForm
             ->placeholder(placeholder: __('filament.user.elector-resource.form.segments.placeholder'))
             ->preload();
     }
+
+    public static function weightageComponent(): TextInput
+    {
+        return TextInput::make('weightage')
+            ->default(1)
+            ->numeric()
+            ->maxValue(99999999)
+            ->minValue(0.00000001)
+            ->required();
+    }
 }

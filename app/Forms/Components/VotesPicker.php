@@ -34,6 +34,8 @@ class VotesPicker extends CheckboxList
 
     protected ?array $groups = null;
 
+    protected string $weightage = '1';
+
     public static function forPosition(string $uuid, PreferenceData $preference): static
     {
         $static = app(abstract: static::class, parameters: ['name' => $uuid]);
@@ -77,7 +79,7 @@ class VotesPicker extends CheckboxList
         $this->maxItems(fn (Position $position) => $position->quota);
         $this->minItems(fn (Position $position) => $position->threshold);
 
-        $this->mutateDehydratedStateUsing(fn (array $state) => Arr::map($state, fn ($item) => new VoteSecretData($item, 1)));
+        $this->mutateDehydratedStateUsing(static fn (array $state, self $component) => Arr::map($state, fn ($item) => new VoteSecretData($item, $component->getWeightage())));
 
         $this->noSearchResultsMessage('No candidates match your search.');
 
@@ -250,6 +252,18 @@ BLADE
     public function hasGroups(): bool
     {
         return $this->getGroups() !== null;
+    }
+
+    public function weightage(string $weightage): static
+    {
+        $this->weightage = $weightage;
+
+        return $this;
+    }
+
+    public function getWeightage(): float
+    {
+        return $this->weightage;
     }
 
     protected function resolveDefaultClosureDependencyForEvaluationByType(string $parameterType): array
