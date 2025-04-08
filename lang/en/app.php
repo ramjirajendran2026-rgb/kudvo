@@ -164,6 +164,9 @@ return [
         'wiki' => [
             'label' => 'Wiki',
         ],
+        'help' => [
+            'label' => 'Help',
+        ],
         'contact' => [
             'label' => 'Contact',
         ],
@@ -172,16 +175,6 @@ return [
         ],
         'terms_of_service' => [
             'label' => 'Terms of Service',
-        ],
-        'help' => [
-            'label' => 'Help',
-            'items' => [
-                'faq' => [
-                    'label' => 'FAQ',
-                ],
-                'contact' => 'Contact',
-            ],
-            'how_it_works' => 'How it Works',
         ],
         'vote_now' => [
             'label' => 'Vote Now',

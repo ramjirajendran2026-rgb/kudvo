@@ -159,6 +159,13 @@
                 >
                     {{ __('app.nav.contact.label') }}
                 </x-filament-panels::topbar.item>
+
+                <x-filament-panels::topbar.item
+                    :should-open-url-in-new-tab="true"
+                    url="https://kudvo.tawk.help/"
+                >
+                    {{ __('app.nav.help.label') }}
+                </x-filament-panels::topbar.item>
             </ul>
 
             <div class="ms-auto hidden gap-x-4 lg:flex lg:items-center">
@@ -271,6 +278,13 @@
                         :url="route('home') . '#contact'"
                     >
                         {{ __('app.nav.contact.label') }}
+                    </x-filament-panels::topbar.item>
+
+                    <x-filament-panels::topbar.item
+                        :should-open-url-in-new-tab="true"
+                        url="https://kudvo.tawk.help/"
+                    >
+                        {{ __('app.nav.help.label') }}
                     </x-filament-panels::topbar.item>
                 </ul>
 
