@@ -31,6 +31,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\HtmlString;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
@@ -110,6 +111,18 @@ class UserPanelProvider extends PanelProvider
             ->renderHook(
                 name: PanelsRenderHook::BODY_START,
                 hook: fn (GoogleTagManagerSettings $gtm) => new HtmlString(html: $gtm->getBodyScript())
+            )
+            ->renderHook(
+                name: PanelsRenderHook::SIMPLE_PAGE_START,
+                hook: fn (Panel $panel) => new HtmlString(html: Blade::render(
+                    <<<'BLADE'
+<x-filament::link href="/" icon="heroicon-m-home">Home</x-filament::button>
+BLADE
+                )),
+                scopes: [
+                    Login::class,
+                    Register::class,
+                ]
             )
             ->renderHook(
                 name: PanelsRenderHook::PAGE_START,
