@@ -46,18 +46,12 @@ return [
         ],
         'videos' => [
             [
-                'title' => 'एसएमएस का उपयोग करके कुदवो के साथ वोट कैसे करें',
-                'thumbnail' => asset('img/products/election/how-to-vote-using-sms.webp'),
-                'url' => 'https://kudvo.s3.amazonaws.com/media/marketing/products/election/how-it-works-sms-voting.mp4',
-                'aspect_ratio' => '9/16',
-                'unsupported_label' => 'आपका ब्राउज़र HTML5 वीडियो का समर्थन नहीं करता है।',
+                'yt-video-id' => 'i1if-NjLJZs',
+                'title' => 'How to Vote in Kudvo Using SMS',
             ],
             [
-                'title' => 'ईमेल का उपयोग करके कुदवो के साथ वोट कैसे करें',
-                'thumbnail' => asset('img/products/election/how-to-vote-using-sms.webp'),
-                'url' => 'https://kudvo.s3.amazonaws.com/media/marketing/products/election/how-it-works-email-voting.mp4',
-                'aspect_ratio' => '16/9',
-                'unsupported_label' => 'आपका ब्राउज़र HTML5 वीडियो का समर्थन नहीं करता है।',
+                'yt-video-id' => 'wQ2eSipPl7M',
+                'title' => 'How to Vote in Kudvo Using Email',
             ],
         ],
     ],

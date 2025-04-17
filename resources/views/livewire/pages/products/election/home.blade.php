@@ -122,7 +122,7 @@
                 </div>
             @endforeach
 
-            <div class="col-span-full text-center">
+            <div class="col-span-full flex gap-4 mx-auto text-center">
                 <x-filament::button
                     :href="__('pages/products/election/home.content.how_it_works.cta.url')"
                     :outlined="true"
@@ -131,6 +131,14 @@
                     title="How its works page link"
                 >
                     {{ __('pages/products/election/home.content.how_it_works.cta.label') }}
+                </x-filament::button>
+                <x-filament::button
+                    size="xl"
+                    :outlined="true"
+                    tag="a"
+                    :href="__('pages/products/election/how-it-works.content.hero.cta.url')"
+                >
+                    {{ __('pages/products/election/how-it-works.content.hero.cta.label') }}
                 </x-filament::button>
             </div>
         </div>
