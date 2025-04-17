@@ -3,8 +3,10 @@
 namespace App\Services\WhatsApp\Http;
 
 use App\Enums\WhatsAppMessageStatus;
-use App\Enums\WhatsAppMessageType;
 use App\Services\WhatsApp\Data\SendWhatsAppMessageResponseData;
+use App\Services\WhatsApp\Messages\TextWhatsAppMessage;
+use App\Services\WhatsApp\Messages\WhatsAppMessage;
+use App\Services\WhatsApp\Messages\WhatsAppMessageFactory;
 use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
@@ -121,36 +123,37 @@ class WhatsAppClient
             'to' => $to,
         ];
 
-        // If message is a string, treat it as a text message
-        if (is_string($message)) {
-            $messageType = WhatsAppMessageType::TEXT;
-            $payload['type'] = $messageType->value;
-            $payload[$messageType->value] = $messageType->formatPayload($message);
+        // If message is a WhatsAppMessage object, use its toArray method
+        if ($message instanceof WhatsAppMessage) {
+            $messageArray = $message->toArray();
+            $payload['type'] = $messageArray['type'];
+            $payload[$messageArray['type']] = $messageArray[$messageArray['type']];
 
             return $payload;
         }
 
-        // If message is an array, check for type
-        if (is_array($message) && isset($message['type'])) {
-            $type = $message['type'];
-
-            // Find the enum case for this type
-            foreach (WhatsAppMessageType::cases() as $case) {
-                if ($case->value === $type) {
-                    $messageType = $case;
-
-                    break;
-                }
-            }
-
-            if (! isset($messageType)) {
-                throw new Exception("Unsupported message type: {$type}");
-            }
-
-            $payload['type'] = $messageType->value;
-            $payload[$messageType->value] = $messageType->formatPayload($message);
+        // If message is a string, create a TextWhatsAppMessage using the factory
+        if (is_string($message)) {
+            $textMessage = WhatsAppMessageFactory::text($message);
+            $messageArray = $textMessage->toArray();
+            $payload['type'] = $messageArray['type'];
+            $payload[$messageArray['type']] = $messageArray[$messageArray['type']];
 
             return $payload;
+        }
+
+        // If message is an array, use the factory to create the appropriate message object
+        if (is_array($message) && isset($message['type'])) {
+            try {
+                $whatsAppMessage = WhatsAppMessageFactory::fromArray($message);
+                $messageArray = $whatsAppMessage->toArray();
+                $payload['type'] = $messageArray['type'];
+                $payload[$messageArray['type']] = $messageArray[$messageArray['type']];
+
+                return $payload;
+            } catch (Exception $e) {
+                throw new Exception("Error creating WhatsApp message: {$e->getMessage()}");
+            }
         }
 
         throw new Exception('Invalid message format');

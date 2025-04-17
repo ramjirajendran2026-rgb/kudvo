@@ -113,17 +113,17 @@ $notifiable->notify(new WhatsAppNotification($message));
 
 The following message types are supported:
 
-- `TEXT`: Text messages
-- `IMAGE`: Image messages
-- `AUDIO`: Audio messages
-- `DOCUMENT`: Document messages
-- `VIDEO`: Video messages
-- `STICKER`: Sticker messages
-- `LOCATION`: Location messages
-- `CONTACT`: Contact messages
-- `INTERACTIVE`: Interactive messages (buttons, lists)
-- `TEMPLATE`: Template messages
-- `REACTION`: Reaction messages
+-   `TEXT`: Text messages
+-   `IMAGE`: Image messages
+-   `AUDIO`: Audio messages
+-   `DOCUMENT`: Document messages
+-   `VIDEO`: Video messages
+-   `STICKER`: Sticker messages
+-   `LOCATION`: Location messages
+-   `CONTACT`: Contact messages
+-   `INTERACTIVE`: Interactive messages (buttons, lists)
+-   `TEMPLATE`: Template messages
+-   `REACTION`: Reaction messages
 
 See the `WhatsAppMessageType` enum for all available message types.
 
