@@ -12,8 +12,8 @@ return [
             'description' => 'Experience the ease and efficiency of online voting with our intuitive platform.<br />From registration to result, manage your election seamlessly with these key steps.',
             'bg_image' => asset('img/products/election/how-its-work-bg.webp'),
             'cta' => [
-                'label' => 'Get Started',
-                'url' => route('filament.user.auth.register'),
+                'label' => 'Watch Video',
+                'url' => route('products.election.how-it-works') . '#online-voting-video',
             ],
         ],
         'steps' => [
@@ -46,18 +46,12 @@ return [
         ],
         'videos' => [
             [
-                'title' => 'How to vote with Kudvo using SMS',
-                'thumbnail' => asset('img/products/election/how-to-vote-using-sms.webp'),
-                'url' => 'https://kudvo.s3.amazonaws.com/media/marketing/products/election/how-it-works-sms-voting.mp4',
-                'aspect_ratio' => '9/16',
-                'unsupported_label' => 'Your browser does not support HTML5 video.',
+                'yt-video-id' => 'i1if-NjLJZs',
+                'title' => 'How to Vote in Kudvo Using SMS',
             ],
             [
-                'title' => 'How to vote with Kudvo using Email',
-                'thumbnail' => asset('img/products/election/how-to-vote-using-email.webp'),
-                'url' => 'https://kudvo.s3.amazonaws.com/media/marketing/products/election/how-it-works-email-voting.mp4',
-                'aspect_ratio' => '16/9',
-                'unsupported_label' => 'Your browser does not support HTML5 video.',
+                'yt-video-id' => 'wQ2eSipPl7M',
+                'title' => 'How to Vote in Kudvo Using Email',
             ],
         ],
     ],

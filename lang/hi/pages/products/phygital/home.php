@@ -59,11 +59,10 @@ return [
             ],
         ],
         'how_we_do' => [
-            'video' => [
-                'src' => asset('video/products/phygital/phygital-voting.mp4'),
-                'thumbnail' => [
-                    'src' => asset('img/products/phygital/how-we-do-phygital-voting.webp'),
-                    'alt' => 'फ़िजिटल वोटिंग वीडियो थंबनेल',
+            'videos' => [
+                [
+                    'yt-video-id' => 'hGv5iyassD8',
+                    'title' => 'कैसे कुदवो में मतदान का उपयोग करके वोट करें',
                 ],
             ],
         ],
