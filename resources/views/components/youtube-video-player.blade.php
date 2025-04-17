@@ -1,4 +1,3 @@
-<!-- resources/views/components/youtube-video.blade.php -->
 @props([
     'videoId',
     'title',
@@ -10,29 +9,35 @@
     x-data="{
         modalOpen: false,
         videoId: '{{ $videoId }}',
-        thumbnailUrl: 'https://img.youtube.com/vi/{{ $videoId }}/{{ $thumbnailQuality }}.jpg',
+        thumbnailUrl:
+            'https://img.youtube.com/vi/{{ $videoId }}/{{ $thumbnailQuality }}.jpg',
         iframeSrc: '',
         openModal() {
-            this.modalOpen = true;
-            this.iframeSrc = 'https://www.youtube.com/embed/' + this.videoId + '?autoplay=1&rel=0';
+            this.modalOpen = true
+            this.iframeSrc =
+                'https://www.youtube.com/embed/' +
+                this.videoId +
+                '?autoplay=1&rel=0'
         },
         closeModal() {
-            this.modalOpen = false;
-            this.iframeSrc = ''; // Clear the src to stop video playback
-            document.exitFullscreen();
+            this.modalOpen = false
+            this.iframeSrc = '' // Clear the src to stop video playback
+            document.exitFullscreen()
         },
         toggleFullscreen() {
-            const modal = document.getElementById('youtube-modal-container');
+            const modal = document.getElementById('youtube-modal-container')
             if (modal) {
-                if (!document.fullscreenElement) {
-                    modal.requestFullscreen().catch(err => {
-                        console.error(`Error attempting to enable fullscreen: ${err.message}`);
-                    });
+                if (! document.fullscreenElement) {
+                    modal.requestFullscreen().catch((err) => {
+                        console.error(
+                            `Error attempting to enable fullscreen: ${err.message}`,
+                        )
+                    })
                 } else {
-                    document.exitFullscreen();
+                    document.exitFullscreen()
                 }
             }
-        }
+        },
     }"
 >
     <!-- Video thumbnail -->
@@ -43,7 +48,7 @@
         aria-label="Watch the video"
     >
         <img
-            class="w-full h-auto rounded-3xl transition-transform duration-300 hover:scale-105"
+            class="h-auto w-full rounded-3xl transition-transform duration-300 hover:scale-105"
             x-bind:src="thumbnailUrl"
             alt="{{ $title }}"
         />
@@ -102,31 +107,53 @@
     >
         <div
             id="youtube-modal-container"
-            class="w-full h-full max-w-6xl max-h-[90vh] bg-black shadow-2xl"
+            class="h-full max-h-[90vh] w-full max-w-6xl bg-black shadow-2xl"
             @click.outside="closeModal()"
         >
-            <div class="relative w-full h-full">
+            <div class="relative h-full w-full">
                 <!-- Control buttons -->
-                <div class="absolute top-4 right-4 z-10 flex space-x-2">
+                <div class="absolute right-4 top-4 z-10 flex space-x-2">
                     <!-- Fullscreen button -->
                     <button
                         @click="toggleFullscreen()"
-                        class="bg-black bg-opacity-50 rounded-full p-2 text-white hover:bg-opacity-75 transition-all"
+                        class="rounded-full bg-black bg-opacity-50 p-2 text-white transition-all hover:bg-opacity-75"
                         aria-label="Toggle fullscreen"
                     >
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5" />
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="h-6 w-6"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5"
+                            />
                         </svg>
                     </button>
 
                     <!-- Close button -->
                     <button
                         @click="closeModal()"
-                        class="bg-black bg-opacity-50 rounded-full p-2 text-white hover:bg-opacity-75 transition-all"
+                        class="rounded-full bg-black bg-opacity-50 p-2 text-white transition-all hover:bg-opacity-75"
                         aria-label="Close modal"
                     >
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="h-6 w-6"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12"
+                            />
                         </svg>
                     </button>
                 </div>
@@ -134,7 +161,7 @@
                 <!-- YouTube iframe with dynamic src -->
                 <iframe
                     x-bind:src="iframeSrc"
-                    class="w-full h-full"
+                    class="h-full w-full"
                     frameborder="0"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
                     allowfullscreen

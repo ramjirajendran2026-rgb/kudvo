@@ -62,7 +62,7 @@ return [
             'videos' => [
                 [
                     'yt-video-id' => 'hGv5iyassD8',
-                    'title' => 'How to Vote in Kudvo Using Phygital Voting',
+                    'title' => 'कैसे कुदवो में मतदान का उपयोग करके वोट करें',
                 ],
             ],
         ],

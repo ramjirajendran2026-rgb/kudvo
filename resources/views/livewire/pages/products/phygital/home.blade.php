@@ -168,9 +168,14 @@
     </section>
     <section id="how-we-do" class="container mx-auto w-full">
         <div class="relative">
-            <main class="relative mx-auto max-w-screen-md p-5 md:p-12 mt-6 flex flex-col justify-center overflow-hidden">
+            <main
+                class="relative mx-auto mt-6 flex max-w-screen-md flex-col justify-center overflow-hidden p-5 md:p-12"
+            >
                 @foreach (__('pages/products/phygital/home.content.how_we_do.videos') as $item)
-                    <x-youtube-video-player video-id="{{$item['yt-video-id']}}" title="{{$item['title']}}"/>
+                    <x-youtube-video-player
+                        video-id="{{$item['yt-video-id']}}"
+                        title="{{$item['title']}}"
+                    />
                 @endforeach
             </main>
         </div>

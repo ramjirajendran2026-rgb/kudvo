@@ -47,11 +47,11 @@ return [
         'videos' => [
             [
                 'yt-video-id' => 'i1if-NjLJZs',
-                'title' => 'How to Vote in Kudvo Using SMS',
+                'title' => 'एसएमएस का उपयोग करके कुदवो में वोट कैसे करें',
             ],
             [
                 'yt-video-id' => 'wQ2eSipPl7M',
-                'title' => 'How to Vote in Kudvo Using Email',
+                'title' => 'ईमेल का उपयोग करके कुदवो में वोट कैसे करें',
             ],
         ],
     ],

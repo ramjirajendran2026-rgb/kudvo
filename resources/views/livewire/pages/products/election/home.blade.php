@@ -122,7 +122,7 @@
                 </div>
             @endforeach
 
-            <div class="col-span-full flex gap-4 mx-auto text-center">
+            <div class="col-span-full mx-auto flex gap-4 text-center">
                 <x-filament::button
                     :href="__('pages/products/election/home.content.how_it_works.cta.url')"
                     :outlined="true"

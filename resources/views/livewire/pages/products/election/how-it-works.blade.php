@@ -56,11 +56,13 @@
     <section class="container mx-auto w-full" id="online-voting-video">
         <div class="relative">
             <main
-                class="relative flex flex-col justify-center p-4 gap-8 overflow-hidden bg-slate-50 md:flex-row"
+                class="relative flex flex-col justify-center gap-8 overflow-hidden bg-slate-50 p-4 md:flex-row"
             >
-
                 @foreach (__('pages/products/election/how-it-works.content.videos') as $item)
-                    <x-youtube-video-player video-id="{{$item['yt-video-id']}}" title="{{$item['title']}}"/>
+                    <x-youtube-video-player
+                        video-id="{{$item['yt-video-id']}}"
+                        title="{{$item['title']}}"
+                    />
                 @endforeach
             </main>
         </div>
