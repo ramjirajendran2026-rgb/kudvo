@@ -14,6 +14,6 @@ class VideoWhatsAppMessage extends MediaWhatsAppMessage
      */
     public function getType(): WhatsAppMessageType
     {
-        return WhatsAppMessageType::VIDEO;
+        return WhatsAppMessageType::Video;
     }
 }

@@ -4,10 +4,10 @@ namespace App\Enums;
 
 enum WhatsAppMessageStatus: string
 {
-    case UNKNOWN = 'unknown';
-    case PENDING = 'pending';
-    case SENT = 'sent';
-    case DELIVERED = 'delivered';
-    case READ = 'read';
-    case FAILED = 'failed';
+    case Unknown = 'unknown';
+    case Pending = 'pending';
+    case Sent = 'sent';
+    case Delivered = 'delivered';
+    case Read = 'read';
+    case Failed = 'failed';
 }

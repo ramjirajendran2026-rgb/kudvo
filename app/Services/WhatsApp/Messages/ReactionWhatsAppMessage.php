@@ -23,7 +23,7 @@ class ReactionWhatsAppMessage extends WhatsAppMessage
      */
     public function getType(): WhatsAppMessageType
     {
-        return WhatsAppMessageType::REACTION;
+        return WhatsAppMessageType::Reaction;
     }
 
     /**

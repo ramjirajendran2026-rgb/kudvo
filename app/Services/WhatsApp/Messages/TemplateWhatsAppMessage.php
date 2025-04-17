@@ -26,7 +26,7 @@ class TemplateWhatsAppMessage extends WhatsAppMessage
      */
     public function getType(): WhatsAppMessageType
     {
-        return WhatsAppMessageType::TEMPLATE;
+        return WhatsAppMessageType::Template;
     }
 
     /**
@@ -38,13 +38,18 @@ class TemplateWhatsAppMessage extends WhatsAppMessage
             return $component->toArray();
         }, $this->components);
 
-        return [
+        $payload = [
             'name' => $this->name,
             'language' => [
                 'code' => $this->language,
             ],
-            'components' => $componentsArray,
         ];
+
+        if (filled($componentsArray)) {
+            $payload['components'] = $componentsArray;
+        }
+
+        return $payload;
     }
 
     /**

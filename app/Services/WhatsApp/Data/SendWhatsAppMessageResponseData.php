@@ -11,8 +11,9 @@ class SendWhatsAppMessageResponseData extends Data
         public ?string $messaging_product = null,
         public ?array $contacts = null,
         public ?array $messages = null,
-        public ?WhatsAppMessageStatus $status = WhatsAppMessageStatus::PENDING,
+        public ?WhatsAppMessageStatus $status = WhatsAppMessageStatus::Pending,
         public ?string $message_id = null,
+        public ?string $message_status = null,
         public ?string $error_code = null,
         public ?string $error_message = null
     ) {}

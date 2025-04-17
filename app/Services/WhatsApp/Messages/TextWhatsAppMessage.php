@@ -23,7 +23,7 @@ class TextWhatsAppMessage extends WhatsAppMessage
      */
     public function getType(): WhatsAppMessageType
     {
-        return WhatsAppMessageType::TEXT;
+        return WhatsAppMessageType::Text;
     }
 
     /**

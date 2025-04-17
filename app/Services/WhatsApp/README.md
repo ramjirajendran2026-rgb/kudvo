@@ -64,21 +64,21 @@ use App\Enums\WhatsAppMessageType;
 
 // Text message with preview URL
 $message = [
-    'type' => WhatsAppMessageType::TEXT->value,
+    'type' => WhatsAppMessageType::Text->value,
     'preview_url' => true,
     'body' => 'Check out this link: https://example.com',
 ];
 
 // Image message
 $message = [
-    'type' => WhatsAppMessageType::IMAGE->value,
+    'type' => WhatsAppMessageType::Image->value,
     'link' => 'https://example.com/image.jpg',
     'caption' => 'Optional caption',
 ];
 
 // Document message
 $message = [
-    'type' => WhatsAppMessageType::DOCUMENT->value,
+    'type' => WhatsAppMessageType::Document->value,
     'link' => 'https://example.com/document.pdf',
     'caption' => 'Optional caption',
     'filename' => 'document.pdf',
@@ -86,7 +86,7 @@ $message = [
 
 // Template message
 $message = [
-    'type' => WhatsAppMessageType::TEMPLATE->value,
+    'type' => WhatsAppMessageType::Template->value,
     'template' => [
         'name' => 'template_name',
         'language' => [
@@ -113,17 +113,17 @@ $notifiable->notify(new WhatsAppNotification($message));
 
 The following message types are supported:
 
--   `TEXT`: Text messages
--   `IMAGE`: Image messages
--   `AUDIO`: Audio messages
--   `DOCUMENT`: Document messages
--   `VIDEO`: Video messages
--   `STICKER`: Sticker messages
--   `LOCATION`: Location messages
--   `CONTACT`: Contact messages
--   `INTERACTIVE`: Interactive messages (buttons, lists)
--   `TEMPLATE`: Template messages
--   `REACTION`: Reaction messages
+-   `Text`: Text messages
+-   `Image`: Image messages
+-   `Audio`: Audio messages
+-   `Document`: Document messages
+-   `Video`: Video messages
+-   `Sticker`: Sticker messages
+-   `Location`: Location messages
+-   `Contact`: Contact messages
+-   `Interactive`: Interactive messages (buttons, lists)
+-   `Template`: Template messages
+-   `Reaction`: Reaction messages
 
 See the `WhatsAppMessageType` enum for all available message types.
 
@@ -136,7 +136,7 @@ use App\Enums\WhatsAppMessageStatus;
 
 $response = $whatsAppClient->sendMessage($to, $message);
 
-if ($response->status === WhatsAppMessageStatus::FAILED) {
+if ($response->status === WhatsAppMessageStatus::Failed) {
     // Handle error
     $errorCode = $response->error_code;
     $errorMessage = $response->error_message;

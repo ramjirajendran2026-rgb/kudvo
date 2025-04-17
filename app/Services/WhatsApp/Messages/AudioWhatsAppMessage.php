@@ -14,6 +14,6 @@ class AudioWhatsAppMessage extends MediaWhatsAppMessage
      */
     public function getType(): WhatsAppMessageType
     {
-        return WhatsAppMessageType::AUDIO;
+        return WhatsAppMessageType::Audio;
     }
 }

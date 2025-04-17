@@ -21,7 +21,7 @@ class ContactWhatsAppMessage extends WhatsAppMessage
      */
     public function getType(): WhatsAppMessageType
     {
-        return WhatsAppMessageType::CONTACT;
+        return WhatsAppMessageType::Contact;
     }
 
     /**

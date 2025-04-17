@@ -25,6 +25,8 @@ abstract class WhatsAppMessage
     public function toArray(): array
     {
         return [
+            'messaging_product' => 'whatsapp',
+            'recipient_type' => 'individual',
             'type' => $this->getType()->value,
             $this->getType()->value => $this->formatPayload(),
         ];

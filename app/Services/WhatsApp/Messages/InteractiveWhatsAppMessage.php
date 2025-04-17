@@ -21,7 +21,7 @@ class InteractiveWhatsAppMessage extends WhatsAppMessage
      */
     public function getType(): WhatsAppMessageType
     {
-        return WhatsAppMessageType::INTERACTIVE;
+        return WhatsAppMessageType::Interactive;
     }
 
     /**

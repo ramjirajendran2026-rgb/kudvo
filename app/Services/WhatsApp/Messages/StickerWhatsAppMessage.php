@@ -14,6 +14,6 @@ class StickerWhatsAppMessage extends MediaWhatsAppMessage
      */
     public function getType(): WhatsAppMessageType
     {
-        return WhatsAppMessageType::STICKER;
+        return WhatsAppMessageType::Sticker;
     }
 }

@@ -163,52 +163,52 @@ class WhatsAppMessageFactory
         $type = $data['type'];
 
         return match ($type) {
-            WhatsAppMessageType::TEXT->value => self::text(
+            WhatsAppMessageType::Text->value => self::text(
                 $data['body'] ?? '',
                 $data['preview_url'] ?? false
             ),
-            WhatsAppMessageType::TEMPLATE->value => self::template(
+            WhatsAppMessageType::Template->value => self::template(
                 $data['template']['name'] ?? '',
                 $data['template']['language']['code'] ?? 'en_US',
                 [] // Components need to be created from the raw array data
             ),
-            WhatsAppMessageType::IMAGE->value => self::image(
+            WhatsAppMessageType::Image->value => self::image(
                 $data['id'] ?? null,
                 $data['link'] ?? null,
                 $data['caption'] ?? null
             ),
-            WhatsAppMessageType::AUDIO->value => self::audio(
+            WhatsAppMessageType::Audio->value => self::audio(
                 $data['id'] ?? null,
                 $data['link'] ?? null
             ),
-            WhatsAppMessageType::VIDEO->value => self::video(
+            WhatsAppMessageType::Video->value => self::video(
                 $data['id'] ?? null,
                 $data['link'] ?? null,
                 $data['caption'] ?? null
             ),
-            WhatsAppMessageType::DOCUMENT->value => self::document(
+            WhatsAppMessageType::Document->value => self::document(
                 $data['id'] ?? null,
                 $data['link'] ?? null,
                 $data['caption'] ?? null,
                 $data['filename'] ?? null
             ),
-            WhatsAppMessageType::STICKER->value => self::sticker(
+            WhatsAppMessageType::Sticker->value => self::sticker(
                 $data['id'] ?? null,
                 $data['link'] ?? null
             ),
-            WhatsAppMessageType::LOCATION->value => self::location(
+            WhatsAppMessageType::Location->value => self::location(
                 $data['latitude'] ?? 0,
                 $data['longitude'] ?? 0,
                 $data['name'] ?? null,
                 $data['address'] ?? null
             ),
-            WhatsAppMessageType::CONTACT->value => self::contact(
+            WhatsAppMessageType::Contact->value => self::contact(
                 $data['contacts'] ?? []
             ),
-            WhatsAppMessageType::INTERACTIVE->value => self::interactive(
+            WhatsAppMessageType::Interactive->value => self::interactive(
                 $data['interactive'] ?? []
             ),
-            WhatsAppMessageType::REACTION->value => self::reaction(
+            WhatsAppMessageType::Reaction->value => self::reaction(
                 $data['message_id'] ?? '',
                 $data['emoji'] ?? ''
             ),

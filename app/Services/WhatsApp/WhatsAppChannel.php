@@ -36,7 +36,7 @@ class WhatsAppChannel
             if (App::isLocal()) {
                 Log::info('[WhatsApp] SendMessage Request: skipped on local');
 
-                return null;
+                //                return null;
             }
 
             $response = $this->client->sendMessage($route, $message);

@@ -14,6 +14,6 @@ class ImageWhatsAppMessage extends MediaWhatsAppMessage
      */
     public function getType(): WhatsAppMessageType
     {
-        return WhatsAppMessageType::IMAGE;
+        return WhatsAppMessageType::Image;
     }
 }

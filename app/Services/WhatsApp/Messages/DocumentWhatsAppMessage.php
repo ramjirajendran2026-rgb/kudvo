@@ -14,6 +14,6 @@ class DocumentWhatsAppMessage extends MediaWhatsAppMessage
      */
     public function getType(): WhatsAppMessageType
     {
-        return WhatsAppMessageType::DOCUMENT;
+        return WhatsAppMessageType::Document;
     }
 }

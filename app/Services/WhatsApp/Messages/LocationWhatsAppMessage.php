@@ -27,7 +27,7 @@ class LocationWhatsAppMessage extends WhatsAppMessage
      */
     public function getType(): WhatsAppMessageType
     {
-        return WhatsAppMessageType::LOCATION;
+        return WhatsAppMessageType::Location;
     }
 
     /**
