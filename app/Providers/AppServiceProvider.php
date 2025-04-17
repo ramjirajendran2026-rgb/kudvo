@@ -7,6 +7,8 @@ use App\KudvoManager;
 use App\Models\User;
 use App\Services\Clicksend\ClicksendChannel;
 use App\Services\TwentyFourSevenSms\TwentyFourSevenSmsChannel;
+use App\Services\WhatsApp\Http\WhatsAppClient;
+use App\Services\WhatsApp\WhatsAppChannel;
 use App\Settings\ServiceConfig;
 use BezhanSalleh\FilamentLanguageSwitch\LanguageSwitch;
 use ClickSend\Api\SMSApi;
@@ -96,6 +98,13 @@ class AppServiceProvider extends ServiceProvider
                     callback: fn () => app(abstract: ClicksendChannel::class)
                 )
         );
+        Notification::resolved(
+            fn (ChannelManager $service) => $service
+                ->extend(
+                    driver: WhatsAppChannel::NAME,
+                    callback: fn () => app(abstract: WhatsAppChannel::class)
+                )
+        );
 
         $this->app->when(concrete: ClicksendChannel::class)
             ->needs(abstract: SMSApi::class)
@@ -109,6 +118,10 @@ class AppServiceProvider extends ServiceProvider
                         ->setPassword($serviceConfig->clicksend->api_key)
                 );
             });
+
+        $this->app->when(concrete: WhatsAppChannel::class)
+            ->needs(abstract: WhatsAppClient::class)
+            ->give(implementation: fn () => app(abstract: WhatsAppClient::class));
 
         $supportedLocales = config(key: 'laravellocalization.supportedLocales');
         if (count($supportedLocales) > 1) {
