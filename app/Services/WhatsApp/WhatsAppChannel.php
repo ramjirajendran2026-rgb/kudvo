@@ -31,12 +31,12 @@ class WhatsAppChannel
         }
 
         try {
-            Log::info('[WhatsApp] SendMessage Request: ' . json_encode($message));
+            Log::info('[WhatsApp] SendMessage Request: ' . json_encode($message->toArray()));
 
             if (App::isLocal()) {
                 Log::info('[WhatsApp] SendMessage Request: skipped on local');
 
-                //                return null;
+                // return null;
             }
 
             $response = $this->client->sendMessage($route, $message);

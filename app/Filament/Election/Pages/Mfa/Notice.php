@@ -2,14 +2,13 @@
 
 namespace App\Filament\Election\Pages\Mfa;
 
-use App\Enums\OneTimePasswordPurpose;
+use App\Actions\Election\SendElectorMfaCode;
 use App\Filament\Base\Contracts\HasElection;
 use App\Filament\Election\Http\Middleware\EnsureMfaCompleted;
 use App\Filament\Election\Pages\Concerns\InteractsWithElection;
 use App\Filament\Election\Pages\Concerns\InteractsWithElector;
 use App\Models\Elector;
 use App\Models\OneTimePassword;
-use App\Notifications\Election\MfaCodeNotification;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use DanHarrin\LivewireRateLimiting\WithRateLimiting;
 use Filament\Actions\Action;
@@ -128,23 +127,9 @@ class Notice extends Page implements HasElection
             return null;
         }
 
-        $oneTimePassword = $this->getElector()
-            ->oneTimePasswords()
-            ->create(attributes: [
-                'purpose' => OneTimePasswordPurpose::MFA,
+        $oneTimePassword = app(SendElectorMfaCode::class)->execute($this->getElector(), $this->getElection());
 
-                ...$this->getElection()->preference->mfa_sms ? ['phone' => $this->getElector()->phone] : [],
-                ...$this->getElection()->preference->mfa_mail ? ['email' => $this->getElector()->email] : [],
-            ]);
-
-        $oneTimePassword->send(
-            notification: new MfaCodeNotification(
-                election: $this->getElection(),
-                oneTimePassword: $oneTimePassword,
-            )
-        );
-
-        Session::put(key: static::getMfaSessionKey($this->getElector()), value: $oneTimePassword->getKey());
+        Session::put(key: static::getMfaSessionKey($this->getElector()), value: $oneTimePassword?->getKey());
 
         $this->redirect(Verify::getUrl(), navigate: $this->isSpa());
     }

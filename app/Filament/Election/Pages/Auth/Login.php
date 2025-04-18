@@ -3,13 +3,12 @@
 namespace App\Filament\Election\Pages\Auth;
 
 use App\Actions\Election\Booth\UpdateOnElectorLogin;
-use App\Enums\OneTimePasswordPurpose;
+use App\Actions\Election\SendElectorMfaCode;
 use App\Events\ElectorAssignedToBoothEvent;
 use App\Facades\Kudvo;
 use App\Filament\Election\Pages\Mfa\Notice;
 use App\Models\Election;
 use App\Models\Elector;
-use App\Notifications\Election\MfaCodeNotification;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
@@ -132,23 +131,9 @@ class Login extends BasePage
 
     protected function sendMfaCode(Elector $elector): void
     {
-        $oneTimePassword = $elector
-            ->oneTimePasswords()
-            ->create(attributes: [
-                'purpose' => OneTimePasswordPurpose::MFA,
+        $oneTimePassword = app(SendElectorMfaCode::class)->execute($elector, Kudvo::getElection());
 
-                ...Kudvo::getElection()->preference->mfa_sms ? ['phone' => $elector->phone] : [],
-                ...Kudvo::getElection()->preference->mfa_mail ? ['email' => $elector->email] : [],
-            ]);
-
-        $oneTimePassword->send(
-            notification: new MfaCodeNotification(
-                election: Kudvo::getElection(),
-                oneTimePassword: $oneTimePassword,
-            )
-        );
-
-        Session::put(key: Notice::getMfaSessionKey(elector: $elector), value: $oneTimePassword->getKey());
+        Session::put(key: Notice::getMfaSessionKey(elector: $elector), value: $oneTimePassword?->getKey());
     }
 
     protected function getCredentialsFromFormData(array $data): array
