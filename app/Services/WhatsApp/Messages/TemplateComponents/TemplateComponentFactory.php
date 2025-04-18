@@ -47,12 +47,19 @@ class TemplateComponentFactory
     /**
      * Create a URL button component
      *
-     * @param  string  $url  The button URL
-     * @param  string|null  $text  Optional button text
+     * @param  string  $text  The button URL
      */
-    public static function urlButton(string $url, ?string $text = null): ButtonComponent
+    public static function urlButton(string $text): ButtonComponent
     {
-        return ButtonComponent::url($url, $text);
+        return ButtonComponent::url($text);
+    }
+
+    /**
+     * Create a Flow button component
+     */
+    public static function flowButton(): ButtonComponent
+    {
+        return ButtonComponent::flow();
     }
 
     /**
@@ -60,9 +67,9 @@ class TemplateComponentFactory
      *
      * @param  string  $text  The text value
      */
-    public static function textParameter(string $text): TextParameter
+    public static function textParameter(string $text, ?string $name = null): TextParameter
     {
-        return new TextParameter($text);
+        return new TextParameter($text, $name);
     }
 
     /**

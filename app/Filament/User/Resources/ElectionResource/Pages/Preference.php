@@ -267,9 +267,7 @@ class Preference extends ElectionPage
                                         feeCurrency: $plan->currency,
                                         hideAddOnPrice: ! $this->canSave(),
                                     )
-                                    ->disabled()
                                     ->hidden(condition: ! $plan->hasFeature(feature: ElectionFeature::BallotLinkWhatsapp))
-                                    ->hint(hint: __('filament.user.election-resource.pages.preference.form.ballot_link_whatsapp.hint'))
                                     ->label(label: __('filament.user.election-resource.pages.preference.form.ballot_link_whatsapp.label')),
                             ]),
 
@@ -296,24 +294,26 @@ class Preference extends ElectionPage
                                     ->label(label: __('filament.user.election-resource.pages.preference.form.mfa_mail.label'))
                                     ->live(),
 
-                                FeatureToggle::make(name: 'mfa_sms')
-                                    ->addOn(
-                                        condition: $plan->hasAddOnFeature(feature: ElectionFeature::VerificationCodeSms),
-                                        featureFee: $plan->getFeatureFee(feature: ElectionFeature::VerificationCodeSms),
-                                        electorFee: $plan->getElectorFee(feature: ElectionFeature::VerificationCodeSms),
-                                        feeCurrency: $plan->currency,
-                                        hideAddOnPrice: ! $this->canSave(),
-                                    )
-                                    ->grow(condition: false)
-                                    ->hidden(condition: ! $plan->hasFeature(feature: ElectionFeature::VerificationCodeSms))
-                                    ->label(label: __('filament.user.election-resource.pages.preference.form.mfa_sms.label'))
-                                    ->live(),
+                                Group::make([
+                                    FeatureToggle::make(name: 'mfa_sms')
+                                        ->addOn(
+                                            condition: $plan->hasAddOnFeature(feature: ElectionFeature::VerificationCodeSms),
+                                            featureFee: $plan->getFeatureFee(feature: ElectionFeature::VerificationCodeSms),
+                                            electorFee: $plan->getElectorFee(feature: ElectionFeature::VerificationCodeSms),
+                                            feeCurrency: $plan->currency,
+                                            hideAddOnPrice: ! $this->canSave(),
+                                        )
+                                        ->grow(condition: false)
+                                        ->hidden(condition: ! $plan->hasFeature(feature: ElectionFeature::VerificationCodeSms))
+                                        ->label(label: __('filament.user.election-resource.pages.preference.form.mfa_sms.label'))
+                                        ->live(),
 
-                                FeatureToggle::make(name: 'mfa_sms_auto_fill_only')
-                                    ->hintIcon(icon: 'heroicon-o-information-circle')
-                                    ->hintIconTooltip(tooltip: __('filament.user.election-resource.pages.preference.form.mfa_sms_auto_fill_only.hint_icon.tooltip'))
-                                    ->label(label: __('filament.user.election-resource.pages.preference.form.mfa_sms_auto_fill_only.label'))
-                                    ->visible(condition: static fn (Get $get): bool => $get(path: 'mfa_sms') && ! $get(path: 'mfa_mail')),
+                                    FeatureToggle::make(name: 'mfa_sms_auto_fill_only')
+                                        ->hintIcon(icon: 'heroicon-o-information-circle')
+                                        ->hintIconTooltip(tooltip: __('filament.user.election-resource.pages.preference.form.mfa_sms_auto_fill_only.hint_icon.tooltip'))
+                                        ->label(label: __('filament.user.election-resource.pages.preference.form.mfa_sms_auto_fill_only.label'))
+                                        ->visible(condition: static fn (Get $get): bool => $get(path: 'mfa_sms') && ! $get(path: 'mfa_mail')),
+                                ])->columns(),
 
                                 FeatureToggle::make(name: 'mfa_whatsapp')
                                     ->addOn(
@@ -323,9 +323,7 @@ class Preference extends ElectionPage
                                         feeCurrency: $plan->currency,
                                         hideAddOnPrice: ! $this->canSave(),
                                     )
-                                    ->disabled()
                                     ->hidden(condition: ! $plan->hasFeature(feature: ElectionFeature::VerificationCodeWhatsapp))
-                                    ->hint(hint: __('filament.user.election-resource.pages.preference.form.mfa_whatsapp.hint'))
                                     ->label(label: __('filament.user.election-resource.pages.preference.form.mfa_whatsapp.label')),
                             ]),
 
@@ -370,9 +368,7 @@ class Preference extends ElectionPage
                                         feeCurrency: $plan->currency,
                                         hideAddOnPrice: ! $this->canSave(),
                                     )
-                                    ->disabled()
                                     ->hidden(condition: ! $plan->hasFeature(feature: ElectionFeature::BallotAcknowledgementWhatsapp))
-                                    ->hint(hint: __('filament.user.election-resource.pages.preference.form.voted_confirmation_whatsapp.hint'))
                                     ->label(label: __('filament.user.election-resource.pages.preference.form.voted_confirmation_whatsapp.label')),
                             ]),
 

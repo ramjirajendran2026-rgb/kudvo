@@ -15,6 +15,7 @@ use App\Enums\InvoiceStatus;
 use App\Filament\Imports\CandidateImporter;
 use App\Filament\Imports\ElectorImporter;
 use App\Models\Concerns\HasShortCode;
+use App\Services\WhatsApp\WhatsAppChannel;
 use Filament\Actions\Imports\Models\Import;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Builder;
@@ -92,6 +93,7 @@ class Election extends Model
             get: fn ($value, array $attributes) => [
                 ...Arr::wrap(value: $this->preference?->ballot_link_mail ? 'mail' : null),
                 ...Arr::wrap(value: $this->preference?->ballot_link_sms ? 'sms' : null),
+                ...Arr::wrap(value: $this->preference?->ballot_link_whatsapp ? WhatsAppChannel::NAME : null),
             ],
         );
     }
@@ -102,6 +104,7 @@ class Election extends Model
             get: fn ($value, array $attributes) => [
                 ...Arr::wrap(value: $this->preference?->voted_confirmation_mail ? 'mail' : null),
                 ...Arr::wrap(value: $this->preference?->voted_confirmation_sms ? 'sms' : null),
+                ...Arr::wrap(value: $this->preference?->voted_confirmation_whatsapp ? WhatsAppChannel::NAME : null),
             ],
         );
     }
@@ -111,6 +114,7 @@ class Election extends Model
         return Attribute::make(
             get: fn ($value, array $attributes) => [
                 ...Arr::wrap(value: $this->preference?->voted_ballot_mail ? 'mail' : null),
+                ...Arr::wrap(value: $this->preference?->voted_ballot_whatsapp ? WhatsAppChannel::NAME : null),
             ],
         );
     }

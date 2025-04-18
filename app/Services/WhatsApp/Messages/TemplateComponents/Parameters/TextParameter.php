@@ -9,9 +9,11 @@ class TextParameter extends TemplateParameter
 {
     /**
      * @param  string  $text  The text value
+     * @param  string|null  $name  Optional name value
      */
     public function __construct(
-        protected string $text
+        protected string $text,
+        protected ?string $name,
     ) {}
 
     /**
@@ -27,9 +29,15 @@ class TextParameter extends TemplateParameter
      */
     public function toArray(): array
     {
-        return [
+        $payload = [
             'type' => $this->getType(),
             'text' => $this->text,
         ];
+
+        if (filled($this->name)) {
+            $payload['parameter_name'] = $this->name;
+        }
+
+        return $payload;
     }
 }

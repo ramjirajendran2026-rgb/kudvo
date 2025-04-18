@@ -29,7 +29,7 @@ class WhatsAppMessageFactory
      * @param  string  $language  The language code (e.g., 'en_US')
      * @param  array<TemplateComponent>  $components  The template components
      */
-    public static function template(string $name, string $language, array $components = []): TemplateWhatsAppMessage
+    public static function template(string $name, string $language = 'en', array $components = []): TemplateWhatsAppMessage
     {
         return TemplateWhatsAppMessage::create($name, $language, $components);
     }

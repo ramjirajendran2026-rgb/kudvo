@@ -13,7 +13,8 @@ class ButtonComponent extends TemplateComponent
      */
     public function __construct(
         protected string $subType,
-        protected array $parameters = []
+        protected array $parameters = [],
+        protected int $index = 0,
     ) {}
 
     /**
@@ -22,6 +23,11 @@ class ButtonComponent extends TemplateComponent
     public function getType(): string
     {
         return 'button';
+    }
+
+    public function getIndex(): int
+    {
+        return $this->index;
     }
 
     /**
@@ -58,6 +64,7 @@ class ButtonComponent extends TemplateComponent
         return [
             'type' => $this->getType(),
             'sub_type' => $this->getSubType(),
+            'index' => $this->getIndex(),
             'parameters' => $this->getParameters(),
         ];
     }
@@ -79,14 +86,16 @@ class ButtonComponent extends TemplateComponent
     /**
      * Create a URL button
      */
-    public static function url(string $url, ?string $text = null): self
+    public static function url(string $text): self
     {
-        $parameters = ['url' => $url];
+        return new self('url', [TemplateComponentFactory::textParameter($text)->toArray()]);
+    }
 
-        if ($text !== null) {
-            $parameters['text'] = $text;
-        }
-
-        return new self('url', $parameters);
+    /**
+     * Create a URL button
+     */
+    public static function flow(): self
+    {
+        return new self('flow');
     }
 }
