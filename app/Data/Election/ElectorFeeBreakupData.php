@@ -15,13 +15,17 @@ class ElectorFeeBreakupData extends Data
         public int $ballot_link_unique = 0,
         public int $ballot_link_mail = 0,
         public int $ballot_link_sms = 0,
+        public int $ballot_link_whatsapp = 0,
         public int $mfa_mail = 0,
         public int $mfa_sms = 0,
         public int $mfa_sms_auto_fill_only = 0,
+        public int $mfa_whatsapp = 0,
         public int $voted_confirmation_mail = 0,
         public int $voted_confirmation_sms = 0,
+        public int $voted_confirmation_whatsapp = 0,
         public int $voted_ballot_download = 0,
         public int $voted_ballot_mail = 0,
+        public int $voted_ballot_whatsapp = 0,
         public int $dnt_votes = 0,
         public int $voted_ballot_update = 0,
         public int $prevent_duplicate_device = 0,
@@ -66,6 +70,13 @@ class ElectorFeeBreakupData extends Data
         return $this;
     }
 
+    public function ballotLinkWhatsapp(int $fee): static
+    {
+        $this->ballot_link_whatsapp = $fee;
+
+        return $this;
+    }
+
     public function mfaMail(int $fee): static
     {
         $this->mfa_mail = $fee;
@@ -87,6 +98,13 @@ class ElectorFeeBreakupData extends Data
         return $this;
     }
 
+    public function mfaWhatsapp(int $fee): static
+    {
+        $this->mfa_whatsapp = $fee;
+
+        return $this;
+    }
+
     public function votedConfirmationMail(int $fee): static
     {
         $this->voted_confirmation_mail = $fee;
@@ -101,6 +119,13 @@ class ElectorFeeBreakupData extends Data
         return $this;
     }
 
+    public function votedConfirmationWhatsapp(int $fee): static
+    {
+        $this->voted_confirmation_whatsapp = $fee;
+
+        return $this;
+    }
+
     public function votedBallotDownload(int $fee): static
     {
         $this->voted_ballot_download = $fee;
@@ -111,6 +136,13 @@ class ElectorFeeBreakupData extends Data
     public function votedBallotMail(int $fee): static
     {
         $this->voted_ballot_mail = $fee;
+
+        return $this;
+    }
+
+    public function votedBallotWhatsapp(int $fee): static
+    {
+        $this->voted_ballot_whatsapp = $fee;
 
         return $this;
     }

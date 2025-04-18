@@ -9,6 +9,9 @@ use App\Models\Elector;
 use App\Notifications\Concerns\HasSmsChannel;
 use App\Notifications\Contracts\HasMailMessagePurpose;
 use App\Notifications\Contracts\HasSmsMessagePurpose;
+use App\Services\WhatsApp\Messages\TemplateComponents\TemplateComponentFactory;
+use App\Services\WhatsApp\Messages\WhatsAppMessage;
+use App\Services\WhatsApp\Messages\WhatsAppMessageFactory;
 use App\Settings\SmsTemplates;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -71,6 +74,22 @@ class BallotLinkNotification extends Notification implements HasMailMessagePurpo
         );
     }
 
+    public function toWhatsapp(): WhatsAppMessage
+    {
+        return WhatsAppMessageFactory::template('ballot_invitation')
+            ->addComponent(TemplateComponentFactory::header([
+                TemplateComponentFactory::textParameter($this->getElection()->name, 'header'),
+            ]))
+            ->addComponent(TemplateComponentFactory::body([
+                TemplateComponentFactory::textParameter($this->getElector()->display_name, 'member_name'),
+                TemplateComponentFactory::textParameter($this->getElection()->name, 'election_name'),
+                TemplateComponentFactory::textParameter($this->getElection()->organisation->name, 'organization_name'),
+                TemplateComponentFactory::textParameter($this->getElection()->starts_at_local->format('d M, Y h:i A (T)'), 'starts_at'),
+                TemplateComponentFactory::textParameter($this->getElection()->ends_at_local->format('d M, Y h:i A (T)'), 'ends_at'),
+            ]))
+            ->addComponent(TemplateComponentFactory::urlButton(str($this->getBallotLinkShort(absolute: false))->replaceStart('/', '')->toString()));
+    }
+
     public function toArray(object $notifiable): array
     {
         return [];
@@ -126,17 +145,17 @@ class BallotLinkNotification extends Notification implements HasMailMessagePurpo
         return $this->getElection()->preference;
     }
 
-    protected function getBallotLink(): string
+    protected function getBallotLink(bool $absolute = true): string
     {
         return $this->getPreference()->ballot_link_unique ?
-            URL::signedRoute(name: 'filament.election.eul', parameters: ['election' => $this->getElection(), 'elector' => $this->getElector()]) :
-            route(name: 'filament.election.pages.index', parameters: ['election' => $this->getElection()]);
+            URL::signedRoute(name: 'filament.election.eul', parameters: ['election' => $this->getElection(), 'elector' => $this->getElector()], absolute: $absolute) :
+            route(name: 'filament.election.pages.index', parameters: ['election' => $this->getElection()], absolute: $absolute);
     }
 
-    protected function getBallotLinkShort(): ?string
+    protected function getBallotLinkShort(bool $absolute = true): ?string
     {
         return $this->getPreference()->ballot_link_unique
-            ? route(name: 'short_link.go', parameters: ['b' => $this->getElector()->short_code])
-            : route(name: 'short_link.go', parameters: ['e' => $this->getElection()->short_code]);
+            ? route(name: 'short_link.go', parameters: ['b' => $this->getElector()->short_code], absolute: $absolute)
+            : route(name: 'short_link.go', parameters: ['e' => $this->getElection()->short_code], absolute: $absolute);
     }
 }

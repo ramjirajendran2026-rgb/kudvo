@@ -9,6 +9,10 @@ use App\Models\OneTimePassword;
 use App\Notifications\Concerns\HasSmsChannel;
 use App\Notifications\Contracts\HasMailMessagePurpose;
 use App\Notifications\Contracts\HasSmsMessagePurpose;
+use App\Services\WhatsApp\Messages\TemplateComponents\TemplateComponentFactory;
+use App\Services\WhatsApp\Messages\WhatsAppMessage;
+use App\Services\WhatsApp\Messages\WhatsAppMessageFactory;
+use App\Services\WhatsApp\WhatsAppChannel;
 use App\Settings\SmsTemplates;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -36,6 +40,7 @@ class MfaCodeNotification extends Notification implements HasMailMessagePurpose,
         return [
             ...Arr::wrap(value: $preference->mfa_mail ? 'mail' : null),
             ...Arr::wrap(value: $preference->mfa_sms ? $this->getSmsChannel(notifiable: $notifiable) : null),
+            ...Arr::wrap(value: $preference->mfa_whatsapp ? WhatsAppChannel::NAME : null),
         ];
     }
 
@@ -57,6 +62,15 @@ class MfaCodeNotification extends Notification implements HasMailMessagePurpose,
     public function toSms(object $notifiable): string
     {
         return $this->formatTemplate(template: app(abstract: SmsTemplates::class)->elector_ballot_mfa);
+    }
+
+    public function toWhatsapp(object $notifiable): WhatsAppMessage
+    {
+        return WhatsAppMessageFactory::template('verification_code')
+            ->addComponent(TemplateComponentFactory::body([
+                TemplateComponentFactory::textParameter($this->getOneTimePassword()->code),
+            ]))
+            ->addComponent(TemplateComponentFactory::urlButton($this->getOneTimePassword()->code));
     }
 
     public function toArray(object $notifiable): array

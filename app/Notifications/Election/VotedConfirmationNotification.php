@@ -10,6 +10,9 @@ use App\Models\Elector;
 use App\Notifications\Concerns\HasSmsChannel;
 use App\Notifications\Contracts\HasMailMessagePurpose;
 use App\Notifications\Contracts\HasSmsMessagePurpose;
+use App\Services\WhatsApp\Messages\TemplateComponents\TemplateComponentFactory;
+use App\Services\WhatsApp\Messages\WhatsAppMessage;
+use App\Services\WhatsApp\Messages\WhatsAppMessageFactory;
 use App\Settings\SmsTemplates;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -65,6 +68,20 @@ class VotedConfirmationNotification extends Notification implements HasMailMessa
             template: app(abstract: SmsTemplates::class)->elector_voted_confirmation,
             notifiable: $notifiable
         );
+    }
+
+    public function toWhatsapp(object $notifiable): WhatsAppMessage
+    {
+        return WhatsAppMessageFactory::template('ballot_acknowledgement')
+            ->addComponent(TemplateComponentFactory::header([
+                TemplateComponentFactory::textParameter('Vote Submitted - ' . $this->election->name, 'header'),
+            ]))
+            ->addComponent(TemplateComponentFactory::body([
+                TemplateComponentFactory::textParameter($this->elector->display_name, 'member_name'),
+                TemplateComponentFactory::textParameter($this->election->name, 'election_name'),
+                TemplateComponentFactory::textParameter($this->election->organisation->name, 'organization_name'),
+            ]))
+            ->addComponent(TemplateComponentFactory::flowButton());
     }
 
     public function toArray($notifiable): array

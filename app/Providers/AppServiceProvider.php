@@ -7,6 +7,7 @@ use App\KudvoManager;
 use App\Models\User;
 use App\Services\Clicksend\ClicksendChannel;
 use App\Services\TwentyFourSevenSms\TwentyFourSevenSmsChannel;
+use App\Services\WhatsApp\WhatsAppChannel;
 use App\Settings\ServiceConfig;
 use BezhanSalleh\FilamentLanguageSwitch\LanguageSwitch;
 use ClickSend\Api\SMSApi;
@@ -94,6 +95,13 @@ class AppServiceProvider extends ServiceProvider
                 ->extend(
                     driver: ClicksendChannel::NAME,
                     callback: fn () => app(abstract: ClicksendChannel::class)
+                )
+        );
+        Notification::resolved(
+            fn (ChannelManager $service) => $service
+                ->extend(
+                    driver: WhatsAppChannel::NAME,
+                    callback: fn () => app(abstract: WhatsAppChannel::class)
                 )
         );
 

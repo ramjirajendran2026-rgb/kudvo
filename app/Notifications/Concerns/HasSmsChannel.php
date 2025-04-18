@@ -29,7 +29,7 @@ trait HasSmsChannel
                 value: in_array(needle: 'sms', haystack: $via),
                 callback: fn ($collection) => $collection
                     ->reject(callback: fn ($channel) => $channel === 'sms')
-                    ->merge($this->getSmsChannel(notifiable: $notifiable)),
+                    ->merge($this->getSmsChannel(notifiable: $notifiable) ?? []),
                 default: fn ($collection) => $collection
             )
             ->toArray();
