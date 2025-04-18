@@ -1,22 +1,32 @@
 <?php
 
+use Nnjeim\World\Models\City;
+use Nnjeim\World\Models\Country;
+use Nnjeim\World\Models\Currency;
+use Nnjeim\World\Models\Language;
+use Nnjeim\World\Models\State;
+use Nnjeim\World\Models\Timezone;
+
 return [
+
     /*
     |--------------------------------------------------------------------------
-    | Allowed countries to be loaded
+    | Allowed countries to be loaded.
     | Leave it empty to load all countries else include the country iso2
-    | value in the allowed_countries array
+    | value in the allowed_countries array.
     |--------------------------------------------------------------------------
     */
+
     'allowed_countries' => [],
 
     /*
     |--------------------------------------------------------------------------
-    | Disallowed countries to not be loaded
+    | Disallowed countries to not be loaded.
     | Leave it empty to allow all countries to be loaded else include the
-    | country iso2 value in the disallowed_countries array
+    | country iso2 value in the disallowed_countries array.
     |--------------------------------------------------------------------------
     */
+
     'disallowed_countries' => [],
 
     /*
@@ -24,6 +34,7 @@ return [
     | Supported locales.
     |--------------------------------------------------------------------------
     */
+
     'accepted_locales' => [
         'ar',
         'bn',
@@ -31,6 +42,7 @@ return [
         'de',
         'en',
         'es',
+        'fa',
         'fr',
         'hr',
         'it',
@@ -44,12 +56,14 @@ return [
         'tr',
         'zh',
     ],
+
     /*
     |--------------------------------------------------------------------------
     | Enabled modules.
     | The cities module depends on the states module.
     |--------------------------------------------------------------------------
     */
+
     'modules' => [
         'states' => true,
         'cities' => true,
@@ -57,23 +71,29 @@ return [
         'currencies' => true,
         'languages' => true,
     ],
+
     /*
     |--------------------------------------------------------------------------
     | Routes.
     |--------------------------------------------------------------------------
     */
-    'routes' => false,
+
+    'routes' => true,
+
     /*
     |--------------------------------------------------------------------------
     | Connection.
     |--------------------------------------------------------------------------
     */
+
     'connection' => env('WORLD_DB_CONNECTION', env('DB_CONNECTION')),
+
     /*
     |--------------------------------------------------------------------------
     | Migrations.
     |--------------------------------------------------------------------------
     */
+
     'migrations' => [
         'countries' => [
             'table_name' => 'countries',
@@ -178,4 +198,21 @@ return [
             'table_name' => 'languages',
         ],
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Fully qualified class names for package models.
+    | You can extend package models with your custom ones.
+    |--------------------------------------------------------------------------
+    */
+
+    'models' => [
+        'cities' => City::class,
+        'countries' => Country::class,
+        'currencies' => Currency::class,
+        'languages' => Language::class,
+        'states' => State::class,
+        'timezones' => Timezone::class,
+    ],
+
 ];

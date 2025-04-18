@@ -269,7 +269,7 @@ enum SurveyQuestionType: string implements HasLabel
                 ->default(null),
 
             PhoneInput::make($question->key)
-                ->disableIpLookUp()
+                ->disableLookup()
                 ->defaultCountry('IN')
                 ->initialCountry('IN')
                 ->hidden(fn (Get $get, Field $component) => filled($get($question->key . '_otp_id')) || $component->getContainer()->isDisabled())

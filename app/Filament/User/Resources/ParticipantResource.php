@@ -82,7 +82,7 @@ class ParticipantResource extends Resource
     {
         return PhoneInput::make(name: 'phone')
             ->defaultCountry(Filament::getTenant()?->country ?: config(key: 'app.default_phone_country'))
-            ->disableIpLookUp()
+            ->disableLookup()
             ->initialCountry(Filament::getTenant()?->country ?: config(key: 'app.default_phone_country'))
             ->validateFor();
     }

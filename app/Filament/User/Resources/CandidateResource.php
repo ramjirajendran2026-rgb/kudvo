@@ -75,7 +75,7 @@ class CandidateResource extends Resource
 
                         CandidateForm::phoneComponent()
                             ->defaultCountry(value: Filament::getTenant()?->country ?: config(key: 'app.default_phone_country'))
-                            ->disableIpLookUp()
+                            ->disableLookup()
                             ->hidden()
                             ->hiddenLabel()
                             ->initialCountry(value: Filament::getTenant()?->country ?: config(key: 'app.default_phone_country')),

@@ -80,7 +80,7 @@ class ElectorResource extends Resource
 
                 ElectorForm::phoneComponent()
                     ->defaultCountry(value: Filament::getTenant()?->country ?: config(key: 'app.default_phone_country'))
-                    ->disableIpLookUp()
+                    ->disableLookup()
                     ->initialCountry(value: Filament::getTenant()?->country ?: config(key: 'app.default_phone_country'))
                     ->when(
                         value: $formLivewire instanceof HasElection && ! $formLivewire->getElection()->preference?->elector_duplicate_phone,

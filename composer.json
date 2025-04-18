@@ -66,7 +66,7 @@
         "squirephp/currencies-en": "^3.5",
         "stechstudio/filament-impersonate": "^3.9",
         "symfony/psr-http-message-bridge": "^7.0",
-        "ysfkaya/filament-phone-input": "^2.2"
+        "ysfkaya/filament-phone-input": "^3.0"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.13",

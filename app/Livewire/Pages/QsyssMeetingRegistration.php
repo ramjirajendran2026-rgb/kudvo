@@ -77,7 +77,7 @@ class QsyssMeetingRegistration extends Component implements HasForms
 
                         PhoneInput::make('phone')
 //                            ->hidden(fn () => filled($this->otpHashed))
-                            ->disableIpLookUp()
+                            ->disableLookup()
                             ->disallowDropdown()
                             ->initialCountry('IN')
                             ->onlyCountries(['IN'])
@@ -88,7 +88,7 @@ class QsyssMeetingRegistration extends Component implements HasForms
                         PhoneInput::make('phone')
                             ->visible(fn () => filled($this->otpHashed))
                             ->disabled()
-                            ->disableIpLookUp()
+                            ->disableLookup()
                             ->disallowDropdown()
                             ->initialCountry('IN')
                             ->onlyCountries(['IN'])

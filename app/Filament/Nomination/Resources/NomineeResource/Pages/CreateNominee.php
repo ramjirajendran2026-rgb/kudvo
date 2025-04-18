@@ -126,7 +126,7 @@ class CreateNominee extends CreateRecord implements HasElector, HasNomination
 
                                     NomineeForm::phoneComponent()
                                         ->defaultCountry(value: Filament::getTenant()?->country ?: config(key: 'app.default_phone_country'))
-                                        ->disableIpLookUp()
+                                        ->disableLookup()
                                         ->initialCountry(value: Filament::getTenant()?->country ?: config(key: 'app.default_phone_country')),
                                 ]),
 
@@ -203,7 +203,7 @@ class CreateNominee extends CreateRecord implements HasElector, HasNomination
 
                             NominatorForm::phoneComponent()
                                 ->defaultCountry(value: Filament::getTenant()?->country ?: config(key: 'app.default_phone_country'))
-                                ->disableIpLookUp()
+                                ->disableLookup()
                                 ->initialCountry(value: Filament::getTenant()?->country ?: config(key: 'app.default_phone_country')),
                         ]),
                 ]),
