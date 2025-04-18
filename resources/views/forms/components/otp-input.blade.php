@@ -91,19 +91,53 @@
             },
 
             handlePaste(e) {
+                // Prevent the default paste behavior (which would insert the whole string into the focused input)
+                e.preventDefault();
+
+                // Prevent pasting if the field is intended for autofill only
                 if(this.autoFillOnly) {
                     e.preventDefault();
-
                     return false;
                 }
 
-                const paste = e.clipboardData.getData('text');
-                const inputs = Array.from(Array(this.length));
+                // Get the pasted text and limit it to the expected length
+                const paste = e.clipboardData.getData('text').substring(0, this.length);
+                const pastedLength = paste.length;
 
-                inputs.forEach((element, i) => {
-                    this.$refs[(i+1)].focus();
-                    this.$refs[(i+1)].value = paste[i] || '';
-                });
+                // Distribute the pasted characters into the corresponding input fields
+                for (let i = 0; i < this.length; i++) {
+                     if (this.$refs[(i + 1)]) {
+                        // Assign the character from the paste, or an empty string if paste is shorter
+                        this.$refs[(i + 1)].value = paste[i] || '';
+                    }
+                }
+
+                // Rebuild the state variable from all input fields after pasting
+                this.state = Array.from(Array(this.length), (element, i) => {
+                    const el = this.$refs[(i + 1)];
+                    // Ensure we only join actual values present in the inputs
+                    return el && el.value ? el.value : '';
+                }).join('');
+
+                // --- Focus Management ---
+                // Focus the input field *after* the last pasted digit,
+                // or the last input field if the paste filled all boxes.
+                const nextFocusIndex = pastedLength < this.length ? pastedLength + 1 : this.length;
+                if (this.$refs[nextFocusIndex]) {
+                    this.$refs[nextFocusIndex].focus();
+                    // Optional: select the content of the newly focused input
+                    // if (nextFocusIndex <= this.length) {
+                    //     this.$refs[nextFocusIndex].select();
+                    // }
+                }
+
+                // --- Livewire Update ---
+                // If the state (derived from input values) represents a complete OTP, notify Livewire
+                if (this.state.length === this.length) {
+                    @this.set('{{ $getStatePath() }}', this.state);
+                    // You could also dispatch an event here if needed elsewhere
+                    // $dispatch('otp-pasted-complete', { code: this.state });
+                }
             },
 
             handleBackspace(e) {
