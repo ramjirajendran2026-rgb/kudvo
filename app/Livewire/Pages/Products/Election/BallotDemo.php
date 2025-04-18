@@ -9,14 +9,15 @@ use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use DanHarrin\LivewireRateLimiting\WithRateLimiting;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Toggle;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Guava\FilamentClusters\Forms\Cluster;
 use Illuminate\Database\UniqueConstraintViolationException;
+use Illuminate\Support\HtmlString;
 use Illuminate\View\View;
 use Livewire\Component;
 use RalphJSmit\Laravel\SEO\SchemaCollection;
@@ -34,6 +35,10 @@ class BallotDemo extends Component implements HasForms
 
     public function mount(): void
     {
+        if (blank($this->getElection())) {
+            return;
+        }
+
         $this->form->fill();
     }
 
@@ -94,32 +99,36 @@ class BallotDemo extends Component implements HasForms
                                 ->placeholder(placeholder: __('filament.user.elector-resource.form.last_name.placeholder')),
                         ])
                             ->columns(columns: 5)
+                            ->hiddenLabel()
                             ->label(label: __('filament.user.elector-resource.form.full_name.label')),
 
-                        Toggle::make('link_mail')
-                            ->dehydrated(false)
-                            ->label('Send voting link through email.')
-                            ->live(),
-
                         ElectorForm::emailComponent()
-                            ->visible(fn (Get $get): bool => (bool) $get('link_mail')),
+                            ->placeholder('Your email address')
+                            ->requiredWithout('phone')
+                            ->visible(fn (Get $get): bool => $this->getElection()->preference->ballot_link_mail),
 
-                        Toggle::make('link_sms')
-                            ->dehydrated(false)
-                            ->label('Send voting link through SMS.')
-                            ->live(),
+                        Placeholder::make('or_and')
+                            ->hiddenLabel()
+                            ->content(new HtmlString('<div class="flex items-center justify-stretch w-full gap-2"><hr class="flex-1" /><span class="text-nowrap">and / or</span><hr class="flex-1" /></div>'))
+                            ->visible($this->getElection()->preference->ballot_link_mail && ($this->getElection()->preference->ballot_link_sms || $this->getElection()->preference->ballot_link_whatsapp)),
 
                         ElectorForm::phoneComponent()
-                            ->visible(fn (Get $get): bool => (bool) $get('link_sms')),
+                            ->requiredWithout('email')
+                            ->visible(fn (Get $get): bool => $this->getElection()->preference->ballot_link_sms || $this->getElection()->preference->ballot_link_whatsapp),
 
                         Actions::make([
                             Action::make('submit')
                                 ->extraAttributes(['wire:loading.class' => 'opacity-50'])
-                                ->label('Submit')
+                                ->label('Get demo voting link')
                                 ->submit('proceed'),
                         ])->alignCenter(),
                     ]),
             ]);
+    }
+
+    public function getElection(): ?Election
+    {
+        return Election::firstWhere('code', config('app.election.demo_election_code'));
     }
 
     public function proceed(): void
@@ -142,8 +151,7 @@ JS
 
         $data = $this->form->getState();
 
-        $demoElectionCode = config('app.election.demo_election_code');
-        if (blank($demoElectionCode) || blank($election = Election::firstWhere('code', $demoElectionCode))) {
+        if (blank($election = $this->getElection())) {
             $this->js(
                 <<<'JS'
 Swal.fire({
@@ -170,13 +178,19 @@ JS
         } while (! isset($elector));
 
         if ($election->preference->ballot_link_unique && (filled($elector->email) || filled($elector->phone))) {
-            $elector->fresh()->sendBallotLink($election, now: true);
+            $elector->fresh()->sendBallotLink($election);
+
+            $sentTo = collect([
+                ...filled($data['email']) ? ['Email'] : [],
+                ...(filled($data['phone']) && $this->getElection()->preference->ballot_link_sms) ? ['SMS'] : [],
+                ...(filled($data['phone']) && $this->getElection()->preference->ballot_link_whatsapp) ? ['WhatsApp'] : [],
+            ])->join(', ', ' and ');
 
             $this->js(
-                <<<'JS'
+                <<<JS
 Swal.fire({
     title: 'Success',
-    text: 'An unique voting link for demo ballot has been sent to your email address / phone number. Please use the given link to experience online voting.',
+    text: 'An unique voting link for demo ballot has been sent to you by $sentTo. Please use the given link to experience online voting.',
     icon: 'success'
 })
 JS
