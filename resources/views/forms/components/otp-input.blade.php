@@ -37,9 +37,7 @@
                         const ac = new AbortController();
 
                         window.addEventListener('livewire:navigating', e => {
-                            console.log('aborting...');
-
-                            ac.abort();
+                            ac.abort('navigating to another page');
                         });
 
                         window.navigator.credentials.get({
