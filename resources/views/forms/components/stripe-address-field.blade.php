@@ -17,11 +17,14 @@
         stripe: null,
         elements: null,
         addressElement: null,
+        appearance: @js($getAppearance()),
+        stripeKey: @js($getStripeKey()),
+        options: @js($getOptions()),
         init() {
-            this.stripe = Stripe(@js($getStripeKey()))
-            const appearance = (@js($getAppearance()))
+            this.stripe = Stripe(this.stripeKey)
+            const appearance = this.appearance
             this.elements = this.stripe.elements({ appearance })
-            this.addressElement = this.elements.create('address', @js($getOptions()))
+            this.addressElement = this.elements.create('address', this.options)
             this.addressElement.on('change', (e) => {
                 this.state = e.value
             })
