@@ -71,22 +71,68 @@
 
             handleInput(e, i) {
                 const input = e.target;
-                if(input.value.length > 1){
-                    input.value = input.value.substring(0, 1);
-                }
+                const currentVal = input.value;
 
-                this.state = Array.from(Array(this.length), (element, i) => {
-                    const el = this.$refs[(i + 1)];
-                    return el.value ? el.value : '';
-                }).join('');
+                // Check if more than one character was inserted (likely autofill/suggestion)
+                if (currentVal.length > 1 && i === 1) { // Check length and if it's the *first* input field
+                    // Prevent the default single-character logic for this event cycle
+                    e.preventDefault();
 
+                    const fullCode = currentVal.substring(0, this.length); // Limit to expected length
+                    const codeLength = fullCode.length;
 
-                if (i < this.length) {
-                    this.$refs[i+1].focus();
-                    this.$refs[i+1].select();
-                }
-                if(i == this.length){
-                    @this.set('{{ $getStatePath() }}', this.state)
+                    // Distribute the characters
+                    for (let j = 0; j < this.length; j++) {
+                        if (this.$refs[(j + 1)]) {
+                           this.$refs[(j + 1)].value = fullCode[j] || '';
+                        }
+                    }
+
+                    // Rebuild state
+                    this.state = Array.from(Array(this.length), (element, k) => {
+                        const el = this.$refs[(k + 1)];
+                        return el && el.value ? el.value : '';
+                    }).join('');
+
+                    // Focus management: Focus input *after* the last filled digit
+                    const nextFocusIndex = codeLength < this.length ? codeLength + 1 : this.length;
+                     if (this.$refs[nextFocusIndex]) {
+                         this.$refs[nextFocusIndex].focus();
+                     }
+
+                    // Update Livewire if complete
+                    if (this.state.length === this.length) {
+                        @this.set('{{ $getStatePath() }}', this.state);
+                    }
+
+                } else if (currentVal.length === 1) {
+                    // --- Original single-character input logic ---
+                    // Rebuild the state based on all inputs
+                    this.state = Array.from(Array(this.length), (element, k) => {
+                        const el = this.$refs[(k + 1)];
+                        return el && el.value ? el.value : '';
+                    }).join('');
+
+                    // Move focus to the next input if not the last one
+                    if (i < this.length) {
+                        this.$refs[i + 1].focus();
+                        // Optional: Select the content of the next input
+                        // this.$refs[i + 1].select();
+                    }
+
+                    // Update Livewire if the state is complete (last input filled)
+                    // Added check for state length to be sure
+                    if (i === this.length && this.state.length === this.length) {
+                         @this.set('{{ $getStatePath() }}', this.state);
+                    }
+                } else {
+                     // Handle cases like clearing the input (length 0), rebuild state
+                     this.state = Array.from(Array(this.length), (element, k) => {
+                        const el = this.$refs[(k + 1)];
+                        return el && el.value ? el.value : '';
+                    }).join('');
+                     // Potentially update Livewire if state becomes incomplete if that's desired
+                     // @this.set('{{ $getStatePath() }}', this.state);
                 }
             },
 
