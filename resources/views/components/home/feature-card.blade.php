@@ -4,37 +4,35 @@
     /** @var FeatureCardData $data */
 @endphp
 
-@props([
-    'data',
-])
+@props(['data'])
 
 <div
-    data-aos="zoom-out-up"
-    class="rounded-xl bg-[#FAF9F6] p-2 ring-1 dark:bg-gray-900"
+    data-aos="fade-up"
+    class="rounded-2xl overflow-hidden border border-primary-100 glass neumorph transition-all shadow-md hover:shadow-lg bg-white/80 backdrop-blur-md font-sans"
 >
-    <div class="p-4">
-        <img
-            loading="lazy"
-            src="{{ $data->image }}"
-            alt="{{ $data->image_alt }}"
-            title="{{ $data->title }}"
-            class="aspect-square w-full rounded-xl"
-        />
-    </div>
-    <div class="space-y-2 p-2 md:p-4">
-        <h3 class="text-lg font-bold text-gray-900 dark:text-white">
+    {{-- Header Section with Fixed Height --}}
+    <div class="flex items-center gap-4 bg-primary-100 p-4 sm:p-6 min-h-[96px]">
+        <div class="shrink-0 rounded-xl bg-white p-2 shadow-sm">
+            <img
+                loading="lazy"
+                src="{{ $data->image }}"
+                alt="{{ $data->image_alt }}"
+                title="{{ $data->title }}"
+                class="h-12 w-12 object-contain"
+            />
+        </div>
+        <h3 class="text-lg sm:text-xl font-extrabold text-gray-800 leading-snug">
             {{ $data->title }}
         </h3>
-        <ul class="space-y-2 text-base text-gray-600 dark:text-white">
-            @foreach ($data->points as $point)
-                <li class="flex items-start gap-2">
-                    <x-filament::icon
-                        icon="heroicon-s-check"
-                        class="h-6 w-6 shrink-0 text-primary-500"
-                    />
-                    <span>{{ $point }}</span>
-                </li>
-            @endforeach
-        </ul>
     </div>
+
+    {{-- Points List --}}
+    <ul class="p-5 sm:p-6 space-y-3 text-sm sm:text-base text-gray-700">
+        @foreach ($data->points as $point)
+            <li class="flex items-start gap-2">
+                <x-heroicon-s-check class="h-5 w-5 text-primary-500" />
+                <span class="leading-snug">{{ $point }}</span>
+            </li>
+        @endforeach
+    </ul>
 </div>

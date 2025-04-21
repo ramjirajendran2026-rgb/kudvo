@@ -1,4 +1,31 @@
-<main class="page-home w-full overflow-hidden">
+<main class="page-home w-full overflow-hidden bg-gradient-to-b from-gray-50 to-blue-50 min-h-screen font-sans">
+    <style>
+        .glass {
+            background: rgba(255, 255, 255, 0.65);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.12);
+            backdrop-filter: blur(7px);
+            -webkit-backdrop-filter: blur(7px);
+            border-radius: 18px;
+            border: 1px solid rgba(255,255,255,0.18);
+        }
+        .neumorph {
+            box-shadow: 8px 8px 24px #e3e8f0, -8px -8px 24px #fff;
+        }
+        .btn-primary {
+            background: linear-gradient(90deg, #2563eb 0%, #1e40af 100%);
+            color: #fff;
+            border-radius: 9999px;
+            box-shadow: 0 2px 8px 0 #2563eb33;
+            font-weight: 600;
+            transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+        }
+        .btn-primary:hover, .btn-primary:focus {
+            background: #1e40af;
+            transform: scale(1.04);
+            box-shadow: 0 4px 16px 0 #2563eb44;
+        }
+        .focus-outline:focus { outline: 2px solid #2563eb; outline-offset: 2px; }
+    </style>
     <section
         id="hero"
         class="container relative overflow-hidden"
@@ -16,24 +43,27 @@
                     if (! this.started) {
                         this.started = true
                     }
-                }, 7000)
+                }, 5000)
             },
 
             prevSlide() {
-                clearInterval(this.intervalId)
-                this.activeSlide = (this.activeSlide - 1 + this.slides) % this.slides
-                this.intervalId = setInterval(() => {
-                    this.activeSlide = (this.activeSlide + 1) % this.slides
-                }, 7000)
+                this.activateSlide(this.activeSlide - 1)
             },
 
             nextSlide() {
-                clearInterval(this.intervalId)
-                this.activeSlide = (this.activeSlide + 1) % this.slides
+                this.activateSlide(this.activeSlide + 1)
+            },
+
+            activateSlide(slide) {
+                if (this.intervalId !== null) {
+                    clearInterval(this.intervalId)
+                }
+
+                this.activeSlide = slide % this.slides
                 this.intervalId = setInterval(() => {
                     this.activeSlide = (this.activeSlide + 1) % this.slides
-                }, 7000)
-            },
+                }, 5000)
+            }
         }"
         x-init="startSlider()"
     >
@@ -77,77 +107,56 @@
                 {{ ! $loop->first ? 'x-cloak' : '' }}
                 x-data="{ currentSlide: @js($loop->index) }"
                 x-show="activeSlide === currentSlide"
-                class="relative flex flex-col bg-cover md:aspect-[2.23/1] md:bg-var-url lg:flex-row lg:pb-0 lg:pt-0"
+                class="relative flex flex-col md:aspect-[2.23/1] lg:flex-row lg:pb-0 lg:pt-0 glass neumorph fade-in shadow-lg my-2 md:my-4 overflow-hidden"
+                tabindex="0" aria-live="polite"
             >
-                <img
-                    {!! ! $loop->first ? 'loading="lazy"' : '' !!}
-                    class="absolute inset-0 -z-10 hidden aspect-[2.23/1] object-cover md:block"
-                    src="{{ $item->image }}"
-                    alt="{{ $item->image_alt }}"
-                    title="{{ $item->title }}"
-                    x-bind:class="{
-                        'animated-image': activeSlide === currentSlide && started,
-                    }"
-                />
-                <div
-                    class="absolute inset-0 hidden bg-gradient-to-r from-gray-50 from-40% md:block"
-                ></div>
-                <div
-                    class="relative flex h-full w-full flex-col items-start justify-center px-4 md:w-[66.6%] md:px-0 lg:w-1/2 lg:px-8"
-                    x-bind:class="{
-                        'animated-image': activeSlide === currentSlide && started,
-                    }"
-                >
-                    <div class="mb-16 md:mb-0 lg:my-auto lg:pr-5">
-                        <h2
-                            class="mb-5 font-sans text-3xl font-bold leading-8 tracking-tight text-gray-900 sm:text-4xl sm:leading-none"
-                        >
-                            {{ $item->title }}
-                        </h2>
-
-                        <ul
-                            class="mb-5 pr-5 text-base text-gray-700 md:text-lg"
-                        >
-                            <li>{{ $item->description }}</li>
-                        </ul>
-
-                        <div class="flex items-center gap-4">
+                <!-- Large screens: image as background with overlay card -->
+                <div class="relative w-full h-56 sm:h-72 md:h-[420px] lg:h-[480px] xl:h-[540px] hidden md:block">
+                    <img
+                        {!! ! $loop->first ? 'loading="lazy"' : '' !!}
+                        class="absolute inset-0 w-full h-full object-cover object-center animated-image rounded-2xl"
+                        src="{{ $item->image }}"
+                        alt="{{ $item->image_alt }}"
+                        title="{{ $item->title }}"
+                        x-bind:class="{ 'animated-image': activeSlide === currentSlide && started, }"
+                        style="filter: brightness(0.97);"
+                    />
+                    <div class="absolute inset-0 flex flex-col justify-center glass neumorph fade-in shadow-lg mx-4 sm:mx-10 md:mx-0 px-4 py-6 sm:px-8 sm:py-8 md:py-12 md:px-12 max-w-full md:w-[66.6%] lg:w-1/2 lg:px-16"
+                        x-bind:class="{ 'animated-image': activeSlide === currentSlide, }">
+                        <h2 class="mb-4 text-xl xs:text-2xl sm:text-3xl md:text-3xl lg:text-4xl xl:text-5xl font-extrabold leading-tight tracking-tight text-gray-900 drop-shadow-md break-words">{{ $item->title }}</h2>
+                        <ul class="mb-4 text-sm xs:text-base sm:text-lg md:text-xl text-gray-700 contrast:text-gray-200"><li>{{ $item->description }}</li></ul>
+                        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mt-2 md:gap-5">
                             @if (filled($item->cta_label))
-                                <x-filament::button
-                                    size="xl"
-                                    color="primary"
-                                    tag="a"
-                                    :href="$item->cta_url ?? '#'"
-                                >
-                                    {{ $item->cta_label }}
-                                </x-filament::button>
+                                <a href="{{ $item->cta_url }}" class="btn-primary px-5 py-2 sm:px-6 sm:py-3 md:px-8 md:py-4 focus-outline text-xs xs:text-sm sm:text-base md:text-lg text-center" tabindex="0" role="button">{{ $item->cta_label }}</a>
                             @endif
-
                             @if (filled($item->cta2_label))
-                                <x-filament::link
-                                    size="xl"
-                                    color="primary"
-                                    tag="a"
-                                    :href="$item->cta2_url ?? '#'"
-                                >
-                                    {{ $item->cta2_label }}
-                                </x-filament::link>
+                                <a href="{{ $item->cta2_url }}" class="btn-primary px-5 py-2 sm:px-6 sm:py-3 md:px-8 md:py-4 focus-outline bg-green-500 hover:bg-green-600 text-xs xs:text-sm sm:text-base md:text-lg text-center" tabindex="0" role="button">{{ $item->cta2_label }}</a>
                             @endif
                         </div>
                     </div>
                 </div>
-                <div
-                    class="inset-y-0 right-0 top-0 z-0 mx-auto block w-full md:hidden md:px-0 lg:absolute lg:mx-0 lg:mb-0 lg:pr-0 xl:px-0"
-                >
+                <!-- Small screens: image below content card -->
+                <div class="flex flex-col md:hidden w-full p-2">
+                    <div class="glass neumorph fade-in shadow-lg px-3 py-5 sm:px-6 sm:py-6">
+                        <h2 class="mb-4 text-xl xs:text-2xl sm:text-3xl font-extrabold leading-tight tracking-tight text-gray-900 contrast:text-white drop-shadow-md break-words">{{ $item->title }}</h2>
+                        <ul class="mb-4 text-sm xs:text-base sm:text-lg text-gray-700 contrast:text-gray-200"><li>{{ $item->description }}</li></ul>
+                        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mt-2">
+                            @if (filled($item->cta_label))
+                                <a href="{{ $item->cta_url }}" class="btn-primary px-5 py-2 sm:px-6 sm:py-3 focus-outline text-xs xs:text-sm sm:text-base text-center" tabindex="0" role="button">{{ $item->cta_label }}</a>
+                            @endif
+                            @if (filled($item->cta2_label))
+                                <a href="{{ $item->cta2_url }}" class="btn-primary px-5 py-2 sm:px-6 sm:py-3 focus-outline bg-green-500 hover:bg-green-600 text-xs xs:text-sm sm:text-base text-center" tabindex="0" role="button">{{ $item->cta2_label }}</a>
+                            @endif
+                        </div>
+                    </div>
                     <img
                         {!! ! $loop->first ? 'loading="lazy"' : '' !!}
-                        class="block h-[343px] w-full object-cover object-right-bottom [mask-image:_linear-gradient(to_bottom,transparent_0,_black_100px,_black_calc(100%-1px),transparent_100%)] md:hidden"
+                        class="w-full h-48 sm:h-64 object-cover object-center mt-4 rounded-2xl animated-image"
                         src="{{ $item->image }}"
                         alt="{{ $item->image_alt }}"
                         title="{{ $item->title }}"
-                        x-bind:class="{
-                            'animated-image': activeSlide === currentSlide && started,
-                        }"
+                        x-bind:class="{ 'animated-image': activeSlide === currentSlide && started, }"
+                        style="filter: brightness(0.97);"
                     />
                 </div>
             </div>
@@ -156,7 +165,7 @@
         <div class="absolute bottom-0 left-0 right-0 mb-8 flex justify-center">
             <template x-for="slide in slides" :key="slide">
                 <button
-                    @click="activeSlide = slide - 1"
+                    @click="activateSlide(slide - 1)"
                     :class="{ 'bg-primary-500': activeSlide === slide - 1, 'bg-gray-200': activeSlide !== slide - 1 }"
                     class="mx-1 h-3 w-6 rounded-full focus:outline-none"
                     x-transition:enter="transition-all duration-300 ease-out"
@@ -187,7 +196,7 @@
         <h2 class="text-center text-2xl font-semibold text-black md:text-4xl">
             {{ __('pages/home.content.features.title') }}
         </h2>
-        <div class="mt-5 grid gap-4 md:grid-cols-3 md:gap-8">
+        <div class="mt-5 grid gap-4 sm:grid-cols-2 md:grid-cols-3 md:gap-8">
             @foreach ($featureItems as $feature)
                 <x-home.feature-card :data="$feature" />
             @endforeach
