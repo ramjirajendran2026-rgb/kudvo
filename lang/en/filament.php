@@ -578,6 +578,10 @@ return [
                         'navigation_label' => 'SMS Logs',
                         'navigation_group' => 'Elector Reports',
                     ],
+                    'elector_whats_app_messages' => [
+                        'navigation_label' => 'WhatsApp Logs',
+                        'navigation_group' => 'Elector Reports',
+                    ],
                 ],
             ],
             'table' => [

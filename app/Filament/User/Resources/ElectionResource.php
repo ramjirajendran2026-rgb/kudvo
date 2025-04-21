@@ -196,6 +196,7 @@ class ElectionResource extends Resource
             'logs.elector_ballots' => Pages\Logs\ElectorBallots::route(path: '/{record}/logs/elector-ballots'),
             'logs.elector_emails' => Pages\Logs\ElectorEmails::route(path: '/{record}/logs/elector-emails'),
             'logs.elector_sms_messages' => Pages\Logs\ElectorSmsMessages::route(path: '/{record}/logs/elector-sms-messages'),
+            'logs.elector_whats_app_messages' => Pages\Logs\ElectorWhatsAppMessages::route('/{record}/logs/elector-whats-app-messages'),
 
             'collaborators' => Pages\Collaborators::route(path: '/{record}/collaborators'),
         ];
@@ -215,6 +216,7 @@ class ElectionResource extends Resource
             Pages\Logs\ElectorBallots::class,
             Pages\Logs\ElectorEmails::class,
             Pages\Logs\ElectorSmsMessages::class,
+            Pages\Logs\ElectorWhatsAppMessages::class,
             Pages\Collaborators::class,
         ]);
     }

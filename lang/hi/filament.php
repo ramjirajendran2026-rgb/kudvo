@@ -570,6 +570,10 @@ candidate_bio' => [
                         'navigation_label' => 'SMS संदेश', // SMS Messages
                         'navigation_group' => 'चुनावकर्ता रिपोर्ट्स', // Elector Reports
                     ],
+                    'elector_whats_app_messages' => [
+                        'navigation_label' => 'व्हाट्सएप लॉग करता है', // WhatsApp Logs
+                        'navigation_group' => 'चुनावकर्ता रिपोर्ट्स', // Elector Reports
+                    ],
                 ],
             ],
             'table' => [
