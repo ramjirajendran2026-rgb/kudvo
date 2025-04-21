@@ -1,8 +1,5 @@
 <main class="page-home w-full overflow-hidden bg-gradient-to-b from-gray-50 to-blue-50 min-h-screen font-sans">
-    <!-- Inter Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        body, .font-sans { font-family: 'Inter', system-ui, sans-serif; }
         .glass {
             background: rgba(255, 255, 255, 0.65);
             box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.12);
@@ -14,7 +11,6 @@
         .neumorph {
             box-shadow: 8px 8px 24px #e3e8f0, -8px -8px 24px #fff;
         }
-        .animated-image { transition: transform 0.7s cubic-bezier(.4,0,.2,1), box-shadow 0.7s; }
         .btn-primary {
             background: linear-gradient(90deg, #2563eb 0%, #1e40af 100%);
             color: #fff;
@@ -29,8 +25,6 @@
             box-shadow: 0 4px 16px 0 #2563eb44;
         }
         .focus-outline:focus { outline: 2px solid #2563eb; outline-offset: 2px; }
-        .fade-in { animation: fadeIn 0.7s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(24px);} to { opacity: 1; transform: none; } }
     </style>
     <section
         id="hero"
@@ -49,24 +43,27 @@
                     if (! this.started) {
                         this.started = true
                     }
-                }, 7000)
+                }, 5000)
             },
 
             prevSlide() {
-                clearInterval(this.intervalId)
-                this.activeSlide = (this.activeSlide - 1 + this.slides) % this.slides
-                this.intervalId = setInterval(() => {
-                    this.activeSlide = (this.activeSlide + 1) % this.slides
-                }, 7000)
+                this.activateSlide(this.activeSlide - 1)
             },
 
             nextSlide() {
-                clearInterval(this.intervalId)
-                this.activeSlide = (this.activeSlide + 1) % this.slides
+                this.activateSlide(this.activeSlide + 1)
+            },
+
+            activateSlide(slide) {
+                if (this.intervalId !== null) {
+                    clearInterval(this.intervalId)
+                }
+
+                this.activeSlide = slide % this.slides
                 this.intervalId = setInterval(() => {
                     this.activeSlide = (this.activeSlide + 1) % this.slides
-                }, 7000)
-            },
+                }, 5000)
+            }
         }"
         x-init="startSlider()"
     >
@@ -125,7 +122,7 @@
                         style="filter: brightness(0.97);"
                     />
                     <div class="absolute inset-0 flex flex-col justify-center glass neumorph fade-in shadow-lg mx-4 sm:mx-10 md:mx-0 px-4 py-6 sm:px-8 sm:py-8 md:py-12 md:px-12 max-w-full md:w-[66.6%] lg:w-1/2 lg:px-16"
-                        x-bind:class="{ 'animated-image': activeSlide === currentSlide && started, }">
+                        x-bind:class="{ 'animated-image': activeSlide === currentSlide, }">
                         <h2 class="mb-4 text-xl xs:text-2xl sm:text-3xl md:text-3xl lg:text-4xl xl:text-5xl font-extrabold leading-tight tracking-tight text-gray-900 drop-shadow-md break-words">{{ $item->title }}</h2>
                         <ul class="mb-4 text-sm xs:text-base sm:text-lg md:text-xl text-gray-700 contrast:text-gray-200"><li>{{ $item->description }}</li></ul>
                         <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mt-2 md:gap-5">
@@ -168,7 +165,7 @@
         <div class="absolute bottom-0 left-0 right-0 mb-8 flex justify-center">
             <template x-for="slide in slides" :key="slide">
                 <button
-                    @click="activeSlide = slide - 1"
+                    @click="activateSlide(slide - 1)"
                     :class="{ 'bg-primary-500': activeSlide === slide - 1, 'bg-gray-200': activeSlide !== slide - 1 }"
                     class="mx-1 h-3 w-6 rounded-full focus:outline-none"
                     x-transition:enter="transition-all duration-300 ease-out"
