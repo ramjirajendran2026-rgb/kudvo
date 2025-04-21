@@ -28,7 +28,7 @@
     </style>
     <section
         id="hero"
-        class="container relative overflow-hidden"
+        class="container !px-0 relative overflow-hidden"
         x-data="{
             started: false,
             activeSlide: 0,
@@ -107,7 +107,7 @@
                 {{ ! $loop->first ? 'x-cloak' : '' }}
                 x-data="{ currentSlide: @js($loop->index) }"
                 x-show="activeSlide === currentSlide"
-                class="relative flex flex-col md:aspect-[2.23/1] lg:flex-row lg:pb-0 lg:pt-0 glass neumorph fade-in shadow-lg my-2 md:my-4 overflow-hidden"
+                class="relative flex flex-col md:aspect-[2.23/1] lg:flex-row lg:pb-0 lg:pt-0 fade-in overflow-hidden"
                 tabindex="0" aria-live="polite"
             >
                 <!-- Large screens: image as background with overlay card -->
@@ -162,11 +162,11 @@
             </div>
         @endforeach
 
-        <div class="absolute bottom-0 left-0 right-0 mb-8 flex justify-center">
+        <div class="flex justify-center">
             <template x-for="slide in slides" :key="slide">
                 <button
                     @click="activateSlide(slide - 1)"
-                    :class="{ 'bg-primary-500': activeSlide === slide - 1, 'bg-gray-200': activeSlide !== slide - 1 }"
+                    :class="{ 'bg-primary-600': activeSlide === slide - 1, 'bg-gray-200': activeSlide !== slide - 1 }"
                     class="mx-1 h-3 w-6 rounded-full focus:outline-none"
                     x-transition:enter="transition-all duration-300 ease-out"
                     x-transition:enter-start="scale-95 opacity-0"
