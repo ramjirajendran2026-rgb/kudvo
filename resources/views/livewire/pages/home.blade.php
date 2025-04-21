@@ -47,7 +47,7 @@
             },
 
             prevSlide() {
-                this.activateSlide(this.activeSlide - 1)
+                this.activateSlide(this.activeSlide - 1 + this.slides)
             },
 
             nextSlide() {
