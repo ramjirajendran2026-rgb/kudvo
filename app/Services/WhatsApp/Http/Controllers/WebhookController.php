@@ -43,10 +43,33 @@ class WebhookController extends Controller
         // Handle webhook payload (POST request)
         Log::info('[WhatsApp] WebhookPayload: ' . json_encode($request->all()));
 
-        $payloadData = WhatsAppReceiptData::from($request->all());
+        $payload = $request->all();
 
-        if (filled($payloadData->message_id) || (filled($payloadData->statuses) && count($payloadData->statuses) > 0)) {
-            app(ProcessWebhookPayload::class)->execute($payloadData);
+        // Handle nested structure for status updates
+        if (isset($payload['object']) && $payload['object'] === 'whatsapp_business_account' &&
+            isset($payload['entry']) && is_array($payload['entry']) && count($payload['entry']) > 0) {
+
+            foreach ($payload['entry'] as $entry) {
+                if (isset($entry['changes']) && is_array($entry['changes']) && count($entry['changes']) > 0) {
+                    foreach ($entry['changes'] as $change) {
+                        if (isset($change['value'])) {
+                            // Extract the value which contains the actual WhatsApp data
+                            $payloadData = WhatsAppReceiptData::from($change['value']);
+
+                            if (filled($payloadData->message_id) || (filled($payloadData->statuses) && count($payloadData->statuses) > 0)) {
+                                app(ProcessWebhookPayload::class)->execute($payloadData);
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            // Handle direct payload structure (for backward compatibility)
+            $payloadData = WhatsAppReceiptData::from($payload);
+
+            if (filled($payloadData->message_id) || (filled($payloadData->statuses) && count($payloadData->statuses) > 0)) {
+                app(ProcessWebhookPayload::class)->execute($payloadData);
+            }
         }
 
         return response()->noContent();
