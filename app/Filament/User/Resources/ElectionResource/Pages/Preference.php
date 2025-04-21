@@ -179,7 +179,8 @@ class Preference extends ElectionPage
                                             if (
                                                 $value &&
                                                 ! $get(path: 'ballot_link_mail') &&
-                                                ! $get(path: 'ballot_link_sms')
+                                                ! $get(path: 'ballot_link_sms') &&
+                                                ! $get(path: 'ballot_link_whatsapp')
                                             ) {
                                                 $fail(__('filament.user.election-resource.pages.preference.form.ballot_link_unique.validation.custom_rule'));
                                             }

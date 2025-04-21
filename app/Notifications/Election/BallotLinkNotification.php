@@ -4,11 +4,13 @@ namespace App\Notifications\Election;
 
 use App\Enums\MailMessagePurpose;
 use App\Enums\SmsMessagePurpose;
+use App\Enums\WhatsAppMessagePurpose;
 use App\Models\Election;
 use App\Models\Elector;
 use App\Notifications\Concerns\HasSmsChannel;
 use App\Notifications\Contracts\HasMailMessagePurpose;
 use App\Notifications\Contracts\HasSmsMessagePurpose;
+use App\Notifications\Contracts\HasWhatsAppMessagePurpose;
 use App\Services\WhatsApp\Messages\TemplateComponents\TemplateComponentFactory;
 use App\Services\WhatsApp\Messages\WhatsAppMessage;
 use App\Services\WhatsApp\Messages\WhatsAppMessageFactory;
@@ -21,7 +23,7 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 use Symfony\Component\Mime\Message;
 
-class BallotLinkNotification extends Notification implements HasMailMessagePurpose, HasSmsMessagePurpose, ShouldQueue
+class BallotLinkNotification extends Notification implements HasMailMessagePurpose, HasSmsMessagePurpose, HasWhatsAppMessagePurpose, ShouldQueue
 {
     use HasSmsChannel;
     use Queueable;
@@ -108,6 +110,11 @@ class BallotLinkNotification extends Notification implements HasMailMessagePurpo
     public function getSmsMessagePurpose(object $notifiable): SmsMessagePurpose
     {
         return SmsMessagePurpose::BallotLink;
+    }
+
+    public function getWhatsAppMessagePurpose(object $notifiable): WhatsAppMessagePurpose
+    {
+        return WhatsAppMessagePurpose::BallotLink;
     }
 
     protected function formatTemplate(string $template, object $notifiable): string

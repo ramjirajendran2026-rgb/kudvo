@@ -4,12 +4,14 @@ namespace App\Notifications\Election;
 
 use App\Enums\MailMessagePurpose;
 use App\Enums\SmsMessagePurpose;
+use App\Enums\WhatsAppMessagePurpose;
 use App\Models\Ballot;
 use App\Models\Election;
 use App\Models\Elector;
 use App\Notifications\Concerns\HasSmsChannel;
 use App\Notifications\Contracts\HasMailMessagePurpose;
 use App\Notifications\Contracts\HasSmsMessagePurpose;
+use App\Notifications\Contracts\HasWhatsAppMessagePurpose;
 use App\Services\WhatsApp\Messages\TemplateComponents\TemplateComponentFactory;
 use App\Services\WhatsApp\Messages\WhatsAppMessage;
 use App\Services\WhatsApp\Messages\WhatsAppMessageFactory;
@@ -19,7 +21,7 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Support\Str;
 use Symfony\Component\Mime\Message;
 
-class VotedConfirmationNotification extends Notification implements HasMailMessagePurpose, HasSmsMessagePurpose
+class VotedConfirmationNotification extends Notification implements HasMailMessagePurpose, HasSmsMessagePurpose, HasWhatsAppMessagePurpose
 {
     use HasSmsChannel;
 
@@ -109,6 +111,11 @@ class VotedConfirmationNotification extends Notification implements HasMailMessa
     public function getSmsMessagePurpose(object $notifiable): SmsMessagePurpose
     {
         return SmsMessagePurpose::VotedConfirmation;
+    }
+
+    public function getWhatsAppMessagePurpose(object $notifiable): WhatsAppMessagePurpose
+    {
+        return WhatsAppMessagePurpose::VotedConfirmation;
     }
 
     public function getMailMessagePurpose(object $notifiable): MailMessagePurpose

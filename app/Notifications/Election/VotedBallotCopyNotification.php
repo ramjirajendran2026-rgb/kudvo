@@ -3,18 +3,23 @@
 namespace App\Notifications\Election;
 
 use App\Enums\MailMessagePurpose;
+use App\Enums\WhatsAppMessagePurpose;
 use App\Models\Ballot;
 use App\Models\Election;
 use App\Models\Elector;
+use App\Notifications\Concerns\HasSmsChannel;
 use App\Notifications\Contracts\HasMailMessagePurpose;
+use App\Notifications\Contracts\HasWhatsAppMessagePurpose;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Dompdf\Dompdf;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Symfony\Component\Mime\Message;
 
-class VotedBallotCopyNotification extends Notification implements HasMailMessagePurpose
+class VotedBallotCopyNotification extends Notification implements HasMailMessagePurpose, HasWhatsAppMessagePurpose
 {
+    use HasSmsChannel;
+
     protected Election $election;
 
     protected Elector $elector;
@@ -30,7 +35,7 @@ class VotedBallotCopyNotification extends Notification implements HasMailMessage
 
     public function via(object $notifiable): array
     {
-        return $this->via;
+        return $this->prepareSmsChannel($notifiable, $this->via);
     }
 
     public function toMail(object $notifiable): MailMessage
@@ -53,6 +58,11 @@ class VotedBallotCopyNotification extends Notification implements HasMailMessage
     public function toArray(object $notifiable): array
     {
         return [];
+    }
+
+    public function getWhatsAppMessagePurpose(object $notifiable): WhatsAppMessagePurpose
+    {
+        return WhatsAppMessagePurpose::VotedBallotCopy;
     }
 
     public function getMailMessagePurpose(object $notifiable): MailMessagePurpose

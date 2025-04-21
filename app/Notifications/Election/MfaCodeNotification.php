@@ -4,11 +4,13 @@ namespace App\Notifications\Election;
 
 use App\Enums\MailMessagePurpose;
 use App\Enums\SmsMessagePurpose;
+use App\Enums\WhatsAppMessagePurpose;
 use App\Models\Election;
 use App\Models\OneTimePassword;
 use App\Notifications\Concerns\HasSmsChannel;
 use App\Notifications\Contracts\HasMailMessagePurpose;
 use App\Notifications\Contracts\HasSmsMessagePurpose;
+use App\Notifications\Contracts\HasWhatsAppMessagePurpose;
 use App\Services\WhatsApp\Messages\TemplateComponents\TemplateComponentFactory;
 use App\Services\WhatsApp\Messages\WhatsAppMessage;
 use App\Services\WhatsApp\Messages\WhatsAppMessageFactory;
@@ -20,7 +22,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Symfony\Component\Mime\Message;
 
-class MfaCodeNotification extends Notification implements HasMailMessagePurpose, HasSmsMessagePurpose
+class MfaCodeNotification extends Notification implements HasMailMessagePurpose, HasSmsMessagePurpose, HasWhatsAppMessagePurpose
 {
     use HasSmsChannel;
 
@@ -86,6 +88,11 @@ class MfaCodeNotification extends Notification implements HasMailMessagePurpose,
     public function getSmsMessagePurpose(object $notifiable): SmsMessagePurpose
     {
         return SmsMessagePurpose::BallotMfaCode;
+    }
+
+    public function getWhatsAppMessagePurpose(object $notifiable): WhatsAppMessagePurpose
+    {
+        return WhatsAppMessagePurpose::BallotMfaCode;
     }
 
     protected function formatTemplate(string $template): string

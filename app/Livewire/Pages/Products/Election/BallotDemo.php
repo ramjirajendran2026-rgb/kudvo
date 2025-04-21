@@ -181,9 +181,9 @@ JS
             $elector->fresh()->sendBallotLink($election);
 
             $sentTo = collect([
-                ...filled($data['email']) ? ['Email'] : [],
-                ...(filled($data['phone']) && $this->getElection()->preference->ballot_link_sms) ? ['SMS'] : [],
-                ...(filled($data['phone']) && $this->getElection()->preference->ballot_link_whatsapp) ? ['WhatsApp'] : [],
+                ...filled($data['email'] ?? null) ? ['Email'] : [],
+                ...(filled($data['phone'] ?? null) && $this->getElection()->preference->ballot_link_sms) ? ['SMS'] : [],
+                ...(filled($data['phone'] ?? null) && $this->getElection()->preference->ballot_link_whatsapp) ? ['WhatsApp'] : [],
             ])->join(', ', ' and ');
 
             $this->js(

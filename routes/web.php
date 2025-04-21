@@ -24,6 +24,7 @@ use App\Models\Meeting;
 use App\Models\Participant;
 use App\Models\ShortLink;
 use App\Services\Clicksend\Http\Controllers\WebhookController as ClicksendWebhookController;
+use App\Services\WhatsApp\Http\Controllers\WebhookController as WhatsAppWebhookController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
@@ -167,6 +168,8 @@ Route::group(
             ->name('qsyss-meeting.responses');
 
         Route::post(uri: 'clicksend/webhook', action: ClicksendWebhookController::class);
+
+        Route::match(['get', 'post'], uri: 'whatsapp/webhook', action: WhatsAppWebhookController::class);
 
         Route::get(uri: 'checkout/success', action: [CheckoutController::class, 'success'])
             ->name(name: 'checkout.success');
