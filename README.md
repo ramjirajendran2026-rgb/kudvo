@@ -84,4 +84,4 @@ This project is licensed under the MIT License.
 For support or inquiries, reach out via:
 
 -   Website: [Kudvo](https://kudvo.com)
--   Email: support@kudvo.com
+-   Email: hello@kudvo.com

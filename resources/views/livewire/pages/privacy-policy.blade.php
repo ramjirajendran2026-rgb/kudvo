@@ -512,7 +512,7 @@
     </p>
     <ul>
         <li>
-            <p>By email: support@kudvo.com</p>
+            <p>By email: hello@kudvo.com</p>
         </li>
         <li>
             <p>

@@ -202,7 +202,7 @@ return [
             'number' => '+1-631-731-3526',
         ],
         'email' => [
-            'address' => 'support@kudvo.com',
+            'address' => 'hello@kudvo.com',
         ],
     ],
 ];
