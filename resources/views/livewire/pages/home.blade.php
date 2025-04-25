@@ -1,4 +1,6 @@
-<main class="page-home w-full overflow-hidden bg-gradient-to-b from-gray-50 to-blue-50 min-h-screen font-sans">
+<main
+    class="page-home min-h-screen w-full overflow-hidden bg-gradient-to-b from-gray-50 to-blue-50 font-sans"
+>
     <style>
         .glass {
             background: rgba(255, 255, 255, 0.65);
@@ -6,10 +8,12 @@
             backdrop-filter: blur(7px);
             -webkit-backdrop-filter: blur(7px);
             border-radius: 18px;
-            border: 1px solid rgba(255,255,255,0.18);
+            border: 1px solid rgba(255, 255, 255, 0.18);
         }
         .neumorph {
-            box-shadow: 8px 8px 24px #e3e8f0, -8px -8px 24px #fff;
+            box-shadow:
+                8px 8px 24px #e3e8f0,
+                -8px -8px 24px #fff;
         }
         .btn-primary {
             background: linear-gradient(90deg, #2563eb 0%, #1e40af 100%);
@@ -17,18 +21,25 @@
             border-radius: 9999px;
             box-shadow: 0 2px 8px 0 #2563eb33;
             font-weight: 600;
-            transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+            transition:
+                background 0.2s,
+                box-shadow 0.2s,
+                transform 0.1s;
         }
-        .btn-primary:hover, .btn-primary:focus {
+        .btn-primary:hover,
+        .btn-primary:focus {
             background: #1e40af;
             transform: scale(1.04);
             box-shadow: 0 4px 16px 0 #2563eb44;
         }
-        .focus-outline:focus { outline: 2px solid #2563eb; outline-offset: 2px; }
+        .focus-outline:focus {
+            outline: 2px solid #2563eb;
+            outline-offset: 2px;
+        }
     </style>
     <section
         id="hero"
-        class="container !px-0 relative overflow-hidden"
+        class="container relative overflow-hidden !px-0"
         x-data="{
             started: false,
             activeSlide: 0,
@@ -63,7 +74,7 @@
                 this.intervalId = setInterval(() => {
                     this.activeSlide = (this.activeSlide + 1) % this.slides
                 }, 5000)
-            }
+            },
         }"
         x-init="startSlider()"
     >
@@ -107,56 +118,113 @@
                 {{ ! $loop->first ? 'x-cloak' : '' }}
                 x-data="{ currentSlide: @js($loop->index) }"
                 x-show="activeSlide === currentSlide"
-                class="relative flex flex-col md:aspect-[2.23/1] lg:flex-row lg:pb-0 lg:pt-0 fade-in overflow-hidden"
-                tabindex="0" aria-live="polite"
+                class="fade-in relative flex flex-col overflow-hidden md:aspect-[2.23/1] lg:flex-row lg:pb-0 lg:pt-0"
+                tabindex="0"
+                aria-live="polite"
             >
                 <!-- Large screens: image as background with overlay card -->
-                <div class="relative w-full h-56 sm:h-72 md:h-[420px] lg:h-[480px] xl:h-[540px] hidden md:block">
+                <div
+                    class="relative hidden h-56 w-full sm:h-72 md:block md:h-[420px] lg:h-[480px] xl:h-[540px]"
+                >
                     <img
                         {!! ! $loop->first ? 'loading="lazy"' : '' !!}
-                        class="absolute inset-0 w-full h-full object-cover object-center animated-image rounded-2xl"
+                        class="animated-image absolute inset-0 h-full w-full rounded-2xl object-cover object-center"
                         src="{{ $item->image }}"
                         alt="{{ $item->image_alt }}"
                         title="{{ $item->title }}"
-                        x-bind:class="{ 'animated-image': activeSlide === currentSlide && started, }"
-                        style="filter: brightness(0.97);"
+                        x-bind:class="{ 'animated-image': activeSlide === currentSlide && started }"
+                        style="filter: brightness(0.97)"
                     />
-                    <div class="absolute inset-0 flex flex-col justify-center glass neumorph fade-in shadow-lg mx-4 sm:mx-10 md:mx-0 px-4 py-6 sm:px-8 sm:py-8 md:py-12 md:px-12 max-w-full md:w-[66.6%] lg:w-1/2 lg:px-16"
-                        x-bind:class="{ 'animated-image': activeSlide === currentSlide, }">
-                        <h2 class="mb-4 text-xl xs:text-2xl sm:text-3xl md:text-3xl lg:text-4xl xl:text-5xl font-extrabold leading-tight tracking-tight text-gray-900 drop-shadow-md break-words">{{ $item->title }}</h2>
-                        <ul class="mb-4 text-sm xs:text-base sm:text-lg md:text-xl text-gray-700 contrast:text-gray-200"><li>{{ $item->description }}</li></ul>
-                        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mt-2 md:gap-5">
+                    <div
+                        class="glass neumorph fade-in absolute inset-0 mx-4 flex max-w-full flex-col justify-center px-4 py-6 shadow-lg sm:mx-10 sm:px-8 sm:py-8 md:mx-0 md:w-[66.6%] md:px-12 md:py-12 lg:w-1/2 lg:px-16"
+                        x-bind:class="{ 'animated-image': activeSlide === currentSlide }"
+                    >
+                        <h2
+                            class="xs:text-2xl mb-4 break-words text-xl font-extrabold leading-tight tracking-tight text-gray-900 drop-shadow-md sm:text-3xl md:text-3xl lg:text-4xl xl:text-5xl"
+                        >
+                            {{ $item->title }}
+                        </h2>
+                        <ul
+                            class="xs:text-base contrast:text-gray-200 mb-4 text-sm text-gray-700 sm:text-lg md:text-xl"
+                        >
+                            <li>{{ $item->description }}</li>
+                        </ul>
+                        <div
+                            class="mt-2 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center md:gap-5"
+                        >
                             @if (filled($item->cta_label))
-                                <a href="{{ $item->cta_url }}" class="btn-primary px-5 py-2 sm:px-6 sm:py-3 md:px-8 md:py-4 focus-outline text-xs xs:text-sm sm:text-base md:text-lg text-center" tabindex="0" role="button">{{ $item->cta_label }}</a>
+                                <a
+                                    href="{{ $item->cta_url }}"
+                                    class="btn-primary focus-outline xs:text-sm px-5 py-2 text-center text-xs sm:px-6 sm:py-3 sm:text-base md:px-8 md:py-4 md:text-lg"
+                                    tabindex="0"
+                                    role="button"
+                                >
+                                    {{ $item->cta_label }}
+                                </a>
                             @endif
+
                             @if (filled($item->cta2_label))
-                                <a href="{{ $item->cta2_url }}" class="btn-primary px-5 py-2 sm:px-6 sm:py-3 md:px-8 md:py-4 focus-outline bg-green-500 hover:bg-green-600 text-xs xs:text-sm sm:text-base md:text-lg text-center" tabindex="0" role="button">{{ $item->cta2_label }}</a>
+                                <a
+                                    href="{{ $item->cta2_url }}"
+                                    class="btn-primary focus-outline xs:text-sm bg-green-500 px-5 py-2 text-center text-xs hover:bg-green-600 sm:px-6 sm:py-3 sm:text-base md:px-8 md:py-4 md:text-lg"
+                                    tabindex="0"
+                                    role="button"
+                                >
+                                    {{ $item->cta2_label }}
+                                </a>
                             @endif
                         </div>
                     </div>
                 </div>
                 <!-- Small screens: image below content card -->
-                <div class="flex flex-col md:hidden w-full p-2">
-                    <div class="glass neumorph fade-in shadow-lg px-3 py-5 sm:px-6 sm:py-6">
-                        <h2 class="mb-4 text-xl xs:text-2xl sm:text-3xl font-extrabold leading-tight tracking-tight text-gray-900 contrast:text-white drop-shadow-md break-words">{{ $item->title }}</h2>
-                        <ul class="mb-4 text-sm xs:text-base sm:text-lg text-gray-700 contrast:text-gray-200"><li>{{ $item->description }}</li></ul>
-                        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mt-2">
+                <div class="flex w-full flex-col p-2 md:hidden">
+                    <div
+                        class="glass neumorph fade-in px-3 py-5 shadow-lg sm:px-6 sm:py-6"
+                    >
+                        <h2
+                            class="xs:text-2xl contrast:text-white mb-4 break-words text-xl font-extrabold leading-tight tracking-tight text-gray-900 drop-shadow-md sm:text-3xl"
+                        >
+                            {{ $item->title }}
+                        </h2>
+                        <ul
+                            class="xs:text-base contrast:text-gray-200 mb-4 text-sm text-gray-700 sm:text-lg"
+                        >
+                            <li>{{ $item->description }}</li>
+                        </ul>
+                        <div
+                            class="mt-2 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center"
+                        >
                             @if (filled($item->cta_label))
-                                <a href="{{ $item->cta_url }}" class="btn-primary px-5 py-2 sm:px-6 sm:py-3 focus-outline text-xs xs:text-sm sm:text-base text-center" tabindex="0" role="button">{{ $item->cta_label }}</a>
+                                <a
+                                    href="{{ $item->cta_url }}"
+                                    class="btn-primary focus-outline xs:text-sm px-5 py-2 text-center text-xs sm:px-6 sm:py-3 sm:text-base"
+                                    tabindex="0"
+                                    role="button"
+                                >
+                                    {{ $item->cta_label }}
+                                </a>
                             @endif
+
                             @if (filled($item->cta2_label))
-                                <a href="{{ $item->cta2_url }}" class="btn-primary px-5 py-2 sm:px-6 sm:py-3 focus-outline bg-green-500 hover:bg-green-600 text-xs xs:text-sm sm:text-base text-center" tabindex="0" role="button">{{ $item->cta2_label }}</a>
+                                <a
+                                    href="{{ $item->cta2_url }}"
+                                    class="btn-primary focus-outline xs:text-sm bg-green-500 px-5 py-2 text-center text-xs hover:bg-green-600 sm:px-6 sm:py-3 sm:text-base"
+                                    tabindex="0"
+                                    role="button"
+                                >
+                                    {{ $item->cta2_label }}
+                                </a>
                             @endif
                         </div>
                     </div>
                     <img
                         {!! ! $loop->first ? 'loading="lazy"' : '' !!}
-                        class="w-full h-48 sm:h-64 object-cover object-center mt-4 rounded-2xl animated-image"
+                        class="animated-image mt-4 h-48 w-full rounded-2xl object-cover object-center sm:h-64"
                         src="{{ $item->image }}"
                         alt="{{ $item->image_alt }}"
                         title="{{ $item->title }}"
-                        x-bind:class="{ 'animated-image': activeSlide === currentSlide && started, }"
-                        style="filter: brightness(0.97);"
+                        x-bind:class="{ 'animated-image': activeSlide === currentSlide && started }"
+                        style="filter: brightness(0.97)"
                     />
                 </div>
             </div>

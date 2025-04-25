@@ -10,17 +10,19 @@
 
 <div
     data-aos="flip-right"
-    class="transform rounded-2xl border border-gray-200 glass shadow-md hover:-translate-y-1 hover:shadow-lg transition-all duration-200 bg-white/80 backdrop-blur-md"
+    class="glass transform rounded-2xl border border-gray-200 bg-white/80 shadow-md backdrop-blur-md transition-all duration-200 hover:-translate-y-1 hover:shadow-lg"
 >
-    <div class="flex h-full flex-col justify-between p-4 sm:p-6 md:space-y-6 md:p-8 font-sans">
+    <div
+        class="flex h-full flex-col justify-between p-4 font-sans sm:p-6 md:space-y-6 md:p-8"
+    >
         <h5
-            class="mb-2 text-center text-2xl sm:text-3xl font-extrabold tracking-tight leading-tight text-gray-900"
+            class="mb-2 text-center text-2xl font-extrabold leading-tight tracking-tight text-gray-900 sm:text-3xl"
             style="color: {{ $data->title_color }}"
         >
             {{ $data->title }}
         </h5>
         <p
-            class="mb-3 text-center text-base sm:text-lg font-normal text-gray-700"
+            class="mb-3 text-center text-base font-normal text-gray-700 sm:text-lg"
         >
             {{ $data->description }}
         </p>
@@ -28,8 +30,8 @@
             size="xl"
             :outlined="true"
             color="primary"
-            class="w-full !rounded-full btn-primary focus-outline text-base sm:text-lg py-3 mt-2"
-            style="font-family: 'Inter', system-ui, sans-serif;"
+            class="btn-primary focus-outline mt-2 w-full !rounded-full py-3 text-base sm:text-lg"
+            style="font-family: 'Inter', system-ui, sans-serif"
             :disabled="blank($data->cta_url)"
             :tag="blank($data->cta_url) ? 'button' : 'a'"
             href="{{ $data->cta_url }}"
