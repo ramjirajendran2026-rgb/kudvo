@@ -37,20 +37,7 @@ class Index extends Component implements HasForms, HasTable
     {
         return view('livewire.pages.wiki.index')
             ->layoutData([
-                'seoData' => $this->category ??
-                        $this->tag ??
-                        new SEOData(
-                            title: 'Kudvo Wiki: Comprehensive Guides on Secure Online Voting & Electoral Systems',
-                            description: 'Explore the Kudvo Wiki for expert insights on online voting systems, secure election technologies, and voter engagement strategies. Learn about electoral processes across the globe.',
-                            enableTitleSuffix: false,
-                            schema: SchemaCollection::make()
-                                ->addBreadcrumbs(
-                                    fn (BreadcrumbListSchema $schema, SEOData $data): BreadcrumbListSchema => $schema
-                                        ->prependBreadcrumbs([
-                                            'Home' => route('home'),
-                                        ])
-                                ),
-                        ),
+                'seoData' => $this->getSeoData(),
             ]);
     }
 
@@ -58,27 +45,6 @@ class Index extends Component implements HasForms, HasTable
     public function defaultCoverUrl(): string
     {
         return WikiPage::getDefaultCoverUrl();
-    }
-
-    #[Computed]
-    public function latestPage(): ?WikiPage
-    {
-        return WikiPage::with(['category', 'tags'])
-            ->when(
-                $this->category,
-                fn (Builder $query, WikiCategory $value) => $query
-                    ->whereBelongsTo($value, 'category')
-            )
-            ->when(
-                $this->tag,
-                fn (Builder $query, WikiTag $value) => $query
-                    ->whereHas(
-                        'tags',
-                        fn (Builder $query) => $query->whereKey($value)
-                    )
-            )
-            ->latest()
-            ->first();
     }
 
     /**
@@ -89,6 +55,21 @@ class Index extends Component implements HasForms, HasTable
     {
         return WikiCategory::orderBy('name')
             ->get();
+    }
+
+    public function getSeoData(): SEOData
+    {
+        return $this->category?->getDynamicSEOData() ??
+                $this->tag?->getDynamicSEOData() ??
+                new SEOData(
+                    title: 'Wiki: Comprehensive Guides on Secure Online Voting & Electoral Systems',
+                    description: 'Explore the Kudvo Wiki for expert insights on online voting systems, secure election technologies, and voter engagement strategies. Learn about electoral processes across the globe.',
+                    enableTitleSuffix: false,
+                    schema: SchemaCollection::make()
+                        ->addBreadcrumbs(
+                            fn (BreadcrumbListSchema $schema, SEOData $data): BreadcrumbListSchema => $schema
+                        )
+                );
     }
 
     /**
@@ -161,12 +142,6 @@ class Index extends Component implements HasForms, HasTable
                     )
             )
             ->recordUrl(fn (WikiPage $page) => route('wiki.show', [$page]))
-            ->query(
-                WikiPage::query()
-                    ->when(
-                        $this->latestPage,
-                        fn (Builder $query, $value) => $query->whereKeyNot($value)
-                    )
-            );
+            ->query(WikiPage::query());
     }
 }
