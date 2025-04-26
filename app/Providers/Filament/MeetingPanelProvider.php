@@ -10,6 +10,7 @@ use App\Filament\Meeting\Http\Middleware\IdentifyPanelState;
 use App\Filament\Meeting\MeetingPanel;
 use App\Filament\Meeting\Pages\Auth\Login;
 use App\Settings\GoogleTagManagerSettings;
+use App\Settings\ServiceConfig;
 use Filament\FontProviders\LocalFontProvider;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -93,6 +94,12 @@ class MeetingPanelProvider extends PanelProvider
             ->renderHook(
                 name: PanelsRenderHook::FOOTER,
                 hook: fn () => Blade::render(string: '<x-filament.nomination.footer />')
+            )
+            ->renderHook(
+                name: PanelsRenderHook::BODY_END,
+                hook: fn (ServiceConfig $services) => ($services->tawk_to->enabled && $services->tawk_to->meeting_panel) ?
+                    new HtmlString(html: $services->tawk_to->script) :
+                    null,
             );
     }
 

@@ -64,7 +64,11 @@
         @livewire('notifications')
 
         @if ($serviceConfig->tawk_to->enabled)
-            {!! $serviceConfig->tawk_to->script !!}
+            @if ((request()->routeIs('home') && $serviceConfig->tawk_to->home_page) ||
+                 (request()->routeIs('products.*') && $serviceConfig->tawk_to->product_pages) ||
+                 (request()->routeIs('wiki.*') && $serviceConfig->tawk_to->wiki_pages))
+                {!! $serviceConfig->tawk_to->script !!}
+            @endif
         @endif
 
         @filamentScripts

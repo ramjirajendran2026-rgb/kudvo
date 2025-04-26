@@ -28,13 +28,39 @@ class TawkTo extends SettingsPage
                     ->mutateDehydratedStateUsing(callback: fn (array $state): TawkToConfigData => TawkToConfigData::from($state))
                     ->statePath('tawk_to')
                     ->schema([
-                        Forms\Components\Toggle::make('enabled'),
+                        Forms\Components\Toggle::make('enabled')
+                            ->live(),
 
                         Forms\Components\Textarea::make('script')
                             ->label('Script')
                             ->requiredIf('enabled', true)
                             ->validationMessages([
                                 'required_if' => 'The :attribute field is required when service is enabled.',
+                            ]),
+
+                        Forms\Components\Fieldset::make('Show on')
+                            ->columns(3)
+                            ->schema([
+                                Forms\Components\Toggle::make('home_page')
+                                    ->disabled(fn (Forms\Get $get): bool => ! $get('enabled')),
+
+                                Forms\Components\Toggle::make('product_pages')
+                                    ->disabled(fn (Forms\Get $get): bool => ! $get('enabled')),
+
+                                Forms\Components\Toggle::make('wiki_pages')
+                                    ->disabled(fn (Forms\Get $get): bool => ! $get('enabled')),
+
+                                Forms\Components\Toggle::make('user_panel')
+                                    ->disabled(fn (Forms\Get $get): bool => ! $get('enabled')),
+
+                                Forms\Components\Toggle::make('election_panel')
+                                    ->disabled(fn (Forms\Get $get): bool => ! $get('enabled')),
+
+                                Forms\Components\Toggle::make('meeting_panel')
+                                    ->disabled(fn (Forms\Get $get): bool => ! $get('enabled')),
+
+                                Forms\Components\Toggle::make('nomination_panel')
+                                    ->disabled(fn (Forms\Get $get): bool => ! $get('enabled')),
                             ]),
                     ]),
             ]);

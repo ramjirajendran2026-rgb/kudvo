@@ -131,7 +131,7 @@ BLADE
             )
             ->renderHook(
                 name: PanelsRenderHook::BODY_END,
-                hook: fn (ServiceConfig $services) => $services->tawk_to->enabled ?
+                hook: fn (ServiceConfig $services) => ($services->tawk_to->enabled && $services->tawk_to->user_panel) ?
                     new HtmlString(html: $services->tawk_to->script) :
                     null,
             )

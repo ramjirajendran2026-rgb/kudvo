@@ -9,6 +9,7 @@ use App\Filament\Nomination\Http\Middleware\EnsureMfaCompleted;
 use App\Filament\Nomination\NominationPanel;
 use App\Filament\Nomination\Pages\Auth\Login;
 use App\Settings\GoogleTagManagerSettings;
+use App\Settings\ServiceConfig;
 use Filament\FontProviders\LocalFontProvider;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -82,8 +83,14 @@ class NominationPanelProvider extends PanelProvider
                 hook: fn (GoogleTagManagerSettings $gtm) => new HtmlString(html: $gtm->getBodyScript())
             )
             ->renderHook(
-                name: 'panels::footer',
+                name: PanelsRenderHook::FOOTER,
                 hook: fn () => Blade::render('<x-filament.nomination.footer />')
+            )
+            ->renderHook(
+                name: PanelsRenderHook::BODY_END,
+                hook: fn (ServiceConfig $services) => ($services->tawk_to->enabled && $services->tawk_to->nomination_panel) ?
+                    new HtmlString(html: $services->tawk_to->script) :
+                    null,
             )
             ->plugins(plugins: [
                 SpatieLaravelTranslatablePlugin::make()

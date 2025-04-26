@@ -17,6 +17,7 @@ use App\Filament\Election\Pages\Index;
 use App\Filament\LocalAvatarProvider;
 use App\Models\Elector;
 use App\Settings\GoogleTagManagerSettings;
+use App\Settings\ServiceConfig;
 use Filament\Facades\Filament;
 use Filament\FontProviders\LocalFontProvider;
 use Filament\Http\Middleware\Authenticate;
@@ -143,6 +144,12 @@ class ElectionPanelProvider extends PanelProvider
             ->renderHook(
                 name: PanelsRenderHook::FOOTER,
                 hook: fn () => Blade::render(string: '<x-filament.nomination.footer data-booth-self-logout="' . ((! Kudvo::isBoothDevice() || Kudvo::getElection()->booth_preference?->logout_by_self) ? 'true' : 'false') . '" />')
+            )
+            ->renderHook(
+                name: PanelsRenderHook::BODY_END,
+                hook: fn (ServiceConfig $services) => ($services->tawk_to->enabled && $services->tawk_to->election_panel) ?
+                    new HtmlString(html: $services->tawk_to->script) :
+                    null,
             );
     }
 
