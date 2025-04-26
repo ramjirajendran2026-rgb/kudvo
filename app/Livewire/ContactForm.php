@@ -64,6 +64,15 @@ class ContactForm extends Component implements HasForms
             ->statePath(path: 'data');
     }
 
+    public function placeholder(): string
+    {
+        return <<<'HTML'
+        <div class="contact-form flex items-center justify-center w-full h-full">
+            Preparing a contact form...
+        </div>
+        HTML;
+    }
+
     public function submit(): void
     {
         try {

@@ -335,7 +335,7 @@
                     {{ __('pages/home.content.contact.title') }}
                 </h3>
 
-                <livewire:contact-form />
+                <livewire:contact-form lazy="on-load" />
             </div>
 
             <div
