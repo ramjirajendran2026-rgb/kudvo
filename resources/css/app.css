@@ -65,3 +65,13 @@ html {
         }
     }
 }
+
+#google_translate_element {
+    .goog-te-gadget {
+        @apply flex items-center justify-center gap-2;
+
+        a {
+            @apply flex items-center justify-center gap-2;
+        }
+    }
+}
