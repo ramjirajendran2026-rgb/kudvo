@@ -14,6 +14,7 @@ use App\Forms\ElectionForm;
 use App\Models\Election;
 use Filament\Actions\Action;
 use Filament\Actions\Contracts\HasActions;
+use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\DateTimePicker;
@@ -173,9 +174,6 @@ class ElectionResource extends Resource
             ->filters([
                 BranchResource::getFilterComponent(),
             ])
-            ->headerActions(actions: [
-                static::getCreateTableAction(),
-            ])
             ->paginationPageOptions(options: [6, 10, 20])
             ->recordClasses(classes: fn (Election $election) => match ($election->status->getColor()) {
                 'info' => '!bg-info-100 dark:!bg-info-400/30',
@@ -243,6 +241,16 @@ class ElectionResource extends Resource
     public static function getCreateTableAction(): CreateTableAction
     {
         return CreateTableAction::make()
+            ->createAnother(condition: false)
+            ->mutateFormDataUsing(callback: function (array $data): array {
+                return array_merge($data, ['owner_id' => Filament::auth()->id()]);
+            })
+            ->successRedirectUrl(url: fn (Election $election) => $election->getPendingStep()?->getUrl([$election]) ?? static::getUrl(name: 'dashboard', parameters: [$election]));
+    }
+
+    public static function getCreateAction(): CreateAction
+    {
+        return CreateAction::make()
             ->createAnother(condition: false)
             ->mutateFormDataUsing(callback: function (array $data): array {
                 return array_merge($data, ['owner_id' => Filament::auth()->id()]);

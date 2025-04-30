@@ -16,7 +16,12 @@ class ManageElections extends ManageRecords
 
     protected static string $resource = ElectionResource::class;
 
-    protected ?string $heading = '';
+    protected function getHeaderActions(): array
+    {
+        return [
+            ElectionResource::getCreateAction(),
+        ];
+    }
 
     public function getTabs(): array
     {

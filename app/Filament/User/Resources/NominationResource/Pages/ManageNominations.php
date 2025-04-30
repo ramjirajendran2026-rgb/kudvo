@@ -10,7 +10,12 @@ class ManageNominations extends ManageRecords
 {
     protected static string $resource = NominationResource::class;
 
-    protected ?string $heading = '';
+    protected function getHeaderActions(): array
+    {
+        return [
+            NominationResource::getCreateAction(),
+        ];
+    }
 
     public function getTabs(): array
     {

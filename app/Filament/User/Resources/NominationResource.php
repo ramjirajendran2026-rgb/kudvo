@@ -13,6 +13,7 @@ use App\Filament\User\Resources\NominationResource\Widgets\NominationStatsOvervi
 use App\Forms\NominationForm;
 use App\Models\Nomination;
 use Filament\Actions\Action;
+use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
 use Filament\Facades\Filament;
 use Filament\Forms\Form;
@@ -104,9 +105,6 @@ class NominationResource extends Resource
             ->filters([
                 BranchResource::getFilterComponent(),
             ])
-            ->headerActions(actions: [
-                static::getTableCreateAction(),
-            ])
             ->heading(heading: Str::title(value: static::getPluralModelLabel()))
             ->recordUrl(url: fn (Nomination $record) => static::getUrl(name: 'dashboard', parameters: [$record]))
             ->relationship(relationship: fn (): Relation => Filament::getTenant()?->nominations());
@@ -145,6 +143,14 @@ class NominationResource extends Resource
     public static function getTableCreateAction(): TableCreateAction
     {
         return TableCreateAction::make()
+            ->createAnother(condition: false)
+            ->modalFooterActionsAlignment(alignment: Alignment::End)
+            ->successRedirectUrl(url: fn (Nomination $record) => static::getUrl(name: 'dashboard', parameters: [$record]));
+    }
+
+    public static function getCreateAction(): CreateAction
+    {
+        return CreateAction::make()
             ->createAnother(condition: false)
             ->modalFooterActionsAlignment(alignment: Alignment::End)
             ->successRedirectUrl(url: fn (Nomination $record) => static::getUrl(name: 'dashboard', parameters: [$record]));
