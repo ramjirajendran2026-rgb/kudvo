@@ -3,7 +3,9 @@
 namespace App\Policies;
 
 use App\Models\Nomination;
+use App\Models\Organisation;
 use App\Models\User;
+use Filament\Facades\Filament;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class NominationPolicy
@@ -12,7 +14,13 @@ class NominationPolicy
 
     public function viewAny(User $user): bool
     {
-        return true;
+        $organisation = Filament::getTenant();
+
+        if ($organisation instanceof Organisation) {
+            return $organisation->settings?->allow_nominations ?? true;
+        }
+
+        return false;
     }
 
     public function deleteAny(User $user): bool

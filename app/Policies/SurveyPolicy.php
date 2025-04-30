@@ -2,13 +2,26 @@
 
 namespace App\Policies;
 
+use App\Models\Organisation;
 use App\Models\Survey;
 use App\Models\User;
+use Filament\Facades\Filament;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class SurveyPolicy
 {
     use HandlesAuthorization;
+
+    public function viewAny(User $user): bool
+    {
+        $organisation = Filament::getTenant();
+
+        if ($organisation instanceof Organisation) {
+            return $organisation->settings?->allow_surveys ?? true;
+        }
+
+        return false;
+    }
 
     public function publish(User $user, Survey $survey): bool
     {

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Data\Organisation\SettingsData;
 use Filament\Facades\Filament;
 use Filament\Models\Contracts\HasAvatar;
 use Illuminate\Database\Eloquent\Builder;
@@ -28,6 +29,11 @@ class Organisation extends Model implements HasAvatar, HasMedia
         'name',
         'country',
         'timezone',
+        'settings',
+    ];
+
+    protected $casts = [
+        'settings' => SettingsData::class,
     ];
 
     public array $translatable = ['name'];
@@ -44,6 +50,11 @@ class Organisation extends Model implements HasAvatar, HasMedia
         return $this->belongsToMany(related: User::class)
             ->using(class: OrganisationUser::class)
             ->withPivot(columns: ['role']);
+    }
+
+    public function branches(): HasMany
+    {
+        return $this->hasMany(Branch::class);
     }
 
     public function members(): HasMany

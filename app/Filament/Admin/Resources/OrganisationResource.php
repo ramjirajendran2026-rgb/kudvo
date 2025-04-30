@@ -7,6 +7,7 @@ use App\Filament\Admin\Resources\OrganisationResource\RelationManagers\UsersRela
 use App\Forms\OrganisationForm;
 use App\Models\Organisation;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Concerns\Translatable;
 use Filament\Resources\Resource;
@@ -26,12 +27,43 @@ class OrganisationResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
+            ->columns(5)
             ->schema([
                 Section::make()
-                    ->schema([
+                    ->columnSpan(span: 4)
+                    ->schema(components: [
                         OrganisationForm::nameComponent(),
+
                         OrganisationForm::countryComponent(),
+
                         OrganisationForm::timezoneComponent(),
+                    ]),
+
+                OrganisationForm::logoComponent()
+                    ->hiddenLabel(),
+
+                Section::make('Other settings')
+                    ->columns(3)
+                    ->columnSpanFull()
+                    ->statePath('settings')
+                    ->schema([
+                        Toggle::make('allow_branches')
+                            ->default(false),
+
+                        Toggle::make('allow_members')
+                            ->default(false),
+
+                        Toggle::make('allow_elections')
+                            ->default(true),
+
+                        Toggle::make('allow_nominations')
+                            ->default(true),
+
+                        Toggle::make('allow_meetings')
+                            ->default(true),
+
+                        Toggle::make('allow_surveys')
+                            ->default(true),
                     ]),
             ]);
     }

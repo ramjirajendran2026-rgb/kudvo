@@ -24,5 +24,7 @@ export default {
         './vendor/awcodes/filament-tiptap-editor/resources/**/*.blade.php',
 
         './vendor/bezhansalleh/filament-language-switch/resources/views/language-switch.blade.php',
+
+        './vendor/solution-forest/filament-tree/resources/**/*.blade.php',
     ],
 }

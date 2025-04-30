@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use App\Models\Election;
 use App\Models\Elector;
+use App\Models\Organisation;
 use App\Models\User;
 use Filament\Facades\Filament;
 use Illuminate\Auth\Access\HandlesAuthorization;
@@ -15,7 +16,13 @@ class ElectionPolicy
 
     public function viewAny(User $user): bool
     {
-        return true;
+        $organisation = Filament::getTenant();
+
+        if ($organisation instanceof Organisation) {
+            return $organisation->settings?->allow_elections ?? true;
+        }
+
+        return false;
     }
 
     public function deleteAny(User $user): bool

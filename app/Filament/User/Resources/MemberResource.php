@@ -19,9 +19,9 @@ class MemberResource extends Resource
 {
     protected static ?string $model = Member::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-users';
+    protected static ?string $navigationIcon = 'heroicon-o-user-group';
 
-    protected static ?string $activeNavigationIcon = 'heroicon-s-users';
+    protected static ?string $activeNavigationIcon = 'heroicon-s-user-group';
 
     protected static ?string $recordTitleAttribute = 'display_name';
 

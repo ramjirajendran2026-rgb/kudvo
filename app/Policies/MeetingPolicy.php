@@ -8,9 +8,11 @@ use App\Enums\MeetingStatus;
 use App\Enums\MeetingVotingStatus;
 use App\Models\Meeting;
 use App\Models\MeetingLinkBlast;
+use App\Models\Organisation;
 use App\Models\Participant;
 use App\Models\Resolution;
 use App\Models\User;
+use Filament\Facades\Filament;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class MeetingPolicy
@@ -55,7 +57,13 @@ class MeetingPolicy
 
     public function viewAny(User $user): bool
     {
-        return true;
+        $organisation = Filament::getTenant();
+
+        if ($organisation instanceof Organisation) {
+            return $organisation->settings?->allow_meetings ?? true;
+        }
+
+        return false;
     }
 
     public function view(User $user, Meeting $meeting): bool
