@@ -35,6 +35,7 @@ class Meeting extends Model
         'published_at',
         'cancelled_at',
         'organisation_id',
+        'branch_id',
     ];
 
     protected $casts = [
@@ -44,6 +45,7 @@ class Meeting extends Model
         'published_at' => 'datetime',
         'cancelled_at' => 'datetime',
         'organisation_id' => 'int',
+        'branch_id' => 'int',
     ];
 
     protected static function booted(): void
@@ -79,6 +81,11 @@ class Meeting extends Model
     public function organisation(): BelongsTo
     {
         return $this->belongsTo(related: Organisation::class);
+    }
+
+    public function branch(): BelongsTo
+    {
+        return $this->belongsTo(Branch::class);
     }
 
     public function votedParticipants(): HasMany

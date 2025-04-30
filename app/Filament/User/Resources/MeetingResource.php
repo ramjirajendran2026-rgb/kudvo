@@ -60,6 +60,8 @@ class MeetingResource extends Resource
             ->schema(components: [
                 Section::make()
                     ->schema(components: [
+                        BranchResource::getFormSelectTree(),
+
                         static::getNameFormComponent(),
 
                         static::getDescriptionFormComponent(),
@@ -115,6 +117,9 @@ class MeetingResource extends Resource
             ->emptyStateDescription(description: __(key: 'filament-tables::table.empty.description', replace: [
                 'model' => static::getPluralModelLabel(),
             ]))
+            ->filters([
+                BranchResource::getFilterComponent(),
+            ])
             ->recordUrl(url: fn (Meeting $record) => Pages\MeetingDashboard::getUrl(parameters: [$record]));
     }
 

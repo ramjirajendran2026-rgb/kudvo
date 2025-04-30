@@ -24,6 +24,7 @@ class Member extends Model
         'email_verified_at',
         'phone_verified_at',
         'organisation_id',
+        'branch_id',
     ];
 
     protected $casts = [
@@ -33,6 +34,7 @@ class Member extends Model
         'email_verified_at' => 'datetime',
         'phone_verified_at' => 'datetime',
         'organisation_id' => 'int',
+        'branch_id' => 'int',
     ];
 
     protected $appends = [
@@ -50,5 +52,10 @@ class Member extends Model
     public function organisation(): BelongsTo
     {
         return $this->belongsTo(Organisation::class);
+    }
+
+    public function branch(): BelongsTo
+    {
+        return $this->belongsTo(Branch::class);
     }
 }

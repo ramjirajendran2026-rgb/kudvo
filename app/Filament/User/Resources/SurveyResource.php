@@ -55,6 +55,8 @@ class SurveyResource extends Resource
         return $form
             ->columns(null)
             ->schema([
+                BranchResource::getFormSelectTree(),
+
                 static::getHasDescriptionComponent(),
 
                 static::getTitleSectionComponent(),
@@ -94,6 +96,9 @@ class SurveyResource extends Resource
                         ->alignStart()
                         ->space(),
                 ]),
+            ])
+            ->filters([
+                BranchResource::getFilterComponent(),
             ])
             ->defaultSort('id', 'desc');
     }

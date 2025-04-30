@@ -10,7 +10,9 @@ use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 
 class BranchResource extends Resource
 {
@@ -37,7 +39,12 @@ class BranchResource extends Resource
                 SelectTree::make('parent_id')
                     ->enableBranchNode()
                     ->label('Parent')
-                    ->relationship('parent', 'display_name', 'parent_id')
+                    ->relationship(
+                        'parent',
+                        'display_name',
+                        'parent_id',
+                        fn (Builder $query) => $query->where('organisation_id', Filament::getTenant()?->getKey())
+                    )
                     ->searchable()
                     ->withCount(),
             ]);
@@ -66,5 +73,39 @@ class BranchResource extends Resource
         return [
             Branches::class,
         ];
+    }
+
+    public static function getFormSelectTree(): SelectTree
+    {
+        return SelectTree::make('branch_id')
+            ->enableBranchNode()
+            ->label('Branch')
+            ->relationship(
+                'branch',
+                'display_name',
+                'parent_id',
+                fn ($query) => $query->where('organisation_id', Filament::getTenant()?->getKey())
+            )
+            ->required()
+            ->searchable()
+            ->withCount()
+            ->visible(condition: fn () => Filament::getTenant()?->settings?->allow_branches ?? false);
+    }
+
+    public static function getFilterComponent(): Filter
+    {
+        return Filter::make('branch')
+            ->form([
+                SelectTree::make('branch')
+                    ->enableBranchNode()
+                    ->relationship(
+                        'branch',
+                        'display_name',
+                        'parent_id',
+                        fn (Builder $query) => $query->where('organisation_id', Filament::getTenant()?->getKey())
+                    )
+                    ->withCount(),
+            ])
+            ->query(fn (Builder $query, array $data) => $query->where('branch_id', $data['branch'] ?? null));
     }
 }

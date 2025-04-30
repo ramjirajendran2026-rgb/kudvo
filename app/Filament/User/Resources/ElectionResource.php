@@ -67,6 +67,8 @@ class ElectionResource extends Resource
         return $form
             ->columns(columns: null)
             ->schema([
+                BranchResource::getFormSelectTree(),
+
                 ElectionForm::nameComponent(),
             ]);
     }
@@ -168,6 +170,9 @@ class ElectionResource extends Resource
                 static::getCreateTableAction(),
             ])
             ->emptyStateIcon(icon: static::getNavigationIcon())
+            ->filters([
+                BranchResource::getFilterComponent(),
+            ])
             ->headerActions(actions: [
                 static::getCreateTableAction(),
             ])

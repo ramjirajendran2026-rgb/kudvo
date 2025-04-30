@@ -33,6 +33,7 @@ class Nomination extends Model
         'scrutinised_at',
         'cancelled_at',
         'organisation_id',
+        'branch_id',
     ];
 
     protected $casts = [
@@ -48,6 +49,7 @@ class Nomination extends Model
         'scrutinised_at' => 'datetime',
         'cancelled_at' => 'datetime',
         'organisation_id' => 'int',
+        'branch_id' => 'int',
     ];
 
     protected function startsAtLocal(): Attribute
@@ -115,6 +117,11 @@ class Nomination extends Model
     public function organisation(): BelongsTo
     {
         return $this->belongsTo(related: Organisation::class);
+    }
+
+    public function branch(): BelongsTo
+    {
+        return $this->belongsTo(Branch::class);
     }
 
     public function electors(): MorphMany

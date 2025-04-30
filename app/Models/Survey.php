@@ -28,6 +28,7 @@ class Survey extends Model implements HasMedia
         'is_active',
         'published_at',
         'organisation_id',
+        'branch_id',
     ];
 
     protected $casts = [
@@ -35,6 +36,7 @@ class Survey extends Model implements HasMedia
         'is_active' => 'boolean',
         'published_at' => 'immutable_datetime',
         'organisation_id' => 'int',
+        'branch_id' => 'int',
     ];
 
     protected $attributes = [
@@ -63,6 +65,11 @@ class Survey extends Model implements HasMedia
     public function organisation(): BelongsTo
     {
         return $this->belongsTo(Organisation::class);
+    }
+
+    public function branch(): BelongsTo
+    {
+        return $this->belongsTo(Branch::class);
     }
 
     public function questions(): HasMany

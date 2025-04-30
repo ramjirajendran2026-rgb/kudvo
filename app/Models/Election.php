@@ -61,6 +61,7 @@ class Election extends Model
         'owner_id',
         'plan_id',
         'organisation_id',
+        'branch_id',
     ];
 
     protected $casts = [
@@ -80,6 +81,7 @@ class Election extends Model
         'owner_id' => 'int',
         'plan_id' => 'int',
         'organisation_id' => 'int',
+        'branch_id' => 'int',
     ];
 
     public array $translatable = [
@@ -247,6 +249,11 @@ class Election extends Model
     public function organisation(): BelongsTo
     {
         return $this->belongsTo(related: Organisation::class);
+    }
+
+    public function branch(): BelongsTo
+    {
+        return $this->belongsTo(Branch::class);
     }
 
     public function owner(): BelongsTo

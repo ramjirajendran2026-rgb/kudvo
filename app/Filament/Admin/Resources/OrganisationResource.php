@@ -68,6 +68,21 @@ class OrganisationResource extends Resource
             ]);
     }
 
+    public static function getPages(): array
+    {
+        return [
+            'index' => Pages\ManageOrganisations::route('/'),
+            'edit' => Pages\EditOrganisation::route('/{record}/edit'),
+        ];
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            UsersRelationManager::class,
+        ];
+    }
+
     public static function table(Table $table): Table
     {
         return $table
@@ -83,20 +98,5 @@ class OrganisationResource extends Resource
                 Tables\Actions\EditAction::make()
                     ->iconButton(),
             ]);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-            UsersRelationManager::class,
-        ];
-    }
-
-    public static function getPages(): array
-    {
-        return [
-            'index' => Pages\ManageOrganisations::route('/'),
-            'edit' => Pages\EditOrganisation::route('/{record}/edit'),
-        ];
     }
 }

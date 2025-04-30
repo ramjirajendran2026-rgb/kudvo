@@ -34,6 +34,8 @@ class MemberResource extends Resource
                 Section::make()
                     ->columns()
                     ->schema([
+                        BranchResource::getFormSelectTree(),
+
                         MemberForm::membershipNumberComponent()
                             ->when(
                                 Filament::getTenant(),
@@ -108,6 +110,9 @@ class MemberResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make()
                     ->iconButton(),
+            ])
+            ->filters([
+                BranchResource::getFilterComponent(),
             ]);
     }
 }

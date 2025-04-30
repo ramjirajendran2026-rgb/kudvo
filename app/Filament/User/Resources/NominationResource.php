@@ -50,6 +50,8 @@ class NominationResource extends Resource
         return $form
             ->columns(columns: null)
             ->schema(components: [
+                BranchResource::getFormSelectTree(),
+
                 NominationForm::nameComponent(),
 
                 NominationForm::descriptionComponent(),
@@ -99,6 +101,9 @@ class NominationResource extends Resource
                 static::getTableCreateAction(),
             ])
             ->emptyStateIcon(icon: static::getNavigationIcon())
+            ->filters([
+                BranchResource::getFilterComponent(),
+            ])
             ->headerActions(actions: [
                 static::getTableCreateAction(),
             ])

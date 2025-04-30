@@ -7,6 +7,7 @@ use CodeWithDennis\FilamentSelectTree\SelectTree;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
+use Illuminate\Database\Eloquent\Builder;
 use SolutionForest\FilamentTree\Actions\DeleteAction;
 use SolutionForest\FilamentTree\Actions\EditAction;
 use SolutionForest\FilamentTree\Actions\ViewAction;
@@ -56,5 +57,11 @@ class Branches extends BaseWidget
             EditAction::make(),
             DeleteAction::make(),
         ];
+    }
+
+    protected function getTreeQuery(): Builder
+    {
+        return Branch::query()
+            ->where('organisation_id', Filament::getTenant()?->getKey());
     }
 }
