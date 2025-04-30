@@ -42,6 +42,12 @@ class MeetingResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
+    protected static ?string $modelLabel = 'Resolution Voting';
+
+    protected static ?string $pluralModelLabel = 'Resolution Voting';
+
+    protected static ?string $slug = 'resolution-voting';
+
     protected static ?int $navigationSort = 4;
 
     protected static ?string $navigationGroup = 'Other products';

@@ -99,8 +99,10 @@ Route::group(
                         Route::get(uri: 'phygital-voting', action: PhygitalHome::class)
                             ->name(name: 'phygital.home');
 
-                        Route::get(uri: 'meeting', action: MeetingHome::class)
+                        Route::get(uri: 'resolution-voting', action: MeetingHome::class)
                             ->name(name: 'meeting.home');
+
+                        Route::permanentRedirect(uri: 'meeting', destination: 'resolution-voting');
 
                         Route::get(uri: 'survey', action: SurveyHome::class)
                             ->name(name: 'survey.home');
