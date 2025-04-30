@@ -35,8 +35,11 @@ class BranchResource extends Resource
                     ->maxLength(255),
 
                 SelectTree::make('parent_id')
+                    ->enableBranchNode()
                     ->label('Parent')
-                    ->relationship('parent', 'display_name', 'parent_id'),
+                    ->relationship('parent', 'display_name', 'parent_id')
+                    ->searchable()
+                    ->withCount(),
             ]);
     }
 
