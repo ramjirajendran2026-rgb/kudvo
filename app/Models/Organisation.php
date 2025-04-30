@@ -46,6 +46,11 @@ class Organisation extends Model implements HasAvatar, HasMedia
             ->withPivot(columns: ['role']);
     }
 
+    public function members(): HasMany
+    {
+        return $this->hasMany(Member::class);
+    }
+
     public function nominations(): HasMany
     {
         return $this->hasMany(related: Nomination::class);

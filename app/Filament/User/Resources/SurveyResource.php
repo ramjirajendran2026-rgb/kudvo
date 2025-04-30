@@ -46,6 +46,10 @@ class SurveyResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'title';
 
+    protected static ?int $navigationSort = 5;
+
+    protected static ?string $navigationGroup = 'Other products';
+
     public static function form(Form $form): Form
     {
         return $form

@@ -36,6 +36,10 @@ class NominationResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
+    protected static ?int $navigationSort = 3;
+
+    protected static ?string $navigationGroup = 'Election management';
+
     public static function isShouldRegisterNavigation(): bool
     {
         return config('app.nomination.enabled');

@@ -42,6 +42,10 @@ class MeetingResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
+    protected static ?int $navigationSort = 4;
+
+    protected static ?string $navigationGroup = 'Other products';
+
     protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Start;
 
     public static function form(Form $form): Form

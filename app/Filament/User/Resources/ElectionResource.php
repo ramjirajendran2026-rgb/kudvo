@@ -48,6 +48,10 @@ class ElectionResource extends Resource
 
     protected static ?string $activeNavigationIcon = 'heroicon-s-archive-box';
 
+    protected static ?int $navigationSort = 2;
+
+    protected static ?string $navigationGroup = 'Election management';
+
     public static function getModelLabel(): string
     {
         return __(key: 'filament.user.election-resource.model_label');
