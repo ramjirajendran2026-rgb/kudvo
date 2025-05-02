@@ -22,6 +22,52 @@ class BranchResource extends Resource
 
     protected static ?string $activeNavigationIcon = 'heroicon-s-bold';
 
+    public static function canViewAny(): bool
+    {
+        return Filament::getTenant()?->settings?->allow_branches ?? false;
+    }
+
+    public static function getFormSelectTree(): SelectTree
+    {
+        return SelectTree::make('branch_id')
+            ->enableBranchNode()
+            ->label('Branch')
+            ->relationship(
+                'branch',
+                'display_name',
+                'parent_id',
+                fn ($query) => $query->where('organisation_id', Filament::getTenant()?->getKey())
+            )
+            ->required()
+            ->searchable()
+            ->withCount()
+            ->visible(condition: fn () => Filament::getTenant()?->settings?->allow_branches ?? false);
+    }
+
+    public static function getFilterComponent(): Filter
+    {
+        return Filter::make('branch')
+            ->form([
+                SelectTree::make('id')
+                    ->enableBranchNode()
+                    ->label('Branch')
+                    ->relationship(
+                        'branch',
+                        'display_name',
+                        'parent_id',
+                        fn (Builder $query) => $query->where('organisation_id', Filament::getTenant()?->getKey())
+                    )
+                    ->withCount(),
+            ])
+            ->query(
+                fn (Builder $query, array $data) => $query
+                    ->when(
+                        $data['id'] ?? null,
+                        fn (Builder $query, $value) => $query->where('branch_id', $value)
+                    )
+            );
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -50,22 +96,11 @@ class BranchResource extends Resource
             ]);
     }
 
-    public static function table(Table $table): Table
-    {
-        return $table
-            ->paginated(false);
-    }
-
     public static function getPages(): array
     {
         return [
             'index' => Pages\ManageBranches::route('/'),
         ];
-    }
-
-    public static function canViewAny(): bool
-    {
-        return Filament::getTenant()?->settings?->allow_branches ?? false;
     }
 
     public static function getWidgets(): array
@@ -75,37 +110,9 @@ class BranchResource extends Resource
         ];
     }
 
-    public static function getFormSelectTree(): SelectTree
+    public static function table(Table $table): Table
     {
-        return SelectTree::make('branch_id')
-            ->enableBranchNode()
-            ->label('Branch')
-            ->relationship(
-                'branch',
-                'display_name',
-                'parent_id',
-                fn ($query) => $query->where('organisation_id', Filament::getTenant()?->getKey())
-            )
-            ->required()
-            ->searchable()
-            ->withCount()
-            ->visible(condition: fn () => Filament::getTenant()?->settings?->allow_branches ?? false);
-    }
-
-    public static function getFilterComponent(): Filter
-    {
-        return Filter::make('branch')
-            ->form([
-                SelectTree::make('branch')
-                    ->enableBranchNode()
-                    ->relationship(
-                        'branch',
-                        'display_name',
-                        'parent_id',
-                        fn (Builder $query) => $query->where('organisation_id', Filament::getTenant()?->getKey())
-                    )
-                    ->withCount(),
-            ])
-            ->query(fn (Builder $query, array $data) => $query->where('branch_id', $data['branch'] ?? null));
+        return $table
+            ->paginated(false);
     }
 }

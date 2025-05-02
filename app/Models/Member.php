@@ -3,17 +3,21 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Member extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'title',
         'first_name',
         'last_name',
         'email',
         'phone',
+        'weightage',
         'membership_number',
         'membership_type',
         'membership_end_date',
@@ -28,6 +32,7 @@ class Member extends Model
     ];
 
     protected $casts = [
+        'weightage' => 'double',
         'membership_end_date' => 'date',
         'is_active' => 'bool',
         'additional_data' => 'array',
@@ -41,14 +46,6 @@ class Member extends Model
         'display_name',
     ];
 
-    protected function displayName(): Attribute
-    {
-        return Attribute::make(
-            get: fn ($value, array $attributes) => collect([$this->title, $this->full_name])
-                ->filter()->implode(' ') ?: 'Member',
-        );
-    }
-
     public function organisation(): BelongsTo
     {
         return $this->belongsTo(Organisation::class);
@@ -57,5 +54,13 @@ class Member extends Model
     public function branch(): BelongsTo
     {
         return $this->belongsTo(Branch::class);
+    }
+
+    protected function displayName(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value, array $attributes) => collect([$this->title, $this->full_name])
+                ->filter()->implode(' ') ?: 'Member',
+        );
     }
 }

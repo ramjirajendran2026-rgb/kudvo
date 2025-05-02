@@ -13,6 +13,10 @@ class ManageMembers extends ManageRecords
     protected function getHeaderActions(): array
     {
         return [
+            Actions\ActionGroup::make([
+                MemberResource::getGenerateDummyMembersAction(),
+            ])->dropdownPlacement('bottom-end'),
+
             Actions\CreateAction::make(),
         ];
     }
