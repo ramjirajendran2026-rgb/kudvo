@@ -69,7 +69,10 @@ class Member extends Model implements AuthenticatableContract, AuthorizableContr
 
     public function getActivitylogOptions(): LogOptions
     {
-        return LogOptions::defaults();
+        return LogOptions::defaults()
+            ->logAll()
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
     }
 
     protected function displayName(): Attribute
