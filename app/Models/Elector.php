@@ -97,6 +97,7 @@ class Elector extends Model implements AuthenticatableContract, AuthorizableCont
         return LogOptions::defaults()
             ->logAll()
             ->logOnlyDirty()
+            ->logExcept(['short_code'])
             ->dontSubmitEmptyLogs();
     }
 

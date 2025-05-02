@@ -110,6 +110,8 @@ class Electors extends ElectionPage implements HasTable
                 $this->getCreateAction(),
             ])
             ->headerActions(actions: [
+                $this->getImportFromMembersAction(),
+
                 $this->getImportAction(),
 
                 $this->getCreateAction(),
@@ -177,6 +179,12 @@ class Electors extends ElectionPage implements HasTable
                 'event_id' => $livewire->getElection()->getKey(),
             ])
             ->visible(condition: $this->canImport());
+    }
+
+    protected function getImportFromMembersAction(): TableAction
+    {
+        return ElectorResource::getImportFromMembersTableAction()
+            ->visible(condition: Filament::getTenant()->settings?->allow_members && $this->canImport());
     }
 
     protected function getCreateAction(): TableCreateAction

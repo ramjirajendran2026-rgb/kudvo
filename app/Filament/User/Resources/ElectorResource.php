@@ -7,12 +7,14 @@ use App\Filament\Imports\ElectorImporter;
 use App\Forms\ElectorForm;
 use App\Models\Election;
 use App\Models\Elector;
+use App\Models\Member;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\MaxWidth;
+use Filament\Tables\Actions\Action as TableAction;
 use Filament\Tables\Actions\CreateAction as TableCreateAction;
 use Filament\Tables\Actions\DeleteAction as TableDeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -22,6 +24,7 @@ use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Guava\FilamentClusters\Forms\Cluster;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Validation\Rules\Unique;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
@@ -33,14 +36,35 @@ class ElectorResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'membership_number';
 
+    public static function getTableEditAction(): TableEditAction
+    {
+        return TableEditAction::make()
+            ->form(form: fn (Form $form): Form => static::form($form))
+            ->iconButton()
+            ->modalCancelAction(action: false)
+            ->modalFooterActionsAlignment(alignment: Alignment::Center)
+            ->modalWidth(width: MaxWidth::Medium);
+    }
+
     public static function getModelLabel(): string
     {
         return __('filament.user.elector-resource.model_label');
     }
 
+    public static function getTableDeleteAction(): TableDeleteAction
+    {
+        return TableDeleteAction::make()
+            ->iconButton();
+    }
+
     public static function getPluralModelLabel(): string
     {
         return __('filament.user.elector-resource.plural_model_label');
+    }
+
+    public static function getBulkDeleteAction(): DeleteBulkAction
+    {
+        return DeleteBulkAction::make();
     }
 
     public static function form(Form $form): Form
@@ -143,6 +167,8 @@ class ElectorResource extends Resource
                     ->wrap(),
             ])
             ->headerActions(actions: [
+                static::getImportFromMembersTableAction(),
+
                 static::getTableImportAction(),
 
                 static::getTableCreateAction(),
@@ -157,7 +183,37 @@ class ElectorResource extends Resource
             ->color(color: 'gray')
             ->icon(icon: 'heroicon-s-arrow-up-tray')
             ->importer(importer: ElectorImporter::class)
+            ->label('Bulk upload')
             ->modalFooterActionsAlignment(alignment: Alignment::Center);
+    }
+
+    public static function getImportFromMembersTableAction(): TableAction
+    {
+        return TableAction::make('importFromMembers')
+            ->requiresConfirmation()
+            ->action(function (HasElection $livewire, TableAction $action) {
+                $election = $livewire->getElection();
+
+                Member::query()
+                    ->where('branch_id', $election->branch_id)
+                    ->where('organisation_id', Filament::getTenant()->getKey())
+                    ->chunkById(50, function (Collection $members) use ($election) {
+                        $members->each(fn (Member $member) => $election->electors()->create($member->only([
+                            'membership_number',
+                            'title',
+                            'first_name',
+                            'last_name',
+                            'email',
+                            'phone',
+                            'weightage',
+                        ])));
+                    });
+
+                $action->success();
+            })
+            ->color(color: 'gray')
+            ->icon(icon: 'heroicon-s-arrow-up-tray')
+            ->successNotificationTitle(title: 'Imported successfully');
     }
 
     public static function getTableCreateAction(): TableCreateAction
@@ -171,26 +227,5 @@ class ElectorResource extends Resource
             ->modalFooterActionsAlignment(alignment: Alignment::Center)
             ->modelLabel(label: static::getModelLabel())
             ->modalWidth(width: MaxWidth::Medium);
-    }
-
-    public static function getTableEditAction(): TableEditAction
-    {
-        return TableEditAction::make()
-            ->form(form: fn (Form $form): Form => static::form($form))
-            ->iconButton()
-            ->modalCancelAction(action: false)
-            ->modalFooterActionsAlignment(alignment: Alignment::Center)
-            ->modalWidth(width: MaxWidth::Medium);
-    }
-
-    public static function getTableDeleteAction(): TableDeleteAction
-    {
-        return TableDeleteAction::make()
-            ->iconButton();
-    }
-
-    public static function getBulkDeleteAction(): DeleteBulkAction
-    {
-        return DeleteBulkAction::make();
     }
 }
