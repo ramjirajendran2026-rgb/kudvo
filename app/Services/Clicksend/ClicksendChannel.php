@@ -39,6 +39,8 @@ class ClicksendChannel
             return null;
         }
 
+        $message->setBody(str($message->getBody())->replace('-iNodesys', '')->toString());
+
         $message->setTo($route);
 
         try {
