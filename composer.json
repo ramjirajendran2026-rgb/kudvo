@@ -55,6 +55,7 @@
         "petercoles/multilingual-country-list": "^1.2",
         "pusher/pusher-php-server": "^7.2",
         "ralphjsmit/laravel-seo": "^1.5",
+        "rmsramos/activitylog": "^1.0",
         "simplesoftwareio/simple-qrcode": "^4.2",
         "solution-forest/filament-tree": "^2.1",
         "spatie/eloquent-sortable": "^4.1",

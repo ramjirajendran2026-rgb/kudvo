@@ -19,6 +19,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Rmsramos\Activitylog\ActivitylogPlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -60,9 +61,10 @@ class AdminPanelProvider extends PanelProvider
                 provider: LocalFontProvider::class,
             )
             ->viteTheme(theme: 'resources/css/filament/admin/theme.css')
-            ->plugin(
+            ->plugins([
                 SpatieLaravelTranslatablePlugin::make()
-                    ->defaultLocales(defaultLocales: array_keys(config('laravellocalization.supportedLocales')))
-            );
+                    ->defaultLocales(defaultLocales: array_keys(config('laravellocalization.supportedLocales'))),
+                ActivitylogPlugin::make(),
+            ]);
     }
 }
