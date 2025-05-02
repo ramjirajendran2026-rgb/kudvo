@@ -64,4 +64,14 @@ readonly class MemberForm
             ->label(label: __('filament.user.elector-resource.form.title.label'))
             ->maxLength(length: 20);
     }
+
+    public static function weightageComponent(): TextInput
+    {
+        return TextInput::make('weightage')
+            ->default(1)
+            ->numeric()
+            ->maxValue(99999999)
+            ->minValue(0.00000001)
+            ->required();
+    }
 }

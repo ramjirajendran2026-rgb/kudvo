@@ -115,6 +115,8 @@ class MemberResource extends Resource
                             ->disableLookup()
                             ->initialCountry(value: Filament::getTenant()?->country ?: config(key: 'app.default_phone_country')),
 
+                        MemberForm::weightageComponent(),
+
                         MemberForm::isActiveComponent(),
                     ]),
             ]);

@@ -63,6 +63,11 @@ class MemberImporter extends Importer
                         ->ignoreModel(model: $record)
                         ->where(column: 'organisation_id', value: $options['organisation_id']),
                 ]),
+
+            ImportColumn::make(name: 'weightage')
+                ->example(example: '1')
+                ->numeric()
+                ->rules(rules: ['nullable', 'numeric', 'min:0.00000001']),
         ];
     }
 
