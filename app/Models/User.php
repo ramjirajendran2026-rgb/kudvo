@@ -20,6 +20,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
 use Laravel\Cashier\Billable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Activitylog\Traits\CausesActivity;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Permission\Traits\HasRoles;
@@ -27,6 +28,7 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable implements FilamentUser, HasAvatar, HasMedia, HasName, HasTenants, MustVerifyEmail
 {
     use Billable;
+    use CausesActivity;
     use HasApiTokens;
     use HasFactory;
     use HasRoles;
@@ -53,11 +55,55 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasMedia,
         'password' => 'hashed',
     ];
 
-    protected function displayName(): Attribute
+    protected static function booted(): void
     {
-        return Attribute::make(
-            get: fn ($value, array $attributes) => $this->name ?: $this->email,
-        );
+        static::updating(callback: function (User $user) {
+            if ($user->isDirty(attributes: 'email') && $user->hasVerifiedEmail()) {
+                $user->email_verified_at = null;
+            }
+        });
+    }
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return match ($panel->getId()) {
+            'user' => $this->hasUserRole(),
+            'admin' => $this->hasAdminRole() || $this->hasStaffRole(),
+            default => false,
+        };
+    }
+
+    public function hasUserRole(): bool
+    {
+        return $this->hasRole(RolesEnum::User);
+    }
+
+    public function hasAdminRole(): bool
+    {
+        return $this->hasRole(RolesEnum::Admin);
+    }
+
+    public function hasStaffRole(): bool
+    {
+        return $this->hasRole(RolesEnum::Staff);
+    }
+
+    public function canAccessTenant(Model $tenant): bool
+    {
+        return match (true) {
+            $tenant instanceof Organisation => $this->isBelongsToOrganisation($tenant)
+                || $tenant->elections()->whereUser(user: $this)->exists(),
+            default => false,
+        };
+    }
+
+    public function isBelongsToOrganisation(Organisation $organisation): bool
+    {
+        if ($this->relationLoaded('organisations')) {
+            return $this->organisations->contains($organisation);
+        }
+
+        return $this->organisations()->whereKey($organisation)->exists();
     }
 
     public function organisations(): BelongsToMany
@@ -74,42 +120,6 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasMedia,
             ->using(class: ElectionUser::class)
             ->withPivot(columns: ['designation', 'permissions'])
             ->withTimestamps();
-    }
-
-    protected static function booted(): void
-    {
-        static::updating(callback: function (User $user) {
-            if ($user->isDirty(attributes: 'email') && $user->hasVerifiedEmail()) {
-                $user->email_verified_at = null;
-            }
-        });
-    }
-
-    public function isBelongsToOrganisation(Organisation $organisation): bool
-    {
-        if ($this->relationLoaded('organisations')) {
-            return $this->organisations->contains($organisation);
-        }
-
-        return $this->organisations()->whereKey($organisation)->exists();
-    }
-
-    public function canAccessPanel(Panel $panel): bool
-    {
-        return match ($panel->getId()) {
-            'user' => $this->hasUserRole(),
-            'admin' => $this->hasAdminRole() || $this->hasStaffRole(),
-            default => false,
-        };
-    }
-
-    public function canAccessTenant(Model $tenant): bool
-    {
-        return match (true) {
-            $tenant instanceof Organisation => $this->isBelongsToOrganisation($tenant)
-                || $tenant->elections()->whereUser(user: $this)->exists(),
-            default => false,
-        };
     }
 
     public function getTenants(Panel $panel): array | Collection
@@ -149,23 +159,15 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasMedia,
         return $this->name ?: (Filament::getTenant()?->name ?: 'Admin');
     }
 
-    public function hasAdminRole(): bool
-    {
-        return $this->hasRole(RolesEnum::Admin);
-    }
-
-    public function hasStaffRole(): bool
-    {
-        return $this->hasRole(RolesEnum::Staff);
-    }
-
-    public function hasUserRole(): bool
-    {
-        return $this->hasRole(RolesEnum::User);
-    }
-
     public function canImpersonate(): bool
     {
         return $this->hasAdminRole();
+    }
+
+    protected function displayName(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value, array $attributes) => $this->name ?: $this->email,
+        );
     }
 }

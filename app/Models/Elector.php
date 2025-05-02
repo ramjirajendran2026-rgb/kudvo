@@ -30,6 +30,7 @@ use Illuminate\Http\Request;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Validator;
+use Spatie\Activitylog\Traits\CausesActivity;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
@@ -37,6 +38,7 @@ class Elector extends Model implements AuthenticatableContract, AuthorizableCont
 {
     use Authenticatable;
     use Authorizable;
+    use CausesActivity;
     use HasFactory;
     use HasShortCode;
     use HasUuids;
@@ -69,13 +71,22 @@ class Elector extends Model implements AuthenticatableContract, AuthorizableCont
         'display_name',
     ];
 
-    protected function displayName(): Attribute
+    protected static function booted(): void
     {
-        return Attribute::make(
-            get: fn ($value, array $attributes) => collect(value: [$this->title, $this->full_name])
-                ->filter(callback: fn (?string $item): bool => filled($item))
-                ->implode(value: ' ')
-        );
+        static::saving(callback: function (Elector $elector) {
+            if (! is_null($elector->groups)) {
+                $elector->groups = collect(value: explode(separator: ',', string: $elector->groups))
+                    ->map(callback: fn (string $item): string => trim(string: $item))
+                    ->unique()
+                    ->sort()
+                    ->implode(value: ',') ?: null;
+            }
+        });
+    }
+
+    public function getRouteKeyName(): string
+    {
+        return 'uuid';
     }
 
     public function event(): MorphTo
@@ -131,14 +142,6 @@ class Elector extends Model implements AuthenticatableContract, AuthorizableCont
             ->latestOfMany();
     }
 
-    public function authSessions(): MorphMany
-    {
-        return $this->morphMany(
-            related: AuthSession::class,
-            name: 'authenticatable',
-        );
-    }
-
     public function authSession(): MorphOne
     {
         return $this
@@ -149,6 +152,12 @@ class Elector extends Model implements AuthenticatableContract, AuthorizableCont
             ->latestOfMany();
     }
 
+    public function ballotLinkEmails(): MorphMany
+    {
+        return $this->emails()
+            ->scopes(scopes: ['ballotLink']);
+    }
+
     public function emails(): MorphMany
     {
         return $this
@@ -156,12 +165,6 @@ class Elector extends Model implements AuthenticatableContract, AuthorizableCont
                 related: Email::class,
                 name: 'notifiable',
             );
-    }
-
-    public function ballotLinkEmails(): MorphMany
-    {
-        return $this->emails()
-            ->scopes(scopes: ['ballotLink']);
     }
 
     public function mfaCodeEmails(): MorphMany
@@ -182,6 +185,12 @@ class Elector extends Model implements AuthenticatableContract, AuthorizableCont
             ->scopes(scopes: ['votedBallotCopy']);
     }
 
+    public function ballotLinkSmsMessages(): MorphMany
+    {
+        return $this->smsMessages()
+            ->scopes(scopes: ['ballotLink']);
+    }
+
     public function smsMessages(): MorphMany
     {
         return $this
@@ -189,12 +198,6 @@ class Elector extends Model implements AuthenticatableContract, AuthorizableCont
                 related: SmsMessage::class,
                 name: 'smsable',
             );
-    }
-
-    public function ballotLinkSmsMessages(): MorphMany
-    {
-        return $this->smsMessages()
-            ->scopes(scopes: ['ballotLink']);
     }
 
     public function mfaCodeSmsMessages(): MorphMany
@@ -207,24 +210,6 @@ class Elector extends Model implements AuthenticatableContract, AuthorizableCont
     {
         return $this->smsMessages()
             ->scopes(scopes: ['votedConfirmation']);
-    }
-
-    protected static function booted(): void
-    {
-        static::saving(callback: function (Elector $elector) {
-            if (! is_null($elector->groups)) {
-                $elector->groups = collect(value: explode(separator: ',', string: $elector->groups))
-                    ->map(callback: fn (string $item): string => trim(string: $item))
-                    ->unique()
-                    ->sort()
-                    ->implode(value: ',') ?: null;
-            }
-        });
-    }
-
-    public function getRouteKeyName(): string
-    {
-        return 'uuid';
     }
 
     public function uniqueIds(): array
@@ -285,6 +270,14 @@ class Elector extends Model implements AuthenticatableContract, AuthorizableCont
             ]);
     }
 
+    public function authSessions(): MorphMany
+    {
+        return $this->morphMany(
+            related: AuthSession::class,
+            name: 'authenticatable',
+        );
+    }
+
     public function notifyVotingInstructions(?Election $election = null, bool $now = false): void
     {
         $notification = new VotingInstructionNotification(
@@ -313,5 +306,14 @@ class Elector extends Model implements AuthenticatableContract, AuthorizableCont
         } else {
             $this->notify(instance: $notification);
         }
+    }
+
+    protected function displayName(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value, array $attributes) => collect(value: [$this->title, $this->full_name])
+                ->filter(callback: fn (?string $item): bool => filled($item))
+                ->implode(value: ' ')
+        );
     }
 }
