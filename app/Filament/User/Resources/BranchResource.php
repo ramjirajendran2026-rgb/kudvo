@@ -32,6 +32,7 @@ class BranchResource extends Resource
         return SelectTree::make('branch_id')
             ->enableBranchNode()
             ->label('Branch')
+            ->placeholder('Select a branch')
             ->relationship(
                 'branch',
                 'display_name',

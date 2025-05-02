@@ -17,6 +17,8 @@ class ManageMembers extends ManageRecords
                 MemberResource::getGenerateDummyMembersAction(),
             ])->dropdownPlacement('bottom-end'),
 
+            MemberResource::getImportAction(),
+
             Actions\CreateAction::make(),
         ];
     }

@@ -2,17 +2,20 @@
 
 namespace App\Filament\User\Resources;
 
+use App\Filament\Imports\MemberImporter;
 use App\Filament\User\Resources\MemberResource\Pages;
 use App\Forms\MemberForm;
 use App\Models\Member;
 use Database\Factories\MemberFactory;
 use Filament\Actions\Action;
+use Filament\Actions\ImportAction;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\IconPosition;
 use Filament\Tables;
@@ -31,6 +34,48 @@ class MemberResource extends Resource
     protected static ?string $recordTitleAttribute = 'display_name';
 
     protected static ?int $navigationSort = 1;
+
+    public static function getGenerateDummyMembersAction(): Action
+    {
+        return Action::make('generateDummyMembers')
+            ->authorize(auth()->user()->hasAdminRole())
+            ->requiresConfirmation()
+            ->action(function (Action $action, array $data) {
+                Member::factory($data['count'])
+                    ->for(Filament::getTenant(), 'organisation')
+                    ->when($data['branch_id'], fn (MemberFactory $factory) => $factory->state(['branch_id' => $data['branch_id']]))
+                    ->when($data['with_name'], fn (MemberFactory $factory) => $factory->withName())
+                    ->when($data['with_email'], fn (MemberFactory $factory) => $factory->withEmail())
+                    ->when($data['with_phone'], fn (MemberFactory $factory) => $factory->withPhone())
+                    ->when($data['with_weightage'], fn (MemberFactory $factory) => $factory->withWeightage())
+                    ->create();
+
+                $action->success();
+            })
+            ->form([
+                TextInput::make('count')
+                    ->default(10)
+                    ->integer()
+                    ->maxValue(99999)
+                    ->minValue(1)
+                    ->required(),
+
+                BranchResource::getFormSelectTree(),
+
+                Toggle::make('with_name')
+                    ->default(true),
+
+                Toggle::make('with_email')
+                    ->default(true),
+
+                Toggle::make('with_phone')
+                    ->default(true),
+
+                Toggle::make('with_weightage')
+                    ->default(true),
+            ])
+            ->successNotificationTitle('Generated successfully');
+    }
 
     public static function form(Form $form): Form
     {
@@ -140,45 +185,14 @@ class MemberResource extends Resource
             ]);
     }
 
-    public static function getGenerateDummyMembersAction(): Action
+    public static function getImportAction(): ImportAction
     {
-        return Action::make('generateDummyMembers')
-            ->authorize(auth()->user()->hasAdminRole())
-            ->requiresConfirmation()
-            ->action(function (Action $action, array $data) {
-                Member::factory($data['count'])
-                    ->for(Filament::getTenant(), 'organisation')
-                    ->when($data['branch_id'], fn (MemberFactory $factory) => $factory->state(['branch_id' => $data['branch_id']]))
-                    ->when($data['with_name'], fn (MemberFactory $factory) => $factory->withName())
-                    ->when($data['with_email'], fn (MemberFactory $factory) => $factory->withEmail())
-                    ->when($data['with_phone'], fn (MemberFactory $factory) => $factory->withPhone())
-                    ->when($data['with_weightage'], fn (MemberFactory $factory) => $factory->withWeightage())
-                    ->create();
-
-                $action->success();
-            })
-            ->form([
-                TextInput::make('count')
-                    ->default(10)
-                    ->integer()
-                    ->maxValue(99999)
-                    ->minValue(1)
-                    ->required(),
-
-                BranchResource::getFormSelectTree(),
-
-                Toggle::make('with_name')
-                    ->default(true),
-
-                Toggle::make('with_email')
-                    ->default(true),
-
-                Toggle::make('with_phone')
-                    ->default(true),
-
-                Toggle::make('with_weightage')
-                    ->default(true),
-            ])
-            ->successNotificationTitle('Generated successfully');
+        return ImportAction::make()
+            ->chunkSize(size: 50)
+            ->color(color: 'gray')
+            ->icon(icon: 'heroicon-s-arrow-up-tray')
+            ->importer(importer: MemberImporter::class)
+            ->modalFooterActionsAlignment(alignment: Alignment::Center)
+            ->options(static fn () => ['organisation_id' => Filament::getTenant()?->getKey()]);
     }
 }
