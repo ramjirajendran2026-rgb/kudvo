@@ -6,9 +6,12 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use SolutionForest\FilamentTree\Concern\ModelTree;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Branch extends Model
 {
+    use LogsActivity;
     use ModelTree;
 
     protected $fillable = [
@@ -37,6 +40,14 @@ class Branch extends Model
     public function parent(): BelongsTo
     {
         return $this->belongsTo(Branch::class, 'parent_id');
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logAll()
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
     }
 
     protected function displayName(): Attribute

@@ -8,11 +8,14 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\EloquentSortable\Sortable;
 use Spatie\EloquentSortable\SortableTrait;
 
 class SurveyQuestion extends Model implements Sortable
 {
+    use LogsActivity;
     use SortableTrait;
 
     public const KEY_PREFIX = 'SQ';
@@ -38,11 +41,12 @@ class SurveyQuestion extends Model implements Sortable
         'survey_id' => 'int',
     ];
 
-    protected function key(): Attribute
+    public function getActivitylogOptions(): LogOptions
     {
-        return Attribute::make(
-            get: fn ($value, array $attributes) => static::KEY_PREFIX . $this->getKey(),
-        );
+        return LogOptions::defaults()
+            ->logAll()
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
     }
 
     public function survey(): BelongsTo
@@ -59,5 +63,12 @@ class SurveyQuestion extends Model implements Sortable
     {
         return static::query()
             ->where('survey_id', $this->survey_id);
+    }
+
+    protected function key(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value, array $attributes) => static::KEY_PREFIX . $this->getKey(),
+        );
     }
 }

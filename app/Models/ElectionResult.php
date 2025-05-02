@@ -6,9 +6,13 @@ use App\Data\Election\ResultMetaData;
 use App\Data\EncryptedDataCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class ElectionResult extends Model
 {
+    use LogsActivity;
+
     protected $fillable = [
         'total_votes',
         'processed_votes',
@@ -24,6 +28,14 @@ class ElectionResult extends Model
         'meta' => EncryptedDataCollection::class . ':' . ResultMetaData::class . ',default',
         'election_id' => 'int',
     ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logAll()
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
 
     public function election(): BelongsTo
     {

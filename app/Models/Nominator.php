@@ -8,9 +8,13 @@ use App\Events\NominatorDeclined;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Nominator extends Model
 {
+    use LogsActivity;
+
     protected $fillable = [
         'membership_number',
         'title',
@@ -35,13 +39,12 @@ class Nominator extends Model
         'display_name',
     ];
 
-    protected function displayName(): Attribute
+    public function getActivitylogOptions(): LogOptions
     {
-        return Attribute::make(
-            get: fn ($value, array $attributes) => collect(value: [$this->title, $this->full_name])
-                ->filter(callback: fn (?string $item): bool => filled($item))
-                ->implode(value: ' ')
-        );
+        return LogOptions::defaults()
+            ->logAll()
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
     }
 
     public function nominee(): BelongsTo
@@ -87,5 +90,14 @@ class Nominator extends Model
         NominatorDeclined::dispatchIf($this->save(), $this);
 
         return $this;
+    }
+
+    protected function displayName(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value, array $attributes) => collect(value: [$this->title, $this->full_name])
+                ->filter(callback: fn (?string $item): bool => filled($item))
+                ->implode(value: ' ')
+        );
     }
 }

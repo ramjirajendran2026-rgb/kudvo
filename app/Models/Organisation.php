@@ -12,6 +12,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Translatable\HasTranslations;
@@ -21,8 +23,11 @@ class Organisation extends Model implements HasAvatar, HasMedia
     use HasFactory;
     use HasTranslations;
     use InteractsWithMedia;
+    use LogsActivity;
 
     public const MEDIA_COLLECTION_LOGO = 'logo';
+
+    public array $translatable = ['name'];
 
     protected $fillable = [
         'code',
@@ -36,13 +41,32 @@ class Organisation extends Model implements HasAvatar, HasMedia
         'settings' => SettingsData::class,
     ];
 
-    public array $translatable = ['name'];
-
-    protected function logoUrl(): Attribute
+    protected static function booted(): void
     {
-        return Attribute::make(
-            get: fn ($value, array $attributes) => Filament::getTenantAvatarUrl($this),
-        );
+        static::creating(callback: function (Organisation $organisation) {
+            if (blank($organisation->code)) {
+                $organisation->code = static::generateCode();
+            }
+        });
+    }
+
+    public static function generateCode(): string
+    {
+        return config(key: 'app.organisation.code.prefix') .
+            Str::upper(value: Str::random(length: config(key: 'app.organisation.code.length')));
+    }
+
+    public function getRouteKeyName(): string
+    {
+        return 'code';
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logAll()
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
     }
 
     public function users(): BelongsToMany
@@ -82,15 +106,6 @@ class Organisation extends Model implements HasAvatar, HasMedia
         return $this->hasMany(Survey::class);
     }
 
-    protected static function booted(): void
-    {
-        static::creating(callback: function (Organisation $organisation) {
-            if (blank($organisation->code)) {
-                $organisation->code = static::generateCode();
-            }
-        });
-    }
-
     public function scopeSearch(Builder $query, string $value, ?string $locale = null): Builder
     {
         $locale ??= app()->currentLocale();
@@ -104,17 +119,6 @@ class Organisation extends Model implements HasAvatar, HasMedia
         });
     }
 
-    public function getRouteKeyName(): string
-    {
-        return 'code';
-    }
-
-    public static function generateCode(): string
-    {
-        return config(key: 'app.organisation.code.prefix') .
-            Str::upper(value: Str::random(length: config(key: 'app.organisation.code.length')));
-    }
-
     public function getFilamentAvatarUrl(): ?string
     {
         return $this->getFirstMediaUrl(collectionName: static::MEDIA_COLLECTION_LOGO);
@@ -126,5 +130,12 @@ class Organisation extends Model implements HasAvatar, HasMedia
             ->addMediaCollection(name: static::MEDIA_COLLECTION_LOGO)
             ->singleFile()
             ->withResponsiveImages();
+    }
+
+    protected function logoUrl(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value, array $attributes) => Filament::getTenantAvatarUrl($this),
+        );
     }
 }

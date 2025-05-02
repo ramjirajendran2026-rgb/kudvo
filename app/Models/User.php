@@ -20,7 +20,9 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
 use Laravel\Cashier\Billable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\CausesActivity;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Permission\Traits\HasRoles;
@@ -33,6 +35,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasMedia,
     use HasFactory;
     use HasRoles;
     use InteractsWithMedia;
+    use LogsActivity;
     use Notifiable;
 
     public const MEDIA_COLLECTION_AVATAR = 'avatar';
@@ -62,6 +65,14 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasMedia,
                 $user->email_verified_at = null;
             }
         });
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logAll()
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
     }
 
     public function canAccessPanel(Panel $panel): bool

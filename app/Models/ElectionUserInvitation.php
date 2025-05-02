@@ -8,10 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class ElectionUserInvitation extends Model
 {
     use HasUlids;
+    use LogsActivity;
     use Notifiable;
     use SoftDeletes;
 
@@ -33,6 +36,14 @@ class ElectionUserInvitation extends Model
         'user_id' => 'int',
         'invitor_id' => 'int',
     ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logAll()
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
 
     public function election(): BelongsTo
     {

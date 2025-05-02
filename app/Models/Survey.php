@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
@@ -18,6 +20,7 @@ class Survey extends Model implements HasMedia
     use HasSEO;
     use HasUlids;
     use InteractsWithMedia;
+    use LogsActivity;
 
     public const MEDIA_COLLECTION_HEADER = 'header';
 
@@ -48,18 +51,12 @@ class Survey extends Model implements HasMedia
         'has_description',
     ];
 
-    protected function hasDescription(): Attribute
+    public function getActivitylogOptions(): LogOptions
     {
-        return Attribute::make(
-            get: fn ($value, array $attributes) => filled($this->description),
-        );
-    }
-
-    protected function isPublished(): Attribute
-    {
-        return Attribute::make(
-            get: fn ($value, array $attributes) => (bool) $this->published_at?->isPast(),
-        );
+        return LogOptions::defaults()
+            ->logAll()
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
     }
 
     public function organisation(): BelongsTo
@@ -70,12 +67,6 @@ class Survey extends Model implements HasMedia
     public function branch(): BelongsTo
     {
         return $this->belongsTo(Branch::class);
-    }
-
-    public function questions(): HasMany
-    {
-        return $this->hasMany(SurveyQuestion::class)
-            ->orderBy('sort');
     }
 
     public function responses(): HasMany
@@ -100,5 +91,25 @@ class Survey extends Model implements HasMedia
     public function isPreviewable(): bool
     {
         return $this->questions()->exists();
+    }
+
+    public function questions(): HasMany
+    {
+        return $this->hasMany(SurveyQuestion::class)
+            ->orderBy('sort');
+    }
+
+    protected function hasDescription(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value, array $attributes) => filled($this->description),
+        );
+    }
+
+    protected function isPublished(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value, array $attributes) => (bool) $this->published_at?->isPast(),
+        );
     }
 }

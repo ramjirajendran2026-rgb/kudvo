@@ -4,9 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class MeetingPayment extends Model
 {
+    use LogsActivity;
+
     protected $fillable = [
         'currency',
         'base_fee',
@@ -26,6 +30,14 @@ class MeetingPayment extends Model
         'stripe_invoice_data' => 'array',
         'meeting_id' => 'int',
     ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logAll()
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
 
     public function meeting(): BelongsTo
     {

@@ -31,6 +31,8 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Laravel\Cashier\Checkout;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Translatable\HasTranslations;
 
@@ -38,6 +40,12 @@ class Election extends Model
 {
     use HasShortCode;
     use HasTranslations;
+    use LogsActivity;
+
+    public array $translatable = [
+        'name',
+        'description',
+    ];
 
     protected $fillable = [
         'name',
@@ -84,191 +92,40 @@ class Election extends Model
         'branch_id' => 'int',
     ];
 
-    public array $translatable = [
-        'name',
-        'description',
-    ];
-
-    protected function ballotLinkVia(): Attribute
+    protected static function booted(): void
     {
-        return Attribute::make(
-            get: fn ($value, array $attributes) => [
-                ...Arr::wrap(value: $this->preference?->ballot_link_mail ? 'mail' : null),
-                ...Arr::wrap(value: $this->preference?->ballot_link_sms ? 'sms' : null),
-                ...Arr::wrap(value: $this->preference?->ballot_link_whatsapp ? WhatsAppChannel::NAME : null),
-            ],
-        );
+        static::creating(callback: function (Election $election) {
+            if (blank($election->code)) {
+                $election->code = static::generateCode();
+            }
+        });
+
+        static::created(callback: function (Election $election) {
+            $election->generateShortCode();
+
+            $election->collaborators()->attach(
+                $election->owner,
+                [
+                    'designation' => 'Admin',
+                    'permissions' => CollaboratorPermissionsData::empty(),
+                ]
+            );
+        });
+
+        static::deleting(callback: function (Election $election) {
+            $election->electors()->cursor()->each->delete();
+            $election->positions()->cursor()->each->delete();
+            $election->candidateGroups()->cursor()->each->delete();
+            $election->monitorTokens()->cursor()->each->delete();
+            $election->boothTokens()->cursor()->each->delete();
+            $election->result()->cursor()->each->delete();
+        });
     }
 
-    protected function votedConfirmationVia(): Attribute
+    public static function generateCode(): string
     {
-        return Attribute::make(
-            get: fn ($value, array $attributes) => [
-                ...Arr::wrap(value: $this->preference?->voted_confirmation_mail ? 'mail' : null),
-                ...Arr::wrap(value: $this->preference?->voted_confirmation_sms ? 'sms' : null),
-                ...Arr::wrap(value: $this->preference?->voted_confirmation_whatsapp ? WhatsAppChannel::NAME : null),
-            ],
-        );
-    }
-
-    protected function votedBallotCopyShareVia(): Attribute
-    {
-        return Attribute::make(
-            get: fn ($value, array $attributes) => [
-                ...Arr::wrap(value: $this->preference?->voted_ballot_mail ? 'mail' : null),
-                ...Arr::wrap(value: $this->preference?->voted_ballot_whatsapp ? WhatsAppChannel::NAME : null),
-            ],
-        );
-    }
-
-    protected function startsAtLocal(): Attribute
-    {
-        return Attribute::make(
-            get: fn ($value, array $attributes) => $this->starts_at?->tz(value: $this->timezone),
-        );
-    }
-
-    protected function endsAtLocal(): Attribute
-    {
-        return Attribute::make(
-            get: fn ($value, array $attributes) => $this->ends_at?->tz(value: $this->timezone),
-        );
-    }
-
-    protected function boothStartsAtLocal(): Attribute
-    {
-        return Attribute::make(
-            get: fn ($value, array $attributes) => $this->booth_starts_at?->tz(value: $this->timezone),
-        );
-    }
-
-    protected function boothEndsAtLocal(): Attribute
-    {
-        return Attribute::make(
-            get: fn ($value, array $attributes) => $this->booth_ends_at?->tz(value: $this->timezone),
-        );
-    }
-
-    protected function status(): Attribute
-    {
-        return Attribute::make(
-            get: fn ($value, array $attributes) => match (true) {
-                filled(value: $this->cancelled_at) => ElectionStatus::CANCELLED,
-                filled(value: $this->completed_at) => ElectionStatus::COMPLETED,
-                filled(value: $this->closed_at) => ElectionStatus::CLOSED,
-                filled(value: $this->published_at) => ElectionStatus::PUBLISHED,
-                default => ElectionStatus::DRAFT,
-            },
-        );
-    }
-
-    protected function isDraft(): Attribute
-    {
-        return Attribute::make(
-            get: fn ($value, array $attributes) => $this->status === ElectionStatus::DRAFT,
-        );
-    }
-
-    protected function isPublished(): Attribute
-    {
-        return Attribute::make(
-            get: fn ($value, array $attributes) => $this->status === ElectionStatus::PUBLISHED,
-        );
-    }
-
-    protected function isUpcoming(): Attribute
-    {
-        return Attribute::make(
-            get: fn ($value, array $attributes) => $this->is_published && $this->starts_at->isFuture(),
-        );
-    }
-
-    protected function isOpen(): Attribute
-    {
-        return Attribute::make(
-            get: fn ($value, array $attributes) => $this->is_published && $this->starts_at->isPast() && $this->ends_at->isFuture(),
-        );
-    }
-
-    protected function isExpired(): Attribute
-    {
-        return Attribute::make(
-            get: fn ($value, array $attributes) => $this->is_published && $this->ends_at->isPast(),
-        );
-    }
-
-    protected function isClosed(): Attribute
-    {
-        return Attribute::make(
-            get: fn ($value, array $attributes) => $this->status === ElectionStatus::CLOSED,
-        );
-    }
-
-    protected function isBoothUpcoming(): Attribute
-    {
-        return Attribute::make(
-            get: fn ($value, array $attributes) => $this->is_published && $this->booth_starts_at?->isFuture(),
-        );
-    }
-
-    protected function isBoothOpen(): Attribute
-    {
-        return Attribute::make(
-            get: fn ($value, array $attributes) => $this->is_published && $this->booth_starts_at?->isPast() && $this->booth_ends_at?->isFuture(),
-        );
-    }
-
-    protected function isBoothExpired(): Attribute
-    {
-        return Attribute::make(
-            get: fn ($value, array $attributes) => $this->is_published && $this->booth_ends_at?->isPast(),
-        );
-    }
-
-    protected function isCompleted(): Attribute
-    {
-        return Attribute::make(
-            get: fn ($value, array $attributes) => $this->status === ElectionStatus::COMPLETED,
-        );
-    }
-
-    protected function isCancelled(): Attribute
-    {
-        return Attribute::make(
-            get: fn ($value, array $attributes) => $this->status === ElectionStatus::CANCELLED,
-        );
-    }
-
-    protected function isPaid(): Attribute
-    {
-        return Attribute::make(
-            get: fn ($value, array $attributes) => filled($this->paid_at),
-        );
-    }
-
-    public function organisation(): BelongsTo
-    {
-        return $this->belongsTo(related: Organisation::class);
-    }
-
-    public function branch(): BelongsTo
-    {
-        return $this->belongsTo(Branch::class);
-    }
-
-    public function owner(): BelongsTo
-    {
-        return $this->belongsTo(related: User::class);
-    }
-
-    public function plan(): BelongsTo
-    {
-        return $this->belongsTo(related: ElectionPlan::class);
-    }
-
-    public function collaborationInvitations(): HasMany
-    {
-        return $this->hasMany(related: ElectionUserInvitation::class);
+        return config(key: 'app.election.code.prefix') .
+            Str::upper(value: Str::random(length: config(key: 'app.election.code.length')));
     }
 
     public function collaborators(): BelongsToMany
@@ -278,11 +135,6 @@ class Election extends Model
             ->using(class: ElectionUser::class)
             ->withPivot(columns: ['designation', 'permissions'])
             ->withTimestamps();
-    }
-
-    public function segments(): HasMany
-    {
-        return $this->hasMany(related: Segment::class);
     }
 
     public function electors(): MorphMany
@@ -318,15 +170,64 @@ class Election extends Model
         return $this->hasMany(related: ElectionBoothToken::class);
     }
 
+    public function result(): HasOne
+    {
+        return $this->hasOne(related: ElectionResult::class)
+            ->latestOfMany();
+    }
+
+    public function getRouteKeyName(): string
+    {
+        return 'code';
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logAll()
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
+
+    public function organisation(): BelongsTo
+    {
+        return $this->belongsTo(related: Organisation::class);
+    }
+
+    public function branch(): BelongsTo
+    {
+        return $this->belongsTo(Branch::class);
+    }
+
+    public function owner(): BelongsTo
+    {
+        return $this->belongsTo(related: User::class);
+    }
+
+    public function plan(): BelongsTo
+    {
+        return $this->belongsTo(related: ElectionPlan::class);
+    }
+
+    public function collaborationInvitations(): HasMany
+    {
+        return $this->hasMany(related: ElectionUserInvitation::class);
+    }
+
+    public function segments(): HasMany
+    {
+        return $this->hasMany(related: Segment::class);
+    }
+
     public function ballotLinkBlasts(): HasMany
     {
         return $this->hasMany(related: BallotLinkBlast::class);
     }
 
-    public function result(): HasOne
+    public function electorImports(): BelongsToMany
     {
-        return $this->hasOne(related: ElectionResult::class)
-            ->latestOfMany();
+        return $this->imports()
+            ->where('importer', ElectorImporter::class);
     }
 
     public function imports(): BelongsToMany
@@ -334,12 +235,6 @@ class Election extends Model
         return $this->belongsToMany(related: Import::class)
             ->using(class: ElectionImport::class)
             ->withPivot(columns: ['options', 'column_map']);
-    }
-
-    public function electorImports(): BelongsToMany
-    {
-        return $this->imports()
-            ->where('importer', ElectorImporter::class);
     }
 
     public function candidateImports(): BelongsToMany
@@ -402,68 +297,9 @@ class Election extends Model
         );
     }
 
-    protected static function booted(): void
-    {
-        static::creating(callback: function (Election $election) {
-            if (blank($election->code)) {
-                $election->code = static::generateCode();
-            }
-        });
-
-        static::created(callback: function (Election $election) {
-            $election->generateShortCode();
-
-            $election->collaborators()->attach(
-                $election->owner,
-                [
-                    'designation' => 'Admin',
-                    'permissions' => CollaboratorPermissionsData::empty(),
-                ]
-            );
-        });
-
-        static::deleting(callback: function (Election $election) {
-            $election->electors()->cursor()->each->delete();
-            $election->positions()->cursor()->each->delete();
-            $election->candidateGroups()->cursor()->each->delete();
-            $election->monitorTokens()->cursor()->each->delete();
-            $election->boothTokens()->cursor()->each->delete();
-            $election->result()->cursor()->each->delete();
-        });
-    }
-
-    public function getRouteKeyName(): string
-    {
-        return 'code';
-    }
-
     public function getFallbackLocale()
     {
         return $this->locales()[0] ?? config('app.locale');
-    }
-
-    public static function generateCode(): string
-    {
-        return config(key: 'app.election.code.prefix') .
-            Str::upper(value: Str::random(length: config(key: 'app.election.code.length')));
-    }
-
-    public function isTimingConfigured(): bool
-    {
-        return filled(value: $this->starts_at) &&
-            filled(value: $this->ends_at) &&
-            filled(value: $this->timezone) &&
-            (
-                ! $this->isBoothVotingEnabled() ||
-                $this->isBoothTimingConfigured()
-            );
-    }
-
-    public function isBoothTimingConfigured(): bool
-    {
-        return filled(value: $this->booth_starts_at) &&
-            filled(value: $this->booth_ends_at) &&
-            filled(value: $this->timezone);
     }
 
     public function isMfaRequired(): bool
@@ -479,16 +315,6 @@ class Election extends Model
     public function isPwaEnabled(): bool
     {
         return filled($this->preference?->web_app_manifest);
-    }
-
-    public function isBoothVotingEnabled(): bool
-    {
-        return $this->preference?->booth_voting ?? false;
-    }
-
-    public function isCheckoutRequired(): bool
-    {
-        return blank($this->paid_at);
     }
 
     public function isOwner(User | Authenticatable $user): bool
@@ -521,6 +347,41 @@ class Election extends Model
             ! $this->isPublished() => ElectionSetupStep::Publish,
             default => null,
         };
+    }
+
+    public function isTimingConfigured(): bool
+    {
+        return filled(value: $this->starts_at) &&
+            filled(value: $this->ends_at) &&
+            filled(value: $this->timezone) &&
+            (
+                ! $this->isBoothVotingEnabled() ||
+                $this->isBoothTimingConfigured()
+            );
+    }
+
+    public function isBoothVotingEnabled(): bool
+    {
+        return $this->preference?->booth_voting ?? false;
+    }
+
+    public function isBoothTimingConfigured(): bool
+    {
+        return filled(value: $this->booth_starts_at) &&
+            filled(value: $this->booth_ends_at) &&
+            filled(value: $this->timezone);
+    }
+
+    public function isCheckoutRequired(): bool
+    {
+        return blank($this->paid_at);
+    }
+
+    protected function isPublished(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value, array $attributes) => $this->status === ElectionStatus::PUBLISHED,
+        );
     }
 
     public function getElectorGroups(): array
@@ -823,5 +684,155 @@ class Election extends Model
                     ],
                 ],
             );
+    }
+
+    protected function ballotLinkVia(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value, array $attributes) => [
+                ...Arr::wrap(value: $this->preference?->ballot_link_mail ? 'mail' : null),
+                ...Arr::wrap(value: $this->preference?->ballot_link_sms ? 'sms' : null),
+                ...Arr::wrap(value: $this->preference?->ballot_link_whatsapp ? WhatsAppChannel::NAME : null),
+            ],
+        );
+    }
+
+    protected function votedConfirmationVia(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value, array $attributes) => [
+                ...Arr::wrap(value: $this->preference?->voted_confirmation_mail ? 'mail' : null),
+                ...Arr::wrap(value: $this->preference?->voted_confirmation_sms ? 'sms' : null),
+                ...Arr::wrap(value: $this->preference?->voted_confirmation_whatsapp ? WhatsAppChannel::NAME : null),
+            ],
+        );
+    }
+
+    protected function votedBallotCopyShareVia(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value, array $attributes) => [
+                ...Arr::wrap(value: $this->preference?->voted_ballot_mail ? 'mail' : null),
+                ...Arr::wrap(value: $this->preference?->voted_ballot_whatsapp ? WhatsAppChannel::NAME : null),
+            ],
+        );
+    }
+
+    protected function startsAtLocal(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value, array $attributes) => $this->starts_at?->tz(value: $this->timezone),
+        );
+    }
+
+    protected function endsAtLocal(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value, array $attributes) => $this->ends_at?->tz(value: $this->timezone),
+        );
+    }
+
+    protected function boothStartsAtLocal(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value, array $attributes) => $this->booth_starts_at?->tz(value: $this->timezone),
+        );
+    }
+
+    protected function boothEndsAtLocal(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value, array $attributes) => $this->booth_ends_at?->tz(value: $this->timezone),
+        );
+    }
+
+    protected function status(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value, array $attributes) => match (true) {
+                filled(value: $this->cancelled_at) => ElectionStatus::CANCELLED,
+                filled(value: $this->completed_at) => ElectionStatus::COMPLETED,
+                filled(value: $this->closed_at) => ElectionStatus::CLOSED,
+                filled(value: $this->published_at) => ElectionStatus::PUBLISHED,
+                default => ElectionStatus::DRAFT,
+            },
+        );
+    }
+
+    protected function isDraft(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value, array $attributes) => $this->status === ElectionStatus::DRAFT,
+        );
+    }
+
+    protected function isUpcoming(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value, array $attributes) => $this->is_published && $this->starts_at->isFuture(),
+        );
+    }
+
+    protected function isOpen(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value, array $attributes) => $this->is_published && $this->starts_at->isPast() && $this->ends_at->isFuture(),
+        );
+    }
+
+    protected function isExpired(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value, array $attributes) => $this->is_published && $this->ends_at->isPast(),
+        );
+    }
+
+    protected function isClosed(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value, array $attributes) => $this->status === ElectionStatus::CLOSED,
+        );
+    }
+
+    protected function isBoothUpcoming(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value, array $attributes) => $this->is_published && $this->booth_starts_at?->isFuture(),
+        );
+    }
+
+    protected function isBoothOpen(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value, array $attributes) => $this->is_published && $this->booth_starts_at?->isPast() && $this->booth_ends_at?->isFuture(),
+        );
+    }
+
+    protected function isBoothExpired(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value, array $attributes) => $this->is_published && $this->booth_ends_at?->isPast(),
+        );
+    }
+
+    protected function isCompleted(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value, array $attributes) => $this->status === ElectionStatus::COMPLETED,
+        );
+    }
+
+    protected function isCancelled(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value, array $attributes) => $this->status === ElectionStatus::CANCELLED,
+        );
+    }
+
+    protected function isPaid(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value, array $attributes) => filled($this->paid_at),
+        );
     }
 }

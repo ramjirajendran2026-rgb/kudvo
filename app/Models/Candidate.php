@@ -13,6 +13,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Cache;
 use LasseRafn\InitialAvatarGenerator\InitialAvatar;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Color\Rgb;
 use Spatie\EloquentSortable\Sortable;
 use Spatie\EloquentSortable\SortableTrait;
@@ -27,6 +29,7 @@ class Candidate extends Model implements HasAvatar, HasMedia, HasName, Sortable
     use HasTranslations;
     use HasUuids;
     use InteractsWithMedia;
+    use LogsActivity;
     use SortableTrait;
 
     public const MEDIA_COLLECTION_ATTACHMENTS = 'attachments';
@@ -71,6 +74,81 @@ class Candidate extends Model implements HasAvatar, HasMedia, HasName, Sortable
         'first_name',
         'last_name',
     ];
+
+    protected static function booted(): void
+    {
+        static::addGlobalScope(
+            scope: 'disabled',
+            implementation: fn (Builder $builder) => $builder->where('disabled', false),
+        );
+    }
+
+    public function getRouteKeyName(): string
+    {
+        return 'uuid';
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logAll()
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
+
+    public function position(): BelongsTo
+    {
+        return $this->belongsTo(related: Position::class);
+    }
+
+    public function candidateGroup(): BelongsTo
+    {
+        return $this->belongsTo(related: CandidateGroup::class);
+    }
+
+    public function elector(): BelongsTo
+    {
+        return $this->belongsTo(related: Elector::class);
+    }
+
+    public function uniqueIds(): array
+    {
+        return ['uuid'];
+    }
+
+    public function buildSortQuery(): Builder
+    {
+        return static::query()
+            ->where('position_id', $this->position_id);
+    }
+
+    public function getFilamentAvatarUrl(): ?string
+    {
+        return $this->getFirstMediaUrl(collectionName: static::MEDIA_COLLECTION_PHOTO);
+    }
+
+    public function getFilamentName(): string
+    {
+        return $this->full_name;
+    }
+
+    public function getFallbackLocale()
+    {
+        return $this->locales()[0] ?? config('app.locale');
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this
+            ->addMediaCollection(name: static::MEDIA_COLLECTION_PHOTO)
+            ->singleFile()
+            ->withResponsiveImages();
+
+        $this
+            ->addMediaCollection(name: static::MEDIA_COLLECTION_SYMBOL)
+            ->singleFile()
+            ->withResponsiveImages();
+    }
 
     protected function fullName(): Attribute
     {
@@ -142,72 +220,5 @@ class Candidate extends Model implements HasAvatar, HasMedia, HasName, Sortable
                         )
                 ),
         );
-    }
-
-    public function position(): BelongsTo
-    {
-        return $this->belongsTo(related: Position::class);
-    }
-
-    public function candidateGroup(): BelongsTo
-    {
-        return $this->belongsTo(related: CandidateGroup::class);
-    }
-
-    public function elector(): BelongsTo
-    {
-        return $this->belongsTo(related: Elector::class);
-    }
-
-    public function getRouteKeyName(): string
-    {
-        return 'uuid';
-    }
-
-    public function uniqueIds(): array
-    {
-        return ['uuid'];
-    }
-
-    protected static function booted(): void
-    {
-        static::addGlobalScope(
-            scope: 'disabled',
-            implementation: fn (Builder $builder) => $builder->where('disabled', false),
-        );
-    }
-
-    public function buildSortQuery(): Builder
-    {
-        return static::query()
-            ->where('position_id', $this->position_id);
-    }
-
-    public function getFilamentAvatarUrl(): ?string
-    {
-        return $this->getFirstMediaUrl(collectionName: static::MEDIA_COLLECTION_PHOTO);
-    }
-
-    public function getFilamentName(): string
-    {
-        return $this->full_name;
-    }
-
-    public function getFallbackLocale()
-    {
-        return $this->locales()[0] ?? config('app.locale');
-    }
-
-    public function registerMediaCollections(): void
-    {
-        $this
-            ->addMediaCollection(name: static::MEDIA_COLLECTION_PHOTO)
-            ->singleFile()
-            ->withResponsiveImages();
-
-        $this
-            ->addMediaCollection(name: static::MEDIA_COLLECTION_SYMBOL)
-            ->singleFile()
-            ->withResponsiveImages();
     }
 }

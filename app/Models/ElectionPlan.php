@@ -7,13 +7,21 @@ use App\Enums\ElectionFeature;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\LaravelData\DataCollection;
 use Spatie\Translatable\HasTranslations;
 
 class ElectionPlan extends Model
 {
     use HasTranslations;
+    use LogsActivity;
     use SoftDeletes;
+
+    public array $translatable = [
+        'name',
+        'description',
+    ];
 
     protected $fillable = [
         'name',
@@ -30,10 +38,13 @@ class ElectionPlan extends Model
         'features' => DataCollection::class . ':' . PlanFeatureData::class,
     ];
 
-    public array $translatable = [
-        'name',
-        'description',
-    ];
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logAll()
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
 
     public function hasFeature(ElectionFeature $feature): bool
     {
@@ -54,16 +65,16 @@ class ElectionPlan extends Model
         return $this->features->toCollection()->where('is_add_on', false);
     }
 
-    public function addOnFeatures(): Collection
-    {
-        return $this->features->toCollection()->where('is_add_on', true);
-    }
-
     public function hasAddOnFeature(ElectionFeature $feature): bool
     {
         return $this
             ->addOnFeatures()
             ->contains(fn (PlanFeatureData $planFeature) => $planFeature->feature === $feature);
+    }
+
+    public function addOnFeatures(): Collection
+    {
+        return $this->features->toCollection()->where('is_add_on', true);
     }
 
     public function getFeatureFee(ElectionFeature $feature): int

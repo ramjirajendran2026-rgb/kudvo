@@ -13,12 +13,15 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
 class Nominee extends Model implements HasMedia
 {
     use InteractsWithMedia;
+    use LogsActivity;
 
     public const MEDIA_COLLECTION_ATTACHMENTS = 'attachments';
 
@@ -66,13 +69,12 @@ class Nominee extends Model implements HasMedia
         'display_name',
     ];
 
-    protected function displayName(): Attribute
+    public function getActivitylogOptions(): LogOptions
     {
-        return Attribute::make(
-            get: fn ($value, array $attributes) => collect(value: [$this->title, $this->full_name])
-                ->filter(callback: fn (?string $item): bool => filled($item))
-                ->implode(value: ' ')
-        );
+        return LogOptions::defaults()
+            ->logAll()
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
     }
 
     public function position(): BelongsTo
@@ -83,11 +85,6 @@ class Nominee extends Model implements HasMedia
     public function elector(): BelongsTo
     {
         return $this->belongsTo(related: Elector::class);
-    }
-
-    public function nominators(): HasMany
-    {
-        return $this->hasMany(related: Nominator::class);
     }
 
     public function proposer(): HasOne
@@ -103,6 +100,11 @@ class Nominee extends Model implements HasMedia
             ->oldest()
             ->take(value: 9999999999)
             ->skip(value: 1);
+    }
+
+    public function nominators(): HasMany
+    {
+        return $this->hasMany(related: Nominator::class);
     }
 
     public function scrutiniser(): BelongsTo
@@ -178,5 +180,14 @@ class Nominee extends Model implements HasMedia
     public function isScrutinyRejected(): bool
     {
         return $this->scrutiny_status == NomineeScrutinyStatus::REJECTED;
+    }
+
+    protected function displayName(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value, array $attributes) => collect(value: [$this->title, $this->full_name])
+                ->filter(callback: fn (?string $item): bool => filled($item))
+                ->implode(value: ' ')
+        );
     }
 }

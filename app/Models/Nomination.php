@@ -12,10 +12,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Str;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Nomination extends Model
 {
     use HasFactory;
+    use LogsActivity;
 
     protected $fillable = [
         'name',
@@ -51,6 +54,141 @@ class Nomination extends Model
         'organisation_id' => 'int',
         'branch_id' => 'int',
     ];
+
+    protected static function booted(): void
+    {
+        static::creating(callback: function (Nomination $nomination) {
+            if (blank($nomination->code)) {
+                $nomination->code = static::generateCode();
+            }
+        });
+    }
+
+    public static function generateCode(): string
+    {
+        return config(key: 'app.nomination.code.prefix') .
+            Str::upper(value: Str::random(length: config(key: 'app.nomination.code.length')));
+    }
+
+    public function getRouteKeyName(): string
+    {
+        return 'code';
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logAll()
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
+
+    public function organisation(): BelongsTo
+    {
+        return $this->belongsTo(related: Organisation::class);
+    }
+
+    public function branch(): BelongsTo
+    {
+        return $this->belongsTo(Branch::class);
+    }
+
+    public function positions(): MorphMany
+    {
+        return $this->morphMany(
+            related: Position::class,
+            name: 'event',
+        );
+    }
+
+    public function nominees(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            related: Nominee::class,
+            through: Position::class,
+            firstKey: 'event_id',
+        );
+    }
+
+    public function scopeCancelled(Builder $query): Builder
+    {
+        return $query->whereNotNull(columns: 'cancelled_at');
+    }
+
+    public function scopeClosed(Builder $query): Builder
+    {
+        return $query->whereNotNull(columns: 'closed_at')
+            ->whereNull(columns: 'scrutinised_at')
+            ->whereNull(columns: 'cancelled_at');
+    }
+
+    public function scopeDraft(Builder $query): Builder
+    {
+        return $query->whereNull(columns: 'published_at')
+            ->whereNull(columns: 'cancelled_at');
+    }
+
+    public function scopePublished(Builder $query): Builder
+    {
+        return $query->whereNotNull(columns: 'published_at')
+            ->whereNull(columns: 'closed_at')
+            ->whereNull(columns: 'cancelled_at');
+    }
+
+    public function scopeScrutinised(Builder $query): Builder
+    {
+        return $query->whereNotNull('scrutinised_at')
+            ->whereNull(columns: 'cancelled_at');
+    }
+
+    public function isTimingConfigured(): bool
+    {
+        return filled(value: $this->starts_at) &&
+            filled(value: $this->ends_at) &&
+            filled(value: $this->timezone);
+    }
+
+    public function isMfaRequired(): bool
+    {
+        return $this->preference?->mfa_mail || $this->preference?->mfa_sms;
+    }
+
+    public function getElectorGroups(): array
+    {
+        return $this
+            ->electors()
+            ->select(columns: ['groups'])
+            ->whereNotNull(columns: 'groups')
+            ->distinct()
+            ->pluck(column: 'groups')
+            ->map(callback: fn (string $item): array => explode(separator: ',', string: $item))
+            ->flatten()
+            ->unique()
+            ->toArray();
+    }
+
+    public function electors(): MorphMany
+    {
+        return $this->morphMany(
+            related: Elector::class,
+            name: 'event',
+        );
+    }
+
+    public function cancel(): bool
+    {
+        return $this->touch(attribute: 'cancelled_at');
+    }
+
+    public function close(): bool
+    {
+        return $this->touch(attribute: 'closed_at');
+    }
+
+    public function publish(): bool
+    {
+        return $this->touch(attribute: 'published_at');
+    }
 
     protected function startsAtLocal(): Attribute
     {
@@ -112,132 +250,5 @@ class Nomination extends Model
         return Attribute::make(
             get: fn ($value, array $attributes) => $this->status === NominationStatus::CANCELLED,
         );
-    }
-
-    public function organisation(): BelongsTo
-    {
-        return $this->belongsTo(related: Organisation::class);
-    }
-
-    public function branch(): BelongsTo
-    {
-        return $this->belongsTo(Branch::class);
-    }
-
-    public function electors(): MorphMany
-    {
-        return $this->morphMany(
-            related: Elector::class,
-            name: 'event',
-        );
-    }
-
-    public function positions(): MorphMany
-    {
-        return $this->morphMany(
-            related: Position::class,
-            name: 'event',
-        );
-    }
-
-    public function nominees(): HasManyThrough
-    {
-        return $this->hasManyThrough(
-            related: Nominee::class,
-            through: Position::class,
-            firstKey: 'event_id',
-        );
-    }
-
-    public function scopeCancelled(Builder $query): Builder
-    {
-        return $query->whereNotNull(columns: 'cancelled_at');
-    }
-
-    public function scopeClosed(Builder $query): Builder
-    {
-        return $query->whereNotNull(columns: 'closed_at')
-            ->whereNull(columns: 'scrutinised_at')
-            ->whereNull(columns: 'cancelled_at');
-    }
-
-    public function scopeDraft(Builder $query): Builder
-    {
-        return $query->whereNull(columns: 'published_at')
-            ->whereNull(columns: 'cancelled_at');
-    }
-
-    public function scopePublished(Builder $query): Builder
-    {
-        return $query->whereNotNull(columns: 'published_at')
-            ->whereNull(columns: 'closed_at')
-            ->whereNull(columns: 'cancelled_at');
-    }
-
-    public function scopeScrutinised(Builder $query): Builder
-    {
-        return $query->whereNotNull('scrutinised_at')
-            ->whereNull(columns: 'cancelled_at');
-    }
-
-    protected static function booted(): void
-    {
-        static::creating(callback: function (Nomination $nomination) {
-            if (blank($nomination->code)) {
-                $nomination->code = static::generateCode();
-            }
-        });
-    }
-
-    public function getRouteKeyName(): string
-    {
-        return 'code';
-    }
-
-    public static function generateCode(): string
-    {
-        return config(key: 'app.nomination.code.prefix') .
-            Str::upper(value: Str::random(length: config(key: 'app.nomination.code.length')));
-    }
-
-    public function isTimingConfigured(): bool
-    {
-        return filled(value: $this->starts_at) &&
-            filled(value: $this->ends_at) &&
-            filled(value: $this->timezone);
-    }
-
-    public function isMfaRequired(): bool
-    {
-        return $this->preference?->mfa_mail || $this->preference?->mfa_sms;
-    }
-
-    public function getElectorGroups(): array
-    {
-        return $this
-            ->electors()
-            ->select(columns: ['groups'])
-            ->whereNotNull(columns: 'groups')
-            ->distinct()
-            ->pluck(column: 'groups')
-            ->map(callback: fn (string $item): array => explode(separator: ',', string: $item))
-            ->flatten()
-            ->unique()
-            ->toArray();
-    }
-
-    public function cancel(): bool
-    {
-        return $this->touch(attribute: 'cancelled_at');
-    }
-
-    public function close(): bool
-    {
-        return $this->touch(attribute: 'closed_at');
-    }
-
-    public function publish(): bool
-    {
-        return $this->touch(attribute: 'published_at');
     }
 }

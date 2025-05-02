@@ -7,9 +7,13 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class MeetingLinkBlast extends Model
 {
+    use LogsActivity;
+
     protected $fillable = [
         'scheduled_at',
         'initiated_at',
@@ -38,17 +42,12 @@ class MeetingLinkBlast extends Model
         'meeting_id' => 'int',
     ];
 
-    protected function status(): Attribute
+    public function getActivitylogOptions(): LogOptions
     {
-        return Attribute::make(
-            get: fn ($value, array $attributes): MeetingLinkBlastStatus => match (true) {
-                filled($this->cancelled_at) => MeetingLinkBlastStatus::Cancelled,
-                filled($this->completed_at) => MeetingLinkBlastStatus::Completed,
-                filled($this->initiated_at) => MeetingLinkBlastStatus::Running,
-                $this->scheduled_at->isPast() => MeetingLinkBlastStatus::Pending,
-                default => MeetingLinkBlastStatus::Scheduled,
-            },
-        );
+        return LogOptions::defaults()
+            ->logAll()
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
     }
 
     public function meeting(): BelongsTo
@@ -70,6 +69,19 @@ class MeetingLinkBlast extends Model
             callback: function (Builder $query) {
                 $query->scopes(scopes: ['published']);
             }
+        );
+    }
+
+    protected function status(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value, array $attributes): MeetingLinkBlastStatus => match (true) {
+                filled($this->cancelled_at) => MeetingLinkBlastStatus::Cancelled,
+                filled($this->completed_at) => MeetingLinkBlastStatus::Completed,
+                filled($this->initiated_at) => MeetingLinkBlastStatus::Running,
+                $this->scheduled_at->isPast() => MeetingLinkBlastStatus::Pending,
+                default => MeetingLinkBlastStatus::Scheduled,
+            },
         );
     }
 }

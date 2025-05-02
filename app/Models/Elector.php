@@ -30,7 +30,9 @@ use Illuminate\Http\Request;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Validator;
+use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\CausesActivity;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
@@ -43,6 +45,7 @@ class Elector extends Model implements AuthenticatableContract, AuthorizableCont
     use HasShortCode;
     use HasUuids;
     use InteractsWithMedia;
+    use LogsActivity;
     use Notifiable;
 
     public const MEDIA_COLLECTION_AVATAR = 'avatar';
@@ -87,6 +90,14 @@ class Elector extends Model implements AuthenticatableContract, AuthorizableCont
     public function getRouteKeyName(): string
     {
         return 'uuid';
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logAll()
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
     }
 
     public function event(): MorphTo

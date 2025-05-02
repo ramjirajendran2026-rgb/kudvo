@@ -12,6 +12,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\EloquentSortable\Sortable;
 use Spatie\EloquentSortable\SortableTrait;
 use Spatie\Translatable\HasTranslations;
@@ -20,7 +22,12 @@ class Position extends Model implements Sortable
 {
     use HasTranslations;
     use HasUuids;
+    use LogsActivity;
     use SortableTrait;
+
+    public array $translatable = [
+        'name',
+    ];
 
     protected $fillable = [
         'name',
@@ -44,15 +51,30 @@ class Position extends Model implements Sortable
         'abstain',
     ];
 
-    public array $translatable = [
-        'name',
-    ];
-
-    protected function abstain(): Attribute
+    protected static function booted(): void
     {
-        return Attribute::make(
-            get: fn ($value, array $attributes) => filled(value: $this->threshold) && $this->threshold != $this->quota,
-        );
+        static::saving(callback: function (Position $position) {
+            $position->threshold = blank($position->threshold) || $position->threshold > $position->quota ?
+                $position->quota
+                : $position->threshold;
+        });
+
+        static::deleting(callback: function (Position $position) {
+            $position->candidates()->cursor()->each->delete();
+        });
+    }
+
+    public function getRouteKeyName(): string
+    {
+        return 'uuid';
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logAll()
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
     }
 
     public function event(): MorphTo
@@ -69,12 +91,6 @@ class Position extends Model implements Sortable
     public function nominees(): HasMany
     {
         return $this->hasMany(related: Nominee::class);
-    }
-
-    public function candidates(): HasMany
-    {
-        return $this->hasMany(related: Candidate::class)
-            ->oldest(column: 'sort');
     }
 
     public function getOrderedCandidates(?CandidateSort $sort = null)
@@ -97,6 +113,12 @@ class Position extends Model implements Sortable
             ->withoutGlobalScope(scope: 'disabled');
     }
 
+    public function candidates(): HasMany
+    {
+        return $this->hasMany(related: Candidate::class)
+            ->oldest(column: 'sort');
+    }
+
     public function rankedCandidates(): HasMany
     {
         return $this->hasMany(related: Candidate::class)
@@ -110,24 +132,6 @@ class Position extends Model implements Sortable
             related: CandidateGroup::class,
             through: Candidate::class,
         );
-    }
-
-    protected static function booted(): void
-    {
-        static::saving(callback: function (Position $position) {
-            $position->threshold = blank($position->threshold) || $position->threshold > $position->quota ?
-                $position->quota
-                : $position->threshold;
-        });
-
-        static::deleting(callback: function (Position $position) {
-            $position->candidates()->cursor()->each->delete();
-        });
-    }
-
-    public function getRouteKeyName(): string
-    {
-        return 'uuid';
     }
 
     public function uniqueIds(): array
@@ -149,5 +153,12 @@ class Position extends Model implements Sortable
     public function isUnopposed(): bool
     {
         return $this->candidates()->count() <= $this->quota;
+    }
+
+    protected function abstain(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value, array $attributes) => filled(value: $this->threshold) && $this->threshold != $this->quota,
+        );
     }
 }
