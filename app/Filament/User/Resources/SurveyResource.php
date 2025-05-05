@@ -22,6 +22,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\IconPosition;
@@ -50,6 +51,74 @@ class SurveyResource extends Resource
 
     protected static ?string $navigationGroup = 'Other products';
 
+    public static function getPreviewAction(): \Filament\Actions\Action
+    {
+        return \Filament\Actions\Action::make('preview')
+            ->authorize('preview')
+            ->color('gray')
+            ->icon('heroicon-m-eye')
+            ->modalCancelAction(false)
+            ->modalContent(fn (Survey $record) => new HtmlString(Blade::render(
+                <<<'BLADE'
+@livewire('survey.entry-form', ['survey' => $survey, 'isPreview' => true])
+BLADE
+                ,
+                ['survey' => $record]
+            )))
+            ->extraModalWindowAttributes([
+                'class' => '[&_.fi-modal-content]:p-0 [&_.fi-modal-content]:bg-gray-50 [&_.fi-modal-content]:dark:bg-gray-950',
+            ])
+            ->modalSubmitAction(false)
+            ->modalWidth(MaxWidth::ScreenMedium)
+            ->slideOver();
+    }
+
+    public static function getPublishAction(): \Filament\Actions\Action
+    {
+        return \Filament\Actions\Action::make('publish')
+            ->requiresConfirmation()
+            ->authorize('publish')
+            ->action(function (Survey $record, \Filament\Actions\Action $action, PublishSurvey $publishSurvey) {
+                if (! $publishSurvey->execute($record)) {
+                    $action->failure();
+
+                    return;
+                }
+
+                $action->success();
+            })
+            ->color('success')
+            ->extraAttributes([
+                'wire:dirty.class' => 'hidden',
+            ])
+            ->icon('heroicon-m-rocket-launch')
+            ->modalIcon('heroicon-o-rocket-launch')
+            ->successNotificationTitle('Survey published!');
+    }
+
+    public static function getSettingsAction()
+    {
+        return \Filament\Actions\EditAction::make('settings')
+            ->icon('heroicon-m-cog-6-tooth')
+            ->iconButton()
+            ->form([
+                Toggle::make('is_active')
+                    ->label('Collect responses?'),
+
+                Group::make([
+                    TextInput::make('reference_number_prefix')
+                        ->maxLength(12),
+
+                    TextInput::make('reference_number_pad_length')
+                        ->maxValue(12)
+                        ->minValue(1)
+                        ->numeric(),
+                ])->statePath('settings'),
+            ])
+            ->label('Settings')
+            ->modalHeading('Settings');
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -69,48 +138,23 @@ class SurveyResource extends Resource
             ]);
     }
 
-    public static function table(Table $table): Table
+    public static function getHasDescriptionComponent(): Hidden
     {
-        return $table
-            ->actions([
-                EditAction::make()
-                    ->iconButton(),
-                DeleteAction::make()
-                    ->iconButton(),
-            ])
-            ->columns([
-                \Filament\Tables\Columns\Layout\Split::make([
-                    Stack::make([
-                        TextColumn::make('title')
-                            ->description(fn (Survey $record) => str(tiptap_converter()->asText($record->description))->limit())
-                            ->searchable()
-                            ->size(TextColumn\TextColumnSize::Large)
-                            ->weight(FontWeight::SemiBold),
-
-                        TextColumn::make('created_at')
-                            ->dateTimeTooltip()
-                            ->grow(false)
-                            ->since()
-                            ->timezone(fn (Survey $record) => Filament::getTenant()?->timezone ?? null),
-                    ])
-                        ->alignStart()
-                        ->space(),
-                ]),
-            ])
-            ->filters([
-                BranchResource::getFilterComponent(),
-            ])
-            ->defaultSort('id', 'desc');
+        return Hidden::make('has_description')
+            ->afterStateUpdated(fn (bool $state, Set $set) => $set('description', $state ? '' : null))
+            ->default(false);
     }
 
-    public static function getPages(): array
+    public static function getTitleSectionComponent(): Section
     {
-        return [
-            'index' => Pages\ManageSurveys::route('/'),
-            'create' => Pages\CreateSurvey::route('/create'),
-            'edit' => Pages\EditSurvey::route('/{record}/questions'),
-            'responses' => Pages\ManageResponses::route('/{record}/responses'),
-        ];
+        return Section::make()
+            ->compact()
+            ->extraAttributes([
+                'class' => '[&_.fi-section-content]:py-2',
+            ])
+            ->schema([
+                static::getTitleComponent(),
+            ]);
     }
 
     public static function getTitleComponent(): Textarea
@@ -129,25 +173,6 @@ class SurveyResource extends Resource
             ->placeholder('Survey title')
             ->required()
             ->rows(1);
-    }
-
-    public static function getTitleSectionComponent(): Section
-    {
-        return Section::make()
-            ->compact()
-            ->extraAttributes([
-                'class' => '[&_.fi-section-content]:py-2',
-            ])
-            ->schema([
-                static::getTitleComponent(),
-            ]);
-    }
-
-    public static function getHasDescriptionComponent(): Hidden
-    {
-        return Hidden::make('has_description')
-            ->afterStateUpdated(fn (bool $state, Set $set) => $set('description', $state ? '' : null))
-            ->default(false);
     }
 
     public static function getToggleDescriptionActionsComponent(): Actions
@@ -284,72 +309,56 @@ class SurveyResource extends Resource
             ]);
     }
 
-    public static function getPreviewAction(): \Filament\Actions\Action
+    public static function getPages(): array
     {
-        return \Filament\Actions\Action::make('preview')
-            ->authorize('preview')
-            ->color('gray')
-            ->icon('heroicon-m-eye')
-            ->modalCancelAction(false)
-            ->modalContent(fn (Survey $record) => new HtmlString(Blade::render(
-                <<<'BLADE'
-@livewire('survey.entry-form', ['survey' => $survey, 'isPreview' => true])
-BLADE
-                ,
-                ['survey' => $record]
-            )))
-            ->extraModalWindowAttributes([
-                'class' => '[&_.fi-modal-content]:p-0 [&_.fi-modal-content]:bg-gray-50 [&_.fi-modal-content]:dark:bg-gray-950',
-            ])
-            ->modalSubmitAction(false)
-            ->modalWidth(MaxWidth::ScreenMedium)
-            ->slideOver();
+        return [
+            'index' => Pages\ManageSurveys::route('/'),
+            'create' => Pages\CreateSurvey::route('/create'),
+            'edit' => Pages\EditSurvey::route('/{record}/questions'),
+            'responses' => Pages\ManageResponses::route('/{record}/responses'),
+        ];
     }
 
-    public static function getPublishAction(): \Filament\Actions\Action
+    public static function getRecordSubNavigation(Page $page): array
     {
-        return \Filament\Actions\Action::make('publish')
-            ->requiresConfirmation()
-            ->authorize('publish')
-            ->action(function (Survey $record, \Filament\Actions\Action $action, PublishSurvey $publishSurvey) {
-                if (! $publishSurvey->execute($record)) {
-                    $action->failure();
-
-                    return;
-                }
-
-                $action->success();
-            })
-            ->color('success')
-            ->extraAttributes([
-                'wire:dirty.class' => 'hidden',
-            ])
-            ->icon('heroicon-m-rocket-launch')
-            ->modalIcon('heroicon-o-rocket-launch')
-            ->successNotificationTitle('Survey published!');
+        return $page->generateNavigationItems([
+            Pages\EditSurvey::class,
+            Pages\ManageResponses::class,
+        ]);
     }
 
-    public static function getSettingsAction()
+    public static function table(Table $table): Table
     {
-        return \Filament\Actions\EditAction::make('settings')
-            ->icon('heroicon-m-cog-6-tooth')
-            ->iconButton()
-            ->form([
-                Toggle::make('is_active')
-                    ->label('Collect responses?'),
-
-                Group::make([
-                    TextInput::make('reference_number_prefix')
-                        ->maxLength(12),
-
-                    TextInput::make('reference_number_pad_length')
-                        ->maxValue(12)
-                        ->minValue(1)
-                        ->numeric(),
-                ])->statePath('settings'),
+        return $table
+            ->actions([
+                EditAction::make()
+                    ->iconButton(),
+                DeleteAction::make()
+                    ->iconButton(),
             ])
-            ->label('Settings')
-            ->modalHeading('Settings');
+            ->columns([
+                \Filament\Tables\Columns\Layout\Split::make([
+                    Stack::make([
+                        TextColumn::make('title')
+                            ->description(fn (Survey $record) => str(tiptap_converter()->asText($record->description))->limit())
+                            ->searchable()
+                            ->size(TextColumn\TextColumnSize::Large)
+                            ->weight(FontWeight::SemiBold),
+
+                        TextColumn::make('created_at')
+                            ->dateTimeTooltip()
+                            ->grow(false)
+                            ->since()
+                            ->timezone(fn (Survey $record) => Filament::getTenant()?->timezone ?? null),
+                    ])
+                        ->alignStart()
+                        ->space(),
+                ]),
+            ])
+            ->filters([
+                BranchResource::getFilterComponent(),
+            ])
+            ->defaultSort('id', 'desc');
     }
 
     public static function getShareAction(): \Filament\Actions\Action
@@ -382,23 +391,5 @@ JS
                 Js::encode(route('survey.entry', ['survey' => $record])),
             ))
             ->icon('heroicon-m-clipboard-document');
-    }
-
-    public static function getResponsePageAction(): \Filament\Actions\Action
-    {
-        return \Filament\Actions\Action::make('viewResponses')
-            ->authorize('viewResponses')
-            ->color('success')
-            ->icon('heroicon-o-document-text')
-            ->label('Responses')
-            ->url(fn (Survey $record) => static::getUrl('responses', ['record' => $record]));
-    }
-
-    public static function getEditPageAction(): \Filament\Actions\Action
-    {
-        return \Filament\Actions\Action::make('editPage')
-            ->icon('heroicon-o-document-text')
-            ->label('Questions')
-            ->url(fn (Survey $record) => static::getUrl('edit', ['record' => $record]));
     }
 }

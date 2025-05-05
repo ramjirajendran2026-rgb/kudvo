@@ -5,37 +5,32 @@ namespace App\Filament\User\Resources\SurveyResource\Pages;
 use App\Filament\User\Resources\SurveyResource;
 use Filament\Actions\Action;
 use Filament\Resources\Pages\EditRecord;
-use Filament\Support\Enums\MaxWidth;
 use Illuminate\Contracts\Support\Htmlable;
 
 class EditSurvey extends EditRecord
 {
     protected static string $resource = SurveyResource::class;
 
-    public function getMaxContentWidth(): MaxWidth | string | null
-    {
-        return MaxWidth::ScreenMedium;
-    }
+    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+
+    protected static ?string $activeNavigationIcon = 'heroicon-s-document-text';
+
+    protected static ?string $navigationLabel = 'Questions';
 
     public function getBreadcrumbs(): array
     {
         return [];
     }
 
-    public function getRecordTitle(): string | Htmlable
-    {
-        return 'Survey #' . $this->getRecord()->getKey();
-    }
-
-    public function getTitle(): string | Htmlable
-    {
-        return $this->getRecordTitle();
-    }
-
     protected function getCancelFormAction(): Action
     {
         return parent::getCancelFormAction()
             ->hidden();
+    }
+
+    public function getRecordTitle(): string | Htmlable
+    {
+        return 'Survey #' . $this->getRecord()->getKey();
     }
 
     protected function getHeaderActions(): array
@@ -50,8 +45,6 @@ class EditSurvey extends EditRecord
                 ->outlined(),
 
             SurveyResource::getPublishAction(),
-
-            SurveyResource::getResponsePageAction(),
 
             SurveyResource::getPreviewAction()
                 ->extraAttributes([
@@ -69,5 +62,10 @@ class EditSurvey extends EditRecord
                 ->icon('heroicon-m-check')
                 ->label('Save'),
         ];
+    }
+
+    public function getTitle(): string | Htmlable
+    {
+        return $this->getRecordTitle();
     }
 }
