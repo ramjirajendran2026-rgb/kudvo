@@ -3,6 +3,7 @@
 namespace App\Livewire\Survey;
 
 use App\Actions\Survey\GenerateReferenceNumber;
+use App\Enums\SurveyQuestionType;
 use App\Models\Survey;
 use App\Models\SurveyAnswer;
 use App\Models\SurveyQuestion;
@@ -10,6 +11,7 @@ use App\Models\SurveyResponse;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\Group;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Concerns\InteractsWithInfolists;
 use Filament\Infolists\Contracts\HasInfolists;
@@ -63,14 +65,26 @@ class EntryResponse extends Component implements HasForms, HasInfolists
     public function responseInfolist(Infolist $infolist): Infolist
     {
         return $infolist
-            ->inlineLabel()
             ->state($this->data)
             ->schema([
                 Section::make()
+                    ->columns(3)
                     ->schema([
-                        ...$this->survey->questions->map(
-                            fn (SurveyQuestion $question) => $question->type->getInfolistComponent($question)
-                        )->filter()->toArray(),
+                        Group::make([
+                            ...$this->survey->questions
+                                ->filter(fn (SurveyQuestion $question) => $question->type !== SurveyQuestionType::Photo)
+                                ->map(
+                                    fn (SurveyQuestion $question) => $question->type->getInfolistComponent($question)
+                                )->filter()->toArray(),
+                        ])->columnSpan(2)->inlineLabel(),
+
+                        Group::make([
+                            ...$this->survey->questions
+                                ->filter(fn (SurveyQuestion $question) => $question->type === SurveyQuestionType::Photo)
+                                ->map(
+                                    fn (SurveyQuestion $question) => $question->type->getInfolistComponent($question)
+                                )->filter()->toArray(),
+                        ]),
                     ]),
             ]);
     }
