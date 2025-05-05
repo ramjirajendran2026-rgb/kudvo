@@ -10,23 +10,9 @@
 
     <div id="google_translate_element" class="print:hidden"></div>
 
-    {{ $this->form }}
+    {{ $this->responseInfolist }}
 
     <x-filament.nomination.footer class="text-center" />
-
-    <script type="text/javascript">
-        function googleTranslateElementInit() {
-            new google.translate.TranslateElement(
-                { includedLanguages: 'en,ta' },
-                'google_translate_element',
-            )
-        }
-    </script>
-
-    <script
-        type="text/javascript"
-        src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
-    ></script>
 
     <x-filament-actions::modals />
 </div>

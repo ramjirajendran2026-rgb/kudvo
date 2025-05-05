@@ -21,6 +21,8 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\TimePicker;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Filament\Infolists\Components\ImageEntry;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Support\Contracts\HasLabel;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Notification;
@@ -116,6 +118,31 @@ enum SurveyQuestionType: string implements HasLabel
             )),
             default => new HtmlString("<span>$answer</span>"),
         };
+    }
+
+    public function getInfolistComponent(SurveyQuestion $question)
+    {
+        $components = match ($this) {
+            self::ShortAnswer,
+            self::Paragraph,
+            self::MultipleChoice,
+            self::MonthYear,
+            self::Email,
+            self::Phone,
+            self::VerifiedPhone,
+            self::Url,
+            self::Checkboxes => TextEntry::make($question->key)->label($question->text),
+            self::Date => TextEntry::make($question->key)->label($question->text)->date(),
+            self::Time => TextEntry::make($question->key)->label($question->text)->time(),
+            self::DateTime => TextEntry::make($question->key)->label($question->text)->dateTime(),
+            self::Number => TextEntry::make($question->key)->label($question->text)->numeric(),
+            self::Photo => ImageEntry::make($question->key)->label($question->text),
+
+        };
+
+        return \Filament\Infolists\Components\Section::make()
+            ->compact()
+            ->schema(Arr::wrap($components));
     }
 
     public function getFormComponent(SurveyQuestion $question, bool $isPreview = false): ?Section

@@ -9,14 +9,18 @@ use App\Models\SurveyResponse;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
+use Filament\Infolists\Concerns\InteractsWithInfolists;
+use Filament\Infolists\Contracts\HasInfolists;
+use Filament\Infolists\Infolist;
 use Livewire\Component;
 
 /**
  * @property Form $form
  */
-class EntryResponse extends Component implements HasForms
+class EntryResponse extends Component implements HasForms, HasInfolists
 {
     use InteractsWithForms;
+    use InteractsWithInfolists;
 
     public Survey $survey;
 
@@ -38,7 +42,7 @@ class EntryResponse extends Component implements HasForms
 
     protected function authorizePageAccess(): void
     {
-        //        $this->authorize('view-response', $this->survey);
+        // $this->authorize('view-response', $this->survey);
     }
 
     public function render()
@@ -50,13 +54,14 @@ class EntryResponse extends Component implements HasForms
             ]);
     }
 
-    public function form(Form $form): Form
+    public function responseInfolist(Infolist $infolist): Infolist
     {
-        return $form
-            ->statePath('data')
+        return $infolist
+            ->inlineLabel()
+            ->state($this->data)
             ->schema([
                 ...$this->survey->questions->map(
-                    fn (SurveyQuestion $question) => $question->type->getFormComponent($question)
+                    fn (SurveyQuestion $question) => $question->type->getInfolistComponent($question)
                 )->filter()->toArray(),
             ]);
     }
