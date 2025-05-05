@@ -53,38 +53,15 @@ class ElectionResource extends Resource
 
     protected static ?string $navigationGroup = 'Election management';
 
-    public static function getModelLabel(): string
-    {
-        return __(key: 'filament.user.election-resource.model_label');
-    }
-
-    public static function getPluralModelLabel(): string
-    {
-        return __(key: 'filament.user.election-resource.plural_model_label');
-    }
-
-    public static function form(Form $form): Form
-    {
-        return $form
-            ->columns(columns: null)
-            ->schema([
-                BranchResource::getFormSelectTree(),
-
-                ElectionForm::nameComponent(),
-            ]);
-    }
-
-    public static function editFormSchema(): array
-    {
-        return [
-            ElectionForm::nameComponent(),
-        ];
-    }
-
     public static function timingForm(Form $form): Form
     {
         return $form
             ->schema(components: static::timingFormSchema());
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __(key: 'filament.user.election-resource.model_label');
     }
 
     public static function timingFormSchema(): array
@@ -111,6 +88,83 @@ class ElectionResource extends Resource
                         ->timezone(fn (Get $get): ?string => $get(path: 'timezone')),
                 ]),
         ];
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __(key: 'filament.user.election-resource.plural_model_label');
+    }
+
+    public static function getCreateAction(): CreateAction
+    {
+        return CreateAction::make()
+            ->createAnother(condition: false)
+            ->mutateFormDataUsing(callback: function (array $data): array {
+                return array_merge($data, ['owner_id' => Filament::auth()->id()]);
+            })
+            ->successRedirectUrl(url: fn (Election $election) => $election->getPendingStep()?->getUrl([$election]) ?? static::getUrl(name: 'dashboard', parameters: [$election]));
+    }
+
+    public static function form(Form $form): Form
+    {
+        return $form
+            ->columns(columns: null)
+            ->schema([
+                BranchResource::getFormSelectTree(),
+
+                ElectionForm::nameComponent(),
+            ]);
+    }
+
+    public static function getEditAction(): EditAction
+    {
+        return EditAction::make()
+            ->authorize(abilities: 'update')
+            ->form(form: static::editFormSchema())
+            ->icon(icon: 'heroicon-m-pencil-square')
+            ->label(label: __('filament.user.election-resource.actions.edit.label'))
+            ->modalCancelAction(action: false);
+    }
+
+    public static function editFormSchema(): array
+    {
+        return [
+            ElectionForm::nameComponent(),
+        ];
+    }
+
+    public static function getEditTimingAction(): EditAction
+    {
+        return static::getSetTimingAction()
+            ->authorize(abilities: 'updateTiming')
+            ->label(label: __('filament.user.election-resource.actions.edit_timing.label'))
+            ->name(name: 'editTiming');
+    }
+
+    public static function getSetTimingAction(): EditAction
+    {
+        return EditAction::make(name: 'setTiming')
+            ->authorize(abilities: 'setTiming')
+            ->form(form: static::timingFormSchema())
+            ->groupedIcon(icon: 'heroicon-m-clock')
+            ->icon(icon: 'heroicon-m-clock')
+            ->label(label: __('filament.user.election-resource.actions.set_timing.label'))
+            ->modalCancelAction(action: false)
+            ->modalHeading(heading: fn (HasElection $livewire): ?string => $livewire->getElection()->name)
+            ->modalWidth(width: MaxWidth::ExtraLarge)
+            ->mutateRecordDataUsing(callback: function (array $data, HasElection $livewire): array {
+                $data['timezone'] ??= Filament::getTenant()?->timezone;
+                $data['starts_at'] ??= now(tz: $data['timezone'] ?? null)->addDays()->startOfDay()->addHours(value: 8);
+                $data['ends_at'] ??= now(tz: $data['timezone'] ?? null)->addDays()->startOfDay()->addHours(value: 18);
+
+                if ($livewire->getElection()->isBoothVotingEnabled()) {
+                    $data['booth_starts_at'] ??= now(tz: $data['timezone'] ?? null)->addDays(value: 2)->startOfDay()->addHours(value: 8);
+                    $data['booth_ends_at'] ??= now(tz: $data['timezone'] ?? null)->addDays(value: 2)->startOfDay()->addHours(value: 18);
+                }
+
+                return $data;
+            })
+            ->record(record: fn (HasElection $livewire): Election => $livewire->getElection());
     }
 
     public static function table(Table $table): Table
@@ -186,6 +240,27 @@ class ElectionResource extends Resource
             ->relationship(relationship: fn (): Relation => Filament::getTenant()?->elections());
     }
 
+    public static function getCancelAction(): Action
+    {
+        return Action::make(name: 'cancel')
+            ->action(
+                action: function (Election $election, Action $action) {
+                    $election->cancel();
+
+                    $action->success();
+                }
+            )
+            ->authorize(abilities: 'cancel')
+            ->requiresConfirmation()
+            ->color(color: ElectionStatus::CANCELLED->getColor())
+            ->icon(icon: ElectionStatus::CANCELLED->getIcon())
+            ->label(label: __('filament.user.election-resource.actions.cancel.label'))
+            ->modalCancelActionLabel(label: __('filament.user.election-resource.actions.cancel.modal_actions.cancel.label'))
+            ->modalIcon(icon: ElectionStatus::CANCELLED->getIcon())
+            ->modalSubmitActionLabel(label: __('filament.user.election-resource.actions.cancel.modal_actions.submit.label'))
+            ->successNotificationTitle(title: __('filament.user.election-resource.actions.cancel.success_notification.title'));
+    }
+
     public static function getPages(): array
     {
         return [
@@ -207,120 +282,6 @@ class ElectionResource extends Resource
 
             'collaborators' => Pages\Collaborators::route(path: '/{record}/collaborators'),
         ];
-    }
-
-    public static function getRecordSubNavigation(Page $page): array
-    {
-        return $page->generateNavigationItems(components: [
-            Pages\Dashboard::class,
-            Pages\Preference::class,
-            Pages\Electors::class,
-            Pages\BallotSetup::class,
-            Pages\BallotLinkBlasts::class,
-            Pages\Result::class,
-            Pages\MonitorTokens::class,
-            Pages\BoothTokens::class,
-            Pages\Logs\ElectorBallots::class,
-            Pages\Logs\ElectorEmails::class,
-            Pages\Logs\ElectorSmsMessages::class,
-            Pages\Logs\ElectorWhatsAppMessages::class,
-            Pages\Collaborators::class,
-        ]);
-    }
-
-    public static function getWidgets(): array
-    {
-        return [
-            ElectionStatsOverview::class,
-            VotedBallots::class,
-            ElectorDataImportProgress::class,
-            CandidateVotesChart::class,
-        ];
-    }
-
-    public static function getCreateTableAction(): CreateTableAction
-    {
-        return CreateTableAction::make()
-            ->createAnother(condition: false)
-            ->mutateFormDataUsing(callback: function (array $data): array {
-                return array_merge($data, ['owner_id' => Filament::auth()->id()]);
-            })
-            ->successRedirectUrl(url: fn (Election $election) => $election->getPendingStep()?->getUrl([$election]) ?? static::getUrl(name: 'dashboard', parameters: [$election]));
-    }
-
-    public static function getCreateAction(): CreateAction
-    {
-        return CreateAction::make()
-            ->createAnother(condition: false)
-            ->mutateFormDataUsing(callback: function (array $data): array {
-                return array_merge($data, ['owner_id' => Filament::auth()->id()]);
-            })
-            ->successRedirectUrl(url: fn (Election $election) => $election->getPendingStep()?->getUrl([$election]) ?? static::getUrl(name: 'dashboard', parameters: [$election]));
-    }
-
-    public static function getEditAction(): EditAction
-    {
-        return EditAction::make()
-            ->authorize(abilities: 'update')
-            ->form(form: static::editFormSchema())
-            ->icon(icon: 'heroicon-m-pencil-square')
-            ->label(label: __('filament.user.election-resource.actions.edit.label'))
-            ->modalCancelAction(action: false);
-    }
-
-    public static function getSetTimingAction(): EditAction
-    {
-        return EditAction::make(name: 'setTiming')
-            ->authorize(abilities: 'setTiming')
-            ->form(form: static::timingFormSchema())
-            ->groupedIcon(icon: 'heroicon-m-clock')
-            ->icon(icon: 'heroicon-m-clock')
-            ->label(label: __('filament.user.election-resource.actions.set_timing.label'))
-            ->modalCancelAction(action: false)
-            ->modalHeading(heading: fn (HasElection $livewire): ?string => $livewire->getElection()->name)
-            ->modalWidth(width: MaxWidth::ExtraLarge)
-            ->mutateRecordDataUsing(callback: function (array $data, HasElection $livewire): array {
-                $data['timezone'] ??= Filament::getTenant()?->timezone;
-                $data['starts_at'] ??= now(tz: $data['timezone'] ?? null)->addDays()->startOfDay()->addHours(value: 8);
-                $data['ends_at'] ??= now(tz: $data['timezone'] ?? null)->addDays()->startOfDay()->addHours(value: 18);
-
-                if ($livewire->getElection()->isBoothVotingEnabled()) {
-                    $data['booth_starts_at'] ??= now(tz: $data['timezone'] ?? null)->addDays(value: 2)->startOfDay()->addHours(value: 8);
-                    $data['booth_ends_at'] ??= now(tz: $data['timezone'] ?? null)->addDays(value: 2)->startOfDay()->addHours(value: 18);
-                }
-
-                return $data;
-            })
-            ->record(record: fn (HasElection $livewire): Election => $livewire->getElection());
-    }
-
-    public static function getEditTimingAction(): EditAction
-    {
-        return static::getSetTimingAction()
-            ->authorize(abilities: 'updateTiming')
-            ->label(label: __('filament.user.election-resource.actions.edit_timing.label'))
-            ->name(name: 'editTiming');
-    }
-
-    public static function getCancelAction(): Action
-    {
-        return Action::make(name: 'cancel')
-            ->action(
-                action: function (Election $election, Action $action) {
-                    $election->cancel();
-
-                    $action->success();
-                }
-            )
-            ->authorize(abilities: 'cancel')
-            ->requiresConfirmation()
-            ->color(color: ElectionStatus::CANCELLED->getColor())
-            ->icon(icon: ElectionStatus::CANCELLED->getIcon())
-            ->label(label: __('filament.user.election-resource.actions.cancel.label'))
-            ->modalCancelActionLabel(label: __('filament.user.election-resource.actions.cancel.modal_actions.cancel.label'))
-            ->modalIcon(icon: ElectionStatus::CANCELLED->getIcon())
-            ->modalSubmitActionLabel(label: __('filament.user.election-resource.actions.cancel.modal_actions.submit.label'))
-            ->successNotificationTitle(title: __('filament.user.election-resource.actions.cancel.success_notification.title'));
     }
 
     public static function getPublishAction(): Action
@@ -375,6 +336,25 @@ class ElectionResource extends Resource
             ->successNotificationTitle(title: __('filament.user.election-resource.actions.publish.success_notification.title'));
     }
 
+    public static function getRecordSubNavigation(Page $page): array
+    {
+        return $page->generateNavigationItems(components: [
+            Pages\Dashboard::class,
+            Pages\Preference::class,
+            Pages\Electors::class,
+            Pages\BallotSetup::class,
+            Pages\BallotLinkBlasts::class,
+            Pages\Result::class,
+            Pages\MonitorTokens::class,
+            Pages\BoothTokens::class,
+            Pages\Logs\ElectorBallots::class,
+            Pages\Logs\ElectorEmails::class,
+            Pages\Logs\ElectorSmsMessages::class,
+            Pages\Logs\ElectorWhatsAppMessages::class,
+            Pages\Collaborators::class,
+        ]);
+    }
+
     public static function getCloseAction(): Action
     {
         return Action::make(name: 'close')
@@ -403,6 +383,16 @@ class ElectionResource extends Resource
             ->successNotificationTitle(title: __('filament.user.election-resource.actions.close.success_notification.title'));
     }
 
+    public static function getWidgets(): array
+    {
+        return [
+            ElectionStatsOverview::class,
+            VotedBallots::class,
+            ElectorDataImportProgress::class,
+            CandidateVotesChart::class,
+        ];
+    }
+
     public static function getGenerateResultAction(): Action
     {
         return Action::make(name: 'generateResult')
@@ -422,6 +412,16 @@ class ElectionResource extends Resource
             ->icon(icon: 'heroicon-o-chart-pie')
             ->label(label: __('filament.user.election-resource.actions.generate_result.label'))
             ->successNotificationTitle(title: __('filament.user.election-resource.actions.generate_result.success_notification.title'));
+    }
+
+    public static function getCreateTableAction(): CreateTableAction
+    {
+        return CreateTableAction::make()
+            ->createAnother(condition: false)
+            ->mutateFormDataUsing(callback: function (array $data): array {
+                return array_merge($data, ['owner_id' => Filament::auth()->id()]);
+            })
+            ->successRedirectUrl(url: fn (Election $election) => $election->getPendingStep()?->getUrl([$election]) ?? static::getUrl(name: 'dashboard', parameters: [$election]));
     }
 
     public static function getReplicateAction(): ReplicateTableAction
@@ -453,6 +453,8 @@ class ElectionResource extends Resource
             ])
             ->form(form: [
                 ElectionForm::nameComponent(),
+
+                BranchResource::getFormSelectTree(),
 
                 Toggle::make(name: 'replicate_electors')
                     ->default(state: true)
