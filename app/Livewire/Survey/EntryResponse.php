@@ -9,6 +9,7 @@ use App\Models\SurveyResponse;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\Section;
 use Filament\Infolists\Concerns\InteractsWithInfolists;
 use Filament\Infolists\Contracts\HasInfolists;
 use Filament\Infolists\Infolist;
@@ -60,9 +61,12 @@ class EntryResponse extends Component implements HasForms, HasInfolists
             ->inlineLabel()
             ->state($this->data)
             ->schema([
-                ...$this->survey->questions->map(
-                    fn (SurveyQuestion $question) => $question->type->getInfolistComponent($question)
-                )->filter()->toArray(),
+                Section::make()
+                    ->schema([
+                        ...$this->survey->questions->map(
+                            fn (SurveyQuestion $question) => $question->type->getInfolistComponent($question)
+                        )->filter()->toArray(),
+                    ]),
             ]);
     }
 }

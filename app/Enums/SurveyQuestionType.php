@@ -21,6 +21,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\TimePicker;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Filament\Infolists\Components\Group;
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Support\Contracts\HasLabel;
@@ -140,8 +141,7 @@ enum SurveyQuestionType: string implements HasLabel
 
         };
 
-        return \Filament\Infolists\Components\Section::make()
-            ->compact()
+        return Group::make()
             ->schema(Arr::wrap($components));
     }
 
