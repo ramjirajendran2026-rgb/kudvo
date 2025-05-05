@@ -60,15 +60,20 @@
         @endforeach
     @elseif ($this->activeTab === SurveyResponsesPageTabs::Individual)
         <div class="flex-row items-center justify-center">
-            <x-filament::input.wrapper>
-                <x-filament::input.select wire:model.live="activeResponseId">
-                    @foreach ($this->getResponseNumbers() as $id => $number)
-                        <option value="{{ $id }}">
-                            Response {{ $number }}
-                        </option>
-                    @endforeach
-                </x-filament::input.select>
-            </x-filament::input.wrapper>
+            <div class="flex w-full items-center gap-2">
+                <x-filament::input.wrapper class="flex-1">
+                    <x-filament::input.select
+                        wire:model.live="activeResponseId"
+                    >
+                        @foreach ($this->getResponseNumbers() as $id => $number)
+                            <option value="{{ $id }}">
+                                Response {{ $number }}
+                            </option>
+                        @endforeach
+                    </x-filament::input.select>
+                </x-filament::input.wrapper>
+                {{ $this->deleteActiveResponse }}
+            </div>
             <span class="text-sm text-gray-950 dark:text-white">
                 Submitted on
                 {{ $this->getActiveResponse()?->created_at->timezone(filament()->getTenant()?->timezone)->format('d M, Y h:i:s A') }}

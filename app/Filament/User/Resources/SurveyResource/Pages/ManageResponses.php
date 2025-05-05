@@ -170,4 +170,22 @@ class ManageResponses extends Page implements HasForms
     {
         return 'Survey #' . $this->getRecord()->getKey();
     }
+
+    public function deleteActiveResponse(): Action
+    {
+        return Action::make('deleteActiveResponse')
+            ->requiresConfirmation()
+            ->icon('heroicon-s-trash')
+            ->iconButton()
+            ->label('Delete')
+            ->color('danger')
+            ->successNotificationTitle('Deleted')
+            ->action(function (self $livewire, Action $action) {
+                $livewire->getActiveResponse()->delete();
+                $livewire->activeResponseId = $this->getSurvey()
+                    ->responses()->latest('sort')->first()?->getKey();
+
+                $action->success();
+            });
+    }
 }
