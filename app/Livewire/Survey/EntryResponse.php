@@ -68,7 +68,7 @@ class EntryResponse extends Component implements HasForms, HasInfolists
             ->state($this->data)
             ->schema([
                 Section::make()
-                    ->columns(3)
+                    ->columns(['sm' => 3])
                     ->schema([
                         Group::make([
                             ...$this->survey->questions
@@ -76,7 +76,7 @@ class EntryResponse extends Component implements HasForms, HasInfolists
                                 ->map(
                                     fn (SurveyQuestion $question) => $question->type->getInfolistComponent($question)
                                 )->filter()->toArray(),
-                        ])->columnSpan(2)->inlineLabel(),
+                        ])->columnSpan(['sm' => 2])->inlineLabel(),
 
                         Group::make([
                             ...$this->survey->questions
