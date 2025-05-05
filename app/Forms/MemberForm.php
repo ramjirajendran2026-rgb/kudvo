@@ -47,6 +47,18 @@ readonly class MemberForm
             ->required();
     }
 
+    public static function passwordComponent(): TextInput
+    {
+        return TextInput::make(name: 'password')
+            ->label(label: __('filament.user.user-resource.form.password.label'))
+            ->placeholder('Leave blank to keep the current password')
+            ->password()
+            ->revealable()
+            ->inlineSuffix()
+            ->rule(rule: 'max:60')
+            ->dehydrated(fn ($state) => filled($state));
+    }
+
     public static function phoneComponent(): PhoneInput
     {
         return PhoneInput::make(name: 'phone')

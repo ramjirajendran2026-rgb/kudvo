@@ -108,12 +108,14 @@ class MemberResource extends Resource
                             ->columns(columns: 5)
                             ->label(label: __('filament.user.elector-resource.form.full_name.label')),
 
-                        MemberForm::emailComponent(),
-
                         MemberForm::phoneComponent()
                             ->defaultCountry(value: Filament::getTenant()?->country ?: config(key: 'app.default_phone_country'))
                             ->disableLookup()
                             ->initialCountry(value: Filament::getTenant()?->country ?: config(key: 'app.default_phone_country')),
+
+                        MemberForm::emailComponent(),
+
+                        MemberForm::passwordComponent(),
 
                         MemberForm::weightageComponent(),
 

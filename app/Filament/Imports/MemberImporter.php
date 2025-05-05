@@ -64,6 +64,11 @@ class MemberImporter extends Importer
                         ->where(column: 'organisation_id', value: $options['organisation_id']),
                 ]),
 
+            ImportColumn::make(name: 'password')
+                ->example('<PASSWORD>')
+                ->ignoreBlankState()
+                ->rules(rules: ['nullable', 'string', 'max:60']),
+
             ImportColumn::make(name: 'weightage')
                 ->example(example: '1')
                 ->numeric()

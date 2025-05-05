@@ -47,10 +47,16 @@ class Member extends Model implements AuthenticatableContract, AuthorizableContr
         'membership_end_date' => 'date',
         'is_active' => 'bool',
         'additional_data' => 'array',
+        'password' => 'hashed',
         'email_verified_at' => 'datetime',
         'phone_verified_at' => 'datetime',
         'organisation_id' => 'int',
         'branch_id' => 'int',
+    ];
+
+    protected $hidden = [
+        'password',
+        'remember_token',
     ];
 
     protected $appends = [
