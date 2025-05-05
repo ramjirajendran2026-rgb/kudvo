@@ -198,15 +198,20 @@ class ElectorResource extends Resource
                     ->where('branch_id', $election->branch_id)
                     ->where('organisation_id', Filament::getTenant()->getKey())
                     ->chunkById(50, function (Collection $members) use ($election) {
-                        $members->each(fn (Member $member) => $election->electors()->create($member->only([
-                            'membership_number',
-                            'title',
-                            'first_name',
-                            'last_name',
-                            'email',
-                            'phone',
-                            'weightage',
-                        ])));
+                        $members->each(fn (Member $member) => $election->electors()
+                            ->updateOrCreate(
+                                $member->only([
+                                    'membership_number',
+                                ]),
+                                $member->only([
+                                    'title',
+                                    'first_name',
+                                    'last_name',
+                                    'email',
+                                    'phone',
+                                    'weightage',
+                                ]),
+                            ));
                     });
 
                 $action->success();
