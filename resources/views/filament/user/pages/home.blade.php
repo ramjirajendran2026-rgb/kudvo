@@ -6,7 +6,7 @@
     <div
         class="grid grid-cols-1 items-center justify-evenly gap-8 md:grid-cols-2 lg:grid-cols-2"
     >
-        @foreach (UserPanelHomeProductCard::cases() as $product)
+        @foreach (UserPanelHomeProductCard::available() as $product)
             <a
                 href="{{ $product->getUrl() }}"
                 x-data="{ show: false }"

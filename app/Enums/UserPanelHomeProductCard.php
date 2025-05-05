@@ -17,6 +17,23 @@ enum UserPanelHomeProductCard: string implements HasDescription, HasIcon, HasLab
     case Nomination = 'nomination';
     case Survey = 'survey';
 
+    public static function available(): array
+    {
+        return collect(self::cases())
+            ->filter(fn (self $case) => $case->isAvailable())
+            ->toArray();
+    }
+
+    public function isAvailable(): bool
+    {
+        return match ($this) {
+            self::Election => ElectionResource::canAccess(),
+            self::Nomination => NominationResource::canAccess(),
+            self::Survey => SurveyResource::canAccess(),
+            self::Meeting => MeetingResource::canAccess(),
+        };
+    }
+
     public function getBadgeLabel(): ?string
     {
         return match ($this) {
