@@ -18,7 +18,7 @@ use App\Livewire\Pages\VoteNow;
 use App\Livewire\Pages\Wiki\Index as WikiIndex;
 use App\Livewire\Pages\Wiki\Show as WikiDetails;
 use App\Livewire\Survey\EntryForm;
-use App\Livewire\Survey\EntryResponse;
+use App\Livewire\Survey\EntryResponses;
 use App\Models\Election;
 use App\Models\Elector;
 use App\Models\Meeting;
@@ -81,8 +81,8 @@ Route::group(
                 Route::get(uri: 'survey/{survey}/preview', action: EntryForm::class)
                     ->name(name: 'survey.preview');
 
-                Route::get(uri: 'survey/{survey}/responses/{surveyResponse}', action: EntryResponse::class)
-                    ->name(name: 'survey.response')
+                Route::get(uri: 'survey/{survey}/responses', action: EntryResponses::class)
+                    ->name(name: 'survey.responses')
                     ->middleware('signed');
 
                 Route::prefix('products')

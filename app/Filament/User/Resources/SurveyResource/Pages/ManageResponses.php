@@ -20,6 +20,7 @@ use Filament\Resources\Pages\Page;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -137,6 +138,12 @@ class ManageResponses extends Page implements HasForms
                         return Excel::download(new SurveyResponsesExport($livewire->getSurvey()), Str::slug($livewire->getSurvey()->title) . '-responses.xlsx');
                     })
                     ->icon('heroicon-s-arrow-down-tray'),
+
+                Action::make('openSeparately')
+                    ->url(URL::signedRoute('survey.responses', [
+                        'survey' => $this->getSurvey()->id,
+                    ]), true)
+                    ->icon('heroicon-s-arrow-up-tray'),
             ])->dropdownPlacement('bottom-end'),
         ];
     }

@@ -79,14 +79,6 @@
                     {{ $this->getActiveResponse()?->referrer_code }}
                 </span>
             @endif
-
-            <x-filament::link
-                :href="URL::signedRoute('survey.response', ['survey' => $this->getRecord()?->getKey(), 'surveyResponse' => $this->getActiveResponse()?->id])"
-                class="text-sm text-primary-600 dark:text-primary-400"
-                target="_blank"
-            >
-                • View Response
-            </x-filament::link>
         </div>
 
         <x-filament::loading-indicator
