@@ -21,13 +21,14 @@ use Filament\Forms\Get;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\IconPosition;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Tables;
 use Filament\Tables\Actions\CreateAction as TableCreateAction;
+use Filament\Tables\Columns\TextColumn\TextColumnSize;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\Str;
 
 class NominationResource extends Resource
 {
@@ -83,15 +84,15 @@ class NominationResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make(name: 'code')
-                    ->badge()
+                    ->color('primary')
                     ->copyable()
-                    ->icon(icon: 'heroicon-m-clipboard-document')
+                    ->fontFamily('mono')
+                    ->icon(icon: 'heroicon-o-clipboard-document')
                     ->iconPosition(iconPosition: IconPosition::After)
-                    ->label(label: 'Code')
-                    ->searchable(),
+                    ->size(TextColumnSize::Large)
+                    ->weight(FontWeight::SemiBold),
 
                 Tables\Columns\TextColumn::make(name: 'name')
-                    ->searchable()
                     ->wrap(),
 
                 Tables\Columns\TextColumn::make(name: 'status')
@@ -105,7 +106,6 @@ class NominationResource extends Resource
             ->filters([
                 BranchResource::getFilterComponent(),
             ])
-            ->heading(heading: Str::title(value: static::getPluralModelLabel()))
             ->recordUrl(url: fn (Nomination $record) => static::getUrl(name: 'dashboard', parameters: [$record]))
             ->relationship(relationship: fn (): Relation => Filament::getTenant()?->nominations());
     }
