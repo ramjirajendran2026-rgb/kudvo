@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Survey;
 
+use App\Actions\Survey\GenerateReferenceNumber;
 use App\Models\Survey;
 use App\Models\SurveyAnswer;
 use App\Models\SurveyQuestion;
@@ -14,6 +15,7 @@ use Filament\Infolists\Concerns\InteractsWithInfolists;
 use Filament\Infolists\Contracts\HasInfolists;
 use Filament\Infolists\Infolist;
 use Livewire\Component;
+use RalphJSmit\Laravel\SEO\Support\SEOData;
 
 /**
  * @property Form $form
@@ -51,7 +53,10 @@ class EntryResponse extends Component implements HasForms, HasInfolists
         return view('livewire.survey.entry-response')
             ->layout('components.layouts.base')
             ->layoutData([
-                'seoData' => $this->survey,
+                'seoData' => new SEOData(
+                    title: app(GenerateReferenceNumber::class)->execute($this->surveyResponse, $this->survey),
+                    enableTitleSuffix: false,
+                ),
             ]);
     }
 
