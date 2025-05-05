@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Elector;
+use App\Models\Member;
 use App\Models\Participant;
 use App\Models\User;
 
@@ -45,6 +46,11 @@ return [
             'provider' => 'users',
         ],
 
+        'member' => [
+            'driver' => 'session',
+            'provider' => 'members',
+        ],
+
         'elector' => [
             'driver' => 'session',
             'provider' => 'electors',
@@ -77,6 +83,11 @@ return [
         'users' => [
             'driver' => 'eloquent',
             'model' => User::class,
+        ],
+
+        'members' => [
+            'driver' => 'eloquent',
+            'model' => Member::class,
         ],
 
         'electors' => [
@@ -117,6 +128,12 @@ return [
     'passwords' => [
         'users' => [
             'provider' => 'users',
+            'table' => 'password_reset_tokens',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+        'members' => [
+            'provider' => 'members',
             'table' => 'password_reset_tokens',
             'expire' => 60,
             'throttle' => 60,
