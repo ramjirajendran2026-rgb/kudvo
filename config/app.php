@@ -7,6 +7,7 @@ use App\Providers\EventServiceProvider;
 use App\Providers\Filament\AdminPanelProvider;
 use App\Providers\Filament\ElectionPanelProvider;
 use App\Providers\Filament\MeetingPanelProvider;
+use App\Providers\Filament\MemberPanelProvider;
 use App\Providers\Filament\NominationPanelProvider;
 use App\Providers\Filament\UserPanelProvider;
 use App\Providers\HorizonServiceProvider;
@@ -182,6 +183,7 @@ return [
         EventServiceProvider::class,
         HorizonServiceProvider::class,
         UserPanelProvider::class,
+        MemberPanelProvider::class,
         NominationPanelProvider::class,
         ElectionPanelProvider::class,
         AdminPanelProvider::class,

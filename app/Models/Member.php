@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Models\Contracts\HasName;
+use Filament\Panel;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
@@ -14,7 +17,7 @@ use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\CausesActivity;
 use Spatie\Activitylog\Traits\LogsActivity;
 
-class Member extends Model implements AuthenticatableContract, AuthorizableContract
+class Member extends Model implements AuthenticatableContract, AuthorizableContract, FilamentUser, HasName
 {
     use Authenticatable;
     use Authorizable;
@@ -81,7 +84,28 @@ class Member extends Model implements AuthenticatableContract, AuthorizableContr
             ->dontSubmitEmptyLogs();
     }
 
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return match (true) {
+            $panel->getId() === 'member' => true,
+            default => false,
+        };
+    }
+
+    public function getFilamentName(): string
+    {
+        return $this->full_name;
+    }
+
     protected function displayName(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value, array $attributes) => collect([$this->title, $this->full_name])
+                ->filter()->implode(' ') ?: 'Member',
+        );
+    }
+
+    protected function name(): Attribute
     {
         return Attribute::make(
             get: fn ($value, array $attributes) => collect([$this->title, $this->full_name])
