@@ -92,10 +92,16 @@ class SmsPriceResource extends Resource
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('channel')
-                    ->options(Arr::mapWithKeys(SmsChannel::cases(), fn (SmsChannel $enum) => [$enum->value => Str::title($enum->value)])),
+                    ->options(Arr::mapWithKeys(SmsChannel::cases(), fn (SmsChannel $enum) => [$enum->value => $enum->getLabel()]))
+                    ->searchable(),
 
                 Tables\Filters\SelectFilter::make('country')
-                    ->options(Country::all()->pluck('name', 'iso2')->toArray()),
+                    ->options(Country::all()->pluck('name', 'iso2')->toArray())
+                    ->searchable(),
+
+                Tables\Filters\SelectFilter::make('currency')
+                    ->options(Arr::mapWithKeys(Currency::getCurrencies(), fn (array $currency, string $code) => [$code => $code . ' - ' . $currency['name']]))
+                    ->searchable(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
