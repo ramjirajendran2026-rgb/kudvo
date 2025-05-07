@@ -34,6 +34,7 @@ class ElectionResult extends Model
         return LogOptions::defaults()
             ->logAll()
             ->logOnlyDirty()
+            ->logExcept(['meta'])
             ->dontSubmitEmptyLogs();
     }
 
