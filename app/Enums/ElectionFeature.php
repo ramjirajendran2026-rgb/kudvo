@@ -104,4 +104,24 @@ enum ElectionFeature: string implements HasLabel
             default => null,
         };
     }
+
+    public function isSmsFeature(): bool
+    {
+        return match ($this) {
+            self::BallotLinkSms,
+            self::VerificationCodeSms,
+            self::BallotAcknowledgementSms => true,
+            default => false,
+        };
+    }
+
+    public function hasMaxUsage(): bool
+    {
+        return match ($this) {
+            self::BallotLinkSms,
+            self::VerificationCodeSms,
+            self::BallotAcknowledgementSms => true,
+            default => false,
+        };
+    }
 }

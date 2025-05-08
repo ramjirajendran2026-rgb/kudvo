@@ -60,9 +60,14 @@ class ElectionPlan extends Model
             ->contains(fn (PlanFeatureData $planFeature) => in_array($planFeature->feature, $features));
     }
 
+    public function getFeatures(): Collection
+    {
+        return $this->features->toCollection()->filter();
+    }
+
     public function selfFeatures(): Collection
     {
-        return $this->features->toCollection()->where('is_add_on', false);
+        return $this->getFeatures()->where('is_add_on', false);
     }
 
     public function hasAddOnFeature(ElectionFeature $feature): bool
@@ -74,7 +79,7 @@ class ElectionPlan extends Model
 
     public function addOnFeatures(): Collection
     {
-        return $this->features->toCollection()->where('is_add_on', true);
+        return $this->getFeatures()->where('is_add_on', true);
     }
 
     public function getFeatureFee(ElectionFeature $feature): int
