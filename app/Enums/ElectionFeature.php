@@ -23,7 +23,7 @@ enum ElectionFeature: string implements HasLabel
     case IpRestriction = 'ip_restriction';
     case DeviceRestriction = 'device_restriction';
     case EditableVotes = 'editable_votes';
-    case TrackableVotes = 'trackable_votes';
+    case AnonymousVotes = 'trackable_votes';
     case ElectorEmailUnique = 'elector_email_unique';
     case ElectorPhoneUnique = 'elector_phone_unique';
     case ElectorCorrections = 'elector_corrections';
@@ -56,7 +56,7 @@ enum ElectionFeature: string implements HasLabel
             self::IpRestriction => 'IP restriction',
             self::DeviceRestriction => 'Device restriction',
             self::EditableVotes => 'Editable votes',
-            self::TrackableVotes => 'Trackable votes',
+            self::AnonymousVotes => 'Anonymous votes',
             self::ElectorEmailUnique => 'Unique email check for elector',
             self::ElectorPhoneUnique => 'Unique phone check for elector',
             self::ElectorCorrections => 'Elector corrections',
@@ -91,7 +91,7 @@ enum ElectionFeature: string implements HasLabel
             self::IpRestriction => 'IP restriction',
             self::DeviceRestriction => 'Device restriction',
             self::EditableVotes => 'Editable votes',
-            self::TrackableVotes => 'Trackable votes',
+            self::AnonymousVotes => 'Anonymous votes',
             self::ElectorEmailUnique => 'Unique email check',
             self::ElectorPhoneUnique => 'Unique phone check',
             self::ElectorCorrections => 'Elector corrections',
@@ -126,7 +126,7 @@ enum ElectionFeature: string implements HasLabel
             self::IpRestriction => 'ip_restriction_threshold',
             self::DeviceRestriction => 'prevent_duplicate_device',
             self::EditableVotes => 'voted_ballot_update',
-            self::TrackableVotes => 'dnt_votes',
+            self::AnonymousVotes => 'dnt_votes',
             self::ElectorEmailUnique => 'elector_duplicate_email',
             self::ElectorPhoneUnique => 'elector_duplicate_phone',
             self::ElectorCorrections => 'elector_update_after_publish',

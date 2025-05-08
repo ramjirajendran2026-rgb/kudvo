@@ -74,31 +74,14 @@ class Preference extends ElectionPage
             static::can(action: 'viewPreference', election: $election);
     }
 
-    public function hasReadAccess(): bool
-    {
-        return $this->isOwner()
-            || $this->getElection()->getCollaboratorPermissions(Filament::auth()->user())->preference !== ElectionCollaboratorPermission::NoAccess;
-    }
-
     public function shouldShowPricingTable(): bool
     {
         return blank($this->getElection()->plan_id);
     }
 
-    public function hasFullAccess(): bool
-    {
-        return $this->isOwner()
-            || $this->getElection()->getCollaboratorPermissions(Filament::auth()->user())->preference === ElectionCollaboratorPermission::FullAccess;
-    }
-
     public function getPlans(): Collection
     {
         return ElectionPlan::where('currency', 'inr')->oldest(column: 'sort')->get();
-    }
-
-    public function getCurrentStep(): ?ElectionSetupStep
-    {
-        return ElectionSetupStep::Preference;
     }
 
     public function getFormActions(): array
@@ -115,6 +98,32 @@ class Preference extends ElectionPage
             ->label(label: __('filament.user.election-resource.pages.preference.actions.save.label'))
             ->submit(form: 'save')
             ->visible(condition: $this->canSave() && $this->hasFullAccess());
+    }
+
+    protected function canSave(): bool
+    {
+        /** @var User $user */
+        $user = Filament::auth()->user();
+
+        return $user->canAccessPanel(panel: Filament::getPanel(id: 'admin')) ||
+            static::can(action: 'savePreference', election: $this->getElection());
+    }
+
+    public function getCurrentStep(): ?ElectionSetupStep
+    {
+        return ElectionSetupStep::Preference;
+    }
+
+    public function hasFullAccess(): bool
+    {
+        return $this->isOwner()
+            || $this->getElection()->getCollaboratorPermissions(Filament::auth()->user())->preference === ElectionCollaboratorPermission::FullAccess;
+    }
+
+    public function hasReadAccess(): bool
+    {
+        return $this->isOwner()
+            || $this->getElection()->getCollaboratorPermissions(Filament::auth()->user())->preference !== ElectionCollaboratorPermission::NoAccess;
     }
 
     public function save(): void
@@ -464,7 +473,7 @@ class Preference extends ElectionPage
                             ->description(description: __('filament.user.election-resource.pages.preference.form.security_preference_section.description'))
                             ->hidden(
                                 condition: ! $plan->hasAnyFeature(features: [
-                                    ElectionFeature::TrackableVotes,
+                                    ElectionFeature::AnonymousVotes,
                                     ElectionFeature::EditableVotes,
                                     ElectionFeature::DeviceRestriction,
                                 ])
@@ -476,9 +485,9 @@ class Preference extends ElectionPage
                                     ->schema(components: [
                                         FeatureToggle::make(name: 'dnt_votes')
                                             ->addOn(
-                                                condition: $plan->hasAddOnFeature(feature: ElectionFeature::TrackableVotes),
-                                                featureFee: $plan->getFeatureFee(feature: ElectionFeature::TrackableVotes),
-                                                electorFee: $plan->getElectorFee(feature: ElectionFeature::TrackableVotes),
+                                                condition: $plan->hasAddOnFeature(feature: ElectionFeature::AnonymousVotes),
+                                                featureFee: $plan->getFeatureFee(feature: ElectionFeature::AnonymousVotes),
+                                                electorFee: $plan->getElectorFee(feature: ElectionFeature::AnonymousVotes),
                                                 feeCurrency: $plan->currency,
                                                 hideAddOnPrice: ! $this->canSave(),
                                             )
@@ -490,7 +499,7 @@ class Preference extends ElectionPage
                                                 $set(path: 'voted_ballot_update', state: false);
                                             })
                                             ->default(state: true)
-                                            ->hidden(condition: ! $plan->hasFeature(feature: ElectionFeature::TrackableVotes))
+                                            ->hidden(condition: ! $plan->hasFeature(feature: ElectionFeature::AnonymousVotes))
                                             ->helperText(text: __('filament.user.election-resource.pages.preference.form.dnt_votes.helper_text'))
                                             ->label(label: __('filament.user.election-resource.pages.preference.form.dnt_votes.label'))
                                             ->live(),
@@ -832,14 +841,5 @@ class Preference extends ElectionPage
         return Action::make(name: 'changePlan')
             ->label(label: __('filament.user.election-resource.pages.preference.actions.change_plan.label'))
             ->url(url: Plan::getUrl(parameters: [$this->getElection()]));
-    }
-
-    protected function canSave(): bool
-    {
-        /** @var User $user */
-        $user = Filament::auth()->user();
-
-        return $user->canAccessPanel(panel: Filament::getPanel(id: 'admin')) ||
-            static::can(action: 'savePreference', election: $this->getElection());
     }
 }
