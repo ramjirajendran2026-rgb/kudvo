@@ -221,7 +221,7 @@ return [
 
     'default_currency' => 'USD',
 
-    'supported_currencies' => ['USD', 'INR'],
+    'supported_currencies' => ['USD'],
 
     'default_phone_country' => 'IN',
 
