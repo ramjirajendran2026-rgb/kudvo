@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Str;
 use Squire\Models\Currency;
+use ValueError;
 
 class ElectionPlanResource extends Resource
 {
@@ -76,7 +77,7 @@ class ElectionPlanResource extends Resource
                 ->schema(components: [
                     Forms\Components\Repeater::make(name: 'features')
                         ->addActionLabel(label: 'Add another')
-                        ->columns()
+                        ->columns(3)
                         ->default(state: collect(ElectionFeature::cases())->map(fn (ElectionFeature $feature) => new PlanFeatureData(feature: $feature))->toArray())
                         ->hiddenLabel()
                         ->maxItems(count: count(value: ElectionFeature::cases()))
@@ -88,6 +89,7 @@ class ElectionPlanResource extends Resource
                                     ->enum(enum: ElectionFeature::class)
                                     ->fixIndistinctState()
                                     ->hiddenLabel()
+                                    ->live()
                                     ->options(options: ElectionFeature::class)
                                     ->optionsLimit(limit: count(value: ElectionFeature::cases()))
                                     ->placeholder(placeholder: 'Select a feature')
@@ -119,6 +121,25 @@ class ElectionPlanResource extends Resource
                                 ->numeric()
                                 ->step(interval: 0)
                                 ->visible(condition: fn (Forms\Get $get): bool => $get('is_add_on') ?? false)
+                                ->required(),
+
+                            Forms\Components\TextInput::make(name: 'max_usage')
+                                ->minValue(value: 1)
+                                ->numeric()
+                                ->step(interval: 1)
+                                ->visible(condition: function (Forms\Get $get): bool {
+                                    if (blank($get('feature'))) {
+                                        return false;
+                                    }
+
+                                    try {
+                                        $feature = ElectionFeature::from($get('feature'));
+
+                                        return $feature->hasMaxUsage();
+                                    } catch (ValueError $e) {
+                                        return false;
+                                    }
+                                })
                                 ->required(),
                         ]),
                 ]),

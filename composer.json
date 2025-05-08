@@ -11,6 +11,7 @@
         "php": "^8.2",
         "ext-mbstring": "*",
         "ext-simplexml": "*",
+        "akaunting/laravel-money": "^6.0",
         "akhan619/laravel-ses-tracking": "^1.0",
         "awcodes/filament-tiptap-editor": "^3.0",
         "aws/aws-php-sns-message-validator": "^1.9",

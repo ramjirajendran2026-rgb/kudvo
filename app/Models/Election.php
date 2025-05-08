@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Actions\Election\Booth\RevokeElectorFromBooth;
+use App\Actions\GetSmsPrices;
 use App\Data\Election\BoothPreferenceData;
 use App\Data\Election\CollaboratorPermissionsData;
 use App\Data\Election\PlanFeatureData;
@@ -653,6 +654,31 @@ class Election extends Model
                     ],
                 ],
             ]);
+        }
+
+        $smsFeatures = $plan->getFeatures()
+            ->filter(fn (PlanFeatureData $feature) => $feature->feature->isSmsFeature())
+            ->filter(fn (PlanFeatureData $feature) => $preference[$feature->feature->getPreferenceKey()] ?? false)
+            ->whereNotNull('max_usage');
+
+        if ($smsFeatures->isNotEmpty()) {
+            $smsFee = app(GetSmsPrices::class)
+                ->execute($plan->currency, $this->electors()->pluck('phone')->filter()->toArray())
+                ->whereNotNull('price')
+                ->sum('price');
+
+            $smsFeatures->each(function (PlanFeatureData $planFeature) use ($items, $smsFee, $plan) {
+                $items->push([
+                    'quantity' => $planFeature->max_usage,
+                    'price_data' => [
+                        'currency' => $plan->currency,
+                        'unit_amount' => $smsFee,
+                        'product_data' => [
+                            'name' => $planFeature->feature->getLabel(),
+                        ],
+                    ],
+                ]);
+            });
         }
 
         return $user
