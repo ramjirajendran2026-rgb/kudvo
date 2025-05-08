@@ -638,7 +638,13 @@ class Election extends Model
                     'currency' => $plan->currency,
                     'unit_amount' => $addOnFeatureFee,
                     'product_data' => [
-                        'name' => 'Add-ons - Feature fee',
+                        'name' => 'Add-ons - Feature fee (' .
+                            $plan->addOnFeatures()
+                                ->filter(fn (PlanFeatureData $feature) => $preference[$feature->feature->getPreferenceKey()] ?? false)
+                                ->filter(fn (PlanFeatureData $feature) => $feature->feature_fee > 0)
+                                ->map(fn (PlanFeatureData $feature) => $feature->feature->getShortLabel())
+                                ->join(', ', ', and ') .
+                            ')',
                     ],
                 ],
             ]);
@@ -650,7 +656,13 @@ class Election extends Model
                     'currency' => $plan->currency,
                     'unit_amount' => $addOnElectorFee,
                     'product_data' => [
-                        'name' => 'Add-ons - Elector fee',
+                        'name' => 'Add-ons - Elector fee (' .
+                            $plan->addOnFeatures()
+                                ->filter(fn (PlanFeatureData $feature) => $preference[$feature->feature->getPreferenceKey()] ?? false)
+                                ->filter(fn (PlanFeatureData $feature) => $feature->elector_fee > 0)
+                                ->map(fn (PlanFeatureData $feature) => $feature->feature->getShortLabel())
+                                ->join(', ', ', and ') .
+                            ')',
                     ],
                 ],
             ]);
@@ -674,7 +686,7 @@ class Election extends Model
                         'currency' => $plan->currency,
                         'unit_amount' => $smsFee,
                         'product_data' => [
-                            'name' => $planFeature->feature->getLabel(),
+                            'name' => $planFeature->feature->getShortLabel(),
                         ],
                     ],
                 ]);

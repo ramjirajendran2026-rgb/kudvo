@@ -71,6 +71,41 @@ enum ElectionFeature: string implements HasLabel
         };
     }
 
+    public function getShortLabel(): string
+    {
+        return match ($this) {
+            self::BallotAccessCommonLink => 'Common link',
+            self::BallotAccessUniqueLink => 'Unique link',
+            self::BallotLinkEmail => 'Email link',
+            self::BallotLinkSms => 'SMS link',
+            self::BallotLinkWhatsapp => 'WhatsApp link',
+            self::VerificationCodeEmail => 'Email code',
+            self::VerificationCodeSms => 'SMS code',
+            self::VerificationCodeWhatsapp => 'WhatsApp code',
+            self::BallotAcknowledgementEmail => 'Email confirmation',
+            self::BallotAcknowledgementSms => 'SMS confirmation',
+            self::BallotAcknowledgementWhatsapp => 'WhatsApp confirmation',
+            self::BallotCopyDownload => 'Download ballot',
+            self::BallotCopyEmail => 'Email ballot',
+            self::BallotCopyWhatsapp => 'WhatsApp ballot',
+            self::IpRestriction => 'IP restriction',
+            self::DeviceRestriction => 'Device restriction',
+            self::EditableVotes => 'Editable votes',
+            self::TrackableVotes => 'Trackable votes',
+            self::ElectorEmailUnique => 'Unique email check',
+            self::ElectorPhoneUnique => 'Unique phone check',
+            self::ElectorCorrections => 'Elector corrections',
+            self::CandidateShuffling => 'Candidate shuffling',
+            self::CandidateSorting => 'Candidate sorting',
+            self::CandidatePhoto => 'Candidate photo',
+            self::CandidateSymbol => 'Candidate symbol',
+            self::CandidateTeam => 'Candidate team',
+            self::DisableUnopposedSelection => 'Restrict unopposed candidate selection',
+            self::SegmentedVoting => 'Segmented voting',
+            self::BoothVoting => 'Booth voting',
+        };
+    }
+
     public function getPreferenceKey(): ?string
     {
         return match ($this) {
