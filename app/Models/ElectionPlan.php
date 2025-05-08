@@ -48,21 +48,19 @@ class ElectionPlan extends Model
 
     public function hasFeature(ElectionFeature $feature): bool
     {
-        return $this->features
-            ->toCollection()
+        return $this->getFeatures()
             ->contains(fn (PlanFeatureData $planFeature) => $planFeature->feature === $feature);
-    }
-
-    public function hasAnyFeature(array $features): bool
-    {
-        return $this->features
-            ->toCollection()
-            ->contains(fn (PlanFeatureData $planFeature) => in_array($planFeature->feature, $features));
     }
 
     public function getFeatures(): Collection
     {
         return $this->features->toCollection()->filter();
+    }
+
+    public function hasAnyFeature(array $features): bool
+    {
+        return $this->getFeatures()
+            ->contains(fn (PlanFeatureData $planFeature) => in_array($planFeature->feature, $features));
     }
 
     public function selfFeatures(): Collection
@@ -84,21 +82,16 @@ class ElectionPlan extends Model
 
     public function getFeatureFee(ElectionFeature $feature): int
     {
-        return $this
-            ->features
-            ->toCollection()
-            ->where('feature', $feature)
-            ->first()
-            ?->feature_fee ?? 0;
+        return $this->getFeature($feature)?->feature_fee ?? 0;
+    }
+
+    public function getFeature(ElectionFeature $feature): ?PlanFeatureData
+    {
+        return $this->getFeatures()->firstWhere('feature', $feature);
     }
 
     public function getElectorFee(ElectionFeature $feature): int
     {
-        return $this
-            ->features
-            ->toCollection()
-            ->where('feature', $feature)
-            ->first()
-            ?->elector_fee ?? 0;
+        return $this->getFeature($feature)?->elector_fee ?? 0;
     }
 }

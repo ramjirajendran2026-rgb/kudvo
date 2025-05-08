@@ -42,13 +42,13 @@ class Preference extends ElectionPage
     use HasUnsavedDataChangesAlert;
     use InteractsWithFormActions;
 
+    public static string | Alignment $formActionsAlignment = Alignment::End;
+
     protected static string $view = 'filament.user.resources.election-resource.pages.preference';
 
     protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
 
     protected static ?string $activeNavigationIcon = 'heroicon-s-cog-6-tooth';
-
-    public static string | Alignment $formActionsAlignment = Alignment::End;
 
     public ?array $data = [];
 
@@ -68,10 +68,21 @@ class Preference extends ElectionPage
         $this->form->fill($election->attributesToArray());
     }
 
+    public static function canAccessPage(Election $election): bool
+    {
+        return parent::canAccessPage($election) &&
+            static::can(action: 'viewPreference', election: $election);
+    }
+
     public function hasReadAccess(): bool
     {
         return $this->isOwner()
             || $this->getElection()->getCollaboratorPermissions(Filament::auth()->user())->preference !== ElectionCollaboratorPermission::NoAccess;
+    }
+
+    public function shouldShowPricingTable(): bool
+    {
+        return blank($this->getElection()->plan_id);
     }
 
     public function hasFullAccess(): bool
@@ -80,19 +91,46 @@ class Preference extends ElectionPage
             || $this->getElection()->getCollaboratorPermissions(Filament::auth()->user())->preference === ElectionCollaboratorPermission::FullAccess;
     }
 
+    public function getPlans(): Collection
+    {
+        return ElectionPlan::where('currency', 'inr')->oldest(column: 'sort')->get();
+    }
+
     public function getCurrentStep(): ?ElectionSetupStep
     {
         return ElectionSetupStep::Preference;
     }
 
-    public function shouldShowPricingTable(): bool
+    public function getFormActions(): array
     {
-        return blank($this->getElection()->plan_id);
+        return [
+            $this->getSaveAction(),
+        ];
     }
 
-    public function getPlans(): Collection
+    protected function getSaveAction(): Action
     {
-        return ElectionPlan::where('currency', 'inr')->oldest(column: 'sort')->get();
+        return Action::make(name: 'save')
+            ->keyBindings(bindings: ['mod+s'])
+            ->label(label: __('filament.user.election-resource.pages.preference.actions.save.label'))
+            ->submit(form: 'save')
+            ->visible(condition: $this->canSave() && $this->hasFullAccess());
+    }
+
+    public function save(): void
+    {
+        abort_unless(boolean: $this->canSave(), code: 403);
+
+        $data = $this->form->getState();
+
+        $this->getElection()->update(attributes: $data);
+
+        Notification::make()
+            ->success()
+            ->title(title: __('filament.user.election-resource.pages.preference.actions.save.success_notification.title'))
+            ->send();
+
+        $this->redirect(url: $this->getRedirectUrl());
     }
 
     public static function getNavigationLabel(): string
@@ -257,7 +295,7 @@ class Preference extends ElectionPage
                                         feeCurrency: $plan->currency,
                                         hideAddOnPrice: ! $this->canSave(),
                                     )
-                                    ->helperText(text: 'Additional fee may apply based recipients country.')
+                                    ->helperText(text: 'Upto ' . $plan->getFeature(ElectionFeature::BallotLinkSms)?->max_usage . ' times. Additional fee may apply based recipients country.')
                                     ->hidden(condition: ! $plan->hasFeature(feature: ElectionFeature::BallotLinkSms))
                                     ->label(label: __('filament.user.election-resource.pages.preference.form.ballot_link_sms.label')),
 
@@ -305,7 +343,7 @@ class Preference extends ElectionPage
                                         hideAddOnPrice: ! $this->canSave(),
                                     )
                                     ->grow(condition: false)
-                                    ->helperText(text: 'Additional fee may apply based recipients country.')
+                                    ->helperText(text: fn () => 'Upto ' . $plan->getFeature(ElectionFeature::VerificationCodeSms)?->max_usage . ' times. Additional fee may apply based recipients country.')
                                     ->hidden(condition: ! $plan->hasFeature(feature: ElectionFeature::VerificationCodeSms))
                                     ->label(label: __('filament.user.election-resource.pages.preference.form.mfa_sms.label'))
                                     ->live(),
@@ -358,7 +396,7 @@ class Preference extends ElectionPage
                                         feeCurrency: $plan->currency,
                                         hideAddOnPrice: ! $this->canSave(),
                                     )
-                                    ->helperText(text: 'Additional fee may apply based recipients country.')
+                                    ->helperText(text: 'Upto ' . $plan->getFeature(ElectionFeature::BallotAcknowledgementSms)?->max_usage . ' times. Additional fee may apply based recipients country.')
                                     ->hidden(condition: ! $plan->hasFeature(feature: ElectionFeature::BallotAcknowledgementSms))
                                     ->label(label: __('filament.user.election-resource.pages.preference.form.voted_confirmation_sms.label')),
 
@@ -789,33 +827,11 @@ class Preference extends ElectionPage
         ];
     }
 
-    public function getFormActions(): array
-    {
-        return [
-            $this->getSaveAction(),
-        ];
-    }
-
-    protected function getSaveAction(): Action
-    {
-        return Action::make(name: 'save')
-            ->keyBindings(bindings: ['mod+s'])
-            ->label(label: __('filament.user.election-resource.pages.preference.actions.save.label'))
-            ->submit(form: 'save')
-            ->visible(condition: $this->canSave() && $this->hasFullAccess());
-    }
-
     public function getChangePlanAction(): Action
     {
         return Action::make(name: 'changePlan')
             ->label(label: __('filament.user.election-resource.pages.preference.actions.change_plan.label'))
             ->url(url: Plan::getUrl(parameters: [$this->getElection()]));
-    }
-
-    public static function canAccessPage(Election $election): bool
-    {
-        return parent::canAccessPage($election) &&
-            static::can(action: 'viewPreference', election: $election);
     }
 
     protected function canSave(): bool
@@ -825,21 +841,5 @@ class Preference extends ElectionPage
 
         return $user->canAccessPanel(panel: Filament::getPanel(id: 'admin')) ||
             static::can(action: 'savePreference', election: $this->getElection());
-    }
-
-    public function save(): void
-    {
-        abort_unless(boolean: $this->canSave(), code: 403);
-
-        $data = $this->form->getState();
-
-        $this->getElection()->update(attributes: $data);
-
-        Notification::make()
-            ->success()
-            ->title(title: __('filament.user.election-resource.pages.preference.actions.save.success_notification.title'))
-            ->send();
-
-        $this->redirect(url: $this->getRedirectUrl());
     }
 }
