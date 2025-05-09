@@ -686,7 +686,7 @@ class Election extends Model
                         'currency' => $plan->currency,
                         'unit_amount' => $smsFee,
                         'product_data' => [
-                            'name' => $planFeature->feature->getShortLabel(),
+                            'name' => $planFeature->feature->getShortLabel() . ' - Usage fee',
                         ],
                     ],
                 ]);
