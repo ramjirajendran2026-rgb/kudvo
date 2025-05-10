@@ -4,6 +4,7 @@ namespace App\Filament\User\Resources\ElectionResource\Pages;
 
 use App\Data\Election\VoteSecretData;
 use App\Enums\ElectionSetupStep;
+use App\Enums\ElectionVotingMethod;
 use App\Filament\Base\Contracts\HasElection;
 use App\Filament\Base\Contracts\HasElectorGroups;
 use App\Filament\User\Resources\ElectionResource;
@@ -272,6 +273,7 @@ abstract class ElectionPage extends Page implements HasElection, HasElectorGroup
                                         uuid: $position->uuid,
                                         preference: $this->getElection()->preference,
                                     )
+                                        ->votingMethod(value: $this->getElection()->voting_method)
                                         ->disabled(condition: fn (Get $get): bool => $get(path: '../preview')),
                                 )
                                 ->toArray(),
@@ -285,7 +287,10 @@ abstract class ElectionPage extends Page implements HasElection, HasElectorGroup
             ->modalFooterActionsAlignment(alignment: Alignment::Center)
             ->modalHeading(heading: $this->getHeading())
             ->modalSubmitActionLabel(label: fn (array $data): string => ($data['preview'] ?? false) ? 'Confirm' : 'Continue')
-            ->modalWidth(MaxWidth::Full)
+            ->modalWidth(match ($this->getElection()->voting_method) {
+                ElectionVotingMethod::Distributed => MaxWidth::ScreenMedium,
+                default => MaxWidth::Full,
+            })
             ->slideOver();
     }
 

@@ -96,6 +96,7 @@ class Preview extends Page implements HasElection
                             uuid: $position->uuid,
                             preference: $this->getElection()->preference,
                         )
+                            ->votingMethod(value: $this->getElection()->voting_method)
                             ->when(
                                 $this->getElection()->preference->candidate_group,
                                 callback: fn (VotesPicker $picker) => $picker

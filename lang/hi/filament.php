@@ -319,9 +319,7 @@ return [
                         'candidate_symbol' => [
                             'label' => 'उम्मीदवार प्रतीक', // Candidate symbol
                         ],
-                        '
-
-candidate_bio' => [
+                        'candidate_bio' => [
                             'label' => 'उम्मीदवार जीवनी पाठ', // Candidate bio text
                         ],
                         'candidate_attachment' => [
@@ -329,6 +327,9 @@ candidate_bio' => [
                         ],
                         'candidate_group' => [
                             'label' => 'उम्मीदवार समूह', // Candidate group
+                        ],
+                        'restrict_self_vote' => [
+                            'label' => 'स्व -वोट को प्रतिबंधित करें', // Restrict self vote
                         ],
                         'advanced_preferences_section' => [
                             'heading' => 'उन्नत पसंद', // Advanced preferences
@@ -582,6 +583,9 @@ candidate_bio' => [
                 ],
                 'name' => [
                     'label' => 'शीर्षक', // Title
+                ],
+                'voting_method' => [
+                    'label' => 'मतदान पद्धति', // Voting method
                 ],
                 'status' => [
                     'label' => 'स्थिति', // Status

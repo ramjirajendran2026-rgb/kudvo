@@ -2,8 +2,10 @@
 
 namespace App\Forms;
 
+use App\Enums\ElectionVotingMethod;
 use App\Forms\Components\TimezonePicker;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TextInput;
 
@@ -63,6 +65,17 @@ readonly class ElectionForm
     {
         return TimezonePicker::make()
             ->label(label: __('filament.user.election-resource.form.timezone.label'))
+            ->required();
+    }
+
+    public static function votingMethodComponent(): Radio
+    {
+        return Radio::make(name: 'voting_method')
+            ->default(state: ElectionVotingMethod::Standard->value)
+            ->enum(enum: ElectionVotingMethod::class)
+            ->inline()
+            ->inlineLabel(false)
+            ->options(options: ElectionVotingMethod::getOptions())
             ->required();
     }
 }

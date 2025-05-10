@@ -322,7 +322,13 @@ JS
                             uuid: $position->uuid,
                             preference: $this->getElection()->preference,
                         )
+                            ->votingMethod(value: $this->getElection()->voting_method)
                             ->weightage($this->getElector()?->weightage ?? '1')
+                            ->when(
+                                $this->getElection()->preference->restrict_self_vote,
+                                callback: fn (VotesPicker $picker) => $picker
+                                    ->restrictedMembershipNumber($this->getElector()->membership_number)
+                            )
                             ->when(
                                 $this->getElection()->preference->candidate_group,
                                 callback: fn (VotesPicker $picker) => $picker

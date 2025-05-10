@@ -113,6 +113,8 @@ class ElectionResource extends Resource
                 BranchResource::getFormSelectTree(),
 
                 ElectionForm::nameComponent(),
+
+                ElectionForm::votingMethodComponent(),
             ]);
     }
 
@@ -181,6 +183,11 @@ class ElectionResource extends Resource
                             ->icon(icon: 'heroicon-m-clipboard-document')
                             ->iconPosition(iconPosition: IconPosition::After)
                             ->label(label: __('filament.user.election-resource.table.code.label')),
+
+                        Tables\Columns\TextColumn::make(name: 'voting_method')
+                            ->badge()
+                            ->grow(condition: false)
+                            ->label(label: __('filament.user.election-resource.table.voting_method.label')),
 
                         Tables\Columns\TextColumn::make(name: 'status')
                             ->badge()

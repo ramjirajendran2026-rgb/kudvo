@@ -331,6 +331,9 @@ return [
                         'candidate_group' => [
                             'label' => 'Candidate group',
                         ],
+                        'restrict_self_vote' => [
+                            'label' => 'Restrict self vote',
+                        ],
                         'advanced_preferences_section' => [
                             'heading' => 'Advanced preferences',
                             'description' => 'These are advanced preferences that you can enable for your election.',
@@ -590,6 +593,9 @@ return [
                 ],
                 'name' => [
                     'label' => 'Title',
+                ],
+                'voting_method' => [
+                    'label' => 'Voting method',
                 ],
                 'status' => [
                     'label' => 'Status',

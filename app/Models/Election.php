@@ -12,6 +12,7 @@ use App\Data\Election\ResultMetaData;
 use App\Data\Election\VoteSecretData;
 use App\Enums\ElectionSetupStep;
 use App\Enums\ElectionStatus;
+use App\Enums\ElectionVotingMethod;
 use App\Enums\InvoiceStatus;
 use App\Filament\Imports\CandidateImporter;
 use App\Filament\Imports\ElectorImporter;
@@ -51,7 +52,7 @@ class Election extends Model
     protected $fillable = [
         'name',
         'description',
-        'ballot_locales',
+        'voting_method',
         'preference',
         'booth_preference',
         'timezone',
@@ -74,6 +75,7 @@ class Election extends Model
     ];
 
     protected $casts = [
+        'voting_method' => ElectionVotingMethod::class,
         'preference' => PreferenceData::class,
         'booth_preference' => BoothPreferenceData::class,
         'starts_at' => 'datetime',

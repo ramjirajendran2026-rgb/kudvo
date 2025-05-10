@@ -141,7 +141,7 @@
         "
         data-quota="{{ $getMaxItems() }}"
         @class([
-            'votes-picker',
+            'votes-picker standard',
             'invalid' => $hasError,
         ])
     >

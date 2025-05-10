@@ -3,6 +3,7 @@
 namespace App\Filament\Election\Pages\Ballot;
 
 use App\Enums\BallotType;
+use App\Enums\ElectionVotingMethod;
 use App\Events\ElectorCastedVoteInBoothEvent;
 use App\Facades\Kudvo;
 use App\Filament\Election\Pages\BasePage;
@@ -61,7 +62,10 @@ class Index extends BasePage
             state: $this->getBallot()?->votes
                 ->mapWithKeys(
                     callback: fn (Vote $vote): array => [
-                        $vote->key => Arr::map($vote->secret?->toArray(), fn ($item) => $item['key']),
+                        $vote->key => match ($this->getElection()->voting_method) {
+                            ElectionVotingMethod::Distributed => Arr::mapWithKeys($vote->secret?->toArray(), fn ($item) => [$item['key'] => (float) $item['value']]),
+                            default => Arr::map($vote->secret?->toArray(), fn ($item) => $item['key']),
+                        },
                     ]
                 )
                 ->toArray() ??
@@ -111,7 +115,13 @@ class Index extends BasePage
                             uuid: $position->uuid,
                             preference: $this->getElection()->preference
                         )
+                            ->votingMethod(value: $this->getElection()->voting_method)
                             ->weightage($this->getElector()?->weightage ?? '1')
+                            ->when(
+                                $this->getElection()->preference->restrict_self_vote,
+                                callback: fn (VotesPicker $picker) => $picker
+                                    ->restrictedMembershipNumber($this->getElector()->membership_number)
+                            )
                             ->when(
                                 $this->getElection()->preference->candidate_group,
                                 callback: fn (VotesPicker $picker) => $picker

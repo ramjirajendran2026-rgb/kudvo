@@ -585,6 +585,7 @@ class Preference extends ElectionPage
                                     ElectionFeature::CandidatePhoto,
                                     ElectionFeature::CandidateSymbol,
                                     ElectionFeature::CandidateTeam,
+                                    ElectionFeature::RestrictSelfVote,
                                 ])
                             )
                             ->schema(components: [
@@ -641,6 +642,17 @@ class Preference extends ElectionPage
                                     )
                                     ->hidden(condition: ! $plan->hasFeature(feature: ElectionFeature::CandidateTeam))
                                     ->label(label: __('filament.user.election-resource.pages.preference.form.candidate_group.label')),
+
+                                FeatureToggle::make(name: 'restrict_self_vote')
+                                    ->addOn(
+                                        condition: $plan->hasAddOnFeature(feature: ElectionFeature::RestrictSelfVote),
+                                        featureFee: $plan->getFeatureFee(feature: ElectionFeature::RestrictSelfVote),
+                                        electorFee: $plan->getElectorFee(feature: ElectionFeature::RestrictSelfVote),
+                                        feeCurrency: $plan->currency,
+                                        hideAddOnPrice: ! $this->canSave(),
+                                    )
+                                    ->hidden(condition: ! $plan->hasFeature(feature: ElectionFeature::RestrictSelfVote))
+                                    ->label(label: __('filament.user.election-resource.pages.preference.form.restrict_self_vote.label')),
                             ]),
 
                         Section::make(heading: __('filament.user.election-resource.pages.preference.form.advanced_preferences_section.heading'))

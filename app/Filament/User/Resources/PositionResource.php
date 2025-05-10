@@ -37,13 +37,16 @@ class PositionResource extends Resource
             PositionForm::nameComponent(),
 
             PositionForm::quotaComponent()
-                ->inlineLabel(),
+                ->inlineLabel()
+                ->visible(condition: fn (HasElection $livewire): bool => $livewire->getElection()->voting_method->canHavePositionQuota()),
 
             PositionForm::abstainComponent()
-                ->live(),
+                ->live()
+                ->visible(condition: fn (HasElection $livewire): bool => $livewire->getElection()->voting_method->canHavePositionQuota()),
 
             PositionForm::thresholdComponent()
-                ->inlineLabel(),
+                ->inlineLabel()
+                ->visible(condition: fn (HasElection $livewire): bool => $livewire->getElection()->voting_method->canHavePositionQuota()),
 
             PositionForm::segmentsComponent()
                 ->visible(condition: fn ($livewire) => $livewire instanceof HasElection && $livewire->getElection()->preference?->segmented_ballot),

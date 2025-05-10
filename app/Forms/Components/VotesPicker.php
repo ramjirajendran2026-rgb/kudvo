@@ -4,11 +4,12 @@ namespace App\Forms\Components;
 
 use App\Data\Election\PreferenceData;
 use App\Data\Election\VoteSecretData;
+use App\Enums\ElectionVotingMethod;
 use App\Facades\Kudvo;
 use App\Models\Candidate;
 use App\Models\Position;
+use Closure;
 use Filament\Forms\Components\CheckboxList;
-use Filament\Forms\Components\Concerns\CanLimitItemsLength;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
@@ -19,10 +20,6 @@ use Spatie\MediaLibrary\MediaCollections\HtmlableMedia;
 
 class VotesPicker extends CheckboxList
 {
-    use CanLimitItemsLength;
-
-    protected string $view = 'forms.components.votes-picker';
-
     #[Locked]
     public string $uuid;
 
@@ -32,9 +29,15 @@ class VotesPicker extends CheckboxList
     #[Locked]
     public bool $isBoothDevice = false;
 
+    #[Locked]
+    public ElectionVotingMethod $votingMethod = ElectionVotingMethod::Standard;
+
     protected ?array $groups = null;
 
     protected string $weightage = '1';
+
+    #[Locked]
+    protected ?string $restrictedMembershipNumber = null;
 
     public static function forPosition(string $uuid, PreferenceData $preference): static
     {
@@ -48,6 +51,38 @@ class VotesPicker extends CheckboxList
         $static->configure();
 
         return $static;
+    }
+
+    public function getView(): string
+    {
+        return $this->getVotingMethod()->getVotesPickerView();
+    }
+
+    public function getVotingMethod(): ElectionVotingMethod
+    {
+        return $this->votingMethod;
+    }
+
+    protected function resolveDefaultClosureDependencyForEvaluationByType(string $parameterType): array
+    {
+        return match ($parameterType) {
+            Position::class => [$this->getPosition()],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType),
+        };
+    }
+
+    public function getPosition(): Position
+    {
+        return Cache::remember(
+            key: $this->getCacheKeyPrefix() . 'position',
+            ttl: 60 * 60 * 24,
+            callback: fn () => Position::where('uuid', $this->uuid)->firstOrFail()
+        );
+    }
+
+    protected function getCacheKeyPrefix(): string
+    {
+        return 'lw.' . $this->getLivewire()->getId() . '.' . $this->getId() . '.';
     }
 
     protected function setUp(): void
@@ -76,10 +111,26 @@ class VotesPicker extends CheckboxList
         $this->hiddenLabel();
         $this->label(fn (Position $position) => $position->name);
 
-        $this->maxItems(fn (Position $position) => $position->quota);
-        $this->minItems(fn (Position $position) => $position->threshold);
+        $this->maxItems(fn (Position $position) => $this->isStandardVotingMethod() ? $position->quota : null);
+        $this->minItems(fn (Position $position) => $this->isStandardVotingMethod() ? $position->threshold : null);
 
-        $this->mutateDehydratedStateUsing(static fn (array $state, self $component) => Arr::map($state, fn ($item) => new VoteSecretData($item, $component->getWeightage())));
+        $this->rules(
+            [
+                fn (self $component): Closure => function (string $attribute, array $value, Closure $fail) use ($component) {
+                    if (array_sum(array_values($value)) != $component->getWeightage()) {
+                        $fail('Use all of the available ' . $component->getWeightage() . ' votes.');
+                    }
+                },
+            ],
+            fn () => $this->isDistributedVotingMethod(),
+        );
+
+        $this->mutateDehydratedStateUsing(static function (array $state, self $component) {
+            return match ($component->getVotingMethod()) {
+                ElectionVotingMethod::Distributed => Arr::map($state, fn ($item, $key) => new VoteSecretData($key, $item)),
+                default => Arr::map($state, fn ($item) => new VoteSecretData($item, $component->getWeightage())),
+            };
+        });
 
         $this->noSearchResultsMessage('No candidates match your search.');
 
@@ -93,18 +144,61 @@ class VotesPicker extends CheckboxList
         ]);
     }
 
-    protected function getCacheKeyPrefix(): string
-    {
-        return 'lw.' . $this->getLivewire()->getId() . '.' . $this->getId() . '.';
-    }
-
-    public function getPosition(): Position
+    /**
+     * @return EloquentCollection<int, Candidate>
+     */
+    public function getCandidates(): EloquentCollection
     {
         return Cache::remember(
-            key: $this->getCacheKeyPrefix() . 'position',
+            key: $this->getCacheKeyPrefix() . 'candidates' . '.' . $this->getRestrictedMembershipNumber(),
             ttl: 60 * 60 * 24,
-            callback: fn () => Position::where('uuid', $this->uuid)->firstOrFail()
+            callback: fn () => $this->getPosition()
+                ->getOrderedCandidates(sort: $this->preference->candidate_sort)
+                ->when(
+                    $this->getRestrictedMembershipNumber(),
+                    fn (EloquentCollection $collection) => $collection->where('membership_number', '!=', $this->getRestrictedMembershipNumber())
+                )
+                ->loadMissing('media')
+                ->when(
+                    $this->hasGroups(),
+                    fn (EloquentCollection $collection) => $collection->loadMissing('candidateGroup'),
+                )
         );
+    }
+
+    public function getRestrictedMembershipNumber(): ?string
+    {
+        return $this->restrictedMembershipNumber;
+    }
+
+    public function hasGroups(): bool
+    {
+        return $this->getGroups() !== null;
+    }
+
+    public function getGroups(): ?array
+    {
+        return $this->groups;
+    }
+
+    public function hasCandidateGroups(): bool
+    {
+        return $this->preference->candidate_group;
+    }
+
+    public function isStandardVotingMethod(): bool
+    {
+        return $this->getVotingMethod() === ElectionVotingMethod::Standard;
+    }
+
+    public function getWeightage(): float
+    {
+        return $this->weightage;
+    }
+
+    public function isDistributedVotingMethod(): bool
+    {
+        return $this->getVotingMethod() === ElectionVotingMethod::Distributed;
     }
 
     public function getHeading(): string
@@ -117,34 +211,6 @@ class VotesPicker extends CheckboxList
         return $this->getPosition()->abstain ?
             $this->getAbstainHelperText() :
             $this->getNonAbstainHelperText();
-    }
-
-    /**
-     * @return EloquentCollection<int, Candidate>
-     */
-    public function getCandidates(): EloquentCollection
-    {
-        return Cache::remember(
-            key: $this->getCacheKeyPrefix() . 'candidates',
-            ttl: 60 * 60 * 24,
-            callback: fn () => $this->getPosition()
-                ->getOrderedCandidates(sort: $this->preference->candidate_sort)
-                ->loadMissing('media')
-                ->when(
-                    $this->hasGroups(),
-                    fn (EloquentCollection $collection) => $collection->loadMissing('candidateGroup'),
-                )
-        );
-    }
-
-    public function getCandidate(string $uuid): ?Candidate
-    {
-        return $this->getCandidates()->firstWhere('uuid', $uuid);
-    }
-
-    public function getGroupId(string $uuid): ?int
-    {
-        return $this->getCandidate($uuid)?->candidate_group_id;
     }
 
     public function getAbstainHelperText(): string
@@ -166,9 +232,14 @@ class VotesPicker extends CheckboxList
         );
     }
 
-    public function hasCandidateGroups(): bool
+    public function getGroupId(string $uuid): ?int
     {
-        return $this->preference->candidate_group;
+        return $this->getCandidate($uuid)?->candidate_group_id;
+    }
+
+    public function getCandidate(string $uuid): ?Candidate
+    {
+        return $this->getCandidates()->firstWhere('uuid', $uuid);
     }
 
     public function shouldShowPhoto(): bool
@@ -244,16 +315,6 @@ BLADE
         return $this;
     }
 
-    public function getGroups(): ?array
-    {
-        return $this->groups;
-    }
-
-    public function hasGroups(): bool
-    {
-        return $this->getGroups() !== null;
-    }
-
     public function weightage(string $weightage): static
     {
         $this->weightage = $weightage;
@@ -261,16 +322,17 @@ BLADE
         return $this;
     }
 
-    public function getWeightage(): float
+    public function restrictedMembershipNumber(?string $value): static
     {
-        return $this->weightage;
+        $this->restrictedMembershipNumber = $value;
+
+        return $this;
     }
 
-    protected function resolveDefaultClosureDependencyForEvaluationByType(string $parameterType): array
+    public function votingMethod(ElectionVotingMethod $value): static
     {
-        return match ($parameterType) {
-            Position::class => [$this->getPosition()],
-            default => parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType),
-        };
+        $this->votingMethod = $value;
+
+        return $this;
     }
 }
