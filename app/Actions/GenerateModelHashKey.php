@@ -10,7 +10,7 @@ class GenerateModelHashKey
 {
     public function execute(Model $model, int $minHashLength = 6): string
     {
-        $key = $model->getKey() ?: (DB::transaction(fn (): int => $model->newQuery()->lockForUpdate()->max($model->getKeyName())) + 1);
+        $key = $model->getKey() ?: (DB::transaction(fn (): int => $model->newQuery()->lockForUpdate()->max($model->getKeyName()) ?? 0) + 1);
 
         $hashIds = new Hashids(salt: $model::class, minHashLength: $minHashLength);
 
