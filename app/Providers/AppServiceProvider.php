@@ -197,8 +197,7 @@ HTML
         });
 
         Turnstile::configureUsing(modifyUsing: function (Turnstile $component) {
-            $component->language(language: 'en-us')
-                ->hidden(condition: App::isLocal());
+            $component->hidden(condition: App::isLocal());
         });
     }
 
