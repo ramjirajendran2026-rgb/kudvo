@@ -4,6 +4,7 @@ namespace App\Filament\User\Resources;
 
 use App\Filament\Base\Contracts\HasElection;
 use App\Filament\Base\Contracts\HasElectorGroups;
+use App\Filament\Base\Contracts\HasNomination;
 use App\Forms\PositionForm;
 use App\Models\Position;
 use Filament\Forms\Form;
@@ -25,6 +26,19 @@ class PositionResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
+    public static function getTableCreateAction(): TableCreateAction
+    {
+        return TableCreateAction::make()
+            ->createAnother(condition: false)
+            ->form(form: fn (Form $form): Form => static::form($form))
+            ->icon(icon: 'heroicon-m-plus')
+            ->model(model: static::getModel())
+            ->modalCancelAction(action: false)
+            ->modalFooterActionsAlignment(alignment: Alignment::Center)
+            ->modelLabel(label: static::getModelLabel())
+            ->modalWidth(width: MaxWidth::Medium);
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -38,15 +52,24 @@ class PositionResource extends Resource
 
             PositionForm::quotaComponent()
                 ->inlineLabel()
-                ->visible(condition: fn (HasElection $livewire): bool => $livewire->getElection()->voting_method->canHavePositionQuota()),
+                ->visible(condition: fn (HasElection | HasNomination $livewire): bool => match (true) {
+                    $livewire instanceof HasElection => $livewire->getElection()->voting_method->canHavePositionQuota(),
+                    default => true,
+                }),
 
             PositionForm::abstainComponent()
                 ->live()
-                ->visible(condition: fn (HasElection $livewire): bool => $livewire->getElection()->voting_method->canHavePositionQuota()),
+                ->visible(condition: fn (HasElection | HasNomination $livewire): bool => match (true) {
+                    $livewire instanceof HasElection => $livewire->getElection()->voting_method->canHavePositionQuota(),
+                    default => true,
+                }),
 
             PositionForm::thresholdComponent()
                 ->inlineLabel()
-                ->visible(condition: fn (HasElection $livewire): bool => $livewire->getElection()->voting_method->canHavePositionQuota()),
+                ->visible(condition: fn (HasElection | HasNomination $livewire): bool => match (true) {
+                    $livewire instanceof HasElection => $livewire->getElection()->voting_method->canHavePositionQuota(),
+                    default => true,
+                }),
 
             PositionForm::segmentsComponent()
                 ->visible(condition: fn ($livewire) => $livewire instanceof HasElection && $livewire->getElection()->preference?->segmented_ballot),
@@ -91,19 +114,6 @@ class PositionResource extends Resource
             ])
             ->defaultSort(column: 'sort')
             ->reorderable(column: 'sort');
-    }
-
-    public static function getTableCreateAction(): TableCreateAction
-    {
-        return TableCreateAction::make()
-            ->createAnother(condition: false)
-            ->form(form: fn (Form $form): Form => static::form($form))
-            ->icon(icon: 'heroicon-m-plus')
-            ->model(model: static::getModel())
-            ->modalCancelAction(action: false)
-            ->modalFooterActionsAlignment(alignment: Alignment::Center)
-            ->modelLabel(label: static::getModelLabel())
-            ->modalWidth(width: MaxWidth::Medium);
     }
 
     public static function getTableEditAction(): TableEditAction
