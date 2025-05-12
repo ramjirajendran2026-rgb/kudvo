@@ -228,7 +228,8 @@ HTML,
             SelectAction::make(name: 'boothId')
                 ->options(options: $this->getElection()->boothTokens()->pluck('name', 'id'))
                 ->placeholder(placeholder: 'All Booths')
-                ->label(label: fn () => $this->getElection()->boothTokens()->find(id: $this->boothId)?->name),
+                ->label(label: fn () => $this->getElection()->boothTokens()->find(id: $this->boothId)?->name)
+                ->visible(condition: $this->getElection()->preference->booth_voting),
 
             $this->getDownloadAction(),
         ];
