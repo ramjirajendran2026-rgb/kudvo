@@ -1,4 +1,5 @@
 @php
+    use App\Enums\ElectionVotingMethod;
     use App\Models\Election;
     use Illuminate\Support\Arr;
 
@@ -6,6 +7,7 @@
     $preference = $election->preference;
     $isCandidatePhotoEnabled = $preference->candidate_photo;
     $isCandidateSymbolEnabled = $preference->candidate_symbol;
+    $isDistributedVoting = $election->voting_method === ElectionVotingMethod::Distributed;
 
     $columns = 1;
 
@@ -14,6 +16,10 @@
     }
 
     if ($isCandidateSymbolEnabled) {
+        $columns++;
+    }
+
+    if ($isDistributedVoting) {
         $columns++;
     }
 @endphp
@@ -29,6 +35,7 @@
             .page {
                 padding: 10mm;
             }
+
             table {
                 width: 100%;
                 border-collapse: collapse;
@@ -184,6 +191,18 @@
                                         {{ implode(' • ', $contacts) }}
                                     </div>
                                 </td>
+
+                                @if ($isDistributedVoting)
+                                    <td
+                                        style="
+                                            padding: 6mm;
+                                            text-align: center;
+                                            vertical-align: middle;
+                                        "
+                                    >
+                                        {{ $vote->value }}
+                                    </td>
+                                @endif
                             </tr>
                         @empty
                             <tr>
