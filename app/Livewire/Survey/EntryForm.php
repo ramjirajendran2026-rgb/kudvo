@@ -118,7 +118,7 @@ class EntryForm extends Component implements HasForms
 
     public function getSuccessDescription(): HtmlString
     {
-        $refNumber = app(GenerateReferenceNumber::class)->execute($this->surveyResponse, $this->survey);
+        $refNumber = $this->isPreview ? 'XXXXXXXX' : app(GenerateReferenceNumber::class)->execute($this->surveyResponse, $this->survey);
 
         return new HtmlString(
             <<<HTML
