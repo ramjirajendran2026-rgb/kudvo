@@ -50,6 +50,7 @@ class MemberImporter extends Importer
                 )
                 ->rules(rules: fn (array $options, Member $record): array => [
                     'nullable',
+                    'phone:AUTO',
                     Rule::unique(table: 'members')
                         ->ignoreModel(model: $record)
                         ->where(column: 'organisation_id', value: $options['organisation_id']),

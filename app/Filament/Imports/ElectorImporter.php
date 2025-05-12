@@ -52,7 +52,7 @@ class ElectorImporter extends Importer
                 ->rules(rules: function (array $options, Elector $record): array {
                     $rules = [
                         'nullable',
-                        //                        'phone:INTERNATIONAL,'.($options['phone_country'] ?? '')
+                        'phone:AUTO',
                     ];
 
                     if ($options['event_type'] === Election::class && Election::find(id: $options['event_id'])?->preference->elector_duplicate_phone === false) {
@@ -93,6 +93,17 @@ class ElectorImporter extends Importer
         ];
     }
 
+    public static function getCompletedNotificationBody(Import $import): string
+    {
+        $body = 'Your elector import has completed and ' . number_format($import->successful_rows) . ' ' . str('row')->plural($import->successful_rows) . ' imported.';
+
+        if ($failedRowsCount = $import->getFailedRowsCount()) {
+            $body .= ' ' . number_format($failedRowsCount) . ' ' . str('row')->plural($failedRowsCount) . ' failed to import.';
+        }
+
+        return $body;
+    }
+
     public static function getOptionsFormComponents(): array
     {
         return [
@@ -111,16 +122,5 @@ class ElectorImporter extends Importer
 
             'membership_number' => $this->data['membership_number'],
         ]);
-    }
-
-    public static function getCompletedNotificationBody(Import $import): string
-    {
-        $body = 'Your elector import has completed and ' . number_format($import->successful_rows) . ' ' . str('row')->plural($import->successful_rows) . ' imported.';
-
-        if ($failedRowsCount = $import->getFailedRowsCount()) {
-            $body .= ' ' . number_format($failedRowsCount) . ' ' . str('row')->plural($failedRowsCount) . ' failed to import.';
-        }
-
-        return $body;
     }
 }
