@@ -32,7 +32,7 @@ class CandidateImporter extends Importer
                         ]),
                 )
                 ->requiredMapping()
-                ->rules(rules: ['max:100']),
+                ->rules(rules: ['required', 'max:100']),
 
             ImportColumn::make(name: 'membership_number')
                 ->example(example: 'MEM-12345')
@@ -63,16 +63,6 @@ class CandidateImporter extends Importer
         ];
     }
 
-    public function resolveRecord(): ?Candidate
-    {
-        // return Candidate::firstOrNew([
-        //     // Update existing records, matching them by `$this->data['column_name']`
-        //     'email' => $this->data['email'],
-        // ]);
-
-        return new Candidate;
-    }
-
     public static function getCompletedNotificationBody(Import $import): string
     {
         $body = 'Your candidate import has completed and ' . number_format($import->successful_rows) . ' ' . str('row')->plural($import->successful_rows) . ' imported.';
@@ -82,5 +72,15 @@ class CandidateImporter extends Importer
         }
 
         return $body;
+    }
+
+    public function resolveRecord(): ?Candidate
+    {
+        // return Candidate::firstOrNew([
+        //     // Update existing records, matching them by `$this->data['column_name']`
+        //     'email' => $this->data['email'],
+        // ]);
+
+        return new Candidate;
     }
 }
