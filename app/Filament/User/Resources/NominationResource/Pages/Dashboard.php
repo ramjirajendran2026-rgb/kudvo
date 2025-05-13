@@ -4,9 +4,11 @@ namespace App\Filament\User\Resources\NominationResource\Pages;
 
 use App\Enums\NominationStatus;
 use App\Filament\Base\Pages\Concerns\HasStateSection;
+use App\Filament\Nomination\Resources\NomineeResource;
 use App\Filament\User\Resources\NominationResource;
 use App\Filament\User\Resources\NominationResource\Widgets\NominationStatsOverview;
 use Filament\Actions\Action;
+use Illuminate\Support\Js;
 
 class Dashboard extends NominationPage
 {
@@ -17,43 +19,6 @@ class Dashboard extends NominationPage
     protected static ?string $navigationIcon = 'heroicon-o-home';
 
     protected static ?string $activeNavigationIcon = 'heroicon-s-home';
-
-    public function getStateHeading(): ?string
-    {
-        return match (true) {
-            $this->hasPendingPreferenceSetup() => 'Get started',
-            $this->hasPendingElectorSetup() => 'Voters information',
-            $this->hasPendingPositionSetup() => 'Configure positions',
-            $this->canSetTiming() => 'Configure timing',
-            $this->canPublish() => 'All set!',
-            $this->canClose() => 'Nomination Published',
-            default => null,
-        };
-    }
-
-    public function getStateDescription(): ?string
-    {
-        return match (true) {
-            $this->hasPendingPreferenceSetup() => 'Continue to configure nomination preferences',
-            $this->hasPendingElectorSetup() => 'Bulk import or add manually',
-            $this->hasPendingPositionSetup() => 'Add positions and available posts',
-            $this->canSetTiming() => 'Set start time and end time for the nominations',
-            $this->canPublish() => 'Once published, you are not allowed to modify any of elector and position information.',
-            default => null,
-        };
-    }
-
-    public function getStateIcon(): ?string
-    {
-        return match (true) {
-            $this->hasPendingPreferenceSetup() => 'heroicon-o-cog-6-tooth',
-            $this->hasPendingElectorSetup() => 'heroicon-o-user-group',
-            $this->hasPendingPositionSetup() => 'heroicon-o-briefcase',
-            $this->canSetTiming() => 'heroicon-o-clock',
-            $this->canPublish() => NominationStatus::PUBLISHED->getIcon(),
-            default => null,
-        };
-    }
 
     protected function getFooterWidgets(): array
     {
@@ -80,6 +45,46 @@ class Dashboard extends NominationPage
             $this->getPublishAction(),
 
             $this->getCloseAction(),
+
+            Action::make('copyLink')
+                ->alpineClickHandler(static fn (self $livewire) => sprintf(
+                    <<<'JS'
+navigator.clipboard.writeText(%s).then(() => new FilamentNotification().title('Copied successfully').success().send())
+JS
+                    ,
+                    Js::encode(NomineeResource::getUrl(parameters: ['nomination' => $livewire->getNomination()], panel: 'nomination')),
+                ))
+                ->color('success')
+                ->icon(icon: 'heroicon-m-clipboard-document')
+                ->outlined()
+                ->visible(condition: fn (self $livewire) => $livewire->canClose()),
+
+            Action::make('shareLink')
+                ->alpineClickHandler(fn (self $livewire) => sprintf(
+                    <<<'JS'
+navigator.share({
+    title: %s,
+    text: %s,
+    url: %s
+})
+JS
+                    ,
+                    Js::encode($livewire->getNomination()->name),
+                    Js::encode('Use this link to nominate a candidate.'),
+                    Js::encode(NomineeResource::getUrl(parameters: ['nomination' => $livewire->getNomination()], panel: 'nomination')),
+                ))
+                ->icon('heroicon-m-share')
+                ->outlined()
+                ->visible(condition: fn (self $livewire) => $livewire->canClose()),
+
+            Action::make('openInNewTab')
+                ->icon(icon: 'heroicon-m-arrow-top-right-on-square')
+                ->iconButton()
+                ->url(
+                    NomineeResource::getUrl(parameters: ['nomination' => $this->getNomination()], panel: 'nomination'),
+                    shouldOpenInNewTab: true,
+                )
+                ->visible(condition: fn (self $livewire) => $livewire->canClose()),
         ];
     }
 
@@ -138,6 +143,32 @@ class Dashboard extends NominationPage
             });
     }
 
+    public function getStateDescription(): ?string
+    {
+        return match (true) {
+            $this->hasPendingPreferenceSetup() => 'Continue to configure nomination preferences',
+            $this->hasPendingElectorSetup() => 'Bulk import or add manually',
+            $this->hasPendingPositionSetup() => 'Add positions and available posts',
+            $this->canSetTiming() => 'Set start time and end time for the nominations',
+            $this->canPublish() => 'Once published, you are not allowed to modify any of elector and position information.',
+            $this->canClose() => NomineeResource::getUrl(parameters: ['nomination' => $this->getNomination()], panel: 'nomination'),
+            default => null,
+        };
+    }
+
+    public function getStateHeading(): ?string
+    {
+        return match (true) {
+            $this->hasPendingPreferenceSetup() => 'Get started',
+            $this->hasPendingElectorSetup() => 'Voters information',
+            $this->hasPendingPositionSetup() => 'Configure positions',
+            $this->canSetTiming() => 'Configure timing',
+            $this->canPublish() => 'All set!',
+            $this->canClose() => 'Nomination Published',
+            default => null,
+        };
+    }
+
     protected function hasPendingPreferenceSetup(): bool
     {
         return Preference::canAccessPage(nomination: $this->getNomination()) &&
@@ -156,6 +187,11 @@ class Dashboard extends NominationPage
             ($this->getNomination()->positions_count ?? $this->getNomination()->loadCount(relations: ['positions'])->positions_count) < 1;
     }
 
+    protected function canSetTiming(): bool
+    {
+        return static::can(action: 'setTiming', nomination: $this->getNomination());
+    }
+
     protected function canPublish(): bool
     {
         return static::can(action: 'publish', nomination: $this->getNomination());
@@ -166,9 +202,16 @@ class Dashboard extends NominationPage
         return static::can(action: 'close', nomination: $this->getNomination());
     }
 
-    protected function canSetTiming(): bool
+    public function getStateIcon(): ?string
     {
-        return static::can(action: 'setTiming', nomination: $this->getNomination());
+        return match (true) {
+            $this->hasPendingPreferenceSetup() => 'heroicon-o-cog-6-tooth',
+            $this->hasPendingElectorSetup() => 'heroicon-o-user-group',
+            $this->hasPendingPositionSetup() => 'heroicon-o-briefcase',
+            $this->canSetTiming() => 'heroicon-o-clock',
+            $this->canPublish() => NominationStatus::PUBLISHED->getIcon(),
+            default => null,
+        };
     }
 
     protected function canUpdateTiming(): bool
