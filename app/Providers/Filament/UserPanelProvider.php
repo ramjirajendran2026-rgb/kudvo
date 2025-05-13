@@ -15,7 +15,6 @@ use App\Models\Organisation;
 use App\Settings\GoogleTagManagerSettings;
 use App\Settings\ServiceConfig;
 use Exception;
-use Filament\Facades\Filament;
 use Filament\FontProviders\LocalFontProvider;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -103,12 +102,6 @@ class UserPanelProvider extends PanelProvider
             ->databaseNotificationsPolling(interval: null)
             ->globalSearch(provider: false)
             ->sidebarCollapsibleOnDesktop()
-            ->spa()
-            ->spaUrlExceptions(fn () => [
-                Filament::getLoginUrl(),
-                Filament::getRegistrationUrl(),
-                Filament::getRequestPasswordResetUrl(),
-            ])
             ->unsavedChangesAlerts()
             ->renderHook(
                 name: PanelsRenderHook::HEAD_START,
