@@ -33,7 +33,8 @@ To set up Kudvo locally:
     ```
 2. **Install Dependencies**
     ```sh
-    composer install  # Install Laravel dependencies
+    composer install #(or)
+    composer install --ignore-platform-reqs  # Install Laravel dependencies
     npm install       # Install frontend dependencies
     ```
 3. **Set Up Environment Variables**
