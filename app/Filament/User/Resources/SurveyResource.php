@@ -110,6 +110,7 @@ BLADE
                         ->maxLength(12),
 
                     TextInput::make('reference_number_pad_length')
+                        ->dehydrateStateUsing(fn ($state) => $state ?? 1)
                         ->maxValue(12)
                         ->minValue(1)
                         ->numeric(),
