@@ -26,4 +26,9 @@ class Home extends Page
     {
         return MaxWidth::ScreenLarge;
     }
+
+    public static function getRelativeRouteName(): string
+    {
+        return 'home';
+    }
 }
