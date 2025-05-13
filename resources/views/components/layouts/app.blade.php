@@ -91,8 +91,10 @@
             <ul
                 class="hidden flex-1 items-center gap-x-4 lg:flex lg:justify-center"
             >
-                <x-filament-panels::topbar.item :url="route('home')" :active="request()->routeIs('home')"
->
+                <x-filament-panels::topbar.item
+                    :url="route('home')"
+                    :active="request()->routeIs('home')"
+                >
                     {{ __('app.nav.home.label') }}
                 </x-filament-panels::topbar.item>
                 <li class="fi-topbar-item">
@@ -103,7 +105,9 @@
                     >
                         <x-slot name="trigger">
                             <ul>
-                                <x-filament-panels::topbar.item :active="request()->routeIs('products.*')">
+                                <x-filament-panels::topbar.item
+                                    :active="request()->routeIs('products.*')"
+                                >
                                     {{ __('app.nav.products.label') }}
                                 </x-filament-panels::topbar.item>
                             </ul>
@@ -155,7 +159,10 @@
                     {{ __('app.nav.clientele.label') }}
                 </x-filament-panels::topbar.item>
 
-                <x-filament-panels::topbar.item :url="route('wiki.index')" :active="request()->routeIs('wiki.*')">
+                <x-filament-panels::topbar.item
+                    :url="route('wiki.index')"
+                    :active="request()->routeIs('wiki.*')"
+                >
                     {{ __('app.nav.wiki.label') }}
                 </x-filament-panels::topbar.item>
 
@@ -219,7 +226,10 @@
                 <ul
                     class="flex w-full flex-col items-start space-y-4 lg:flex-row"
                 >
-                    <x-filament-panels::topbar.item :url="route('home')" :active="request()->routeIs('home')">
+                    <x-filament-panels::topbar.item
+                        :url="route('home')"
+                        :active="request()->routeIs('home')"
+                    >
                         {{ __('app.nav.home.label') }}
                     </x-filament-panels::topbar.item>
 
@@ -229,7 +239,9 @@
                         teleport
                     >
                         <x-slot name="trigger">
-                            <x-filament-panels::topbar.item :active="request()->routeIs('products.*')">
+                            <x-filament-panels::topbar.item
+                                :active="request()->routeIs('products.*')"
+                            >
                                 {{ __('app.nav.products.label') }}
                             </x-filament-panels::topbar.item>
                         </x-slot>
@@ -279,7 +291,10 @@
                         {{ __('app.nav.clientele.label') }}
                     </x-filament-panels::topbar.item>
 
-                    <x-filament-panels::topbar.item :url="route('wiki.index')" :active="request()->routeIs('wiki.*')">
+                    <x-filament-panels::topbar.item
+                        :url="route('wiki.index')"
+                        :active="request()->routeIs('wiki.*')"
+                    >
                         {{ __('app.nav.wiki.label') }}
                     </x-filament-panels::topbar.item>
 

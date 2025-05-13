@@ -100,7 +100,7 @@
                         style="filter: brightness(0.97)"
                     />
                     <div
-                        class="glass neumorph fade-in absolute inset-0 mx-4 flex max-w-full flex-col justify-center px-4 py-6 shadow-lg sm:mx-10 sm:px-8 sm:py-8 md:mx-0 md:w-[66.6%] md:px-12 md:py-12 lg:w-1/2 lg:px-16"
+                        class="fade-in absolute inset-0 mx-4 flex max-w-full flex-col justify-center px-4 py-6 shadow-lg glass neumorph sm:mx-10 sm:px-8 sm:py-8 md:mx-0 md:w-[66.6%] md:px-12 md:py-12 lg:w-1/2 lg:px-16"
                         x-bind:class="{ 'animated-image': activeSlide === currentSlide }"
                     >
                         <h2
@@ -119,7 +119,7 @@
                             @if (filled($item->cta_label))
                                 <a
                                     href="{{ $item->cta_url }}"
-                                    class="btn-primary focus-outline xs:text-sm px-5 py-2 text-center text-xs sm:px-6 sm:py-3 sm:text-base md:px-8 md:py-4 md:text-lg"
+                                    class="xs:text-sm px-5 py-2 text-center text-xs btn-primary focus-outline sm:px-6 sm:py-3 sm:text-base md:px-8 md:py-4 md:text-lg"
                                     tabindex="0"
                                     role="button"
                                 >
@@ -130,7 +130,7 @@
                             @if (filled($item->cta2_label))
                                 <a
                                     href="{{ $item->cta2_url }}"
-                                    class="btn-primary focus-outline xs:text-sm bg-green-500 px-5 py-2 text-center text-xs hover:bg-green-600 sm:px-6 sm:py-3 sm:text-base md:px-8 md:py-4 md:text-lg"
+                                    class="xs:text-sm bg-green-500 px-5 py-2 text-center text-xs btn-primary focus-outline hover:bg-green-600 sm:px-6 sm:py-3 sm:text-base md:px-8 md:py-4 md:text-lg"
                                     tabindex="0"
                                     role="button"
                                 >
@@ -143,7 +143,7 @@
                 <!-- Small screens: image below content card -->
                 <div class="flex w-full flex-col p-2 md:hidden">
                     <div
-                        class="glass neumorph fade-in px-3 py-5 shadow-lg sm:px-6 sm:py-6"
+                        class="fade-in px-3 py-5 shadow-lg glass neumorph sm:px-6 sm:py-6"
                     >
                         <h2
                             class="xs:text-2xl contrast:text-white mb-4 break-words text-xl font-extrabold leading-tight tracking-tight text-gray-900 drop-shadow-md sm:text-3xl"
@@ -161,7 +161,7 @@
                             @if (filled($item->cta_label))
                                 <a
                                     href="{{ $item->cta_url }}"
-                                    class="btn-primary focus-outline xs:text-sm px-5 py-2 text-center text-xs sm:px-6 sm:py-3 sm:text-base"
+                                    class="xs:text-sm px-5 py-2 text-center text-xs btn-primary focus-outline sm:px-6 sm:py-3 sm:text-base"
                                     tabindex="0"
                                     role="button"
                                 >
@@ -172,7 +172,7 @@
                             @if (filled($item->cta2_label))
                                 <a
                                     href="{{ $item->cta2_url }}"
-                                    class="btn-primary focus-outline xs:text-sm bg-green-500 px-5 py-2 text-center text-xs hover:bg-green-600 sm:px-6 sm:py-3 sm:text-base"
+                                    class="xs:text-sm bg-green-500 px-5 py-2 text-center text-xs btn-primary focus-outline hover:bg-green-600 sm:px-6 sm:py-3 sm:text-base"
                                     tabindex="0"
                                     role="button"
                                 >
@@ -228,7 +228,7 @@
         <h2 class="text-center text-2xl font-semibold text-black md:text-4xl">
             {{ __('pages/home.content.features.title') }}
         </h2>
-        <div class="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 md:gap-8">
+        <div class="mt-5 grid gap-4 sm:grid-cols-2 md:gap-8 lg:grid-cols-3">
             @foreach ($featureItems as $feature)
                 <x-home.feature-card :data="$feature" />
             @endforeach
@@ -244,7 +244,7 @@
             >
                 {{ __('pages/home.content.products.title') }}
             </h4>
-            <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 md:gap-8">
+            <div class="grid gap-4 sm:grid-cols-2 md:gap-8 lg:grid-cols-3">
                 @foreach ($productItems as $product)
                     <x-home.product-card :data="$product" />
                 @endforeach
@@ -290,7 +290,7 @@
 
     <section class="!mt-0 bg-white pb-16">
         <div
-            class="container flex flex-col items-center justify-between gap-6 lg:flex-row md:gap-12"
+            class="container flex flex-col items-center justify-between gap-6 md:gap-12 lg:flex-row"
         >
             <!-- Left Section -->
             <div class="w-full flex-1 space-y-6">
@@ -315,7 +315,9 @@
                     class="absolute inset-0 h-full w-full object-cover sm:rounded-lg md:rounded-3xl"
                 />
                 <!-- Content Card -->
-                <div class="relative space-y-4 rounded-xl bg-white p-4 shadow-lg sm:p-6 md:p-8">
+                <div
+                    class="relative space-y-4 rounded-xl bg-white p-4 shadow-lg sm:p-6 md:p-8"
+                >
                     <h4 class="text-center text-2xl font-semibold md:text-4xl">
                         {{ config('app.name') }}
                     </h4>
@@ -343,7 +345,7 @@
                         />
                         <a
                             href="mailto:{{ __('app.contact.email.address') }}"
-                            class="cursor-pointer text-sm sm:text-lg hover:text-primary-700 hover:underline"
+                            class="cursor-pointer text-sm hover:text-primary-700 hover:underline sm:text-lg"
                         >
                             {{ __('app.contact.email.address') }}
                         </a>

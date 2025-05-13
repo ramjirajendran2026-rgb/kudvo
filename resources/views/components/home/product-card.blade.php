@@ -30,7 +30,7 @@
             size="xl"
             :outlined="true"
             color="primary"
-            class="btn-primary focus-outline mt-2 w-full !rounded-full py-3 text-base sm:text-lg"
+            class="mt-2 w-full !rounded-full py-3 text-base btn-primary focus-outline sm:text-lg"
             style="font-family: 'Inter', system-ui, sans-serif"
             :disabled="blank($data->cta_url)"
             :tag="blank($data->cta_url) ? 'button' : 'a'"

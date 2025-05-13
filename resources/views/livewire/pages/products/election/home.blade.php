@@ -71,92 +71,94 @@
     </section>
 
     <section id="benefits" class="bg-white py-16">
-      <div
-          class="container flex flex-wrap justify-center gap-6 lg:gap-10"
-      >
-          <!-- Section Title -->
-          <div class="animate-zoomIn w-full space-y-4">
-              <h2 class="text-center text-2xl font-semibold sm:text-3xl">
-                  {{ __('pages/products/election/home.content.benefits.title') }}
-              </h2>
-              <p class="text-center text-gray-600">
-                  {{ __('pages/products/election/home.content.benefits.description') }}
-              </p>
-          </div>
+        <div class="container flex flex-wrap justify-center gap-6 lg:gap-10">
+            <!-- Section Title -->
+            <div class="animate-zoomIn w-full space-y-4">
+                <h2 class="text-center text-2xl font-semibold sm:text-3xl">
+                    {{ __('pages/products/election/home.content.benefits.title') }}
+                </h2>
+                <p class="text-center text-gray-600">
+                    {{ __('pages/products/election/home.content.benefits.description') }}
+                </p>
+            </div>
 
-          <!-- Benefits List -->
-          @foreach ($benefits as $item)
-              <div class="flex w-full flex-col items-center space-y-4 text-center sm:w-[calc(50%-1.5rem)] lg:w-[calc(33.333%-2.5rem)]">
-                  <!-- Icon -->
-                  {!! $item->icon !!}
+            <!-- Benefits List -->
+            @foreach ($benefits as $item)
+                <div
+                    class="flex w-full flex-col items-center space-y-4 text-center sm:w-[calc(50%-1.5rem)] lg:w-[calc(33.333%-2.5rem)]"
+                >
+                    <!-- Icon -->
+                    {!! $item->icon !!}
 
-                  <!-- Title -->
-                  <h3 class="text-lg font-semibold sm:text-xl">
-                      {{ $item->title }}
-                  </h3>
+                    <!-- Title -->
+                    <h3 class="text-lg font-semibold sm:text-xl">
+                        {{ $item->title }}
+                    </h3>
 
-                  <!-- Description -->
-                  <p class="text-gray-600">
-                      {{ $item->description }}
-                  </p>
-              </div>
-          @endforeach
-      </div>
+                    <!-- Description -->
+                    <p class="text-gray-600">
+                        {{ $item->description }}
+                    </p>
+                </div>
+            @endforeach
+        </div>
     </section>
 
     <section id="how-it-works" class="py-16">
-       <div class="container flex flex-col items-center gap-6">
-           <!-- Section Title -->
-           <div class="w-full space-y-4">
-               <h2 class="text-center text-2xl font-semibold sm:text-3xl">
-                   {{ __('pages/products/election/home.content.how_it_works.title') }}
-               </h2>
-               <p class="text-center text-gray-600">
-                   {{ __('pages/products/election/home.content.how_it_works.description') }}
-               </p>
-           </div>
+        <div class="container flex flex-col items-center gap-6">
+            <!-- Section Title -->
+            <div class="w-full space-y-4">
+                <h2 class="text-center text-2xl font-semibold sm:text-3xl">
+                    {{ __('pages/products/election/home.content.how_it_works.title') }}
+                </h2>
+                <p class="text-center text-gray-600">
+                    {{ __('pages/products/election/home.content.how_it_works.description') }}
+                </p>
+            </div>
 
-           <!-- How It Works Items -->
-           <div class="flex w-full flex-wrap justify-center gap-6 lg:gap-10">
-               @foreach ($howItWorks as $item)
-                   <div class="flex w-full flex-col items-center space-y-4 text-center sm:w-[calc(50%-1.5rem)] lg:w-[calc(33.333%-2.5rem)]">
-                       <!-- Icon -->
-                       {!! $item->icon !!}
+            <!-- How It Works Items -->
+            <div class="flex w-full flex-wrap justify-center gap-6 lg:gap-10">
+                @foreach ($howItWorks as $item)
+                    <div
+                        class="flex w-full flex-col items-center space-y-4 text-center sm:w-[calc(50%-1.5rem)] lg:w-[calc(33.333%-2.5rem)]"
+                    >
+                        <!-- Icon -->
+                        {!! $item->icon !!}
 
-                       <!-- Title -->
-                       <h3 class="text-lf font-semibold sm:text-xl">
-                           {{ $item->title }}
-                       </h3>
+                        <!-- Title -->
+                        <h3 class="text-lf font-semibold sm:text-xl">
+                            {{ $item->title }}
+                        </h3>
 
-                       <!-- Description -->
-                       <p class="text-gray-600">
-                           {{ $item->description }}
-                       </p>
-                   </div>
-               @endforeach
-           </div>
+                        <!-- Description -->
+                        <p class="text-gray-600">
+                            {{ $item->description }}
+                        </p>
+                    </div>
+                @endforeach
+            </div>
 
-           <!-- CTA Buttons -->
-           <div class="flex flex-wrap justify-center gap-4 text-center">
-               <x-filament::button
-                   :href="__('pages/products/election/home.content.how_it_works.cta.url')"
-                   :outlined="true"
-                   tag="a"
-                   size="xl"
-                   title="How it's works page link"
-               >
-                   {{ __('pages/products/election/home.content.how_it_works.cta.label') }}
-               </x-filament::button>
-               <x-filament::button
-                   size="xl"
-                   :outlined="true"
-                   tag="a"
-                   :href="__('pages/products/election/how-it-works.content.hero.cta.url')"
-               >
-                   {{ __('pages/products/election/how-it-works.content.hero.cta.label') }}
-               </x-filament::button>
-           </div>
-       </div>
+            <!-- CTA Buttons -->
+            <div class="flex flex-wrap justify-center gap-4 text-center">
+                <x-filament::button
+                    :href="__('pages/products/election/home.content.how_it_works.cta.url')"
+                    :outlined="true"
+                    tag="a"
+                    size="xl"
+                    title="How it's works page link"
+                >
+                    {{ __('pages/products/election/home.content.how_it_works.cta.label') }}
+                </x-filament::button>
+                <x-filament::button
+                    size="xl"
+                    :outlined="true"
+                    tag="a"
+                    :href="__('pages/products/election/how-it-works.content.hero.cta.url')"
+                >
+                    {{ __('pages/products/election/how-it-works.content.hero.cta.label') }}
+                </x-filament::button>
+            </div>
+        </div>
     </section>
 
     @foreach ($additionalSections as $section)

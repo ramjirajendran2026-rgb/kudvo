@@ -56,12 +56,14 @@ export default {
                     'box-shadow': '8px 8px 24px #e3e8f0, -8px -8px 24px #fff',
                 },
                 '.btn-primary': {
-                    background: 'linear-gradient(90deg, #2563eb 0%, #1e40af 100%)',
+                    background:
+                        'linear-gradient(90deg, #2563eb 0%, #1e40af 100%)',
                     color: '#fff',
                     'border-radius': '9999px',
                     'box-shadow': '0 2px 8px 0 #2563eb33',
                     'font-weight': '600',
-                    transition: 'background 0.2s, box-shadow 0.2s, transform 0.1s',
+                    transition:
+                        'background 0.2s, box-shadow 0.2s, transform 0.1s',
                 },
                 '.btn-primary:hover, .btn-primary:focus': {
                     background: '#1e40af',
