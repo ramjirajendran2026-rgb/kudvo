@@ -112,21 +112,27 @@ class UserPanelProvider extends PanelProvider
                 hook: fn (GoogleTagManagerSettings $gtm) => new HtmlString(html: $gtm->getBodyScript())
             )
             ->renderHook(
-                name: PanelsRenderHook::SIMPLE_PAGE_START,
-                hook: fn (Panel $panel) => new HtmlString(html: Blade::render(
-                    <<<'BLADE'
-<x-filament::link href="/" icon="heroicon-m-home">Home</x-filament::button>
-BLADE
-                )),
-                scopes: [
-                    Login::class,
-                    Register::class,
-                ]
-            )
-            ->renderHook(
                 name: PanelsRenderHook::PAGE_START,
                 hook: fn () => new HtmlString(html: '<span class="pg-election-list hidden"></span>'),
                 scopes: ManageElections::class
+            )
+            ->renderHook(
+                name: PanelsRenderHook::AUTH_LOGIN_FORM_AFTER,
+                hook: fn (Panel $panel) => new HtmlString(html: Blade::render(
+                    <<<'BLADE'
+<x-filament::link href="/" icon="heroicon-m-arrow-left">Back to Home</x-filament::link>
+BLADE
+                )),
+                scopes: Login::class,
+            )
+            ->renderHook(
+                name: PanelsRenderHook::AUTH_REGISTER_FORM_AFTER,
+                hook: fn (Panel $panel) => new HtmlString(html: Blade::render(
+                    <<<'BLADE'
+<x-filament::link href="/" icon="heroicon-m-arrow-left">Back to Home</x-filament::link>
+BLADE
+                )),
+                scopes: Register::class,
             )
             ->renderHook(
                 name: PanelsRenderHook::BODY_END,
