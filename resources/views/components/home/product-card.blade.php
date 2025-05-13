@@ -10,7 +10,7 @@
 
 <div
     data-aos="flip-right"
-    class="glass transform rounded-2xl border border-gray-200 bg-white/80 shadow-md backdrop-blur-md transition-all duration-200 hover:-translate-y-1 hover:shadow-lg"
+    class="transform rounded-2xl border border-gray-200 bg-white/80 shadow-md transition-all duration-200 hover:-translate-y-1 hover:shadow-lg"
 >
     <div
         class="flex h-full flex-col justify-between p-4 font-sans sm:p-6 md:space-y-6 md:p-8"

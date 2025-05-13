@@ -1,45 +1,9 @@
 <main
     class="page-home min-h-screen w-full overflow-hidden bg-gradient-to-b from-gray-50 to-blue-50 font-sans"
 >
-    <style>
-        .glass {
-            background: rgba(255, 255, 255, 0.65);
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.12);
-            backdrop-filter: blur(7px);
-            -webkit-backdrop-filter: blur(7px);
-            border-radius: 18px;
-            border: 1px solid rgba(255, 255, 255, 0.18);
-        }
-        .neumorph {
-            box-shadow:
-                8px 8px 24px #e3e8f0,
-                -8px -8px 24px #fff;
-        }
-        .btn-primary {
-            background: linear-gradient(90deg, #2563eb 0%, #1e40af 100%);
-            color: #fff;
-            border-radius: 9999px;
-            box-shadow: 0 2px 8px 0 #2563eb33;
-            font-weight: 600;
-            transition:
-                background 0.2s,
-                box-shadow 0.2s,
-                transform 0.1s;
-        }
-        .btn-primary:hover,
-        .btn-primary:focus {
-            background: #1e40af;
-            transform: scale(1.04);
-            box-shadow: 0 4px 16px 0 #2563eb44;
-        }
-        .focus-outline:focus {
-            outline: 2px solid #2563eb;
-            outline-offset: 2px;
-        }
-    </style>
     <section
         id="hero"
-        class="container relative overflow-hidden !px-0"
+        class="container relative overflow-hidden !px-0 md:!px-6 xl:!px-0"
         x-data="{
             started: false,
             activeSlide: 0,
@@ -230,7 +194,7 @@
             </div>
         @endforeach
 
-        <div class="flex justify-center">
+        <div class="flex justify-center md:mt-4 xl:mt-0">
             <template x-for="slide in slides" :key="slide">
                 <button
                     @click="activateSlide(slide - 1)"
@@ -264,7 +228,7 @@
         <h2 class="text-center text-2xl font-semibold text-black md:text-4xl">
             {{ __('pages/home.content.features.title') }}
         </h2>
-        <div class="mt-5 grid gap-4 sm:grid-cols-2 md:grid-cols-3 md:gap-8">
+        <div class="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 md:gap-8">
             @foreach ($featureItems as $feature)
                 <x-home.feature-card :data="$feature" />
             @endforeach
@@ -280,7 +244,7 @@
             >
                 {{ __('pages/home.content.products.title') }}
             </h4>
-            <div class="grid gap-4 md:grid-cols-3 md:gap-8">
+            <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 md:gap-8">
                 @foreach ($productItems as $product)
                     <x-home.product-card :data="$product" />
                 @endforeach
@@ -326,38 +290,41 @@
 
     <section class="!mt-0 bg-white pb-16">
         <div
-            class="container flex flex-col items-center justify-between gap-6 md:flex-row md:gap-12"
+            class="container flex flex-col items-center justify-between gap-6 lg:flex-row md:gap-12"
         >
+            <!-- Left Section -->
             <div class="w-full flex-1 space-y-6">
                 <h3
                     class="text-center text-2xl font-semibold md:text-start md:text-4xl"
                 >
                     {{ __('pages/home.content.contact.title') }}
                 </h3>
-
                 <livewire:contact-form lazy="on-load" />
             </div>
 
+            <!-- Right Section -->
             <div
-                class="relative flex aspect-video w-full flex-1 items-center justify-center"
+                class="relative flex aspect-video w-full flex-1 items-center justify-center lg:max-w-lg"
             >
+                <!-- Background Image -->
                 <img
                     loading="lazy"
                     src="{{ url('img/contact-bg.webp') }}"
                     alt="An abstract geometric pattern with repeating blue and light purple shapes, including circles, semi-circles, and triangles, creating a mosaic-like design."
                     title="Contact Us"
-                    class="absolute inset-0 h-full w-full object-cover md:rounded-3xl"
+                    class="absolute inset-0 h-full w-full object-cover sm:rounded-lg md:rounded-3xl"
                 />
-                <div class="relative space-y-4 rounded-xl bg-white p-4 md:p-6">
+                <!-- Content Card -->
+                <div class="relative space-y-4 rounded-xl bg-white p-4 shadow-lg sm:p-6 md:p-8">
                     <h4 class="text-center text-2xl font-semibold md:text-4xl">
                         {{ config('app.name') }}
                     </h4>
                     <div class="flex items-center justify-center gap-4">
                         <x-filament::icon
                             icon="heroicon-o-phone"
-                            class="h-6 w-6"
+                            class="h-5 w-5 sm:h-6 sm:w-6"
                         />
-                        <div class="text-lg">
+                        <div class="text-sm sm:text-lg">
                             <span class="hidden sm:inline">
                                 {{ __('app.contact.phone.label') }}
                             </span>
@@ -372,11 +339,11 @@
                     <div class="flex items-center justify-center gap-4">
                         <x-filament::icon
                             icon="heroicon-o-envelope"
-                            class="h-6 w-6"
+                            class="h-5 w-5 sm:h-6 sm:w-6"
                         />
                         <a
                             href="mailto:{{ __('app.contact.email.address') }}"
-                            class="cursor-pointer text-lg hover:text-primary-700 hover:underline"
+                            class="cursor-pointer text-sm sm:text-lg hover:text-primary-700 hover:underline"
                         >
                             {{ __('app.contact.email.address') }}
                         </a>

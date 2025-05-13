@@ -42,7 +42,7 @@
                     this.isOpen = true
                 },
             }"
-            class="container flex h-16 gap-x-4 lg:items-center lg:justify-between"
+            class="container flex h-16 gap-x-4 md:!px-0 lg:items-center lg:justify-between"
         >
             <div class="flex w-full items-center justify-between lg:w-auto">
                 <a
@@ -91,7 +91,8 @@
             <ul
                 class="hidden flex-1 items-center gap-x-4 lg:flex lg:justify-center"
             >
-                <x-filament-panels::topbar.item :url="route('home')">
+                <x-filament-panels::topbar.item :url="route('home')" :active="request()->routeIs('home')"
+>
                     {{ __('app.nav.home.label') }}
                 </x-filament-panels::topbar.item>
                 <li class="fi-topbar-item">
@@ -102,7 +103,7 @@
                     >
                         <x-slot name="trigger">
                             <ul>
-                                <x-filament-panels::topbar.item>
+                                <x-filament-panels::topbar.item :active="request()->routeIs('products.*')">
                                     {{ __('app.nav.products.label') }}
                                 </x-filament-panels::topbar.item>
                             </ul>
@@ -111,6 +112,7 @@
                         <x-filament::dropdown.list>
                             <x-filament::dropdown.list.item
                                 :href="route('products.election.home')"
+                                :class="request()->routeIs('products.election.home') ? 'bg-primary-50 shadow' : ''"
                                 icon="heroicon-o-computer-desktop"
                                 tag="a"
                             >
@@ -119,6 +121,7 @@
 
                             <x-filament::dropdown.list.item
                                 :href="route('products.phygital.home')"
+                                :class="request()->routeIs('products.phygital.home') ? 'bg-primary-50 shadow' : ''"
                                 icon="heroicon-o-archive-box"
                                 tag="a"
                             >
@@ -127,6 +130,7 @@
 
                             <x-filament::dropdown.list.item
                                 :href="route('products.meeting.home')"
+                                :class="request()->routeIs('products.meeting.home') ? 'bg-primary-50 shadow' : ''"
                                 icon="heroicon-o-scale"
                                 tag="a"
                             >
@@ -135,6 +139,7 @@
 
                             <x-filament::dropdown.list.item
                                 :href="route('products.survey.home')"
+                                :class="request()->routeIs('products.survey.home') ? 'bg-primary-50 shadow' : ''"
                                 icon="heroicon-o-document-chart-bar"
                                 tag="a"
                             >
@@ -150,7 +155,7 @@
                     {{ __('app.nav.clientele.label') }}
                 </x-filament-panels::topbar.item>
 
-                <x-filament-panels::topbar.item :url="route('wiki.index')">
+                <x-filament-panels::topbar.item :url="route('wiki.index')" :active="request()->routeIs('wiki.*')">
                     {{ __('app.nav.wiki.label') }}
                 </x-filament-panels::topbar.item>
 
@@ -214,7 +219,7 @@
                 <ul
                     class="flex w-full flex-col items-start space-y-4 lg:flex-row"
                 >
-                    <x-filament-panels::topbar.item :url="route('home')">
+                    <x-filament-panels::topbar.item :url="route('home')" :active="request()->routeIs('home')">
                         {{ __('app.nav.home.label') }}
                     </x-filament-panels::topbar.item>
 
@@ -224,7 +229,7 @@
                         teleport
                     >
                         <x-slot name="trigger">
-                            <x-filament-panels::topbar.item>
+                            <x-filament-panels::topbar.item :active="request()->routeIs('products.*')">
                                 {{ __('app.nav.products.label') }}
                             </x-filament-panels::topbar.item>
                         </x-slot>
@@ -232,6 +237,7 @@
                         <x-filament::dropdown.list>
                             <x-filament::dropdown.list.item
                                 :href="route('products.election.home')"
+                                :class="request()->routeIs('products.election.home') ? 'bg-primary-50 shadow' : ''"
                                 icon="heroicon-o-archive-box"
                                 tag="a"
                             >
@@ -240,6 +246,7 @@
 
                             <x-filament::dropdown.list.item
                                 :href="route('products.phygital.home')"
+                                :class="request()->routeIs('products.phygital.home') ? 'bg-primary-50 shadow' : ''"
                                 icon="heroicon-o-archive-box"
                                 tag="a"
                             >
@@ -248,6 +255,7 @@
 
                             <x-filament::dropdown.list.item
                                 :href="route('products.meeting.home')"
+                                :class="request()->routeIs('products.meeting.home') ? 'bg-primary-50 shadow' : ''"
                                 icon="heroicon-o-scale"
                                 tag="a"
                             >
@@ -256,6 +264,7 @@
 
                             <x-filament::dropdown.list.item
                                 :href="route('products.survey.home')"
+                                :class="request()->routeIs('products.survey.home') ? 'bg-primary-50 shadow' : ''"
                                 icon="heroicon-o-document-chart-bar"
                                 tag="a"
                             >
@@ -270,7 +279,7 @@
                         {{ __('app.nav.clientele.label') }}
                     </x-filament-panels::topbar.item>
 
-                    <x-filament-panels::topbar.item :url="route('wiki.index')">
+                    <x-filament-panels::topbar.item :url="route('wiki.index')" :active="request()->routeIs('wiki.*')">
                         {{ __('app.nav.wiki.label') }}
                     </x-filament-panels::topbar.item>
 
