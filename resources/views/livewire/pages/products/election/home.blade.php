@@ -71,10 +71,9 @@
     </section>
 
     <section id="benefits" class="bg-white py-16">
-        <div
-            class="container grid gap-6 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-10"
-        >
-            <div class="animate-zoomIn col-span-full space-y-4">
+        <div class="container flex flex-wrap justify-center gap-6 lg:gap-10">
+            <!-- Section Title -->
+            <div class="animate-zoomIn w-full space-y-4">
                 <h2 class="text-center text-2xl font-semibold sm:text-3xl">
                     {{ __('pages/products/election/home.content.benefits.title') }}
                 </h2>
@@ -83,12 +82,20 @@
                 </p>
             </div>
 
+            <!-- Benefits List -->
             @foreach ($benefits as $item)
-                <div class="space-y-4 text-center">
+                <div
+                    class="flex w-full flex-col items-center space-y-4 text-center sm:w-[calc(50%-1.5rem)] lg:w-[calc(33.333%-2.5rem)]"
+                >
+                    <!-- Icon -->
                     {!! $item->icon !!}
-                    <h3 class="text-lf font-semibold sm:text-xl">
+
+                    <!-- Title -->
+                    <h3 class="text-lg font-semibold sm:text-xl">
                         {{ $item->title }}
                     </h3>
+
+                    <!-- Description -->
                     <p class="text-gray-600">
                         {{ $item->description }}
                     </p>
@@ -98,10 +105,9 @@
     </section>
 
     <section id="how-it-works" class="py-16">
-        <div
-            class="container grid gap-6 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-10"
-        >
-            <div class="col-span-full space-y-4">
+        <div class="container flex flex-col items-center gap-6">
+            <!-- Section Title -->
+            <div class="w-full space-y-4">
                 <h2 class="text-center text-2xl font-semibold sm:text-3xl">
                     {{ __('pages/products/election/home.content.how_it_works.title') }}
                 </h2>
@@ -110,25 +116,36 @@
                 </p>
             </div>
 
-            @foreach ($howItWorks as $item)
-                <div class="space-y-4 text-center">
-                    {!! $item->icon !!}
-                    <h3 class="text-lf font-semibold sm:text-xl">
-                        {{ $item->title }}
-                    </h3>
-                    <p class="text-gray-600">
-                        {{ $item->description }}
-                    </p>
-                </div>
-            @endforeach
+            <!-- How It Works Items -->
+            <div class="flex w-full flex-wrap justify-center gap-6 lg:gap-10">
+                @foreach ($howItWorks as $item)
+                    <div
+                        class="flex w-full flex-col items-center space-y-4 text-center sm:w-[calc(50%-1.5rem)] lg:w-[calc(33.333%-2.5rem)]"
+                    >
+                        <!-- Icon -->
+                        {!! $item->icon !!}
 
-            <div class="col-span-full mx-auto flex gap-4 text-center">
+                        <!-- Title -->
+                        <h3 class="text-lf font-semibold sm:text-xl">
+                            {{ $item->title }}
+                        </h3>
+
+                        <!-- Description -->
+                        <p class="text-gray-600">
+                            {{ $item->description }}
+                        </p>
+                    </div>
+                @endforeach
+            </div>
+
+            <!-- CTA Buttons -->
+            <div class="flex flex-wrap justify-center gap-4 text-center">
                 <x-filament::button
                     :href="__('pages/products/election/home.content.how_it_works.cta.url')"
                     :outlined="true"
                     tag="a"
                     size="xl"
-                    title="How its works page link"
+                    title="How it's works page link"
                 >
                     {{ __('pages/products/election/home.content.how_it_works.cta.label') }}
                 </x-filament::button>

@@ -1,4 +1,4 @@
-<div class="grid gap-4 pt-6 md:grid-cols-3 md:gap-6">
+<div class="grid gap-6 pt-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
     <div class="col-span-full flex items-center justify-center">
         <x-filament::tabs label="Currency">
             @foreach ($supportedCurrencies as $supportedCurrency)
@@ -18,32 +18,38 @@
     @foreach ($this->plans as $plan)
         <div
             wire:key="plan-{{ $plan->id }}"
-            class="cursor-default space-y-4 rounded-3xl bg-white p-6 ring-primary-600 hover:translate-y-1 hover:ring-2 md:p-8"
+            class="cursor-default space-y-4 rounded-3xl bg-white p-4 shadow-md ring-primary-600 transition-transform duration-300 hover:translate-y-1 hover:ring-2 md:p-6 lg:p-8"
         >
-            <h4 class="text-2xl font-semibold md:text-3xl">
+            <h4 class="text-xl font-semibold sm:text-2xl lg:text-3xl">
                 {{ $plan->name }}
             </h4>
-            <p class="text-gray-600">
+            <p class="text-sm text-gray-600 md:text-base lg:text-lg">
                 {{ $plan->description }}
             </p>
-            <div class="py-6">
-                <span wire:loading wire:target="currency">Calculating...</span>
+            <div class="py-4">
+                <span
+                    wire:loading
+                    wire:target="currency"
+                    class="text-primary-600"
+                >
+                    Calculating...
+                </span>
 
                 <div
                     wire:loading.class="hidden"
                     wire:target="currency"
-                    class="space-y-1"
+                    class="space-y-2"
                 >
                     <div class="flex items-end justify-center gap-1">
                         <span
-                            class="font-mono text-3xl font-bold text-primary-600 dark:text-primary-500 md:text-4xl"
+                            class="font-mono text-2xl font-bold text-primary-600 sm:text-3xl lg:text-4xl"
                         >
                             @money($plan->elector_fee, $plan->currency)
                         </span>
-                        <span>/elector</span>
+                        <span class="text-sm md:text-base">/elector</span>
                     </div>
                     <div
-                        class="font-mono text-primary-600 dark:text-primary-500"
+                        class="font-mono text-sm text-primary-600 md:text-base"
                     >
                         +
                         @money($plan->base_fee, $plan->currency)
@@ -56,12 +62,12 @@
                         @continue
                     @endif
 
-                    <li class="flex gap-2">
+                    <li class="flex items-center gap-2">
                         <x-filament::icon
                             icon="heroicon-o-check-circle"
-                            class="h-6 w-6 text-green-500"
+                            class="h-5 w-5 text-green-500"
                         />
-                        <span>
+                        <span class="text-sm md:text-base">
                             {{ $feature->feature->getLabel() }}
                         </span>
                     </li>
@@ -75,23 +81,28 @@
                         <x-filament::icon
                             x-show="! showAddOns"
                             icon="heroicon-o-plus"
-                            class="h-6 w-6"
+                            class="h-5 w-5"
                         />
                         <x-filament::icon
                             x-show="showAddOns"
                             icon="heroicon-o-chevron-up"
-                            class="h-6 w-6"
+                            class="h-5 w-5"
                         />
-                        <span class="font-semibold">Add-ons</span>
+                        <span class="text-sm font-semibold md:text-base">
+                            Add-ons
+                        </span>
                         <hr class="flex-1" />
                     </li>
                     @foreach ($plan->addOnFeatures() as $feature)
-                        <li x-show="showAddOns" class="flex gap-2">
+                        <li
+                            x-show="showAddOns"
+                            class="flex items-center gap-2"
+                        >
                             <x-filament::icon
                                 icon="heroicon-o-sparkles"
-                                class="h-6 w-6 text-green-500"
+                                class="h-5 w-5 text-green-500"
                             />
-                            <span>
+                            <span class="text-sm md:text-base">
                                 {{ $feature->feature->getLabel() }}
                             </span>
                         </li>

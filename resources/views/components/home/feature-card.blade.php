@@ -8,7 +8,7 @@
 
 <div
     data-aos="fade-up"
-    class="glass neumorph overflow-hidden rounded-2xl border border-primary-100 bg-white/80 font-sans shadow-md backdrop-blur-md transition-all hover:shadow-lg"
+    class="overflow-hidden rounded-2xl border border-primary-100 bg-white/80 font-sans shadow-md backdrop-blur-md transition-all glass neumorph hover:shadow-lg"
 >
     {{-- Header Section with Fixed Height --}}
     <div class="flex min-h-[96px] items-center gap-4 bg-primary-100 p-4 sm:p-6">
