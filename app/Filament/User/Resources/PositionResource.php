@@ -66,9 +66,9 @@ class PositionResource extends Resource
 
             PositionForm::thresholdComponent()
                 ->inlineLabel()
-                ->visible(condition: fn (HasElection | HasNomination $livewire): bool => match (true) {
-                    $livewire instanceof HasElection => $livewire->getElection()->voting_method->canHavePositionQuota(),
-                    default => true,
+                ->hidden(condition: fn (HasElection | HasNomination $livewire): bool => match (true) {
+                    $livewire instanceof HasElection => ! $livewire->getElection()->voting_method->canHavePositionQuota(),
+                    default => false,
                 }),
 
             PositionForm::segmentsComponent()
