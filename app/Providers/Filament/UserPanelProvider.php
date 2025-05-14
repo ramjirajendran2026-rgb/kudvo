@@ -14,6 +14,7 @@ use App\Filament\User\Resources\ElectionResource\Pages\ManageElections;
 use App\Models\Organisation;
 use App\Settings\GoogleTagManagerSettings;
 use App\Settings\ServiceConfig;
+use ChrisReedIO\Socialment\SocialmentPlugin;
 use Exception;
 use Filament\FontProviders\LocalFontProvider;
 use Filament\Http\Middleware\Authenticate;
@@ -143,6 +144,32 @@ BLADE
             ->plugins(plugins: [
                 SpatieLaravelTranslatablePlugin::make()
                     ->defaultLocales(defaultLocales: array_keys(config('laravellocalization.supportedLocales'))),
+
+                ...$this->getSocialiteProviders(),
             ]);
+    }
+
+    protected function getSocialiteProviders(): array
+    {
+        $services = app(ServiceConfig::class);
+
+        $enabledServices = collect()
+            ->when($services->facebook->enabled, fn ($collection) => $collection->push(['provider' => 'facebook', 'icon' => 'fab-facebook', 'label' => 'Facebook']))
+            ->when($services->google->enabled, fn ($collection) => $collection->push(['provider' => 'google', 'icon' => 'fab-google', 'label' => 'Google']))
+            ->when($services->github->enabled, fn ($collection) => $collection->push(['provider' => 'github', 'icon' => 'fab-github', 'label' => 'GitHub']))
+            ->when($services->linkedin->enabled, fn ($collection) => $collection->push(['provider' => 'linkedin', 'icon' => 'fab-linkedin', 'label' => 'LinkedIn']))
+            ->when($services->x->enabled, fn ($collection) => $collection->push(['provider' => 'x', 'icon' => 'fab-twitter', 'label' => 'X']));
+
+        if ($enabledServices->isEmpty()) {
+            return [];
+        }
+
+        $plugin = SocialmentPlugin::make();
+
+        $enabledServices->each(function ($service) use ($plugin) {
+            $plugin->registerProvider($service['provider'], $service['icon'], $service['label']);
+        });
+
+        return [$plugin];
     }
 }

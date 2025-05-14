@@ -12,6 +12,7 @@ use App\Providers\Filament\NominationPanelProvider;
 use App\Providers\Filament\UserPanelProvider;
 use App\Providers\HorizonServiceProvider;
 use App\Providers\RouteServiceProvider;
+use App\Providers\SocialiteServiceProvider;
 use App\Providers\TelescopeServiceProvider;
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\ServiceProvider;
@@ -190,6 +191,7 @@ return [
         MeetingPanelProvider::class,
         RouteServiceProvider::class,
         TelescopeServiceProvider::class,
+        SocialiteServiceProvider::class,
     ])->toArray(),
 
     /*

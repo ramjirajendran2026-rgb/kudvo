@@ -81,3 +81,25 @@
         }
     }
 }
+
+.filalite-panel {
+    & > .flex:last-child {
+        @apply flex-wrap gap-4;
+
+        a {
+            @apply p-2;
+
+            svg {
+                @apply size-6;
+            }
+        }
+    }
+
+    & > .flex:last-child:has(:nth-child(3)) {
+        a {
+            span:last-child {
+                @apply hidden;
+            }
+        }
+    }
+}

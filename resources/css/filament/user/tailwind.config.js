@@ -26,5 +26,7 @@ export default {
         './vendor/bezhansalleh/filament-language-switch/resources/views/language-switch.blade.php',
 
         './vendor/solution-forest/filament-tree/resources/**/*.blade.php',
+
+        './vendor/chrisreedio/socialment/resources/**/*.blade.php',
     ],
 }
