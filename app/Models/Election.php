@@ -308,7 +308,7 @@ class Election extends Model
 
     public function isMfaRequired(): bool
     {
-        return $this->preference->mfa_sms || $this->preference->mfa_mail;
+        return $this->preference->mfa_sms || $this->preference->mfa_mail || $this->preference->mfa_whatsapp;
     }
 
     public function isMfaSmsAutoFillOnly(): bool

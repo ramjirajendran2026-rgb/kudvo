@@ -48,10 +48,11 @@ class PreferenceData extends Data
     public function isBallotLinkBlastNeeded(?Elector $elector = null): bool
     {
         if (blank($elector)) {
-            return $this->ballot_link_mail || $this->ballot_link_sms;
+            return $this->ballot_link_mail || $this->ballot_link_sms || $this->ballot_link_whatsapp;
         }
 
         return (filled($elector?->email) && $this->ballot_link_mail) ||
-            (filled($elector?->phone) && $this->ballot_link_sms);
+            (filled($elector?->phone) && $this->ballot_link_sms) ||
+            (filled($elector?->phone) && $this->ballot_link_whatsapp);
     }
 }
