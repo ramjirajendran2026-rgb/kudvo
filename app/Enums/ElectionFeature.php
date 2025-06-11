@@ -35,6 +35,7 @@ enum ElectionFeature: string implements HasLabel
     case RestrictSelfVote = 'restrict_self_vote';
     case DisableUnopposedSelection = 'disable_unopposed_selection';
     case SegmentedVoting = 'segmented_voting';
+    case WaterfallVoting = 'waterfall_voting';
     case BoothVoting = 'booth_voting';
 
     public function getLabel(): ?string
@@ -69,6 +70,7 @@ enum ElectionFeature: string implements HasLabel
             self::RestrictSelfVote => 'Restrict self selection',
             self::DisableUnopposedSelection => 'Restrict unopposed candidate selection',
             self::SegmentedVoting => 'Segmented voting',
+            self::WaterfallVoting => 'Waterfall voting',
             self::BoothVoting => 'Booth voting',
         };
     }
@@ -105,6 +107,7 @@ enum ElectionFeature: string implements HasLabel
             self::RestrictSelfVote => 'Restrict self selection',
             self::DisableUnopposedSelection => 'Restrict unopposed candidate selection',
             self::SegmentedVoting => 'Segmented voting',
+            self::WaterfallVoting => 'Waterfall voting',
             self::BoothVoting => 'Booth voting',
         };
     }
@@ -139,6 +142,7 @@ enum ElectionFeature: string implements HasLabel
             self::RestrictSelfVote => 'restrict_self_vote',
             self::DisableUnopposedSelection => 'disable_unopposed_selection',
             self::SegmentedVoting => 'segmented_ballot',
+            self::WaterfallVoting => 'waterfall_voting',
             self::BoothVoting => 'booth_voting',
             default => null,
         };

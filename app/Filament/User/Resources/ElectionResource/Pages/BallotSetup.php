@@ -2,6 +2,7 @@
 
 namespace App\Filament\User\Resources\ElectionResource\Pages;
 
+use App\Data\Election\VoteSecretData;
 use App\Enums\ElectionCollaboratorPermission;
 use App\Enums\ElectionSetupStep;
 use App\Enums\ElectionStatus;
@@ -13,8 +14,10 @@ use App\Filament\User\Resources\CandidateResource;
 use App\Filament\User\Resources\ElectionResource\Widgets\ElectorDataImportProgress;
 use App\Filament\User\Resources\PositionResource;
 use App\Models\Candidate;
+use App\Models\CandidateFallbackPosition;
 use App\Models\Election;
 use App\Models\Position;
+use App\Models\Vote;
 use Filament\Actions\Action;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\CreateAction;
@@ -36,6 +39,7 @@ use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\MaxWidth;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
@@ -257,6 +261,10 @@ class BallotSetup extends ElectionPage
                             ])
                             ->footerActionsAlignment(alignment: Alignment::Center)
                             ->headerActions(actions: [
+                                $this->getActivateVotingAction(),
+
+                                $this->getCloseVotingAction(),
+
                                 $this->getGenerateDummyCandidatesAction(),
 
                                 $this->getReorderCandidateAction(),
@@ -385,6 +393,7 @@ HTML,
             ->form(form: fn (Form $form, Position $record) => CandidateResource::form(form: $form, position: $record))
             ->icon(icon: 'heroicon-m-plus')
             ->label(label: __('filament.user.election-resource.pages.ballot_setup.actions.create_candidate.label'))
+            ->modalCancelAction(action: false)
             ->modalHeading(heading: fn (Position $record): string => __('filament.user.election-resource.pages.ballot_setup.actions.create_candidate.modal_heading', ['position' => $record->name]))
             ->modalSubmitActionLabel(label: __('filament-actions::create.single.modal.actions.create.label'))
             ->modalWidth(width: match (true) {
@@ -398,6 +407,109 @@ HTML,
             ->size(size: ActionSize::Small)
             ->successNotificationTitle(title: __('filament.user.election-resource.pages.ballot_setup.actions.create_candidate.success_notification.title'))
             ->visible(condition: $this->hasFullAccess());
+    }
+
+    protected function getActivateVotingAction()
+    {
+        return InfolistAction::make(name: 'activateVoting')
+            ->requiresConfirmation()
+            ->authorize(
+                abilities: fn (HasElection $livewire): bool => static::can(
+                    action: 'activateVoting',
+                    election: $livewire->getElection()
+                )
+            )
+            ->action(action: function (InfolistAction $action, Position $record, HasElection $livewire) {
+                $previousPositon = $livewire->getElection()
+                    ->positions()
+                    ->whereNotNull('voting_ends_at')
+                    ->where('sort', '<', $record->sort)
+                    ->latest('sort')
+                    ->first();
+                $candidateVotes = [];
+
+                Vote::query()->where('key', $previousPositon->uuid)
+                    ->chunkById(
+                        count: 250,
+                        callback: function (Collection $votes) use (&$candidateVotes) {
+                            $votes->each(callback: function (Vote $vote) use (&$candidateVotes) {
+                                $vote->secret?->each(callback: function (VoteSecretData $secret) use (&$candidateVotes) {
+                                    $candidateVotes[$secret->key] ??= 0;
+                                    $candidateVotes[$secret->key] += floatval($secret->value);
+                                });
+                            });
+                        }
+                    );
+
+                $previousPositon->candidates()->with('fallbackPositions')->get()
+                    ->sortByDesc(fn (Candidate $candidate) => $candidateVotes[$candidate->uuid] ?? 0)
+                    ->skip($previousPositon->quota)
+                    ->filter(fn (Candidate $candidate) => $candidate->fallbackPositions->where('position_id', $record->getKey()))
+                    ->each(function (Candidate $candidate) use ($record) {
+                        $newCandidate = $record->candidates()
+                            ->updateOrCreate(
+                                ['primary_candidate_id' => $candidate->getKey()],
+                                $candidate->only([
+                                    'membership_number',
+                                    'title',
+                                    'first_name',
+                                    'last_name',
+                                    'email',
+                                    'phone',
+                                    'candidate_group_id',
+                                    'elector_id',
+                                ])
+                            );
+
+                        $candidate->fallbackPositions
+                            ->reject(fn (CandidateFallbackPosition $p) => $p->is($record))
+                            ->each(function (CandidateFallbackPosition $p) use ($newCandidate, $record) {
+                                $newCandidate->fallbackPositions()
+                                    ->create([
+                                        'position_id' => $record->getKey(),
+                                    ]);
+                            });
+                    });
+
+                $record->touch('voting_starts_at');
+
+                $action->success();
+            })
+            ->color(color: 'success')
+            ->label(label: 'Activate voting')
+            ->successNotificationTitle(title: 'Activated successfully')
+            ->visible(
+                fn (Position $record, self $livewire) => $livewire->getElection()->is_open &&
+                    $livewire->getElection()->preference->waterfall_voting &&
+                    blank($record->voting_starts_at) &&
+                    ((filled($previous = $livewire->getElection()->positions->where('sort', '<', $record->sort)->sortByDesc('sort')->first()) && filled($previous->voting_ends_at)) || blank($previous))
+            );
+    }
+
+    protected function getCloseVotingAction()
+    {
+        return InfolistAction::make(name: 'closeVoting')
+            ->requiresConfirmation()
+            ->authorize(
+                abilities: fn (HasElection $livewire, Position $record): bool => static::can(
+                    action: 'closeVoting',
+                    election: $livewire->getElection()
+                )
+            )
+            ->action(action: function (InfolistAction $action, Position $record) {
+                $record->touch('voting_ends_at');
+
+                $action->success();
+            })
+            ->color(color: 'warning')
+            ->label(label: 'Close voting')
+            ->successNotificationTitle(title: 'Closed successfully')
+            ->visible(
+                fn (Position $record, self $livewire) => ! $livewire->getElection()->is_draft &&
+                    $livewire->getElection()->preference->waterfall_voting &&
+                    filled($record->voting_starts_at) &&
+                    blank($record->voting_ends_at)
+            );
     }
 
     protected function getGenerateDummyCandidatesAction(): InfolistAction

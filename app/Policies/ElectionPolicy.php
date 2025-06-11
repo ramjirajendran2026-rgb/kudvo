@@ -304,7 +304,8 @@ class ElectionPolicy
         return $election->is_open &&
             (
                 ! $elector->ballot?->isVoted() ||
-                $election->preference->voted_ballot_update
+                $election->preference->voted_ballot_update ||
+                ($elector->ballot?->isVoted() && $election->preference->waterfall_voting)
             );
     }
 
@@ -313,7 +314,8 @@ class ElectionPolicy
         return $election->is_booth_open &&
             (
                 ! $elector->ballot?->isVoted() ||
-                $election->preference->voted_ballot_update
+                $election->preference->voted_ballot_update ||
+                ($elector->ballot?->isVoted() && $election->preference->waterfall_voting)
             );
     }
 }

@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Cache;
 use LasseRafn\InitialAvatarGenerator\InitialAvatar;
 use Spatie\Activitylog\LogOptions;
@@ -51,6 +52,7 @@ class Candidate extends Model implements HasAvatar, HasMedia, HasName, Sortable
         'sort',
         'rank',
         'position_id',
+        'primary_candidate_id',
         'candidate_group_id',
         'elector_id',
     ];
@@ -60,6 +62,7 @@ class Candidate extends Model implements HasAvatar, HasMedia, HasName, Sortable
         'sort' => 'int',
         'rank' => 'int',
         'position_id' => 'int',
+        'primary_candidate_id' => 'int',
         'candidate_group_id' => 'int',
         'elector_id' => 'int',
     ];
@@ -109,6 +112,17 @@ class Candidate extends Model implements HasAvatar, HasMedia, HasName, Sortable
     public function elector(): BelongsTo
     {
         return $this->belongsTo(related: Elector::class);
+    }
+
+    public function primaryCandidate(): BelongsTo
+    {
+        return $this->belongsTo(Candidate::class);
+    }
+
+    public function fallbackPositions(): HasMany
+    {
+        return $this->hasMany(CandidateFallbackPosition::class)
+            ->orderBy('sort');
     }
 
     public function uniqueIds(): array

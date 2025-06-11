@@ -34,6 +34,8 @@ class Position extends Model implements Sortable
         'quota',
         'threshold',
         'elector_groups',
+        'voting_starts_at',
+        'voting_ends_at',
         'sort',
         'event_id',
         'event_type',
@@ -43,6 +45,8 @@ class Position extends Model implements Sortable
         'quota' => 'int',
         'threshold' => 'int',
         'elector_groups' => 'array',
+        'voting_starts_at' => 'datetime',
+        'voting_ends_at' => 'datetime',
         'sort' => 'int',
         'event_id' => 'int',
     ];

@@ -21,7 +21,6 @@ use Filament\Notifications\Notification;
 use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\Alignment;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Session;
@@ -58,6 +57,10 @@ class Index extends BasePage
             return;
         }
 
+        if ($this->getElection()->preference->waterfall_voting) {
+            $this->isVoted = $this->positions->pluck('uuid')->diff(collect($this->getBallot()?->position_keys ?? []))->isEmpty();
+        }
+
         $this->form->fill(
             state: $this->getBallot()?->votes
                 ->mapWithKeys(
@@ -69,7 +72,7 @@ class Index extends BasePage
                     ]
                 )
                 ->toArray() ??
-                []
+            []
         );
     }
 
@@ -84,10 +87,6 @@ class Index extends BasePage
 
     public function form(Form $form): Form
     {
-        $electorSegmentIds = $this->getElection()->preference->segmented_ballot ?
-            $this->getElector()->segments()->pluck('id') :
-            [];
-
         return $form
             ->disabled(condition: fn (self $livewire): bool => $this->preview)
             ->model(model: $this->getElection())
@@ -100,16 +99,13 @@ class Index extends BasePage
                     ->hiddenLabel()
                     ->visible(condition: fn (self $livewire): bool => $this->preview && ! $this->isVoted),
 
+                Placeholder::make(name: 'no_positions')
+                    ->content(content: new HtmlString('<h2 class="text-lg md:text-xl font-semibold text-warning-600 dark:text-warning-400">No open positions available / You voted all open positions</h2>'))
+                    ->extraAttributes(attributes: ['class' => 'text-center'])
+                    ->hiddenLabel()
+                    ->visible(condition: fn (self $livewire): bool => $this->positions->isEmpty()),
+
                 ...$this->positions
-                    ->when(
-                        value: $this->getElection()->preference->segmented_ballot,
-                        callback: fn (Collection $query) => $query
-                            ->where(
-                                fn (Position $position) => $position->segments()
-                                    ->whereIn('id', $electorSegmentIds)
-                                    ->exists(),
-                            )
-                    )
                     ->map(
                         callback: fn (Position $position) => VotesPicker::forPosition(
                             uuid: $position->uuid,
@@ -159,7 +155,8 @@ class Index extends BasePage
                         ->visible(condition: fn (self $livewire): bool => $this->isVoted && $livewire->getElection()->booth_preference?->voted_ballot_print_by_self),
                 ])
                     ->alignment(alignment: fn (self $livewire): Alignment => $livewire->preview ? Alignment::Between : Alignment::End)
-                    ->extraAttributes(attributes: ['class' => 'px-2 md:px-0']),
+                    ->extraAttributes(attributes: ['class' => 'px-2 md:px-0'])
+                    ->hidden(fn (self $livewire): bool => $livewire->positions->isEmpty()),
             ]);
     }
 
@@ -199,6 +196,13 @@ class Index extends BasePage
             return;
         }
 
+        $positionKeys = collect($data)->keys();
+        if ($this->getElection()->preference->waterfall_voting) {
+            $positionKeys = $positionKeys->merge(
+                collect($this->getElector()->ballot?->position_keys ?? [])->diff($positionKeys)
+            );
+        }
+
         $ballot = $this->getElector()->ballots()
             ->updateOrCreate(
                 attributes: [
@@ -210,10 +214,11 @@ class Index extends BasePage
                     'voted_at' => now(),
                     'auth_session_id' => $this->getElector()->authSession->getKey(),
                     'booth_id' => Kudvo::getElectionBoothToken()?->getKey(),
+                    'position_keys' => $positionKeys->toArray(),
                 ]
             );
 
-        if (! $ballot->wasRecentlyCreated) {
+        if (! $ballot->wasRecentlyCreated && ! $this->getElection()->preference->waterfall_voting) {
             $ballot->votes()->delete();
         }
 
