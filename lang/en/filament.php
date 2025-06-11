@@ -342,6 +342,9 @@ return [
                             'helper_text' => 'This will allow you to segment the ballot based on the elector details.',
                             'label' => 'Segmented ballot',
                         ],
+                        'waterfall_voting' => [
+                            'label' => 'Waterfall voting',
+                        ],
                         'booth_voting_section' => [
                             'heading' => 'Booth voting',
                             'description' => 'This will allow electors to cast votes from a specific location. This is useful for conducting elections in a physical location.',
@@ -765,6 +768,9 @@ return [
                 'email' => [
                     'label' => 'Email address',
                     'placeholder' => 'Email address',
+                ],
+                'fallback_positions' => [
+                    'label' => 'Fallback positions',
                 ],
                 'first_name' => [
                     'label' => 'First name',

@@ -14,6 +14,7 @@ class Ballot extends Model
         'type',
         'ip_address',
         'voted_at',
+        'position_keys',
         'mock',
         'booth_id',
         'elector_id',
@@ -23,6 +24,7 @@ class Ballot extends Model
     protected $casts = [
         'type' => BallotType::class,
         'voted_at' => 'datetime',
+        'position_keys' => 'array',
         'mock' => 'bool',
         'booth_id' => 'int',
         'elector_id' => 'int',

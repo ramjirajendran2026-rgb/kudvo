@@ -41,6 +41,7 @@ class PreferenceData extends Data
         public bool $restrict_self_vote = false,
         public bool $disable_unopposed_selection = false,
         public bool $segmented_ballot = false,
+        public bool $waterfall_voting = false,
         public bool $booth_voting = false,
         public ?WebAppManifestData $web_app_manifest = null,
     ) {}

@@ -38,6 +38,15 @@ abstract class BasePage extends Page implements HasElection, HasElector
 
     public bool $mock;
 
+    public static function can(string $action)
+    {
+        try {
+            return authorize(action: $action, model: Kudvo::getElection() ?? Election::class)->allowed();
+        } catch (AuthorizationException $exception) {
+            return $exception->toResponse()->allowed();
+        }
+    }
+
     public function getListeners(): array
     {
         $listeners = parent::getListeners();
@@ -54,15 +63,6 @@ abstract class BasePage extends Page implements HasElection, HasElector
         $this->mock = $request->query(key: 'mock', default: false);
     }
 
-    public static function can(string $action)
-    {
-        try {
-            return authorize(action: $action, model: Kudvo::getElection() ?? Election::class)->allowed();
-        } catch (AuthorizationException $exception) {
-            return $exception->toResponse()->allowed();
-        }
-    }
-
     public function getPanel(): ElectionPanel
     {
         /** @var ElectionPanel $panel */
@@ -76,14 +76,14 @@ abstract class BasePage extends Page implements HasElection, HasElector
         return Filament::getCurrentPanel()->hasSpaMode();
     }
 
-    public function isMock(): bool
-    {
-        return $this->mock;
-    }
-
     public function getRedirectUrl(): ?string
     {
         return Index::getUrl(parameters: $this->isMock() ? ['mock' => 1] : []);
+    }
+
+    public function isMock(): bool
+    {
+        return $this->mock;
     }
 
     #[On(event: 'session-expired')]
@@ -99,9 +99,36 @@ abstract class BasePage extends Page implements HasElection, HasElector
     #[Computed(persist: true)]
     public function positions(): Collection
     {
+        $electorSegmentIds = $this->getElection()->preference->segmented_ballot ?
+            $this->getElector()->segments()->pluck('id') :
+            [];
+
         return Position::whereMorphedTo('event', $this->getElection())
             ->oldest('sort')
-            ->get();
+            ->get()
+            ->when(
+                $this->getElection()->preference->waterfall_voting,
+                fn ($query) => $query->where('voting_starts_at', '<=', now())
+                    ->where(
+                        fn ($query) => $query->whereNull('voting_ends_at')
+                            ->orWhere('voting_ends_at', '>=', now()),
+                    ),
+            )
+            ->when(
+                value: $this->getElection()->preference->segmented_ballot,
+                callback: fn (Collection $query) => $query
+                    ->where(
+                        fn (Position $position) => $position->segments()
+                            ->whereIn('id', $electorSegmentIds)
+                            ->exists(),
+                    )
+            )
+            ->when(
+                $this->getElection()->preference->waterfall_voting &&
+                ! $this->getElection()->preference->voted_ballot_update &&
+                filled($this->getBallot()?->position_keys),
+                fn (Collection $collection) => $collection->reject(fn (Position $position) => collect($this->getBallot()->position_keys)->contains($position->uuid))
+            );
     }
 
     #[Computed(persist: true)]

@@ -44,6 +44,7 @@ class IdentifyPanelState
 
             $election->is_cancelled => ElectionPanelState::Cancelled,
 
+            ! $election->preference->waterfall_voting &&
             $elector?->ballot?->isVoted() => ElectionPanelState::Voted,
 
             $election->is_closed,

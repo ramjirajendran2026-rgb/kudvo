@@ -69,6 +69,9 @@ class CandidateResource extends Resource
                             ->columnSpanFull()
                             ->hiddenLabel(),
 
+                        CandidateForm::fallbackPositionsComponent(position: $position)
+                            ->columnSpanFull(),
+
                         CandidateForm::emailComponent()
                             ->hidden()
                             ->hiddenLabel(),

@@ -660,6 +660,7 @@ class Preference extends ElectionPage
                             ->description(description: __('filament.user.election-resource.pages.preference.form.advanced_preferences_section.description'))
                             ->hidden(
                                 condition: ! $plan->hasAnyFeature(features: [
+                                    ElectionFeature::WaterfallVoting,
                                     ElectionFeature::SegmentedVoting,
                                     ElectionFeature::BoothVoting,
                                     ElectionFeature::DisableUnopposedSelection,
@@ -688,6 +689,17 @@ class Preference extends ElectionPage
                                     ->helperText(text: __('filament.user.election-resource.pages.preference.form.segmented_ballot.helper_text'))
                                     ->hidden(condition: ! $plan->hasFeature(feature: ElectionFeature::SegmentedVoting))
                                     ->label(label: __('filament.user.election-resource.pages.preference.form.segmented_ballot.label')),
+
+                                FeatureToggle::make(name: 'waterfall_voting')
+                                    ->addOn(
+                                        condition: $plan->hasAddOnFeature(feature: ElectionFeature::WaterfallVoting),
+                                        featureFee: $plan->getFeatureFee(feature: ElectionFeature::WaterfallVoting),
+                                        electorFee: $plan->getElectorFee(feature: ElectionFeature::WaterfallVoting),
+                                        feeCurrency: $plan->currency,
+                                        hideAddOnPrice: ! $this->canSave(),
+                                    )
+                                    ->hidden(condition: ! $plan->hasFeature(feature: ElectionFeature::WaterfallVoting))
+                                    ->label(label: __('filament.user.election-resource.pages.preference.form.waterfall_voting.label')),
 
                                 FeatureToggle::make(name: 'booth_voting')
                                     ->addOn(

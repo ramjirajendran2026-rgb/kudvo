@@ -5,11 +5,14 @@ namespace App\Forms;
 use App\Filament\Base\Contracts\HasElection;
 use App\Models\Candidate;
 use App\Models\Election;
+use App\Models\Position;
 use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Set;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Validation\Rules\Exists;
 use Illuminate\Validation\Rules\Unique;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
@@ -116,6 +119,35 @@ readonly class CandidateForm
             ->maxLength(length: 100)
             ->placeholder(placeholder: __('filament.user.candidate-resource.form.email.placeholder'))
             ->rule(rule: 'email:rfc,dns');
+    }
+
+    public static function fallbackPositionsComponent(?Position $position = null): Repeater
+    {
+        return Repeater::make(name: 'fallbackPositions')
+            ->label(label: __('filament.user.candidate-resource.form.fallback_positions.label'))
+            ->relationship()
+            ->simple(
+                field: Select::make(name: 'position_id')
+                    ->label(label: 'Position')
+                    ->relationship(
+                        name: 'position',
+                        titleAttribute: 'name',
+                        modifyQueryUsing: fn (Builder $query, HasElection $livewire) => $query
+                            ->when(
+                                value: $position,
+                                callback: fn (Builder $query) => $query
+                                    ->whereKeyNot($position->getKey())
+                                    ->where('sort', '>', $position->sort),
+                            )
+                            ->whereMorphedTo('event', $livewire->getElection()),
+                    )
+                    ->searchable()
+                    ->preload()
+                    ->disableOptionsWhenSelectedInSiblingRepeaterItems()
+                    ->getOptionLabelFromRecordUsing(fn (Position $position) => $position->name)
+                    ->placeholder('Select fallback position'),
+            )
+            ->visible(condition: fn (HasElection $livewire): bool => $livewire->getElection()->preference->waterfall_voting);
     }
 
     public static function firstNameComponent(): TextInput
