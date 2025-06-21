@@ -136,7 +136,7 @@ class Index extends BasePage
                             'class' => 'lg:text-2xl',
                         ])
                         ->size(size: ActionSize::ExtraLarge)
-                        ->visible(condition: fn (self $livewire): bool => ! $livewire->preview),
+                        ->visible(condition: fn (self $livewire): bool => ! $livewire->preview && ! $livewire->getElection()->preference->skip_ballot_selection_confirmation),
 
                     Actions\Action::make(name: 'confirm')
                         ->requiresConfirmation()
@@ -146,7 +146,7 @@ class Index extends BasePage
                         ])
                         ->label(label: __('filament.election.pages.ballot.index.form.actions.confirm.label'))
                         ->size(size: ActionSize::ExtraLarge)
-                        ->visible(condition: fn (self $livewire): bool => $livewire->preview && ! $livewire->isVoted),
+                        ->visible(condition: fn (self $livewire): bool => ! $livewire->isVoted && ($livewire->preview || $livewire->getElection()->preference->skip_ballot_selection_confirmation)),
 
                     Actions\Action::make(name: 'print')
                         ->alpineClickHandler(handler: 'window.print()')
@@ -188,7 +188,7 @@ class Index extends BasePage
 
         $data = $this->form->getState();
 
-        if (! $this->preview) {
+        if (! $this->preview && ! $this->getElection()->preference->skip_ballot_selection_confirmation) {
             $this->preview = true;
 
             $this->dispatch(event: 'scroll-to-top');
