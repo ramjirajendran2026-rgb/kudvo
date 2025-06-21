@@ -40,6 +40,7 @@ class PreferenceData extends Data
         public bool $candidate_group = false,
         public bool $restrict_self_vote = false,
         public bool $disable_unopposed_selection = false,
+        public bool $skip_ballot_selection_confirmation = false,
         public bool $segmented_ballot = false,
         public bool $waterfall_voting = false,
         public bool $booth_voting = false,

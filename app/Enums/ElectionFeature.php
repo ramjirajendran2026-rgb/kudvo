@@ -34,6 +34,7 @@ enum ElectionFeature: string implements HasLabel
     case CandidateTeam = 'candidate_team';
     case RestrictSelfVote = 'restrict_self_vote';
     case DisableUnopposedSelection = 'disable_unopposed_selection';
+    case SkipBallotSelectionConfirmation = 'skip_ballot_selection_confirmation';
     case SegmentedVoting = 'segmented_voting';
     case WaterfallVoting = 'waterfall_voting';
     case BoothVoting = 'booth_voting';
@@ -69,6 +70,7 @@ enum ElectionFeature: string implements HasLabel
             self::CandidateTeam => 'Candidate team',
             self::RestrictSelfVote => 'Restrict self selection',
             self::DisableUnopposedSelection => 'Restrict unopposed candidate selection',
+            self::SkipBallotSelectionConfirmation => 'Skip confirmation screen on ballot submission',
             self::SegmentedVoting => 'Segmented voting',
             self::WaterfallVoting => 'Waterfall voting',
             self::BoothVoting => 'Booth voting',
@@ -106,6 +108,7 @@ enum ElectionFeature: string implements HasLabel
             self::CandidateTeam => 'Candidate team',
             self::RestrictSelfVote => 'Restrict self selection',
             self::DisableUnopposedSelection => 'Restrict unopposed candidate selection',
+            self::SkipBallotSelectionConfirmation => 'Skip ballot confirmation',
             self::SegmentedVoting => 'Segmented voting',
             self::WaterfallVoting => 'Waterfall voting',
             self::BoothVoting => 'Booth voting',
@@ -141,6 +144,7 @@ enum ElectionFeature: string implements HasLabel
             self::CandidateTeam => 'candidate_group',
             self::RestrictSelfVote => 'restrict_self_vote',
             self::DisableUnopposedSelection => 'disable_unopposed_selection',
+            self::SkipBallotSelectionConfirmation => 'skip_ballot_selection_confirmation',
             self::SegmentedVoting => 'segmented_ballot',
             self::WaterfallVoting => 'waterfall_voting',
             self::BoothVoting => 'booth_voting',

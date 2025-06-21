@@ -664,6 +664,7 @@ class Preference extends ElectionPage
                                     ElectionFeature::SegmentedVoting,
                                     ElectionFeature::BoothVoting,
                                     ElectionFeature::DisableUnopposedSelection,
+                                    ElectionFeature::SkipBallotSelectionConfirmation,
                                 ])
                             )
                             ->schema(components: [
@@ -677,6 +678,17 @@ class Preference extends ElectionPage
                                     )
                                     ->hidden(condition: ! $plan->hasFeature(feature: ElectionFeature::DisableUnopposedSelection))
                                     ->label(label: 'Restrict selection for Unopposed candidates'),
+
+                                FeatureToggle::make(name: 'skip_ballot_selection_confirmation')
+                                    ->addOn(
+                                        condition: $plan->hasAddOnFeature(feature: ElectionFeature::SkipBallotSelectionConfirmation),
+                                        featureFee: $plan->getFeatureFee(feature: ElectionFeature::SkipBallotSelectionConfirmation),
+                                        electorFee: $plan->getElectorFee(feature: ElectionFeature::SkipBallotSelectionConfirmation),
+                                        feeCurrency: $plan->currency,
+                                        hideAddOnPrice: ! $this->canSave(),
+                                    )
+                                    ->hidden(condition: ! $plan->hasFeature(feature: ElectionFeature::SkipBallotSelectionConfirmation))
+                                    ->label(label: 'Skip confirmation screen on ballot submission'),
 
                                 FeatureToggle::make(name: 'segmented_ballot')
                                     ->addOn(
