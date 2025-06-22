@@ -83,7 +83,7 @@ class BallotLinkNotification extends Notification implements HasMailMessagePurpo
                 TemplateComponentFactory::textParameter($this->getElection()->name, 'header'),
             ]))
             ->addComponent(TemplateComponentFactory::body([
-                TemplateComponentFactory::textParameter($this->getElector()->display_name, 'member_name'),
+                TemplateComponentFactory::textParameter($this->getElector()->display_name ?? $this->getElector()->membership_number, 'member_name'),
                 TemplateComponentFactory::textParameter($this->getElection()->name, 'election_name'),
                 TemplateComponentFactory::textParameter($this->getElection()->organisation->name, 'organization_name'),
                 TemplateComponentFactory::textParameter($this->getElection()->starts_at_local->format('d M, Y h:i A (T)'), 'starts_at'),
