@@ -110,6 +110,7 @@ class Preview extends Page implements HasElection
                             uuid: $position->uuid,
                             preference: $this->getElection()->preference,
                         )
+                            ->columns($this->getElection()->preference->candidate_per_row ?: 2)
                             ->votingMethod(value: $this->getElection()->voting_method)
                             ->when(
                                 $this->getElection()->preference->candidate_group,

@@ -322,6 +322,7 @@ JS
                             uuid: $position->uuid,
                             preference: $this->getElection()->preference,
                         )
+                            ->columns($this->getElection()->preference->candidate_per_row ?: 2)
                             ->votingMethod(value: $this->getElection()->voting_method)
                             ->weightage($this->getElector()?->weightage ?? '1')
                             ->when(

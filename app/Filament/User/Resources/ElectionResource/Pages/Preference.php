@@ -832,6 +832,16 @@ class Preference extends ElectionPage
                                             ]),
                                     ]),
                             ]),
+
+                        Section::make('Admin only settings')
+                            ->collapsed()
+                            ->columns()
+                            ->visible(fn () => auth()->user()->hasAdminRole())
+                            ->schema([
+                                Quantity::make(name: 'candidate_per_row')
+                                    ->numeric()
+                                    ->minValue(1),
+                            ]),
                     ]),
 
                 Section::make(heading: __('filament.user.election-resource.pages.preference.form.booth_voting_section.heading'))

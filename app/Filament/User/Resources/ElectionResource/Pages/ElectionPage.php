@@ -273,6 +273,7 @@ abstract class ElectionPage extends Page implements HasElection, HasElectorGroup
                                         uuid: $position->uuid,
                                         preference: $this->getElection()->preference,
                                     )
+                                        ->columns($this->getElection()->preference->candidate_per_row ?: 2)
                                         ->votingMethod(value: $this->getElection()->voting_method)
                                         ->disabled(condition: fn (Get $get): bool => $get(path: '../preview')),
                                 )

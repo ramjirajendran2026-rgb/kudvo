@@ -89,12 +89,6 @@ class VotesPicker extends CheckboxList
     {
         parent::setUp();
 
-        $this->columns([
-            'md' => 2,
-            'xl' => 3,
-            '2xl' => 4,
-        ]);
-
         $this->descriptions(
             fn (Position $position) => $this->getCandidates()
                 ->mapWithKeys(fn (Candidate $candidate) => [

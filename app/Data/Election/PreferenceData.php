@@ -45,6 +45,7 @@ class PreferenceData extends Data
         public bool $waterfall_voting = false,
         public bool $booth_voting = false,
         public ?WebAppManifestData $web_app_manifest = null,
+        public int $candidate_per_row = 2,
     ) {}
 
     public function isBallotLinkBlastNeeded(?Elector $elector = null): bool
