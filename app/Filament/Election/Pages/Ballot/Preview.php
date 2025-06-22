@@ -13,6 +13,7 @@ use App\Models\CandidateGroup;
 use App\Models\Position;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Actions;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Form;
 use Filament\Pages\Page;
 use Filament\Panel;
@@ -22,6 +23,7 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\HtmlString;
 use Livewire\Attributes\Computed;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -90,6 +92,18 @@ class Preview extends Page implements HasElection
                     $this->getBackAction(),
                 ]),
 
+                Placeholder::make(name: 'confirmation')
+                    ->content(content: new HtmlString('<h2 class="text-lg md:text-xl font-semibold text-warning-600 dark:text-warning-400">Review & confirm your selection</h2>'))
+                    ->extraAttributes(attributes: ['class' => 'text-center'])
+                    ->hiddenLabel()
+                    ->visible(condition: fn (self $livewire): bool => $this->preview),
+
+                Placeholder::make(name: 'no_positions')
+                    ->content(content: new HtmlString('<h2 class="text-lg md:text-xl font-semibold text-warning-600 dark:text-warning-400">No open positions available / You voted all open positions</h2>'))
+                    ->extraAttributes(attributes: ['class' => 'text-center'])
+                    ->hiddenLabel()
+                    ->visible(condition: fn (self $livewire): bool => $this->positions->isEmpty()),
+
                 ...$this->positions
                     ->map(
                         callback: fn (Position $position) => VotesPicker::forPosition(
@@ -129,6 +143,32 @@ class Preview extends Page implements HasElection
                         ->size(size: ActionSize::ExtraLarge),
                 ])
                     ->alignment(alignment: fn (self $livewire): Alignment => $livewire->preview ? Alignment::Between : Alignment::End),
+
+                Actions::make(actions: [
+                    $this->getBackAction(),
+
+                    Actions\Action::make(name: 'continue')
+                        ->label(label: __('filament.election.pages.ballot.index.form.actions.continue.label'))
+                        ->action(action: 'submit')
+                        ->extraAttributes([
+                            'class' => 'lg:text-2xl',
+                        ])
+                        ->size(size: ActionSize::ExtraLarge)
+                        ->visible(condition: fn (self $livewire): bool => ! $livewire->preview && ! $livewire->getElection()->preference->skip_ballot_selection_confirmation),
+
+                    Actions\Action::make(name: 'confirm')
+                        ->requiresConfirmation()
+                        ->action(action: 'submit')
+                        ->extraAttributes([
+                            'class' => 'lg:text-2xl',
+                        ])
+                        ->label(label: __('filament.election.pages.ballot.index.form.actions.confirm.label'))
+                        ->size(size: ActionSize::ExtraLarge)
+                        ->visible(condition: fn (self $livewire): bool => ($livewire->preview || $livewire->getElection()->preference->skip_ballot_selection_confirmation)),
+                ])
+                    ->alignment(alignment: fn (self $livewire): Alignment => $livewire->preview ? Alignment::Between : Alignment::End)
+                    ->extraAttributes(attributes: ['class' => 'px-2 md:px-0'])
+                    ->hidden(fn (self $livewire): bool => $livewire->positions->isEmpty()),
             ]);
     }
 
@@ -173,18 +213,8 @@ class Preview extends Page implements HasElection
     {
         $this->form->getState();
 
-        if (! $this->preview) {
+        if (! $this->preview && ! $this->getElection()->preference->skip_ballot_selection_confirmation) {
             $this->preview = true;
-
-            $this->js(
-                <<<'JS'
-Swal.fire({
-    title: 'Confirmation',
-    text: 'Please review your selection and confirm',
-    icon: 'info'
-})
-JS
-            );
 
             $this->dispatch(event: 'scroll-to-top');
 

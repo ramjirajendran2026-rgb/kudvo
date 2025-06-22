@@ -93,6 +93,10 @@ class Index extends BasePage
             ->operation(operation: $this->preview ? 'preview' : 'create')
             ->statePath(path: 'data')
             ->schema(components: [
+                Actions::make(actions: [
+                    $this->getBackAction(),
+                ]),
+
                 Placeholder::make(name: 'confirmation')
                     ->content(content: new HtmlString('<h2 class="text-lg md:text-xl font-semibold text-warning-600 dark:text-warning-400">Review & confirm your selection</h2>'))
                     ->extraAttributes(attributes: ['class' => 'text-center'])
