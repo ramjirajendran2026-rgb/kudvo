@@ -123,31 +123,6 @@ class Preview extends Page implements HasElection
                     $this->getBackAction(),
 
                     Actions\Action::make(name: 'continue')
-                        ->label(label: 'Continue to review')
-                        ->action(action: 'submit')
-                        ->extraAttributes([
-                            'class' => 'lg:text-2xl',
-                        ])
-                        ->hidden(condition: fn (self $livewire): bool => $livewire->flashVotes || $livewire->preview)
-                        ->size(size: ActionSize::ExtraLarge)
-                        ->submit(form: 'submit'),
-
-                    Actions\Action::make(name: 'confirm')
-                        ->requiresConfirmation()
-                        ->action(action: 'submit')
-                        ->extraAttributes([
-                            'class' => 'lg:text-2xl',
-                        ])
-                        ->label(label: 'Confirm to vote')
-                        ->hidden(condition: fn (self $livewire): bool => $livewire->flashVotes || ! $livewire->preview)
-                        ->size(size: ActionSize::ExtraLarge),
-                ])
-                    ->alignment(alignment: fn (self $livewire): Alignment => $livewire->preview ? Alignment::Between : Alignment::End),
-
-                Actions::make(actions: [
-                    $this->getBackAction(),
-
-                    Actions\Action::make(name: 'continue')
                         ->label(label: __('filament.election.pages.ballot.index.form.actions.continue.label'))
                         ->action(action: 'submit')
                         ->extraAttributes([
