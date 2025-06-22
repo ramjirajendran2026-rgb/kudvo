@@ -79,7 +79,7 @@ class VotedConfirmationNotification extends Notification implements HasMailMessa
                 TemplateComponentFactory::textParameter('Vote Submitted - ' . $this->election->name, 'header'),
             ]))
             ->addComponent(TemplateComponentFactory::body([
-                TemplateComponentFactory::textParameter($this->elector->display_name, 'member_name'),
+                TemplateComponentFactory::textParameter($this->elector->display_name ?: $this->elector->membership_number, 'member_name'),
                 TemplateComponentFactory::textParameter($this->election->name, 'election_name'),
                 TemplateComponentFactory::textParameter($this->election->organisation->name, 'organization_name'),
             ]))
