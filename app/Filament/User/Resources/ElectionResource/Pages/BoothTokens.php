@@ -10,6 +10,7 @@ use App\Events\Election\Booth\PrintBallot;
 use App\Events\ElectorAssignedToBoothEvent;
 use App\Events\ElectorCastedVoteInBoothEvent;
 use App\Events\ElectorRevokedFromBoothEvent;
+use App\Forms\ElectorForm;
 use App\Models\Election;
 use App\Models\ElectionBoothToken;
 use App\Models\Elector;
@@ -133,7 +134,14 @@ class BoothTokens extends ElectionPage implements HasTable
                                     ),
                             )
                             ->required()
-                            ->searchable(condition: ['membership_number', 'full_name']),
+                            ->searchable(condition: ['membership_number', 'full_name'])
+                            ->createOptionForm([
+                                ElectorForm::membershipNumberComponent(),
+                            ])
+                            ->createOptionUsing(
+                                callback: fn (array $data): int => $this->getElection()->electors()->create($data)->getKey()
+                            )
+                            ->createOptionAction(fn (\Filament\Forms\Components\Actions\Action $action) => $action->visible(auth()->user()->hasAdminRole())),
                     ])
                     ->icon(icon: 'heroicon-s-user-plus')
                     ->label(label: 'Assign')
