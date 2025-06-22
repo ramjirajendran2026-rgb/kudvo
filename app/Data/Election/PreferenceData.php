@@ -58,4 +58,19 @@ class PreferenceData extends Data
             (filled($elector?->phone) && $this->ballot_link_sms) ||
             (filled($elector?->phone) && $this->ballot_link_whatsapp);
     }
+
+    public function isBallotConfirmationNeeded(?Elector $elector = null): bool
+    {
+        if (blank($elector)) {
+            return $this->voted_confirmation_mail || $this->voted_confirmation_sms || $this->voted_confirmation_whatsapp;
+        }
+
+        if (! $elector->ballot?->isVoted()) {
+            return false;
+        }
+
+        return (filled($elector?->email) && $this->voted_confirmation_mail) ||
+            (filled($elector?->phone) && $this->voted_confirmation_sms) ||
+            (filled($elector?->phone) && $this->voted_confirmation_whatsapp);
+    }
 }

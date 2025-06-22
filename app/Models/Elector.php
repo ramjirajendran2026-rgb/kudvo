@@ -7,6 +7,7 @@ use App\Filament\Election\ElectionPanel;
 use App\Filament\Nomination\NominationPanel;
 use App\Models\Concerns\HasShortCode;
 use App\Notifications\Election\BallotLinkNotification;
+use App\Notifications\Election\VotedConfirmationNotification;
 use App\Notifications\Election\VotingInstructionNotification;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
@@ -311,6 +312,25 @@ class Elector extends Model implements AuthenticatableContract, AuthorizableCont
         $notification = new BallotLinkNotification(
             elector: $this,
             election: $election,
+        );
+
+        if ($now) {
+            $this->notifyNow(instance: $notification);
+        } else {
+            $this->notify(instance: $notification);
+        }
+    }
+
+    public function sendBallotConfirmation(bool $now = false): void
+    {
+        $ballot = $this->ballot;
+
+        if (blank($ballot)) {
+            return;
+        }
+
+        $notification = new VotedConfirmationNotification(
+            ballot: $ballot,
         );
 
         if ($now) {

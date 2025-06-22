@@ -93,6 +93,8 @@ class Electors extends ElectionPage implements HasTable
 
                 $this->getSendBallotLinkAction(),
 
+                $this->getSendBallotConfirmationAction(),
+
                 ActionGroup::make(actions: [
                     $this->getLogBallotLink(),
                 ]),
@@ -234,6 +236,26 @@ class Electors extends ElectionPage implements HasTable
                     ->body(body: __('filament.user.election-resource.pages.electors.actions.send_ballot_link.success_notification.body'))
             )
             ->visible(condition: fn (HasElection $livewire): bool => $livewire->getElection()->preference?->isBallotLinkBlastNeeded());
+    }
+
+    protected function getSendBallotConfirmationAction(): TableAction
+    {
+        return TableAction::make(name: 'sendBallotConfirmation')
+            ->authorize(abilities: 'sendBallotConfirmation')
+            ->requiresConfirmation()
+            ->action(action: function (HasElection $livewire, Elector $elector, TableAction $action) {
+                $elector->sendBallotConfirmation();
+
+                $action->success();
+            })
+            ->icon(icon: 'heroicon-m-bell-alert')
+            ->iconButton()
+            ->label(label: 'Send Ballot Acknowledgement')
+            ->successNotification(
+                notification: fn (Notification $notification) => $notification
+                    ->title(title: 'Acknowledgement sent')
+            )
+            ->visible(condition: fn (HasElection $livewire, Elector $elector): bool => $livewire->getElection()->preference?->isBallotConfirmationNeeded());
     }
 
     protected function getSendBallotLinkBulkAction(): BulkAction

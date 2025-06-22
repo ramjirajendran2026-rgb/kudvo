@@ -36,4 +36,13 @@ class ElectorPolicy
             $election->preference->isBallotLinkBlastNeeded(elector: $elector) &&
             ! $elector->ballot?->isVoted();
     }
+
+    public function sendBallotConfirmation(User $user, Elector $elector): bool
+    {
+        $election = $elector->event;
+
+        return $election instanceof Election &&
+            (! $election->is_draft && ! $election->is_cancelled) &&
+            $election->preference->isBallotConfirmationNeeded(elector: $elector);
+    }
 }
