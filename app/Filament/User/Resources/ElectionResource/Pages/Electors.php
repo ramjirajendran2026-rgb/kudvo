@@ -107,6 +107,8 @@ class Electors extends ElectionPage implements HasTable
                 $this->getNotifyVotingInstructionsBulkAction(),
 
                 $this->getSendBallotLinkBulkAction(),
+
+                $this->getSendBallotConfirmationBulkAction(),
             ])
             ->emptyStateActions(actions: [
                 $this->getCreateAction(),
@@ -238,26 +240,6 @@ class Electors extends ElectionPage implements HasTable
             ->visible(condition: fn (HasElection $livewire): bool => $livewire->getElection()->preference?->isBallotLinkBlastNeeded());
     }
 
-    protected function getSendBallotConfirmationAction(): TableAction
-    {
-        return TableAction::make(name: 'sendBallotConfirmation')
-            ->authorize(abilities: 'sendBallotConfirmation')
-            ->requiresConfirmation()
-            ->action(action: function (HasElection $livewire, Elector $elector, TableAction $action) {
-                $elector->sendBallotConfirmation();
-
-                $action->success();
-            })
-            ->icon(icon: 'heroicon-m-bell-alert')
-            ->iconButton()
-            ->label(label: 'Send Ballot Acknowledgement')
-            ->successNotification(
-                notification: fn (Notification $notification) => $notification
-                    ->title(title: 'Acknowledgement sent')
-            )
-            ->visible(condition: fn (HasElection $livewire, Elector $elector): bool => $livewire->getElection()->preference?->isBallotConfirmationNeeded());
-    }
-
     protected function getSendBallotLinkBulkAction(): BulkAction
     {
         return BulkAction::make(name: 'sendBallotLinkBulk')
@@ -284,6 +266,51 @@ class Electors extends ElectionPage implements HasTable
                     ->body(body: __('filament.user.election-resource.pages.electors.bulk_actions.send_ballot_link.success_notification.body'))
             )
             ->visible(condition: fn (self $livewire): bool => $livewire->hasFullAccess() && $livewire->getElection()->preference?->isBallotLinkBlastNeeded());
+    }
+
+    protected function getSendBallotConfirmationAction(): TableAction
+    {
+        return TableAction::make(name: 'sendBallotConfirmation')
+            ->authorize(abilities: 'sendBallotConfirmation')
+            ->requiresConfirmation()
+            ->action(action: function (HasElection $livewire, Elector $elector, TableAction $action) {
+                $elector->sendBallotConfirmation($livewire->getElection()->voted_confirmation_via);
+
+                $action->success();
+            })
+            ->icon(icon: 'heroicon-m-bell-alert')
+            ->iconButton()
+            ->label(label: 'Send Ballot Acknowledgement')
+            ->successNotification(
+                notification: fn (Notification $notification) => $notification
+                    ->title(title: 'Acknowledgement sent')
+            )
+            ->visible(condition: fn (HasElection $livewire, Elector $elector): bool => $livewire->getElection()->preference?->isBallotConfirmationNeeded());
+    }
+
+    protected function getSendBallotConfirmationBulkAction(): BulkAction
+    {
+        return BulkAction::make(name: 'sendBallotConfirmationBulk')
+            ->authorize(abilities: fn (self $livewire): bool => static::can(action: 'sendBallotConfirmationBulk', election: $livewire->getElection()))
+            ->requiresConfirmation()
+            ->action(action: function (BulkAction $action, Collection $collection, HasElection $livewire) {
+                $election = $livewire->getElection();
+
+                $collection->each(
+                    callback: function (Elector $elector) use ($election) {
+                        $elector->sendBallotConfirmation($election->voted_confirmation_via);
+                    }
+                );
+
+                $action->success();
+            })
+            ->icon(icon: 'heroicon-m-bell-alert')
+            ->label(label: 'Send Ballot Acknowledgement')
+            ->successNotification(
+                notification: fn (Notification $notification) => $notification
+                    ->title(title: 'Acknowledgement sent')
+            )
+            ->visible(condition: fn (self $livewire): bool => $livewire->hasFullAccess() && $livewire->getElection()->preference?->isBallotConfirmationNeeded());
     }
 
     public function getNotifyVotingInstructionsBulkAction()

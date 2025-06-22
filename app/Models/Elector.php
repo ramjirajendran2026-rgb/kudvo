@@ -321,7 +321,7 @@ class Elector extends Model implements AuthenticatableContract, AuthorizableCont
         }
     }
 
-    public function sendBallotConfirmation(bool $now = false): void
+    public function sendBallotConfirmation(array $via, bool $now = false): void
     {
         $ballot = $this->ballot;
 
@@ -331,6 +331,7 @@ class Elector extends Model implements AuthenticatableContract, AuthorizableCont
 
         $notification = new VotedConfirmationNotification(
             ballot: $ballot,
+            via: $via
         );
 
         if ($now) {

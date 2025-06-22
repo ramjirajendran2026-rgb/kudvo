@@ -299,6 +299,11 @@ class ElectionPolicy
         return $election->is_published;
     }
 
+    public function sendBallotConfirmationBulk(User $user, Election $election): bool
+    {
+        return ! $election->is_draft && ! $election->is_cancelled && $election->preference?->isBallotConfirmationNeeded();
+    }
+
     public function vote(Elector $elector, Election $election): bool
     {
         return $election->is_open &&
