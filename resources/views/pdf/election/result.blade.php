@@ -87,6 +87,13 @@
                 {{ $election->name }}
             </th>
         </tr>
+        @if($election->preference->booth_voting)
+            <tr>
+                <td colspan="2" align="center">
+                    Online Voting
+                </td>
+            </tr>
+        @endif
         <tr>
             <td align="center">
                 {{ $election->starts_at_local?->format('h:i A (T)') }}
@@ -99,6 +106,25 @@
                 {{ $election->ends_at_local?->toFormattedDateString() }}
             </td>
         </tr>
+        @if($election->preference->booth_voting)
+            <tr>
+                <td colspan="2" align="center">
+                    Booth Voting
+                </td>
+            </tr>
+            <tr>
+                <td align="center">
+                    {{ $election->booth_starts_at_local?->format('h:i A (T)') }}
+                    <br/>
+                    {{ $election->booth_starts_at_local?->toFormattedDateString() }}
+                </td>
+                <td align="center">
+                    {{ $election->booth_ends_at_local?->format('h:i A (T)') }}
+                    <br/>
+                    {{ $election->booth_ends_at_local?->toFormattedDateString() }}
+                </td>
+            </tr>
+        @endif
         </thead>
     </table>
 
