@@ -28,7 +28,7 @@
     }
 
     .votes-picker-header {
-        @apply sticky top-0 space-y-2 rounded-t-xl border-b border-gray-200 bg-inherit p-3 dark:border-white/10 z-10;
+        @apply sticky top-0 z-10 space-y-2 rounded-t-xl border-b border-gray-200 bg-inherit p-3 dark:border-white/10;
 
         &.sticked {
             @apply rounded-t-none shadow;

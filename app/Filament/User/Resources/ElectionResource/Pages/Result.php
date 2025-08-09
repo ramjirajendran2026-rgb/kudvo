@@ -2,12 +2,12 @@
 
 namespace App\Filament\User\Resources\ElectionResource\Pages;
 
+use App\Actions\Election\GenerateResultPdf;
 use App\Enums\ElectionResultSortBy;
 use App\Filament\User\Resources\ElectionResource\Widgets\CandidateVotesChart;
 use App\Models\Candidate;
 use App\Models\Election;
 use App\Models\Position;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Filament\Actions\Action;
 use Filament\Actions\SelectAction;
 use Filament\Infolists\Components\RepeatableEntry;
@@ -240,24 +240,11 @@ HTML,
         return Action::make(name: 'download')
             ->action(action: function (self $livewire) {
                 $election = $livewire->getElection();
+                $pdf = app(GenerateResultPdf::class)->execute($election);
 
-                $pdf = Pdf::loadView(
-                    'pdf.election.result',
-                    [
-                        'election' => $election,
-                        'boothId' => $this->boothId,
-                    ],
-                    [],
-                    'UTF-8'
-                );
-
-                return response()
-                    ->streamDownload(
-                        callback: function () use ($pdf) {
-                            echo $pdf->output();
-                        },
-                        name: "result-{$this->getElection()->code}.pdf",
-                    );
+                return response()->streamDownload(function () use ($pdf) {
+                    echo base64_decode($pdf->base64());
+                }, 'result-' . $election->getRouteKey() . '.pdf');
             })
             ->icon(icon: 'heroicon-s-arrow-down-tray');
     }

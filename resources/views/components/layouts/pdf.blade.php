@@ -1,4 +1,5 @@
 @php
+    use Filament\FontProviders\GoogleFontProvider;
     use Filament\FontProviders\LocalFontProvider;
     use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 @endphp
@@ -21,8 +22,6 @@
         </style>
 
         @vite('resources/css/pdf.css')
-
-        {{ app(LocalFontProvider::class)->getHtml(family: 'Poppins') }}
 
         @stack('styles')
     </head>
