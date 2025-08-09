@@ -28,7 +28,7 @@
     }
 
     .votes-picker-header {
-        @apply sticky top-0 space-y-2 rounded-t-xl border-b border-gray-200 bg-inherit p-3 dark:border-white/10;
+        @apply sticky top-0 space-y-2 rounded-t-xl border-b border-gray-200 bg-inherit p-3 dark:border-white/10 z-10;
 
         &.sticked {
             @apply rounded-t-none shadow;
@@ -110,8 +110,10 @@
 
                 &:has(:checked) {
                     .votes-picker-option-label,
-                    .votes-picker-option-description {
-                        @apply text-white print:text-black;
+                    .votes-picker-option-description,
+                    .votes-picker-option-action,
+                    .votes-picker-option-action .fi-btn-icon {
+                        @apply text-white dark:text-white print:text-black;
                     }
                 }
 
@@ -131,6 +133,10 @@
                 .votes-picker-option-description {
                     @apply text-gray-500 dark:text-gray-400;
                     @apply print:text-black;
+                }
+
+                .votes-picker-option-action {
+                    @apply print:hidden;
                 }
             }
         }

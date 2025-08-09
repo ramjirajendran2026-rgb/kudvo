@@ -310,6 +310,7 @@
                                             size="xs"
                                             :outlined="true"
                                             icon="heroicon-m-eye"
+                                            class="votes-picker-option-action"
                                             x-on:click.stop="open()"
                                         >
                                             View bio
