@@ -10,6 +10,8 @@ use App\Models\Candidate;
 use App\Models\Position;
 use Closure;
 use Filament\Forms\Components\CheckboxList;
+use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
@@ -38,6 +40,11 @@ class VotesPicker extends CheckboxList
 
     #[Locked]
     protected ?string $restrictedMembershipNumber = null;
+
+    /**
+     * @var array<string | Htmlable> | Arrayable | Closure
+     */
+    protected array | Arrayable | Closure $bios = [];
 
     public static function forPosition(string $uuid, PreferenceData $preference): static
     {
@@ -97,6 +104,12 @@ class VotesPicker extends CheckboxList
                         $this->hasCandidateGroups() ? $candidate->candidateGroup?->short_name : null,
                     ])->filter(fn (?string $item): bool => filled($item))->implode(' • '),
                 ])
+                ->toArray()
+        );
+
+        $this->bios(
+            fn (Position $position) => $this->getCandidates()
+                ->pluck('bio', 'uuid')
                 ->toArray()
         );
 
@@ -238,7 +251,7 @@ class VotesPicker extends CheckboxList
 
     public function shouldShowPhoto(): bool
     {
-        return $this->preference->candidate_symbol;
+        return $this->preference->candidate_photo;
     }
 
     public function getPhotoImg(string $uuid): HtmlableMedia | HtmlString | null
@@ -328,5 +341,45 @@ BLADE
         $this->votingMethod = $value;
 
         return $this;
+    }
+
+    /**
+     * @param  array<string | Htmlable> | Arrayable | Closure  $bios
+     */
+    public function bios(array | Arrayable | Closure $bios): static
+    {
+        $this->bios = $bios;
+
+        return $this;
+    }
+
+    /**
+     * @param  array-key  $value
+     */
+    public function hasBio(int | string $value): bool
+    {
+        return array_key_exists($value, $this->getBios());
+    }
+
+    /**
+     * @param  array-key  $value
+     */
+    public function getBio(int | string $value): string | Htmlable | null
+    {
+        return $this->getBios()[$value] ?? null;
+    }
+
+    /**
+     * @return array<string | Htmlable>
+     */
+    public function getBios(): array
+    {
+        $bios = $this->evaluate($this->bios);
+
+        if ($bios instanceof Arrayable) {
+            $bios = $bios->toArray();
+        }
+
+        return $bios;
     }
 }

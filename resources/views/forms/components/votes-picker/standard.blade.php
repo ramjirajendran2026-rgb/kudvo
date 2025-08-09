@@ -298,6 +298,35 @@
                                     {{ $getDescription($value) }}
                                 </p>
                             @endif
+
+                            @if ($hasBio($value))
+                                <x-filament::modal
+                                    width="5xl"
+                                    :sticky-header="true"
+                                >
+                                    <x-slot name="trigger" class="w-fit">
+                                        <x-filament::button
+                                            color="gray"
+                                            size="xs"
+                                            :outlined="true"
+                                            icon="heroicon-m-eye"
+                                            x-on:click.stop="open()"
+                                        >
+                                            View bio
+                                        </x-filament::button>
+                                    </x-slot>
+                                    <x-slot name="heading">
+                                        {{ $label }}'s bio
+                                    </x-slot>
+                                    @if ($hasDescription($value))
+                                        <x-slot name="description">
+                                            {{ $getDescription($value) }}
+                                        </x-slot>
+                                    @endif
+
+                                    {{ $getBio($value) }}
+                                </x-filament::modal>
+                            @endif
                         </div>
                     </label>
                 @empty

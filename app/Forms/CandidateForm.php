@@ -10,6 +10,7 @@ use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Set;
 use Illuminate\Database\Eloquent\Builder;
@@ -30,12 +31,12 @@ readonly class CandidateForm
             ->reorderable();
     }
 
-    public static function bioComponent(): SpatieMediaLibraryFileUpload
+    public static function bioComponent(): Textarea
     {
-        return SpatieMediaLibraryFileUpload::make(name: 'bio')
-            ->collection(collection: Candidate::MEDIA_COLLECTION_BIO)
-            ->label(label: __('filament.user.candidate-resource.form.bio.label'))
-            ->maxSize(size: 1024 * 2);
+        return Textarea::make(name: 'bio')
+            ->label(label: 'Bio')
+            ->maxLength(length: 10000)
+            ->placeholder(placeholder: 'Bio');
     }
 
     public static function electorIdComponent(): Hidden

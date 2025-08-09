@@ -60,6 +60,11 @@ class CandidateImporter extends Importer
                 ->example(example: 'Doe')
                 ->label(label: 'Last Name')
                 ->rules(rules: ['max:100']),
+
+            ImportColumn::make(name: 'bio')
+                ->example(example: 'John Doe is a great candidate.')
+                ->label(label: 'Bio')
+                ->rules(rules: ['max:10000']),
         ];
     }
 

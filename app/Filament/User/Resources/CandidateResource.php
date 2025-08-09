@@ -82,6 +82,10 @@ class CandidateResource extends Resource
                             ->hidden()
                             ->hiddenLabel()
                             ->initialCountry(value: Filament::getTenant()?->country ?: config(key: 'app.default_phone_country')),
+
+                        CandidateForm::bioComponent()
+                            ->columnSpanFull()
+                            ->hiddenLabel(),
                     ]),
 
                 CandidateForm::symbolComponent()

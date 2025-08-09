@@ -76,6 +76,7 @@ class Candidate extends Model implements HasAvatar, HasMedia, HasName, Sortable
         'title',
         'first_name',
         'last_name',
+        'bio',
     ];
 
     protected static function booted(): void
