@@ -7,6 +7,7 @@ use App\Data\TwentyFourSevenSmsConfigData;
 use App\Filament\Admin\Clusters\SmsSettingsCluster;
 use App\Services\Clicksend\Actions\GetBalance;
 use App\Services\Clicksend\Actions\SyncPricing;
+use App\Services\TwentyFourSevenSms\Actions\GetBalance as TwetyFourSevenSmsGetBalance;
 use App\Settings\ServiceConfig;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -36,6 +37,29 @@ class Services extends SettingsPage
                 Forms\Components\Section::make(heading: '24x7 SMS')
                     ->collapsible()
                     ->compact()
+                    ->headerActions(actions: [
+                        Forms\Components\Actions\Action::make(name: 'checkBalance')
+                            ->link()
+                            ->action(function (TwetyFourSevenSmsGetBalance $getBalance) {
+                                try {
+                                    $data = $getBalance->execute();
+
+                                    Notification::make()
+                                        ->title('Success')
+                                        ->body("$data")
+                                        ->success()
+                                        ->persistent()
+                                        ->send();
+                                } catch (Throwable $e) {
+                                    Notification::make()
+                                        ->title('Failed')
+                                        ->body($e->getMessage())
+                                        ->danger()
+                                        ->persistent()
+                                        ->send();
+                                }
+                            }),
+                    ])
                     ->mutateDehydratedStateUsing(callback: fn (array $state): TwentyFourSevenSmsConfigData => TwentyFourSevenSmsConfigData::from($state))
                     ->statePath(path: 'twenty_four_seven_sms')
                     ->schema(components: [
