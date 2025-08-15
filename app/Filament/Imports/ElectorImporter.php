@@ -38,17 +38,36 @@ class ElectorImporter extends Importer
                 ->rules(rules: ['max:100']),
 
             ImportColumn::make(name: 'phone')
-                ->castStateUsing(
-                    callback: fn (?string $state, array $options): ?string => $state &&
-                    ($phone = phone(number: $state, country: $options['phone_country'])) &&
-                    $phone->isValid() ?
-                        $phone->formatE164() :
-                        $state
-                )
+                ->castStateUsing(function (?string $state, array $data, array $options): ?string {
+                    if (empty($state)) {
+                        return null;
+                    }
+
+                    if (($phone = phone(number: $state)) && $phone->isValid()) {
+                        return $phone->formatE164();
+                    }
+
+                    if (($phone = phone(number: $state, country: $data['phone_country'] ?? $options['phone_country'])) && $phone->isValid()) {
+                        return $phone->formatE164();
+                    }
+
+                    return $state;
+                })
                 ->example(example: '9876543210')
-                ->fillRecordUsing(
-                    callback: fn (?string $state, array $options, Elector $record) => $record->phone = ($phone = phone(number: $state, country: $options['phone_country']))->isValid() ? $phone->formatE164() : null
-                )
+                ->fillRecordUsing(callback: function (?string $state, array $data, array $options, Elector $record) {
+                    if (empty($state)) {
+                        $record->phone = null;
+
+                        return;
+                    }
+
+                    $phone = phone(number: $state);
+                    if (! $phone->isValid()) {
+                        $phone = phone(number: $state, country: $data['phone_country'] ?? $options['phone_country']);
+                    }
+
+                    $record->phone = $phone->isValid() ? $phone->formatE164() : null;
+                })
                 ->rules(rules: function (array $options, Elector $record): array {
                     $rules = [
                         'nullable',
