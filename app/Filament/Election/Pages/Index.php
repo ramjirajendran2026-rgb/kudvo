@@ -200,7 +200,18 @@ class Index extends Page
 
     public function getStateDescription(): string | Htmlable | null
     {
-        return $this->getState()?->getDescription(election: $this->getElection(), elector: $this->getElector());
+        $description = $this->getState()?->getDescription(election: $this->getElection(), elector: $this->getElector());
+
+        if (
+            $this->getState() === ElectionPanelState::Voted &&
+            ! Kudvo::isBoothDevice() &&
+            filled($this->sessionVotes) &&
+            $this->getElection()->preference->voted_ballot_download
+        ) {
+            $description .= ' Voted Ballot can be downloaded only in this page. Once this page closed voted ballot cannot be viewed again.';
+        }
+
+        return $description;
     }
 
     protected function getStateActions(): array
