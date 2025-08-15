@@ -105,7 +105,8 @@ class ElectorSmsMessages extends ElectionPage implements HasTable
                     ->searchable(),
 
                 TextColumn::make('status')
-                    ->badge(),
+                    ->badge()
+                    ->tooltip(fn (SmsMessage $smsMessage): ?string => $smsMessage->notes),
 
                 TextColumn::make('created_at')
                     ->dateTime(timezone: $this->getElection()->timezone)
