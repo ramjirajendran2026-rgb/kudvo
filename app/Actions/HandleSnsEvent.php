@@ -3,13 +3,28 @@
 namespace App\Actions;
 
 use App\Models\Email;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
-class HandleSnsEvent
+class HandleSnsEvent implements ShouldQueue
 {
-    public function handle(string $controllerAction, object $message): void
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+
+    public function __construct(
+        public string $controllerAction,
+        public object $message
+    ) {}
+
+    public function handle(): void
     {
         $eventTypes = [
             'Bounce',
@@ -24,8 +39,8 @@ class HandleSnsEvent
             'Subscription',
         ];
 
-        if (in_array($message->eventType, $eventTypes, true)) {
-            $this->{'handle' . Str::studly($message->eventType) . 'Event'}($message);
+        if (in_array($this->message->eventType, $eventTypes, true)) {
+            $this->{'handle' . Str::studly($this->message->eventType) . 'Event'}($this->message);
         }
     }
 

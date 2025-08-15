@@ -43,7 +43,7 @@ class AwsSnsController extends Controller
                 return $result;
             }
 
-            app()->make(HandleSnsEvent::class)->handle(controllerAction: $method, message: $result);
+            HandleSnsEvent::dispatch($method, $result);
 
             return response()->json([
                 'success' => true,
