@@ -54,9 +54,10 @@ class BallotLinkNotification extends Notification implements HasMailMessagePurpo
     {
         $elector = $this->getElector();
         $election = $this->getElection();
+        $electionName = $this->getElectionName();
 
         return (new MailMessage)
-            ->subject(subject: "eVoting Link for $election->name - $elector->membership_number")
+            ->subject(subject: "eVoting Link for $electionName - $elector->membership_number")
             ->greeting(greeting: "Dear $elector->display_name,")
             ->line(line: "Use the following link to cast your vote for $election->name.")
             ->action(text: 'Vote Now', url: $this->getBallotLink())
@@ -80,7 +81,7 @@ class BallotLinkNotification extends Notification implements HasMailMessagePurpo
     {
         return WhatsAppMessageFactory::template('ballot_invitation')
             ->addComponent(TemplateComponentFactory::header([
-                TemplateComponentFactory::textParameter($this->getElection()->name, 'header'),
+                TemplateComponentFactory::textParameter($this->getElectionName(), 'header'),
             ]))
             ->addComponent(TemplateComponentFactory::body([
                 TemplateComponentFactory::textParameter($this->getElector()->display_name ?: $this->getElector()->membership_number, 'member_name'),
@@ -122,8 +123,8 @@ class BallotLinkNotification extends Notification implements HasMailMessagePurpo
         $variables = [
             static::VAR_BALLOT_LINK => $this->getBallotLink(),
             static::VAR_BALLOT_LINK_SHORT => $this->getBallotLinkShort(),
-            static::VAR_ELECTION_NAME => $this->getElection()->name,
-            static::VAR_ELECTION_NAME_SHORT => Str::maxLimit(value: $this->getElection()->name, limit: 30),
+            static::VAR_ELECTION_NAME => $this->getElectionName(),
+            static::VAR_ELECTION_NAME_SHORT => Str::maxLimit(value: $this->getElectionName(), limit: 30),
             static::VAR_ELECTOR_NAME => $this->getElector()->display_name,
             static::VAR_ELECTOR_NAME_SHORT => $this->getElector()->display_name ?
                 Str::maxLimit(value: $this->getElector()->display_name, limit: 30) :
@@ -145,6 +146,11 @@ class BallotLinkNotification extends Notification implements HasMailMessagePurpo
     public function getElection(): Election
     {
         return $this->election;
+    }
+
+    public function getElectionName(): ?string
+    {
+        return $this->getElection()->getShortName();
     }
 
     public function getPreference()

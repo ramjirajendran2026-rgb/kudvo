@@ -114,6 +114,8 @@ class ElectionResource extends Resource
 
                 ElectionForm::nameComponent(),
 
+                ElectionForm::shortNameComponent(),
+
                 ElectionForm::votingMethodComponent(),
             ]);
     }
@@ -132,6 +134,8 @@ class ElectionResource extends Resource
     {
         return [
             ElectionForm::nameComponent(),
+
+            ElectionForm::shortNameComponent(),
         ];
     }
 
@@ -460,6 +464,8 @@ class ElectionResource extends Resource
             ])
             ->form(form: [
                 ElectionForm::nameComponent(),
+
+                ElectionForm::shortNameComponent(),
 
                 BranchResource::getFormSelectTree(),
 

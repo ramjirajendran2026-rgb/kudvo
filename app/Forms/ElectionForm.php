@@ -44,6 +44,15 @@ readonly class ElectionForm
             ->required();
     }
 
+    public static function shortNameComponent(): TextInput
+    {
+        return TextInput::make(name: 'short_name')
+            ->label(label: __('filament.user.election-resource.form.short_name.label'))
+            ->helperText(text: __('filament.user.election-resource.form.short_name.helper_text'))
+            ->maxLength(length: 30)
+            ->minLength(length: 3);
+    }
+
     public static function startsAtComponent(): DateTimePicker
     {
         return DateTimePicker::make(name: 'starts_at')

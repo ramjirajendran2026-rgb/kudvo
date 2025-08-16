@@ -55,6 +55,7 @@ class VotedConfirmationNotification extends Notification implements HasMailMessa
     public function toMail($notifiable): MailMessage
     {
         return (new MailMessage)
+            ->subject(subject: 'Voted Confirmation for ' . $this->election->getShortName() . ' - ' . $this->elector->membership_number)
             ->greeting(greeting: $this->formatTemplate(template: 'Dear ' . static::VAR_ELECTOR_NAME . ',', notifiable: $notifiable))
             ->line(line: $this->formatTemplate(template: 'You have successfully cast your vote for **' . static::VAR_ELECTION_NAME . '** on **' . static::VAR_VOTED_AT . '**.', notifiable: $notifiable))
             ->withSymfonyMessage(
@@ -76,7 +77,7 @@ class VotedConfirmationNotification extends Notification implements HasMailMessa
     {
         return WhatsAppMessageFactory::template('ballot_acknowledgement')
             ->addComponent(TemplateComponentFactory::header([
-                TemplateComponentFactory::textParameter('Vote Submitted - ' . $this->election->name, 'header'),
+                TemplateComponentFactory::textParameter('Vote Submitted - ' . $this->election->getShortName(), 'header'),
             ]))
             ->addComponent(TemplateComponentFactory::body([
                 TemplateComponentFactory::textParameter($this->elector->display_name ?: $this->elector->membership_number, 'member_name'),
@@ -94,8 +95,8 @@ class VotedConfirmationNotification extends Notification implements HasMailMessa
     protected function formatTemplate(string $template, object $notifiable): string
     {
         $variables = [
-            static::VAR_ELECTION_NAME => $this->election->name,
-            static::VAR_ELECTION_NAME_SHORT => Str::maxLimit(value: $this->election->name, limit: 30),
+            static::VAR_ELECTION_NAME => $this->election->getShortName(),
+            static::VAR_ELECTION_NAME_SHORT => Str::maxLimit(value: $this->election->getShortName(), limit: 30),
             static::VAR_ELECTOR_NAME => $this->elector->display_name,
             static::VAR_ELECTOR_NAME_SHORT => Str::maxLimit(value: $this->elector->display_name, limit: 30),
             static::VAR_VOTED_AT => $this->ballot->voted_at->timezone(value: $this->election->timezone)->format(format: 'M j, Y h:i A'),

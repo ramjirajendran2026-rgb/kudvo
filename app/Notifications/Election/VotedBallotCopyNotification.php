@@ -41,7 +41,7 @@ class VotedBallotCopyNotification extends Notification implements HasMailMessage
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject(subject: 'Voted Ballot Copy - ' . $this->election->name)
+            ->subject(subject: 'Voted Ballot Copy - ' . $this->election->getShortName())
             ->greeting(greeting: 'Dear ' . $this->elector->display_name . ',')
             ->line(line: 'You have successfully cast your vote for ' . $this->election->name . ' on ' . $this->ballot->voted_at->timezone(value: $this->election->timezone)->format(format: 'M j, Y h:i A (T)') . '. Here is your ballot copy.')
             ->attachData(

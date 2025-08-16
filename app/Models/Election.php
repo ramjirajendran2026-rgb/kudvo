@@ -46,11 +46,13 @@ class Election extends Model
 
     public array $translatable = [
         'name',
+        'short_name',
         'description',
     ];
 
     protected $fillable = [
         'name',
+        'short_name',
         'description',
         'voting_method',
         'preference',
@@ -304,6 +306,11 @@ class Election extends Model
     public function getFallbackLocale()
     {
         return $this->locales()[0] ?? config('app.locale');
+    }
+
+    public function getShortName(): ?string
+    {
+        return $this->short_name ?: $this->name;
     }
 
     public function isMfaRequired(): bool

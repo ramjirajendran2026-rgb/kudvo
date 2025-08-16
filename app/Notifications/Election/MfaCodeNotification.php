@@ -52,7 +52,7 @@ class MfaCodeNotification extends Notification implements HasMailMessagePurpose,
         $oneTimePassword = $this->getOneTimePassword();
 
         return (new MailMessage)
-            ->subject(subject: "MFA Code for $election->name")
+            ->subject(subject: 'MFA Code for ' . $election->getShortName())
             ->line(line: "**$oneTimePassword->code** is your MFA code for $election->name")
             ->withSymfonyMessage(
                 callback: fn (Message $message) => $message

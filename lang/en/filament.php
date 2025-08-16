@@ -139,6 +139,10 @@ return [
                 'name' => [
                     'label' => 'Election name / title',
                 ],
+                'short_name' => [
+                    'label' => 'Short name / title',
+                    'helper_text' => 'This will be used in the email subject line and in the SMS message.',
+                ],
                 'booth_starts_at' => [
                     'label' => 'Starts at',
                 ],
