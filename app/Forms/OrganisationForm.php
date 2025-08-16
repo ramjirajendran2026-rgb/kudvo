@@ -42,7 +42,7 @@ readonly class OrganisationForm
     {
         return TextInput::make(name: 'name')
             ->label(label: __('filament.user.organisation-resource.form.name.label'))
-            ->maxLength(length: 60)
+            ->maxLength(length: 100)
             ->minLength(length: 4)
             ->required();
     }
