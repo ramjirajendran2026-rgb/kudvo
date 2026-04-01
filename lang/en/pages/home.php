@@ -1,3 +1,10 @@
+<style>
+    .xl
+    {
+        color: #fff;
+    }
+</style>
+
 <?php
 
 return [
@@ -61,14 +68,7 @@ return [
                     'cta2_url' => route('products.election.home'),
                 ],
                 [
-                    'title' => 'Transform Educational Institutions with Trusted Online Election Tools',
-                    'description' => 'Encourage student and staff participation in institutional decisions.',
-                    'image' => asset('img/home/hero/school-or-university.webp'),
-                    'image_alt' => 'Aerial view of a modern university campus with multiple buildings, landscaped grounds, and walking paths.',
-                    'cta_label' => 'Get Started',
-                    'cta_url' => route('filament.user.auth.register'),
-                    'cta2_label' => 'Explore',
-                    'cta2_url' => route('products.election.home'),
+                    
                 ],
                 [
                     'title' => 'Empower Employee Associations with Seamless Online Voting Platforms',
